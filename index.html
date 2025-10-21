@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LLM Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* For custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #1e293b; /* slate-800 */
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #475569; /* slate-600 */
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #64748b; /* slate-500 */
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* --- SVG Animations & Interactivity --- */
+      
+      /* Transformer Diagram */
+      .transformer-node {
+        transition: transform 0.3s ease, filter 0.3s ease;
+      }
+      .transformer-node:hover {
+        transform: scale(1.03);
+        filter: drop-shadow(0 0 8px rgb(34 211 238 / 0.5));
+      }
+
+      .data-flow-path {
+        stroke-dasharray: 10;
+        stroke-dashoffset: 20;
+        animation: data-flow-animation 2s linear infinite;
+      }
+      
+      @keyframes data-flow-animation {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      /* Attention Diagram */
+      .attention-group .attention-line {
+        transition: stroke 0.3s ease, opacity 0.3s ease;
+        opacity: 0.5;
+      }
+      .attention-group:hover .attention-line {
+        stroke: #22d3ee; /* cyan-400 */
+        opacity: 1;
+        animation: attention-pulse 1.5s ease-in-out infinite;
+      }
+      
+      .attention-word {
+        cursor: pointer;
+        transition: fill 0.3s ease;
+      }
+      .attention-group:hover .attention-word {
+        fill: #67e8f9; /* cyan-300 */
+      }
+
+      .qkv-node {
+        transition: filter 0.3s ease;
+      }
+      .qkv-node:hover {
+        filter: drop-shadow(0 0 6px rgb(165 243 252 / 0.7));
+      }
+
+      @keyframes attention-pulse {
+        0%, 100% {
+          stroke-width: 1.5;
+        }
+        50% {
+          stroke-width: 2.5;
+        }
+      }
+      
+      /* Embedding Diagram */
+      .embedding-group {
+        cursor: pointer;
+      }
+      .embedding-group .embedding-vector {
+        transition: filter 0.3s ease;
+      }
+      .embedding-group:hover .embedding-vector {
+        filter: drop-shadow(0 0 6px rgb(165 243 252 / 0.7));
+      }
+       .embedding-group .embedding-arrow {
+        transition: stroke 0.3s ease;
+      }
+       .embedding-group:hover .embedding-arrow {
+        stroke: #67e8f9; /* cyan-300 */
+      }
+
+      /* Positional Encoding Diagram */
+      .positional-wave {
+        stroke-dasharray: 20;
+        stroke-dashoffset: 40;
+        animation: wave-flow 3s linear infinite;
+      }
+      .pe-group:hover .positional-wave {
+        stroke: #6ee7b7; /* emerald-300 */
+      }
+      .pe-group .pe-box {
+        transition: fill 0.3s ease;
+      }
+      .pe-group:hover .pe-box {
+        fill: #1d4ed8; /* blue-700 */
+      }
+
+      @keyframes wave-flow {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.25.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-slate-900">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
