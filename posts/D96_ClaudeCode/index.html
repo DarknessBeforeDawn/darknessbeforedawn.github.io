@@ -1,0 +1,2654 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、简介 ZCF（Zero-Config Code Flow）是一个面向专业开发者的 CLI 工具，目标是在几分钟内完成 Claude Code 与 Codex 的端到端环境初始化。通过 npx zcf 可以一站式完成配置目录创建、API&#x2F;代理接入、MCP 服务接入、工作流导入、输出风格与记忆配置，以及常用工具安装。 1.1 为什么选择 ZCF  零配置体验：自动检测操作系统、语言偏好与安装状态，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Claude Code（九）:Claude Code配置工具ZCF">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D96_ClaudeCode/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、简介 ZCF（Zero-Config Code Flow）是一个面向专业开发者的 CLI 工具，目标是在几分钟内完成 Claude Code 与 Codex 的端到端环境初始化。通过 npx zcf 可以一站式完成配置目录创建、API&#x2F;代理接入、MCP 服务接入、工作流导入、输出风格与记忆配置，以及常用工具安装。 1.1 为什么选择 ZCF  零配置体验：自动检测操作系统、语言偏好与安装状态，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/ZCF.webp">
+<meta property="article:published_time" content="2025-11-19T13:33:13.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.282Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="ZCF">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/ZCF.webp">
+  
+  
+  
+  <title>Claude Code（九）:Claude Code配置工具ZCF - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Claude Code（九）:Claude Code配置工具ZCF"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-11-19 21:33" pubdate>
+          2025年11月19日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          97 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Claude Code（九）:Claude Code配置工具ZCF</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一简介">一、简介</h2>
+<p>ZCF（Zero-Config Code Flow）是一个面向专业开发者的 CLI
+工具，目标是在几分钟内完成 Claude Code 与 Codex 的端到端环境初始化。通过
+npx zcf 可以一站式完成配置目录创建、API/代理接入、MCP
+服务接入、工作流导入、输出风格与记忆配置，以及常用工具安装。</p>
+<h3 id="为什么选择-zcf">1.1 为什么选择 ZCF</h3>
+<ul>
+<li><strong>零配置体验</strong>：自动检测操作系统、语言偏好与安装状态，必要时触发增量配置，避免重复劳动。</li>
+<li><strong>多工具统一</strong>：同时支持 Claude Code 与
+Codex，两套环境共享一套 CLI，随时切换目标平台。</li>
+<li><strong>结构化工作流</strong>：预置六阶段结构化工作流、Feat
+规划流、BMad 敏捷流等，内置代理与指令模板。</li>
+<li><strong>丰富的 MCP 集成</strong>：默认提供 Context7、Open Web
+Search、Spec Workflow、DeepWiki、Playwright、Serena 等服务。</li>
+<li><strong>可视化状态与运维</strong>：包含 CCR（Claude Code
+Router）配置助手以及 CCometixLine 状态栏安装与升级能力。</li>
+<li><strong>可扩展配置体系</strong>：支持多 API
+配置并行、输出风格切换、环境权限导入、模板与语言分离管理。</li>
+</ul>
+<h3 id="使用-zcf-你将获得什么">1.2 使用 ZCF 你将获得什么</h3>
+<ul>
+<li><strong>安全的隐私与权限配置</strong>：环境变量、权限模板与备份策略自动落地，确保极简但安全的运行环境。</li>
+<li><strong>API 与代理管理</strong>：支持官方登录、API Key、CCR
+代理三种模式，内置 302.AI、GLM、MiniMax、Kimi 等预设。</li>
+<li><strong>全局输出风格与语言体系</strong>：命令行即可设置 AI
+输出语言、项目级/全局输出风格与 Codex 记忆指令。</li>
+<li><strong>工作流与指令模板集</strong>：自动导入
+<code>/zcf:workflow</code>、<code>/zcf:feat</code>、<code>/git-commit</code>
+等命令以及对应的代理配置。</li>
+<li><strong>MCP 服务基座</strong>：一键启用主流 MCP
+Server，并根据是否需要 API Key 智能提示环境变量要求。</li>
+<li><strong>辅助工具链</strong>：CCometixLine 状态栏自动安装、CCR
+管理菜单、Codex CLI 安装/升级、使用数据统计。</li>
+</ul>
+<h2 id="二安装使用">二、安装使用</h2>
+<p>需要Node.js版本不低于22。npm需要支持npx命令。<code>npx zcf</code>即可直接启动ZCF。</p>
+<p><strong>命令概览</strong></p>
+<p>ZCF CLI 基于 <code>cac</code> 实现，所有命令均可通过
+<code>npx zcf &lt;command&gt;</code> 调用。常用命令如下：</p>
+<table>
+
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>zcf</code></td>
+<td>打开交互式菜单，聚合所有功能</td>
+</tr>
+<tr>
+<td><code>zcf init</code> / <code>zcf i</code></td>
+<td>完整初始化，覆盖 Claude Code 或 Codex</td>
+</tr>
+<tr>
+<td><code>zcf update</code> / <code>zcf u</code></td>
+<td>更新工作流与模板，可选择语言与输出样式</td>
+</tr>
+<tr>
+<td><code>zcf ccr</code></td>
+<td>管理 Claude Code Router 代理</td>
+</tr>
+<tr>
+<td><code>zcf ccu</code></td>
+<td>Claude Code 使用分析与统计</td>
+</tr>
+<tr>
+<td><code>zcf uninstall</code></td>
+<td>卸载配置并可选择保留备份</td>
+</tr>
+<tr>
+<td><code>zcf config-switch</code> / <code>zcf cs</code></td>
+<td>在多套配置之间切换</td>
+</tr>
+<tr>
+<td><code>zcf check-updates</code> / <code>zcf check</code></td>
+<td>检查并升级工具链</td>
+</tr>
+</tbody>
+</table>
+<p>每个命令均支持 <code>--help</code> 查看详细参数。</p>
+<h3 id="主菜单">2.1 主菜单</h3>
+<p>执行 <code>npx zcf</code> 会进入交互式菜单系统。菜单是 ZCF
+的核心交互界面，提供可视化的操作选项，无需记忆复杂的命令参数。</p>
+<p><img src="/images/zcf.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>菜单特点</strong></p>
+<ul>
+<li>🎯 <strong>动态显示</strong>：根据当前代码工具（Claude Code 或
+Codex）动态调整菜单项</li>
+<li>⌨️
+<strong>快捷键操作</strong>：输入单个字符即可执行操作，无需记忆命令</li>
+<li>🔄 <strong>智能切换</strong>：可以在 Claude Code 和 Codex
+之间无缝切换</li>
+<li>📋
+<strong>功能聚合</strong>：所有常用功能都集中在菜单中，方便快速访问</li>
+</ul>
+<p><strong>Claude Code 模式菜单</strong></p>
+<table style="width:100%;">
+
+<thead>
+<tr>
+<th>选项</th>
+<th>功能</th>
+<th>对应命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1</code></td>
+<td>完整初始化</td>
+<td><code>zcf init</code></td>
+<td>完整初始化 Claude Code 环境</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td>导入/更新工作流</td>
+<td><code>zcf update</code></td>
+<td>更新工作流模板和提示词</td>
+</tr>
+<tr>
+<td><code>3</code></td>
+<td>配置 API 或 CCR</td>
+<td>-</td>
+<td>配置 API 密钥、提供商或 CCR 代理</td>
+</tr>
+<tr>
+<td><code>4</code></td>
+<td>配置 MCP 服务</td>
+<td>-</td>
+<td>安装和配置 MCP 服务</td>
+</tr>
+<tr>
+<td><code>5</code></td>
+<td>配置默认模型</td>
+<td>-</td>
+<td>设置默认使用的 Claude 模型</td>
+</tr>
+<tr>
+<td><code>6</code></td>
+<td>配置 AI 记忆与输出风格</td>
+<td>-</td>
+<td>设置 AI 输出语言和全局输出风格</td>
+</tr>
+<tr>
+<td><code>7</code></td>
+<td>导入推荐环境变量与权限</td>
+<td>-</td>
+<td>配置环境变量和文件系统权限</td>
+</tr>
+<tr>
+<td><code>R</code></td>
+<td>CCR 管理菜单</td>
+<td><code>zcf ccr</code></td>
+<td>Claude Code Router 管理</td>
+</tr>
+<tr>
+<td><code>U</code></td>
+<td>Claude Code 使用分析</td>
+<td><code>zcf ccu</code></td>
+<td>查看 API 使用统计</td>
+</tr>
+<tr>
+<td><code>L</code></td>
+<td>CCometixLine 管理</td>
+<td>-</td>
+<td>状态栏工具管理</td>
+</tr>
+<tr>
+<td><code>0</code></td>
+<td>切换脚本语言</td>
+<td>-</td>
+<td>切换 CLI 界面语言（zh-CN/en）</td>
+</tr>
+<tr>
+<td><code>S</code></td>
+<td>切换代码工具</td>
+<td>-</td>
+<td>在 Claude Code ↔︎ Codex 之间切换</td>
+</tr>
+<tr>
+<td><code>-</code></td>
+<td>卸载当前工具配置</td>
+<td><code>zcf uninstall</code></td>
+<td>卸载 Claude Code 配置</td>
+</tr>
+<tr>
+<td><code>+</code></td>
+<td>检查更新</td>
+<td><code>zcf check-updates</code></td>
+<td>检查工具版本并更新</td>
+</tr>
+<tr>
+<td><code>Q</code></td>
+<td>退出</td>
+<td>-</td>
+<td>退出菜单</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Codex 模式菜单</strong></p>
+<p>Codex 模式下的菜单会调整为 Codex 对应的操作：</p>
+<ul>
+<li><code>1</code> - Codex 完整初始化</li>
+<li><code>2</code> - 更新 Codex 工作流和模板</li>
+<li><code>3</code> - 配置 Codex API 提供商或 MCP</li>
+<li><code>4</code> - 配置 Codex MCP 服务</li>
+<li><code>S</code> - 切换回 Claude Code</li>
+<li>其他选项保持相同</li>
+</ul>
+<h4 id="菜单功能详解">2.1.1 菜单功能详解</h4>
+<h5 id="完整初始化选项-1">1.完整初始化（选项 1）</h5>
+<p>等同于执行 <code>npx zcf init</code>，会引导您完成：</p>
+<ul>
+<li>选择代码工具类型</li>
+<li>配置 API（官方登录/API Key/CCR 代理）</li>
+<li>选择 MCP 服务</li>
+<li>选择工作流</li>
+<li>选择输出风格</li>
+<li>配置语言选项</li>
+</ul>
+<h5 id="导入更新工作流选项-2">2.导入/更新工作流（选项 2）</h5>
+<p>等同于执行 <code>npx zcf update</code>，会：</p>
+<ul>
+<li>更新工作流模板</li>
+<li>更新提示词内容</li>
+<li>检查工具版本</li>
+<li>选择模板语言</li>
+</ul>
+<h5 id="配置-api-或-ccr选项-3">3.配置 API 或 CCR（选项 3）</h5>
+<p>提供以下配置选项：</p>
+<ul>
+<li>配置 API Key（自定义端点）</li>
+<li>使用 API 提供商预设（302.AI、GLM 等）</li>
+<li>配置 CCR 代理</li>
+<li>切换回官方登录</li>
+</ul>
+<h5 id="配置-mcp-服务选项-4">4.配置 MCP 服务（选项 4）</h5>
+<p>管理 MCP 服务：</p>
+<ul>
+<li>安装新的 MCP 服务</li>
+<li>移除不需要的服务</li>
+<li>更新服务配置</li>
+<li>检查服务状态</li>
+</ul>
+<h5 id="配置默认模型选项-5">5.配置默认模型（选项 5）</h5>
+<p>设置默认使用的 Claude 模型：</p>
+<ul>
+<li>自动选择（Claude Code 自动选择最佳模型）</li>
+<li>Opus（高 token 消耗，谨慎使用）</li>
+<li>Sonnet 1M（大上下文窗口）</li>
+<li>自定义（指定主模型和快速模型）</li>
+</ul>
+<h5 id="配置-ai-记忆与输出风格选项-6">6.配置 AI 记忆与输出风格（选项
+6）</h5>
+<p>管理 AI 行为：</p>
+<ul>
+<li>设置 AI 输出语言</li>
+<li>切换全局输出风格</li>
+<li>编辑输出风格内容</li>
+<li>管理项目记忆</li>
+</ul>
+<h5 id="导入推荐环境变量与权限选项-7">7.导入推荐环境变量与权限（选项
+7）</h5>
+<p>配置开发环境：</p>
+<ul>
+<li>导入环境变量模板</li>
+<li>配置文件系统权限</li>
+<li>设置推荐的工作目录权限</li>
+</ul>
+<h5 id="r.ccr-管理菜单选项-r">R.CCR 管理菜单（选项 R）</h5>
+<p>进入 CCR 专用管理界面：</p>
+<ul>
+<li>初始化/安装 CCR</li>
+<li>启动/停止/重启 CCR 服务</li>
+<li>打开 CCR Web UI</li>
+<li>查看 CCR 状态</li>
+<li>配置路由规则</li>
+</ul>
+<h5 id="u.claude-code-使用分析选项-u">U.Claude Code 使用分析（选项
+U）</h5>
+<p>查看 API 使用统计：</p>
+<ul>
+<li>Token 使用量</li>
+<li>成本统计</li>
+<li>使用趋势</li>
+<li>导出 JSON 数据</li>
+</ul>
+<h5 id="l.ccometixline-管理选项-l">L.CCometixLine 管理（选项 L）</h5>
+<p>管理状态栏工具：</p>
+<ul>
+<li>安装/升级 CCometixLine</li>
+<li>卸载 CCometixLine</li>
+<li>配置状态栏格式</li>
+<li>查看版本信息</li>
+</ul>
+<h5 id="检查更新选项">+.检查更新（选项 +）</h5>
+<p>检查并更新工具：</p>
+<ul>
+<li>检查 Claude Code 版本</li>
+<li>检查 CCR 版本</li>
+<li>检查 CCometixLine 版本</li>
+<li>自动更新可用版本</li>
+</ul>
+<h5 id="卸载当前工具配置选项--">-.卸载当前工具配置（选项 -）</h5>
+<p>安全卸载配置：</p>
+<ul>
+<li>完整卸载所有配置</li>
+<li>自定义卸载特定组件</li>
+<li>保留备份选项</li>
+</ul>
+<h3 id="ccr-代理管理">2.2 CCR 代理管理</h3>
+<p><code>zcf ccr</code> 提供 Claude Code
+Router（CCR）的完整管理菜单，包括安装、配置、服务控制和 Web UI
+访问等功能。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 打开 CCR 管理菜单</span><br>npx zcf ccr<br><br><span class="hljs-comment"># 或通过主菜单访问</span><br>npx zcf<br><span class="hljs-comment"># 然后选择 R. CCR 管理</span><br></code></pre></td></tr></table></figure>
+<p><img src="/images/zcf1.png" srcset="/img/loading.gif" lazyload></p>
+<h5 id="初始化-ccr">1. 初始化 CCR</h5>
+<p><strong>功能</strong>：首次设置 CCR 或重新配置 CCR</p>
+<p><strong>流程</strong>：</p>
+<ol type="1">
+<li>自动检测是否已安装 CCR CLI 工具</li>
+<li>如果未安装，自动安装
+<code>@musistudio/claude-code-router</code></li>
+<li>引导配置向导：
+<ul>
+<li>选择提供商预设（302.AI、GLM、MiniMax、Kimi 等）</li>
+<li>配置 API 密钥（如需要）</li>
+<li>选择默认模型</li>
+<li>创建配置文件 <code>~/.claude-code-router/config.json</code></li>
+</ul></li>
+<li>自动配置 Claude Code 使用 CCR 代理</li>
+<li>备份现有配置（如果存在）</li>
+</ol>
+<p><strong>使用场景</strong>：</p>
+<ul>
+<li>首次使用 CCR</li>
+<li>需要更换提供商或重新配置</li>
+<li>配置丢失需要重新设置</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">npx zcf ccr<br><span class="hljs-comment"># 选择 1</span><br><span class="hljs-comment"># 按提示完成配置</span><br></code></pre></td></tr></table></figure>
+<h5 id="启动-ui">2. 启动 UI</h5>
+<p><strong>功能</strong>：启动 CCR Web 管理界面</p>
+<p><strong>访问地址</strong>：<code>http://localhost:3456/ui</code>（默认端口）</p>
+<p><strong>Web UI 功能</strong>：</p>
+<ul>
+<li>📊 实时使用统计和成本分析</li>
+<li>⚙️ 路由规则配置</li>
+<li>🔧 模型管理（添加、编辑、删除）</li>
+<li>📈 详细的使用量统计</li>
+<li>🔄 服务控制（启动、停止、重启）</li>
+</ul>
+<p><strong>前置条件</strong>：</p>
+<ul>
+<li>必须先完成 CCR 初始化（选项 1）</li>
+<li>配置文件 <code>~/.claude-code-router/config.json</code>
+必须存在</li>
+</ul>
+<p><strong>API 密钥</strong>：</p>
+<ul>
+<li>启动 UI 时会显示 CCR API
+密钥（默认：<code>sk-zcf-x-ccr</code>）</li>
+<li>使用此密钥登录 Web UI</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">npx zcf ccr<br><span class="hljs-comment"># 选择 2</span><br><span class="hljs-comment"># 等待服务启动后，访问 http://localhost:3456/ui</span><br></code></pre></td></tr></table></figure>
+<h5 id="检查状态">3. 检查状态</h5>
+<p><strong>功能</strong>：查看 CCR 服务当前运行状态</p>
+<p><strong>显示信息</strong>：</p>
+<ul>
+<li>服务是否运行</li>
+<li>运行端口</li>
+<li>配置的提供商数量</li>
+<li>路由规则摘要</li>
+</ul>
+<p><strong>使用场景</strong>：</p>
+<ul>
+<li>验证服务是否正常启动</li>
+<li>排查连接问题</li>
+<li>查看当前配置状态</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">npx zcf ccr<br><span class="hljs-comment"># 选择 3</span><br></code></pre></td></tr></table></figure>
+<h5 id="重启服务">4. 重启服务</h5>
+<p><strong>功能</strong>：重启 CCR 服务，重新加载配置</p>
+<p><strong>使用场景</strong>：</p>
+<ul>
+<li>修改配置文件后需要重新加载</li>
+<li>服务异常需要重启</li>
+<li>端口冲突后需要重启</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">npx zcf ccr<br><span class="hljs-comment"># 选择 4</span><br></code></pre></td></tr></table></figure>
+<h5 id="启动服务">5. 启动服务</h5>
+<p><strong>功能</strong>：启动 CCR 服务</p>
+<p><strong>使用场景</strong>：</p>
+<ul>
+<li>服务停止后需要重新启动</li>
+<li>系统重启后启动服务</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">npx zcf ccr<br><span class="hljs-comment"># 选择 5</span><br></code></pre></td></tr></table></figure>
+<h5 id="停止服务">6. 停止服务</h5>
+<p><strong>功能</strong>：停止当前运行的 CCR 服务</p>
+<p><strong>使用场景</strong>：</p>
+<ul>
+<li>需要暂停 CCR 代理</li>
+<li>调试时需要停止服务</li>
+<li>更换配置前先停止服务</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">npx zcf ccr<br><span class="hljs-comment"># 选择 6</span><br></code></pre></td></tr></table></figure>
+<p><strong>路由规则配置</strong></p>
+<p>CCR 支持灵活的路由规则配置，可以通过 Web UI
+或配置文件设置。配置文件位于
+<code>~/.claude-code-router/config.json</code>，使用 JSON 格式。</p>
+<p><strong>完整配置示例</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"LOG"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"HOST"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"127.0.0.1"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"PORT"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3456</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"APIKEY"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"sk-zcf-x-ccr"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"API_TIMEOUT_MS"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"600000"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"PROXY_URL"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">""</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"Providers"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"name"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"openrouter"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"api_base_url"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://openrouter.ai/api/v1/chat/completions"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"api_key"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"sk-xxx"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"models"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>        <span class="hljs-string">"google/gemini-2.5-pro-preview"</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-string">"anthropic/claude-sonnet-4"</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-string">"anthropic/claude-3.5-sonnet"</span><br>      <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"transformer"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"use"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"openrouter"</span><span class="hljs-punctuation">]</span><br>      <span class="hljs-punctuation">}</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"name"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"deepseek"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"api_base_url"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://api.deepseek.com/v1/chat/completions"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"api_key"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"sk-xxx"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"models"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"deepseek-chat"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"deepseek-reasoner"</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"transformer"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"use"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"deepseek"</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">"deepseek-chat"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>          <span class="hljs-attr">"use"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"tooluse"</span><span class="hljs-punctuation">]</span><br>        <span class="hljs-punctuation">}</span><br>      <span class="hljs-punctuation">}</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"name"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"ollama"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"api_base_url"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"http://localhost:11434/v1/chat/completions"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"api_key"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"ollama"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"models"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"qwen2.5-coder:latest"</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"transformer"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"use"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"ollama"</span><span class="hljs-punctuation">]</span><br>      <span class="hljs-punctuation">}</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"name"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"gemini"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"api_base_url"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://generativelanguage.googleapis.com/v1beta/models/"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"api_key"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"sk-xxx"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"models"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"gemini-2.5-flash"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"gemini-2.5-pro"</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"transformer"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"use"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"gemini"</span><span class="hljs-punctuation">]</span><br>      <span class="hljs-punctuation">}</span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"Router"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"default"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"openrouter,google/gemini-2.5-pro-preview"</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"background"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"deepseek,deepseek-chat"</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"think"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"deepseek,deepseek-reasoner"</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"longContext"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"openrouter,anthropic/claude-sonnet-4"</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"longContextThreshold"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">60000</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"webSearch"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"gemini,gemini-2.5-flash"</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<h4 id="配置字段说明">2.2.1 配置字段说明</h4>
+<p><strong>基础配置</strong></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LOG</code></td>
+<td>boolean</td>
+<td>是否启用日志</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>HOST</code></td>
+<td>string</td>
+<td>服务监听地址</td>
+<td><code>127.0.0.1</code></td>
+</tr>
+<tr>
+<td><code>PORT</code></td>
+<td>number</td>
+<td>服务端口</td>
+<td><code>3456</code></td>
+</tr>
+<tr>
+<td><code>APIKEY</code></td>
+<td>string</td>
+<td>CCR API 密钥</td>
+<td><code>sk-zcf-x-ccr</code></td>
+</tr>
+<tr>
+<td><code>API_TIMEOUT_MS</code></td>
+<td>string</td>
+<td>API 超时时间（毫秒）</td>
+<td><code>600000</code></td>
+</tr>
+<tr>
+<td><code>PROXY_URL</code></td>
+<td>string</td>
+<td>代理 URL（可选）</td>
+<td><code>""</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Providers 配置</strong></p>
+<p><code>Providers</code> 是一个数组，每个 Provider 包含：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>string</td>
+<td>提供商名称（用于路由规则）</td>
+</tr>
+<tr>
+<td><code>api_base_url</code></td>
+<td>string</td>
+<td>API 基础 URL</td>
+</tr>
+<tr>
+<td><code>api_key</code></td>
+<td>string</td>
+<td>API 密钥（免费模型可使用 <code>sk-free</code>）</td>
+</tr>
+<tr>
+<td><code>models</code></td>
+<td>string[]</td>
+<td>该提供商支持的模型列表</td>
+</tr>
+<tr>
+<td><code>transformer</code></td>
+<td>object</td>
+<td>可选的请求转换器（用于 API 兼容性）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Router 配置</strong></p>
+<p><code>Router</code>
+定义了不同场景下的模型路由规则，格式为：<code>${providerName},${modelName}</code></p>
+<table>
+
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>default</code></td>
+<td>string</td>
+<td>默认路由（格式：<code>provider,model</code>）</td>
+</tr>
+<tr>
+<td><code>background</code></td>
+<td>string</td>
+<td>后台任务路由（可选）</td>
+</tr>
+<tr>
+<td><code>think</code></td>
+<td>string</td>
+<td>思考任务路由（可选）</td>
+</tr>
+<tr>
+<td><code>longContext</code></td>
+<td>string</td>
+<td>长上下文任务路由（可选）</td>
+</tr>
+<tr>
+<td><code>longContextThreshold</code></td>
+<td>number</td>
+<td>长上下文的 token 阈值（可选）</td>
+</tr>
+<tr>
+<td><code>webSearch</code></td>
+<td>string</td>
+<td>网页搜索任务路由（可选）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="提供商预设">2.2.2 提供商预设</h4>
+<p>ZCF 支持多个 CCR 提供商预设，简化配置流程：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">npx zcf ccr<br><span class="hljs-comment"># 选择 1. 初始化 CCR</span><br><span class="hljs-comment"># 选择提供商预设</span><br></code></pre></td></tr></table></figure>
+<p>支持的预设包括：</p>
+<ul>
+<li><strong>302.AI</strong>：企业级 AI 服务</li>
+<li><strong>GLM</strong>：智谱 AI</li>
+<li><strong>MiniMax</strong>：MiniMax AI 服务</li>
+<li><strong>自定义</strong>：配置自定义提供商</li>
+</ul>
+<h3 id="使用分析-ccu">2.3 使用分析 ccu</h3>
+<p><code>zcf ccu</code>（Claude Code Usage）用于查看和分析 Claude Code
+的使用统计信息，帮助您了解 AI 助手的使用情况和成本。</p>
+<h4 id="命令格式">2.3.1 命令格式</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 基本使用（显示默认统计）</span><br>npx zcf ccu<br><br><span class="hljs-comment"># 指定统计周期</span><br>npx zcf ccu --period daily<br>npx zcf ccu --period weekly<br>npx zcf ccu --period monthly<br><br><span class="hljs-comment"># JSON 格式输出（用于脚本处理）</span><br>npx zcf ccu --json<br><br><span class="hljs-comment"># CSV 格式输出（用于 Excel 分析）</span><br>npx zcf ccu --csv<br><br><span class="hljs-comment"># 通过主菜单访问</span><br>npx zcf<br><span class="hljs-comment"># 然后选择 U. 使用分析</span><br></code></pre></td></tr></table></figure>
+<h4 id="参数说明">2.3.2 参数说明</h4>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>可选值</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--period</code></td>
+<td>统计周期</td>
+<td><code>daily</code>, <code>weekly</code>, <code>monthly</code></td>
+<td><code>daily</code></td>
+</tr>
+<tr>
+<td><code>--json</code></td>
+<td>JSON 格式输出</td>
+<td>无</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>--csv</code></td>
+<td>CSV 格式输出</td>
+<td>无</td>
+<td>否</td>
+</tr>
+</tbody>
+</table>
+<h4 id="功能详解">2.3.3 功能详解</h4>
+<p>ccusage 是一个强大的使用分析工具，主要功能包括：</p>
+<ul>
+<li>📊 <strong>多维度报告</strong>：支持日度、周度、月度 token
+使用量和成本报告</li>
+<li>📅 <strong>灵活周期</strong>：支持 <code>daily</code>,
+<code>weekly</code>, <code>monthly</code> 等多种统计周期</li>
+<li>📈 <strong>实时监控</strong>：实时仪表板显示活动会话进度、token
+消耗率和成本预测</li>
+<li>💬 <strong>会话分析</strong>：按对话会话分组的使用情况分析</li>
+<li>🤖 <strong>模型细分</strong>：查看每个模型（Opus, Sonnet
+等）的具体使用成本</li>
+<li>💰 <strong>成本跟踪</strong>：显示每天/每月的美元成本</li>
+<li>🔄 <strong>缓存统计</strong>：分别跟踪缓存创建和缓存读取的
+token</li>
+<li>📱
+<strong>智能显示</strong>：根据终端宽度自动调整表格布局（支持紧凑模式）</li>
+<li>🔌 <strong>多格式导出</strong>：支持 JSON 和 CSV
+格式导出，方便二次分析</li>
+<li>🚀 <strong>状态栏集成</strong>：支持与 CCometixLine
+状态栏集成显示摘要</li>
+</ul>
+<h4 id="统计数据来源">2.3.4 统计数据来源</h4>
+<p>CCusage 工具会读取 Claude Code 的官方使用数据库
+<code>usage.db</code>，包含：</p>
+<ul>
+<li><strong>调用次数</strong>：AI 请求的总次数</li>
+<li><strong>使用时长</strong>：累计的 AI 使用时间</li>
+<li><strong>时间范围</strong>：按指定周期统计的数据</li>
+<li><strong>Token 详情</strong>：输入/输出/缓存 Token 数量</li>
+</ul>
+<h4 id="统计周期示例">2.3.5 统计周期示例</h4>
+<h5 id="日统计daily">日统计（<code>daily</code>）</h5>
+<p>显示每天的使用情况，适合日常监控。</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs txt">📊 Claude Code Usage Statistics<br>Period: Daily<br><br>Date       | Requests | Duration<br>-----------|----------|----------<br>2025-01-15 | 45       | 2h 30m<br>2025-01-14 | 38       | 2h 15m<br></code></pre></td></tr></table></figure>
+<h5 id="周统计weekly">周统计（<code>weekly</code>）</h5>
+<p>显示每周的使用情况，适合周期性分析。</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs txt">📊 Claude Code Usage Statistics<br>Period: Weekly<br><br>Week       | Requests | Duration<br>-----------|----------|----------<br>Week 3     | 315      | 18h 20m<br>Week 2     | 298      | 17h 45m<br></code></pre></td></tr></table></figure>
+<h5 id="月统计monthly">月统计（<code>monthly</code>）</h5>
+<p>显示每月的使用情况，适合长期趋势分析和成本预算。</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs txt">📊 Claude Code Usage Statistics<br>Period: Monthly<br><br>Month      | Requests | Duration<br>-----------|----------|----------<br>2025-01    | 1250     | 72h 15m<br>2024-12    | 1180     | 68h 30m<br></code></pre></td></tr></table></figure>
+<h4 id="输出格式">2.3.6 输出格式</h4>
+<h5 id="默认格式表格">默认格式（表格）</h5>
+<p>适合终端查看，格式清晰易读。会自动适配终端宽度。</p>
+<h5 id="json-格式">JSON 格式</h5>
+<p>适合脚本处理和自动化：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npx zcf ccu --json --period weekly<br></code></pre></td></tr></table></figure>
+<p><strong>输出示例</strong>：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"period"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"weekly"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"data"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"date"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"2025-01-15"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"requests"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">45</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"duration"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"2h 30m"</span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"total"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"requests"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">315</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"duration"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"18h 20m"</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<h5 id="csv-格式">CSV 格式</h5>
+<p>适合导入 Excel 或其他分析工具：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npx zcf ccu --csv --period monthly &gt; usage.csv<br></code></pre></td></tr></table></figure>
+<p><strong>输出示例</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs csv">Date,Requests,Duration<br>2025-01-15,45,2h 30m<br>2025-01-14,38,2h 15m<br></code></pre></td></tr></table></figure>
+<h4 id="使用场景">2.3.7 使用场景</h4>
+<h5 id="日常使用监控">1. 日常使用监控</h5>
+<p>快速查看当天的使用情况：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npx zcf ccu --period daily<br></code></pre></td></tr></table></figure>
+<h5 id="团队使用统计">2. 团队使用统计</h5>
+<p>定期统计团队成员的使用量：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 每周生成统计报告</span><br>npx zcf ccu --period weekly --json &gt; weekly-usage.json<br></code></pre></td></tr></table></figure>
+<h5 id="成本分析">3. 成本分析</h5>
+<p>结合 API 价格进行成本估算：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 生成月度使用报告</span><br>npx zcf ccu --period monthly --csv &gt; monthly-usage.csv<br><span class="hljs-comment"># 然后在 Excel 中结合 API 价格计算成本</span><br></code></pre></td></tr></table></figure>
+<h5 id="自动化监控">4. 自动化监控</h5>
+<p>搭配 <code>cron</code> 定时收集使用数据：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 添加到 crontab（每天执行）</span><br>0 23 * * * <span class="hljs-built_in">cd</span> /path/to/project &amp;&amp; npx zcf ccu --json --period daily &gt;&gt; usage.log<br></code></pre></td></tr></table></figure>
+<h4 id="与-ccometixline-集成">2.3.8 与 CCometixLine 集成</h4>
+<p>CCometixLine 状态栏同样可以显示使用统计摘要：</p>
+<ol type="1">
+<li>安装 CCometixLine：<code>npx zcf</code> → 选择相应选项</li>
+<li>在状态栏中查看实时使用情况</li>
+<li>点击状态栏可查看详细统计</li>
+</ol>
+<h3 id="卸载与清理">2.4 卸载与清理</h3>
+<p><code>zcf uninstall</code>
+提供安全的卸载流程，支持选择性卸载、完整卸载和冲突解决。适合需要重置环境、迁移设备或清理配置的场景。</p>
+<h4 id="完整卸载">2.4.1 完整卸载</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 交互式完整卸载</span><br>npx zcf uninstall<br><span class="hljs-comment"># 然后选择 "完整卸载"</span><br><br><span class="hljs-comment"># 非交互式完整卸载</span><br>npx zcf uninstall --mode complete<br><br><span class="hljs-comment"># 指定语言</span><br>npx zcf uninstall --mode complete --lang zh-CN<br></code></pre></td></tr></table></figure>
+<p><strong>会删除的内容</strong>：</p>
+<ul>
+<li>✅ Claude Code 配置（<code>~/.claude/</code>）</li>
+<li>✅ Codex 配置（<code>~/.codex/</code>）</li>
+<li>✅ CCR 配置（<code>~/.claude-code-router/</code>）</li>
+<li>✅ CCometixLine 配置（<code>~/.cometix/</code>）</li>
+<li>✅ ZCF 全局配置（<code>~/.ufomiao/zcf/</code>）</li>
+<li>✅ 所有备份文件</li>
+</ul>
+<p><strong>不会删除的内容</strong>：</p>
+<ul>
+<li>❌ Claude Code CLI 本身（需要通过其他方式卸载）</li>
+<li>❌ Codex CLI 本身（需要通过其他方式卸载）</li>
+<li>❌ 系统级工具和依赖</li>
+</ul>
+<h4 id="自定义卸载">2.4.2 自定义卸载</h4>
+<p>选择性卸载特定组件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 交互式自定义卸载</span><br>npx zcf uninstall<br><span class="hljs-comment"># 然后选择 "自定义卸载"，再选择要卸载的组件</span><br><br><span class="hljs-comment"># 非交互式自定义卸载（逗号分隔）</span><br>npx zcf uninstall --mode custom --items <span class="hljs-string">"ccr,backups,cometix"</span><br><br><span class="hljs-comment"># 使用数组格式（在代码中）</span><br>npx zcf uninstall --mode custom --items <span class="hljs-string">'["ccr","backups"]'</span><br></code></pre></td></tr></table></figure>
+<p>可以选择性地卸载以下组件：</p>
+<table>
+
+<thead>
+<tr>
+<th>组件</th>
+<th>说明</th>
+<th>配置位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>claude-code</code></td>
+<td>Claude Code 配置</td>
+<td><code>~/.claude/</code></td>
+</tr>
+<tr>
+<td><code>codex</code></td>
+<td>Codex 配置</td>
+<td><code>~/.codex/</code></td>
+</tr>
+<tr>
+<td><code>ccr</code></td>
+<td>Claude Code Router 配置</td>
+<td><code>~/.claude-code-router/</code></td>
+</tr>
+<tr>
+<td><code>cometix</code></td>
+<td>CCometixLine 配置</td>
+<td><code>~/.cometix/</code></td>
+</tr>
+<tr>
+<td><code>backups</code></td>
+<td>所有备份文件</td>
+<td><code>~/.claude/backup/</code>, <code>~/.codex/backup/</code>
+等</td>
+</tr>
+<tr>
+<td><code>zcf-config</code></td>
+<td>ZCF 全局配置</td>
+<td><code>~/.ufomiao/zcf/</code></td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 仅卸载 CCR</span><br>npx zcf uninstall --mode custom --items ccr<br><br><span class="hljs-comment"># 卸载多个组件</span><br>npx zcf uninstall --mode custom --items <span class="hljs-string">"ccr,cometix,backups"</span><br><br><span class="hljs-comment"># 卸载所有备份（清理空间）</span><br>npx zcf uninstall --mode custom --items backups<br></code></pre></td></tr></table></figure>
+<h4 id="常用参数">2.4.3 常用参数</h4>
+<table>
+
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>可选值</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--mode, -m</code></td>
+<td>卸载模式</td>
+<td><code>complete</code>, <code>custom</code>,
+<code>interactive</code></td>
+<td><code>interactive</code></td>
+</tr>
+<tr>
+<td><code>--items, -i</code></td>
+<td>要卸载的组件（自定义模式）</td>
+<td>逗号分隔的组件名称或 JSON 数组</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>--lang, -l</code></td>
+<td>界面语言</td>
+<td><code>zh-CN</code>, <code>en</code></td>
+<td><code>en</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="配置管理">2.5 配置管理</h3>
+<p>ZCF 的配置分布在以下目录：</p>
+<table>
+
+<thead>
+<tr>
+<th>目录</th>
+<th>说明</th>
+<th>主要文件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>~/.claude/</code></td>
+<td>Claude Code 主配置目录</td>
+<td><code>settings.json</code>, <code>CLAUDE.md</code>,
+<code>prompts/</code>, <code>workflows/</code></td>
+</tr>
+<tr>
+<td><code>~/.codex/</code></td>
+<td>Codex 主配置目录</td>
+<td><code>config.toml</code>, <code>auth.json</code>,
+<code>prompts/</code>, <code>AGENTS.md</code></td>
+</tr>
+<tr>
+<td><code>~/.ufomiao/zcf/</code></td>
+<td>ZCF 全局配置目录</td>
+<td><code>config.toml</code></td>
+</tr>
+<tr>
+<td><code>~/.claude-code-router/</code></td>
+<td>CCR 配置目录</td>
+<td><code>config.json</code></td>
+</tr>
+<tr>
+<td><code>~/.claude/backup/</code></td>
+<td>Claude Code 备份目录</td>
+<td>时间戳备份文件</td>
+</tr>
+<tr>
+<td><code>~/.codex/backup/</code></td>
+<td>Codex 备份目录</td>
+<td>时间戳备份文件</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Claude Code 配置</strong></p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs nix">~<span class="hljs-operator">/</span>.claude<span class="hljs-symbol">/</span><br>├── settings.json          <span class="hljs-comment"># 主配置文件（API、MCP、权限等）</span><br>├── CLAUDE.md              <span class="hljs-comment"># 项目记忆和系统提示</span><br>├── prompts<span class="hljs-symbol">/</span>               <span class="hljs-comment"># 提示词目录</span><br>│   ├── output-style<span class="hljs-symbol">/</span>      <span class="hljs-comment"># 输出风格模板</span><br>│   └── memory<span class="hljs-symbol">/</span>            <span class="hljs-comment"># 记忆模板</span><br>└── workflows<span class="hljs-symbol">/</span>             <span class="hljs-comment"># 工作流目录</span><br>    ├── zcf-workflow<span class="hljs-symbol">/</span>      <span class="hljs-comment"># 六阶段工作流</span><br>    ├── feat<span class="hljs-symbol">/</span>              <span class="hljs-comment"># 功能开发工作流</span><br>    ├── git<span class="hljs-symbol">/</span>               <span class="hljs-comment"># Git 工作流</span><br>    └── bmad<span class="hljs-symbol">/</span>              <span class="hljs-comment"># BMad 工作流</span><br></code></pre></td></tr></table></figure>
+<p><strong>Codex 配置</strong></p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs nix">~<span class="hljs-operator">/</span>.codex<span class="hljs-symbol">/</span><br>├── config.toml            <span class="hljs-comment"># 主配置文件（TOML 格式）</span><br>├── auth.json              <span class="hljs-comment"># API 密钥配置（加密存储）</span><br>├── AGENTS.md              <span class="hljs-comment"># 系统提示和代理配置</span><br>├── prompts<span class="hljs-symbol">/</span>               <span class="hljs-comment"># 提示词目录</span><br>│   └── workflow<span class="hljs-symbol">/</span>          <span class="hljs-comment"># 工作流提示词</span><br>└── system-prompt<span class="hljs-symbol">/</span>         <span class="hljs-comment"># 系统提示模板</span><br></code></pre></td></tr></table></figure>
+<p><strong>ZCF 全局配置</strong></p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs nix">~<span class="hljs-operator">/</span>.ufomiao<span class="hljs-operator">/</span>zcf<span class="hljs-symbol">/</span><br>├── config.toml            <span class="hljs-comment"># ZCF 全局配置（TOML 格式）</span><br>│   ├── preferredLang      <span class="hljs-comment"># CLI 语言偏好</span><br>│   ├── templateLang       <span class="hljs-comment"># 模板语言偏好</span><br>│   ├── aiOutputLang       <span class="hljs-comment"># AI 输出语言偏好</span><br>│   └── codeToolType       <span class="hljs-comment"># 当前活动工具类型</span><br>└── backup<span class="hljs-symbol">/</span>                <span class="hljs-comment"># ZCF 配置备份</span><br></code></pre></td></tr></table></figure>
+<h4 id="api-模型配置">2.5.1 API 模型配置</h4>
+<p><strong>四模型架构</strong></p>
+<p>ZCF 采用四模型架构,提供细粒度的 AI 模型选择控制:</p>
+<table>
+
+<thead>
+<tr>
+<th>模型类型</th>
+<th>环境变量</th>
+<th>默认值</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>主模型</strong></td>
+<td><code>ANTHROPIC_MODEL</code></td>
+<td><code>claude-sonnet-4-5-20250929</code></td>
+<td>通用任务的默认模型</td>
+</tr>
+<tr>
+<td><strong>Haiku 模型</strong></td>
+<td><code>ANTHROPIC_DEFAULT_HAIKU_MODEL</code></td>
+<td><code>claude-haiku-4-5-20250910</code></td>
+<td>快速、经济的简单任务模型</td>
+</tr>
+<tr>
+<td><strong>Sonnet 模型</strong></td>
+<td><code>ANTHROPIC_DEFAULT_SONNET_MODEL</code></td>
+<td><code>claude-sonnet-4-5-20250929</code></td>
+<td>适用于大多数工作流的平衡模型</td>
+</tr>
+<tr>
+<td><strong>Opus 模型</strong></td>
+<td><code>ANTHROPIC_DEFAULT_OPUS_MODEL</code></td>
+<td><code>claude-opus-4-5-20251101</code></td>
+<td>复杂任务的最强模型</td>
+</tr>
+</tbody>
+</table>
+<p><strong>模型配置参数</strong></p>
+<p>配置 API 设置时,您可以单独指定每个模型:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 配置全部四个模型</span><br>npx zcf i -s \<br>  --api-key <span class="hljs-string">"sk-xxx"</span> \<br>  --api-model <span class="hljs-string">"claude-sonnet-4-5"</span> \<br>  --api-haiku-model <span class="hljs-string">"claude-haiku-4-5"</span> \<br>  --api-sonnet-model <span class="hljs-string">"claude-sonnet-4-5"</span> \<br>  --api-opus-model <span class="hljs-string">"claude-opus-4-5"</span><br></code></pre></td></tr></table></figure>
+<p><strong>多配置文件的模型配置</strong></p>
+<p>使用多个 API 配置文件时,每个配置文件可以有自己的模型配置:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"name"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"production"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"api_key"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"key"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"sk-prod-xxx"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"primaryModel"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"claude-sonnet-4-5"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"defaultHaikuModel"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"claude-haiku-4-5"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"defaultSonnetModel"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"claude-sonnet-4-5"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"defaultOpusModel"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"claude-opus-4-5"</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p><strong>环境变量映射</strong></p>
+<p>配置系统将配置文件中的模型设置映射到环境变量:</p>
+<ul>
+<li><code>primaryModel</code> → <code>ANTHROPIC_MODEL</code></li>
+<li><code>defaultHaikuModel</code> →
+<code>ANTHROPIC_DEFAULT_HAIKU_MODEL</code></li>
+<li><code>defaultSonnetModel</code> →
+<code>ANTHROPIC_DEFAULT_SONNET_MODEL</code></li>
+<li><code>defaultOpusModel</code> →
+<code>ANTHROPIC_DEFAULT_OPUS_MODEL</code></li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"primaryModel"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"claude-sonnet-4-5"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"defaultHaikuModel"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"claude-haiku-4-5"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"defaultSonnetModel"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"claude-sonnet-4-5"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"defaultOpusModel"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"claude-opus-4-5"</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p><strong>模型选择最佳实践</strong></p>
+<ol type="1">
+<li><strong>Haiku</strong>:
+用于简单任务,如格式化、基本转换、快速响应</li>
+<li><strong>Sonnet</strong>:
+大多数开发工作流和常规编码任务的默认选择</li>
+<li><strong>Opus</strong>: 保留用于复杂推理、架构决策和关键代码生成</li>
+<li><strong>主模型</strong>: 作为未请求特定模型时的后备选项</li>
+</ol>
+<h4 id="ai-输出语言指令">2.5.2 AI 输出语言指令</h4>
+<p><strong>配置机制</strong></p>
+<p><code>applyAiLanguageDirective</code> 函数会根据
+<code>--ai-output-lang</code> 参数将对应的语言指令写入系统提示文件。</p>
+<ul>
+<li><code>zh-CN</code>：中文输出指令</li>
+<li><code>en</code>：英文输出指令</li>
+<li><code>custom</code>：自定义语言指令</li>
+</ul>
+<p>使用 <code>custom</code> 选项可以输入自定义语言指令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">npx zcf init --ai-output-lang custom<br><span class="hljs-comment"># 输入：使用日语回复，保持专业和礼貌的语调</span><br></code></pre></td></tr></table></figure>
+<p><strong>自定义指令会写入</strong>：</p>
+<ul>
+<li><strong>Claude Code</strong>：<code>~/.claude/CLAUDE.md</code></li>
+<li><strong>Codex</strong>：<code>~/.codex/AGENTS.md</code></li>
+</ul>
+<p><strong>语言指令的配置位置</strong>：</p>
+<ul>
+<li><strong>Claude Code</strong>：<code>CLAUDE.md</code> 文件顶部</li>
+<li><strong>Codex</strong>：<code>AGENTS.md</code> 文件顶部</li>
+</ul>
+<h4 id="模板语言选择">2.5.3 模板语言选择</h4>
+<p><code>resolveTemplateLanguage</code>
+函数会综合以下因素确定模板语言：</p>
+<ol type="1">
+<li><strong>命令行参数</strong>：<code>--config-lang</code> 或
+<code>--all-lang</code></li>
+<li><strong>配置文件</strong>：<code>~/.ufomiao/zcf/config.toml</code>
+中的 <code>templateLang</code></li>
+<li><strong>交互输入</strong>：如果没有指定，会提示用户选择</li>
+<li><strong>系统默认</strong>：最后回退到 <code>en</code></li>
+</ol>
+<p>模板语言与 AI 输出语言相互独立，可以<strong>灵活组合</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 中文模板 + 英文输出（适合需要英文代码注释）</span><br>npx zcf init --config-lang zh-CN --ai-output-lang en<br><br><span class="hljs-comment"># 英文模板 + 中文输出（适合国际化团队）</span><br>npx zcf init --config-lang en --ai-output-lang zh-CN<br></code></pre></td></tr></table></figure>
+<p><strong>模板语言影响</strong>：</p>
+<ul>
+<li>工作流模板的语言版本</li>
+<li>提示词和指令的语言</li>
+<li>系统提示模板的语言</li>
+<li>输出风格模板的语言</li>
+</ul>
+<h3 id="配置切换">2.6 配置切换</h3>
+<p><code>zcf config-switch</code> 用于在多套 API
+配置之间快速切换，适合在不同项目使用不同 API 提供商的用户。</p>
+<blockquote>
+<p><strong>别名</strong>：可以使用 <code>zcf cs</code>
+这一简写，所有示例都可改写为 <code>npx zcf cs --list</code> 等形式。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 交互式切换（推荐）</span><br>npx zcf cs<br><br><span class="hljs-comment"># 列出所有可用配置</span><br>npx zcf cs --list<br><br><span class="hljs-comment"># 直接切换到指定配置（Claude Code）</span><br>npx zcf cs provider1<br><br><span class="hljs-comment"># 指定工具类型（支持简写 -T cc/cx）</span><br>npx zcf cs --list -T cc      <span class="hljs-comment"># 列出 Claude Code 配置</span><br>npx zcf cs --list -T cx      <span class="hljs-comment"># 列出 Codex 配置</span><br>npx zcf cs provider1 -T cx   <span class="hljs-comment"># 切换 Codex 配置</span><br></code></pre></td></tr></table></figure>
+<p><strong>参数说明</strong></p>
+<table>
+
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>可选值</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--code-type</code>, <code>-T</code></td>
+<td>指定工具类型</td>
+<td><code>claude-code</code> (cc), <code>codex</code> (cx)</td>
+<td>从 ZCF 配置读取</td>
+</tr>
+<tr>
+<td><code>--list</code>, <code>-l</code></td>
+<td>仅列出配置，不切换</td>
+<td>无</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>目标配置</code></td>
+<td>直接指定要切换的配置名称</td>
+<td>配置名称或 ID</td>
+<td>无</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Claude Code 支持切换以下类型的配置</strong>：</p>
+<ol type="1">
+<li><strong>官方登录</strong>：使用 Claude 官方 OAuth 登录</li>
+<li><strong>CCR 代理</strong>：使用 Claude Code Router 代理</li>
+<li><strong>自定义配置</strong>：通过 <code>zcf init</code> 创建的多 API
+配置</li>
+</ol>
+<p><strong>配置来源</strong>：</p>
+<ul>
+<li>配置文件：<code>~/.claude/settings.json</code></li>
+<li>Profile 管理：每个配置作为独立的 Profile 存储</li>
+<li>当前配置标识：<code>currentProfileId</code> 字段</li>
+</ul>
+<p><strong>支持切换 Codex 的模型提供商</strong>：</p>
+<ol type="1">
+<li><strong>官方登录</strong>：使用 Codex 官方 OAuth 登录</li>
+<li><strong>自定义提供商</strong>：通过 <code>zcf init</code>
+配置的提供商（如 302.AI、GLM 等）</li>
+</ol>
+<p><strong>配置来源</strong>：</p>
+<ul>
+<li>配置文件：<code>~/.codex/config.toml</code></li>
+<li>Provider 列表：从配置文件中读取已配置的提供商</li>
+</ul>
+<h3 id="版本检查">2.7 版本检查</h3>
+<p><code>zcf check-updates</code> 用于检测并更新 ZCF
+工具链中的各个组件，包括 ZCF 本身、Claude Code、CCR、CCometixLine、Codex
+等工具。</p>
+<blockquote>
+<p><strong>别名</strong>：可使用同等效果的 <code>zcf check</code>（如
+<code>npx zcf check -T cx</code>）。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 检查所有工具更新（Claude Code 模式）</span><br>npx zcf check<br><br><span class="hljs-comment"># 检查 Codex 相关工具更新</span><br>npx zcf check -T cx<br><br><span class="hljs-comment"># 非交互模式（自动更新，跳过确认）</span><br>npx zcf check -s<br><br><span class="hljs-comment"># 通过主菜单访问</span><br>npx zcf<br><span class="hljs-comment"># 然后选择 +. 检查更新</span><br></code></pre></td></tr></table></figure>
+<table>
+
+<thead>
+<tr>
+<th>参数</th>
+<th>简写</th>
+<th>说明</th>
+<th>可选值</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--code-type, -T</code></td>
+<td><code>-T</code></td>
+<td>指定工具类型</td>
+<td><code>claude-code</code>, <code>codex</code>, <code>cc</code>,
+<code>cx</code></td>
+<td>从 ZCF 配置读取</td>
+</tr>
+<tr>
+<td><code>--skip-prompt, -s</code></td>
+<td><code>-s</code></td>
+<td>跳过交互确认（非交互模式）</td>
+<td>无</td>
+<td>否（交互模式）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="claude-code-模式">2.7.1 Claude Code 模式</h4>
+<p>当 <code>-T</code> 为 <code>cc</code>（或
+<code>claude-code</code>）或未指定时，检查以下工具：</p>
+<ol type="1">
+<li><p><strong>CCR (Claude Code Router)</strong></p>
+<ul>
+<li>包名：<code>@musistudio/claude-code-router</code></li>
+<li>检查方式：npm registry</li>
+</ul></li>
+<li><p><strong>Claude Code CLI</strong></p>
+<ul>
+<li>包名：<code>@anthropic-ai/claude-code</code></li>
+<li>检查方式：npm registry</li>
+</ul></li>
+<li><p><strong>CCometixLine</strong></p>
+<ul>
+<li>包名：<code>@cometix/ccline</code></li>
+<li>检查方式：npm registry</li>
+</ul></li>
+</ol>
+<h4 id="codex-模式">2.7.2 Codex 模式</h4>
+<p>当 <code>-T</code> 为 <code>cx</code>（或
+<code>codex</code>）时，检查：</p>
+<ol type="1">
+<li><strong>Codex CLI</strong>
+<ul>
+<li>检查方式：Codex 官方 API</li>
+<li>更新方式：自动下载并安装最新版本</li>
+</ul></li>
+</ol>
+<h2 id="三工作流详解">三、工作流详解</h2>
+<h3 id="工作流概览">3.1 工作流概览</h3>
+<p>ZCF 通过 MCP +
+工作流模板帮助团队标准化开发流程。本章介绍每个工作流的定位与使用方式。</p>
+<table>
+
+<thead>
+<tr>
+<th>工作流</th>
+<th>适用场景</th>
+<th>关键特性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZCF 六阶段工作流</td>
+<td>通用开发任务</td>
+<td>六阶段闭环、自动质量把关、交互式确认</td>
+</tr>
+<tr>
+<td>功能开发工作流</td>
+<td>新功能设计与实现</td>
+<td>规划 + UI/UX 代理联动</td>
+</tr>
+<tr>
+<td>BMad 敏捷流程</td>
+<td>大型项目敏捷迭代</td>
+<td>多阶段仪式管理</td>
+</tr>
+<tr>
+<td>Spec 工作流集成</td>
+<td>需求文档与规范生成</td>
+<td>Spec MCP 联动</td>
+</tr>
+<tr>
+<td>Git 智能命令</td>
+<td>Git 操作自动化</td>
+<td>提交、回滚、清理、worktree</td>
+</tr>
+</tbody>
+</table>
+<h4 id="使用方法">3.1.1 使用方法</h4>
+<p>根据使用的工具，使用不同的命令前缀：</p>
+<h5 id="claude-code">Claude Code</h5>
+<p>在 Claude Code 中使用以下命令：</p>
+<ul>
+<li><code>/zcf:workflow</code> - 六阶段工作流</li>
+<li><code>/zcf:feat</code> - 功能开发工作流</li>
+<li><code>/git-commit</code> - Git 提交命令</li>
+<li><code>/init-project</code> - 项目初始化</li>
+</ul>
+<h5 id="codex">Codex</h5>
+<p>在 Codex 中使用以下命令（注意 <code>/prompts:</code> 前缀）：</p>
+<ul>
+<li><code>/prompts:workflow</code> - 六阶段工作流</li>
+<li><code>/prompts:git-commit</code> - Git 提交命令</li>
+<li><code>/prompts:git-rollback</code> - Git 回滚命令</li>
+<li><code>/prompts:git-cleanBranches</code> - 清理已合并分支</li>
+<li><code>/prompts:git-worktree</code> - Git 工作树管理</li>
+</ul>
+<blockquote>
+<p>⚠️ <strong>注意</strong>：Codex 目前仅支持六阶段工作流和 Git
+工作流。功能开发工作流（feat）、项目初始化（init-project）和 BMad
+工作流暂未在 Codex 中提供。</p>
+</blockquote>
+<blockquote>
+<p>💡 <strong>提示</strong>：Codex 使用 <code>/prompts:</code>
+前缀访问所有工作流命令，这是 Codex 的命令格式规范。</p>
+</blockquote>
+<h2 id="使用建议">使用建议 <a href="chrome-extension://kcbaglhfgbkjdnpeokaamjjkddempipm/offscreen/offscreen.html/#使用建议"></a></h2>
+<ol type="1">
+<li>首次使用工作流时，可让 AI
+输出任务进度文档，方便后续在新对话继续。</li>
+<li>完成关键里程碑后请求 AI 生成进度总结，方便跨对话衔接。</li>
+<li>搭配 <code>best-practices/worktree.md</code>
+提升多工作区协作效率。</li>
+<li>与 Git 工作流搭配使用，可快速完成需求拆解→编码→提交的闭环。</li>
+</ol>
+<h3 id="zcf-六阶段工作流">3.2 ZCF 六阶段工作流</h3>
+<p>六阶段工作流是 ZCF
+的核心开发流程，涵盖完整的软件开发生命周期：<strong>研究 → 构思 → 计划 →
+执行 → 优化 → 评审</strong>。</p>
+<p><strong>功能特点</strong></p>
+<ul>
+<li>📊 <strong>结构化流程</strong>：每个阶段都有明确的输入/输出与 AI
+行为规范</li>
+<li>✅
+<strong>强制确认机制</strong>：每个阶段完成后需要用户确认，避免遗漏用户反馈</li>
+<li>📝
+<strong>自动文档生成</strong>：自动生成计划文档并要求保存在项目目录</li>
+<li>🔄 <strong>迭代支持</strong>：支持多轮迭代和持续改进</li>
+</ul>
+<h4 id="使用方法-1">3.2.1 使用方法</h4>
+<h5 id="claude-code-1">Claude Code</h5>
+<p>在 Claude Code 中使用以下命令：</p>
+<p><strong>示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">/zcf:workflow 实现用户登录功能，支持邮箱和手机号登录<br></code></pre></td></tr></table></figure>
+<h5 id="codex-1">Codex</h5>
+<p>在 Codex 中使用以下命令（注意前缀不同）：</p>
+<p><strong>示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">/prompts:workflow 实现用户登录功能，支持邮箱和手机号登录<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>💡 <strong>提示</strong>：Codex 使用 <code>/prompts:</code> 前缀，而
+Claude Code 使用 <code>/zcf:</code> 前缀。</p>
+</blockquote>
+<h4 id="六阶段详解">3.2.2 六阶段详解</h4>
+<h5 id="研究research">1. 研究（Research）</h5>
+<p><strong>目标</strong>：深入理解任务需求和背景</p>
+<p><strong>AI 行为</strong>：</p>
+<ul>
+<li>分析任务描述和上下文</li>
+<li>收集相关技术资料和最佳实践</li>
+<li>识别潜在问题和风险点</li>
+<li>理解用户需求和业务场景</li>
+</ul>
+<p><strong>输出</strong>：</p>
+<ul>
+<li>需求分析报告</li>
+<li>技术调研结果</li>
+<li>风险评估</li>
+</ul>
+<h5 id="构思ideate">2. 构思（Ideate）</h5>
+<p><strong>目标</strong>：生成多个可行的解决方案</p>
+<p><strong>AI 行为</strong>：</p>
+<ul>
+<li>提出多个设计方案</li>
+<li>评估各方案的优缺点</li>
+<li>考虑技术可行性和实现复杂度</li>
+<li>推荐最佳方案</li>
+</ul>
+<p><strong>输出</strong>：</p>
+<ul>
+<li>多个设计方案</li>
+<li>方案对比分析</li>
+<li>推荐方案及理由</li>
+</ul>
+<h5 id="计划plan">3. 计划（Plan）</h5>
+<p><strong>目标</strong>：制定详细的实施计划</p>
+<p><strong>AI 行为</strong>：</p>
+<ul>
+<li>将任务拆解为具体步骤</li>
+<li>确定技术选型和架构设计</li>
+<li>制定时间估算和里程碑</li>
+<li>识别依赖关系和前置条件</li>
+</ul>
+<p><strong>输出</strong>：</p>
+<ul>
+<li>详细的任务分解</li>
+<li>技术实现方案</li>
+<li>开发计划和时间线</li>
+<li>计划文档（保存在 <code>.zcf/plan/current/任务名.md</code>）</li>
+</ul>
+<h5 id="执行execute">4. 执行（Execute）</h5>
+<p><strong>目标</strong>：按照计划实施开发</p>
+<p><strong>AI 行为</strong>：</p>
+<ul>
+<li>按照计划逐步实现功能</li>
+<li>编写代码和测试用例</li>
+<li>处理实现过程中的问题</li>
+<li>保持代码质量和规范</li>
+</ul>
+<p><strong>输出</strong>：</p>
+<ul>
+<li>实现的代码</li>
+<li>测试用例</li>
+<li>相关文档</li>
+</ul>
+<h5 id="优化optimize">5. 优化（Optimize）</h5>
+<p><strong>目标</strong>：提升代码质量和性能</p>
+<p><strong>AI 行为</strong>：</p>
+<ul>
+<li>代码重构和优化</li>
+<li>性能优化建议</li>
+<li>安全性检查</li>
+<li>代码规范审查</li>
+</ul>
+<p><strong>输出</strong>：</p>
+<ul>
+<li>优化后的代码</li>
+<li>性能改进建议</li>
+<li>安全审查报告</li>
+</ul>
+<h5 id="评审review">6. 评审（Review）</h5>
+<p><strong>目标</strong>：最终评估和总结</p>
+<p><strong>AI 行为</strong>：</p>
+<ul>
+<li>全面审查实现结果</li>
+<li>生成测试报告</li>
+<li>总结经验和教训</li>
+<li>提出后续改进建议</li>
+</ul>
+<p><strong>输出</strong>：</p>
+<ul>
+<li>完整的实现总结</li>
+<li>测试报告</li>
+<li>经验总结</li>
+<li>改进建议</li>
+</ul>
+<h4 id="执行流程">3.2.3 执行流程</h4>
+<h5 id="基本流程">基本流程</h5>
+<ol type="1">
+<li><strong>输入命令</strong>：输入 <code>/zcf:workflow</code> 或
+<code>/prompts:workflow</code> 并描述任务</li>
+<li><strong>阶段执行</strong>：AI 按顺序执行六个阶段</li>
+<li><strong>用户确认</strong>：每个阶段完成后等待用户确认</li>
+<li><strong>继续下一步</strong>：用户确认后进入下一阶段</li>
+<li><strong>文档保存</strong>：计划文档自动保存到项目目录</li>
+</ol>
+<h5 id="文档保存位置">文档保存位置</h5>
+<p>工作流会自动生成计划文档并要求保存：</p>
+<ul>
+<li><strong>进行中的任务</strong>：<code>.zcf/plan/current/</code>
+目录</li>
+<li><strong>已完成的任务</strong>：<code>.zcf/plan/history/</code>
+目录</li>
+</ul>
+<blockquote>
+<p>💡 <strong>提示</strong>：<code>.zcf/</code>
+是统一的工作流目录，无论使用 Claude Code 还是 Codex
+都使用相同的路径。</p>
+</blockquote>
+<p><strong>文件命名规则</strong></p>
+<ul>
+<li><strong>进行中</strong>：<code>任务名.md</code>（例如：<code>用户登录功能.md</code>）</li>
+<li><strong>归档后</strong>：<code>[完成时间]任务名.md</code>（例如：<code>2024-01-15_143052用户登录功能.md</code>）</li>
+</ul>
+<p>时间格式为 <code>YYYY-MM-DD_HHMMSS</code>，通过 bash
+命令自动获取以确保准确性。</p>
+<h3 id="功能开发工作流">3.3 功能开发工作流</h3>
+<p>功能开发工作流面向新功能设计与实现，预置了专业的规划师（Planner）与
+UI/UX 设计师（UI/UX
+Designer）代理，帮助您系统化地完成从需求分析到实施计划的完整流程。</p>
+<h4 id="功能概述">3.3.1 功能概述</h4>
+<p>功能开发工作流专注于新功能的完整开发周期，通过结构化的阶段流程，确保功能开发的质量和完整性。</p>
+<p><strong>核心特点</strong></p>
+<ul>
+<li>🎯
+<strong>需求驱动</strong>：从需求分析开始，确保功能符合用户期望</li>
+<li>📐 <strong>多方案设计</strong>：生成多个可行方案并评估优劣</li>
+<li>🎨 <strong>UI/UX 支持</strong>：提供专业的 UI/UX 设计建议</li>
+<li>📋 <strong>详细计划</strong>：输出可执行的任务分解和实施计划</li>
+<li>🤖 <strong>专业代理</strong>：内置规划师和 UI/UX 设计师代理</li>
+</ul>
+<h4 id="使用方法-2">3.3.2 使用方法</h4>
+<h5 id="claude-code-2">Claude Code</h5>
+<p>在 Claude Code 中使用以下命令：</p>
+<p><strong>示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">/zcf:feat 实现用户评论功能，支持点赞、回复和删除<br></code></pre></td></tr></table></figure>
+<h5 id="codex-2">Codex</h5>
+<blockquote>
+<p>⚠️ <strong>注意</strong>：功能开发工作流（feat）目前仅在 Claude Code
+中提供，Codex 暂不支持此工作流。</p>
+</blockquote>
+<p>如果需要类似功能，可以在 Codex 中使用 <code>/prompts:workflow</code>
+六阶段工作流来实现功能开发任务。</p>
+<h4 id="工作流阶段">3.3.3 工作流阶段</h4>
+<p>功能开发工作流包含四个核心阶段：</p>
+<h5 id="需求确认">1. 需求确认</h5>
+<p><strong>目标</strong>：深入理解功能需求和业务场景</p>
+<p><strong>AI 行为</strong>：</p>
+<ul>
+<li>分析功能描述和用户需求</li>
+<li>识别功能范围和边界</li>
+<li>确定成功标准和验收条件</li>
+<li>理解业务价值和用户场景</li>
+</ul>
+<p><strong>输出</strong>：</p>
+<ul>
+<li>功能需求文档</li>
+<li>用户故事</li>
+<li>验收标准</li>
+<li>成功指标</li>
+</ul>
+<p><strong>示例输出</strong>：</p>
+<ul>
+<li>功能范围：用户评论、点赞、回复、删除</li>
+<li>用户角色：普通用户、管理员</li>
+<li>验收标准：用户可以发布评论、点赞他人评论、回复评论、删除自己的评论</li>
+</ul>
+<h5 id="方案规划">2. 方案规划</h5>
+<p><strong>目标</strong>：生成多个可行的技术方案并评估</p>
+<p><strong>AI 行为</strong>：</p>
+<ul>
+<li>提出 2-3 个不同的技术方案</li>
+<li>评估各方案的技术复杂度</li>
+<li>分析方案的可扩展性和维护性</li>
+<li>考虑性能、安全性和成本因素</li>
+<li>推荐最适合的方案</li>
+</ul>
+<p><strong>输出</strong>：</p>
+<ul>
+<li>多个技术方案</li>
+<li>方案对比分析</li>
+<li>技术选型建议</li>
+<li>架构设计草图</li>
+</ul>
+<p><strong>示例输出</strong>：</p>
+<ul>
+<li>方案 A：使用现有数据库表结构，简单快速</li>
+<li>方案 B：引入评论树结构，支持无限嵌套回复</li>
+<li>方案 C：使用图数据库，支持复杂关系查询</li>
+<li>推荐：方案 B（平衡了复杂度和功能完整性）</li>
+</ul>
+<h5 id="uiux-支撑">3. UI/UX 支撑</h5>
+<p><strong>目标</strong>：提供专业的用户界面和交互设计建议</p>
+<p><strong>AI 行为</strong>：</p>
+<ul>
+<li>设计用户界面布局</li>
+<li>提供交互流程建议</li>
+<li>生成线框图和原型建议</li>
+<li>编写界面文案和提示语</li>
+<li>考虑用户体验和易用性</li>
+</ul>
+<p><strong>输出</strong>：</p>
+<ul>
+<li>UI 设计建议</li>
+<li>交互流程图</li>
+<li>界面线框图描述</li>
+<li>文案和提示语</li>
+<li>响应式设计考虑</li>
+</ul>
+<p><strong>示例输出</strong>：</p>
+<ul>
+<li>评论列表布局：时间倒序、头像+昵称+内容</li>
+<li>交互流程：点击回复 → 显示回复框 → 输入内容 → 提交</li>
+<li>文案：“发表评论”、“回复”、“点赞（123）”</li>
+</ul>
+<h5 id="实施计划">4. 实施计划</h5>
+<p><strong>目标</strong>：输出详细的任务分解和实施计划</p>
+<p><strong>AI 行为</strong>：</p>
+<ul>
+<li>将功能拆解为具体开发任务</li>
+<li>确定技术实现细节</li>
+<li>制定开发顺序和依赖关系</li>
+<li>估算开发工作量</li>
+<li>提供测试策略</li>
+</ul>
+<p><strong>输出</strong>：</p>
+<ul>
+<li>详细任务列表</li>
+<li>技术实现细节</li>
+<li>开发时间估算</li>
+<li>测试计划</li>
+<li>部署考虑</li>
+</ul>
+<p><strong>示例输出</strong>：</p>
+<ol type="1">
+<li>创建评论数据模型（2 小时）</li>
+<li>实现评论 API 接口（4 小时）</li>
+<li>开发前端评论组件（3 小时）</li>
+<li>实现点赞功能（2 小时）</li>
+<li>实现回复功能（3 小时）</li>
+<li>实现删除功能（1 小时）</li>
+<li>编写测试用例（2 小时）</li>
+<li>性能优化（1 小时）</li>
+</ol>
+<h3 id="bmad-敏捷流程">3.4 BMad 敏捷流程</h3>
+<blockquote>
+<p><strong>官方资源</strong>：<a target="_blank" rel="noopener" href="https://github.com/bmad-code-org/BMAD-METHOD">BMad Method -
+GitHub</a></p>
+</blockquote>
+<p>BMad（Build-Measure-Analyze-Decision）工作流适合大型项目的结构化迭代。BMad
+Method 是一个企业级的 AI
+驱动敏捷开发框架，提供完整的团队协作工作流和文档模板。</p>
+<p><strong>什么是 BMad</strong></p>
+<p>BMad Method 是一个通用的 AI
+代理框架，专为企业级敏捷开发而设计。它通过结构化的
+Build-Measure-Analyze-Decision
+循环，将复杂的开发任务分解为可管理的迭代周期。</p>
+<p><strong>核心特点</strong></p>
+<ul>
+<li>🏢
+<strong>企业级框架</strong>：完整的敏捷开发流程和团队协作机制</li>
+<li>🤖 <strong>专业 AI
+代理团队</strong>：包含产品经理（PO）、项目经理（PM）、架构师、开发工程师、QA
+测试等角色</li>
+<li>📋 <strong>完整文档模板</strong>：自动生成
+PRD、架构文档、用户故事等专业文档</li>
+<li>🔄 <strong>迭代管理</strong>：支持持续迭代、验收和复盘</li>
+<li>🌱
+<strong>项目类型支持</strong>：支持全新项目（greenfield）和现有项目（brownfield）</li>
+</ul>
+<h4 id="使用方法-3">3.4.1 使用方法</h4>
+<h5 id="claude-code-3">Claude Code</h5>
+<p>在 Claude Code 中使用以下命令初始化 BMad 工作流：</p>
+<h5 id="codex-3">Codex</h5>
+<blockquote>
+<p>⚠️ <strong>注意</strong>：BMad 工作流目前仅在 Claude Code
+中提供，Codex 暂不支持此工作流。</p>
+</blockquote>
+<p>如果需要类似的企业级敏捷开发流程，可以在 Codex 中使用
+<code>/prompts:workflow</code> 六阶段工作流来实现类似功能。</p>
+<h4 id="核心功能">3.4.2 核心功能</h4>
+<h5 id="一次性导入完整工作流">1. 一次性导入完整工作流</h5>
+<p>执行 <code>/zcf:bmad-init</code> 后，ZCF 会：</p>
+<ul>
+<li>✅ 导入所有 BMad 指令集和文档模板</li>
+<li>✅ 创建完整的项目结构</li>
+<li>✅ 生成初始配置文件</li>
+<li>✅ 设置 AI 代理团队</li>
+</ul>
+<h5 id="迭代生命周期管理">2. 迭代生命周期管理</h5>
+<p>BMad 工作流覆盖完整的迭代周期：</p>
+<ul>
+<li><strong>迭代计划</strong>：基于 PRD 和架构文档制定迭代计划</li>
+<li><strong>执行开发</strong>：按照计划执行开发任务</li>
+<li><strong>验收测试</strong>：QA 团队进行验收测试</li>
+<li><strong>复盘总结</strong>：团队复盘迭代成果和改进点</li>
+</ul>
+<h5 id="专业-ai-代理团队">3. 专业 AI 代理团队</h5>
+<p>BMad 提供完整的专业 AI 代理团队，包括：</p>
+<ul>
+<li><strong>PO (Product
+Owner)</strong>：产品负责人，负责产品规划和需求管理</li>
+<li><strong>PM (Project
+Manager)</strong>：项目经理，负责项目进度和资源协调</li>
+<li><strong>架构师
+(Architect)</strong>：系统架构师，负责架构设计和技术方案</li>
+<li><strong>开发工程师 (Developer)</strong>：开发人员，负责功能实现</li>
+<li><strong>QA (Quality
+Assurance)</strong>：测试工程师，负责质量保证和测试</li>
+</ul>
+<h5 id="项目类型支持">4. 项目类型支持</h5>
+<p><strong>Greenfield（全新项目）</strong></p>
+<p>适合从零开始的新项目：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 在项目根目录执行</span><br>/zcf:bmad-init<br><br><span class="hljs-comment"># BMad 会引导你：</span><br><span class="hljs-comment"># 1. 创建 PRD（产品需求文档）</span><br><span class="hljs-comment"># 2. 设计系统架构</span><br><span class="hljs-comment"># 3. 生成用户故事</span><br><span class="hljs-comment"># 4. 创建项目结构</span><br></code></pre></td></tr></table></figure>
+<p><strong>Brownfield（现有项目）</strong></p>
+<p>适合已有代码库的项目现代化和功能增强：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 在现有项目根目录执行</span><br>/zcf:bmad-init<br><br><span class="hljs-comment"># BMad 会：</span><br><span class="hljs-comment"># 1. 分析现有代码结构</span><br><span class="hljs-comment"># 2. 生成架构文档</span><br><span class="hljs-comment"># 3. 创建功能增强计划</span><br><span class="hljs-comment"># 4. 保持与现有代码的兼容性</span><br></code></pre></td></tr></table></figure>
+<h5 id="文档模板系统">5. 文档模板系统</h5>
+<p>BMad 初始化后会生成完整的文档模板：</p>
+<ul>
+<li><strong>PRD (Product Requirements
+Document)</strong>：产品需求文档</li>
+<li><strong>架构文档</strong>：系统架构设计文档</li>
+<li><strong>用户故事</strong>：用户故事和验收标准</li>
+<li><strong>技术规范</strong>：技术实现规范</li>
+<li><strong>测试计划</strong>：测试计划和测试用例</li>
+</ul>
+<h4 id="工作流阶段-1">3.4.3 工作流阶段</h4>
+<p>BMad 工作流遵循以下阶段：</p>
+<h5 id="build构建">Build（构建）</h5>
+<ul>
+<li>根据 PRD 和架构文档进行开发</li>
+<li>遵循编码规范和最佳实践</li>
+<li>实现功能模块</li>
+</ul>
+<h5 id="measure度量">Measure（度量）</h5>
+<ul>
+<li>收集开发数据和指标</li>
+<li>监控代码质量和性能</li>
+<li>跟踪进度和风险</li>
+</ul>
+<h5 id="analyze分析">Analyze（分析）</h5>
+<ul>
+<li>分析迭代成果</li>
+<li>识别问题和改进点</li>
+<li>评估技术债务</li>
+</ul>
+<h5 id="decision决策">Decision（决策）</h5>
+<ul>
+<li>评审迭代结果</li>
+<li>决定下一步行动</li>
+<li>调整开发计划</li>
+</ul>
+<h4 id="最佳实践-最佳实践">3.4.4 最佳实践 最佳实践)</h4>
+<h5 id="团队统一使用">1. 团队统一使用</h5>
+<p>在团队环境中，建议统一使用 BMad 工作流：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 团队成员统一执行</span><br>/zcf:bmad-init<br><br><span class="hljs-comment"># 这样可以确保：</span><br><span class="hljs-comment"># - 工作流规范一致</span><br><span class="hljs-comment"># - 文档格式统一</span><br><span class="hljs-comment"># - 协作效率提升</span><br></code></pre></td></tr></table></figure>
+<h5 id="结合-mcp-服务">2. 结合 MCP 服务</h5>
+<p>结合 MCP 服务可以提升分析质量：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 配置 MCP 服务</span><br>npx zcf<br><span class="hljs-comment"># 选择 4 (配置 MCP)</span><br><br><span class="hljs-comment"># 推荐服务：</span><br><span class="hljs-comment"># - Context7：查询技术文档</span><br><span class="hljs-comment"># - DeepWiki：获取项目背景信息</span><br><span class="hljs-comment"># - Spec Workflow：结构化需求分析</span><br></code></pre></td></tr></table></figure>
+<h5 id="迭代计划管理">3. 迭代计划管理</h5>
+<ul>
+<li><strong>制定明确的目标</strong>：每个迭代应该有清晰的目标和范围</li>
+<li><strong>保持迭代长度适中</strong>：建议 1-2 周的迭代周期</li>
+<li><strong>及时复盘</strong>：每次迭代结束后进行复盘，持续改进</li>
+</ul>
+<h5 id="文档维护">4. 文档维护</h5>
+<ul>
+<li><strong>保持文档更新</strong>：随着项目发展及时更新文档</li>
+<li><strong>版本控制</strong>：将文档纳入 Git 版本控制</li>
+<li><strong>团队共享</strong>：确保团队成员能够访问最新文档</li>
+</ul>
+<h5 id="与-zcf-其他工作流结合">5. 与 ZCF 其他工作流结合</h5>
+<p>BMad 可以与其他 ZCF 工作流结合使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 1. 使用 BMad 进行项目规划</span><br>/zcf:bmad-init<br><br><span class="hljs-comment"># 2. 使用六阶段工作流实现具体功能</span><br>/zcf:workflow 实现用户登录功能<br><br><span class="hljs-comment"># 3. 使用功能开发工作流处理新需求</span><br>/zcf:feat 添加评论功能<br><br><span class="hljs-comment"># 4. 使用 Git 工作流管理代码</span><br>/git-commit<br></code></pre></td></tr></table></figure>
+<h4 id="项目结构">3.4.5 项目结构</h4>
+<p>BMad 初始化后会在项目根目录创建以下结构：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">项目根目录/<br>├── .bmad-core/              <span class="hljs-comment"># BMad 核心文件</span><br>│   ├── workflows/          <span class="hljs-comment"># 工作流定义</span><br>│   ├── templates/          <span class="hljs-comment"># 文档模板</span><br>│   └── agents/             <span class="hljs-comment"># AI 代理定义</span><br>├── PRD.md                   <span class="hljs-comment"># 产品需求文档</span><br>├── ARCHITECTURE.md          <span class="hljs-comment"># 架构文档</span><br>├── USER_STORIES.md          <span class="hljs-comment"># 用户故事</span><br>└── .claude/                 <span class="hljs-comment"># Claude Code 配置</span><br>    └── plan/                <span class="hljs-comment"># 迭代计划</span><br></code></pre></td></tr></table></figure>
+<h3 id="spec-工作流集成">3.5 Spec 工作流集成</h3>
+<p>Spec 工作流是一个综合性的 MCP
+服务，提供从需求到实现的结构化特性开发工作流程。它通过标准化的需求分析、设计阶段、任务管理和实施工作流，帮助团队系统化地进行功能开发。</p>
+<p><strong>什么是 Spec 工作流</strong></p>
+<p>Spec Workflow MCP 是一个基于 Model Context Protocol (MCP)
+的服务，专门为需求规格说明和设计文档生成而设计。它提供：</p>
+<ul>
+<li>📋 <strong>需求分析</strong>：结构化需求收集和文档编写</li>
+<li>🎨 <strong>设计阶段</strong>：详细的技术设计和架构规划</li>
+<li>📊 <strong>任务管理</strong>：自动任务拆解和进度跟踪</li>
+<li>🔄 <strong>实施工作流</strong>：从需求到实现的系统化方法</li>
+<li>📈
+<strong>交互式仪表板</strong>：内置的工作流可视化和管理仪表板</li>
+<li>✅ <strong>审批系统</strong>：每个开发阶段的评审和审批流程</li>
+</ul>
+<h4 id="安装与配置">3.5.1 安装与配置</h4>
+<h5 id="通过-zcf-安装">通过 ZCF 安装</h5>
+<p>Spec 工作流作为 MCP 服务的一部分，可以在 ZCF 初始化时选择安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 完整初始化时选择 Spec Workflow</span><br>npx zcf init<br><br><span class="hljs-comment"># 或在已有环境中添加 MCP 服务</span><br>npx zcf → 选择 4 (配置 MCP)<br></code></pre></td></tr></table></figure>
+<p>在 MCP 服务选择界面中，选择 <code>spec-workflow</code> 即可安装。</p>
+<h5 id="手动安装可选">手动安装（可选）</h5>
+<p>如果需要手动安装或更新 Spec Workflow MCP：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 安装最新版本</span><br>npm install -g @pimzino/spec-workflow-mcp@latest<br><br><span class="hljs-comment"># 或使用 npx 运行</span><br>npx -y @pimzino/spec-workflow-mcp@latest<br></code></pre></td></tr></table></figure>
+<h5 id="配置文件位置">配置文件位置</h5>
+<p>Spec Workflow MCP 配置会添加到 Claude Code 或 Codex 的 MCP
+服务配置中：</p>
+<p><strong>Claude Code：</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-comment">// ~/.claude/settings.json</span><br><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"mcpServers"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"spec-workflow"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"command"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"npx"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"args"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"-y"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"@pimzino/spec-workflow-mcp@latest"</span><span class="hljs-punctuation">]</span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p><strong>Codex：</strong></p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs toml"><span class="hljs-comment"># ~/.codex/config.toml</span><br><span class="hljs-section">[mcp_server."spec-workflow"]</span><br><span class="hljs-attr">command</span> = <span class="hljs-string">"npx"</span><br><span class="hljs-attr">args</span> = [<span class="hljs-string">"-y"</span>, <span class="hljs-string">"@pimzino/spec-workflow-mcp@latest"</span>]<br></code></pre></td></tr></table></figure>
+<h4 id="核心功能-1">3.5.2 核心功能</h4>
+<h5 id="需求分析">1.需求分析</h5>
+<p>Spec 工作流提供结构化的需求收集和分析能力：</p>
+<ul>
+<li><strong>需求收集</strong>：系统化地收集功能需求、非功能需求和约束条件</li>
+<li><strong>需求文档化</strong>：自动生成标准化的需求规格说明文档</li>
+<li><strong>需求验证</strong>：检查需求的完整性、一致性和可测试性</li>
+</ul>
+<p><strong>使用示例</strong>：</p>
+<h5 id="设计阶段">2.设计阶段</h5>
+<p>提供详细的技术设计和架构规划：</p>
+<ul>
+<li><strong>技术方案设计</strong>：生成多个可行的技术方案</li>
+<li><strong>架构设计</strong>：设计系统架构和模块划分</li>
+<li><strong>接口设计</strong>：定义 API 接口和数据模型</li>
+<li><strong>数据库设计</strong>：设计数据库表结构（如需要）</li>
+</ul>
+<p><strong>使用示例</strong>：</p>
+<h5 id="任务管理">3.任务管理</h5>
+<p>自动任务拆解和进度跟踪：</p>
+<ul>
+<li><strong>任务拆解</strong>：将大型需求拆解为可执行的小任务</li>
+<li><strong>任务优先级</strong>：自动评估和分配任务优先级</li>
+<li><strong>进度跟踪</strong>：实时跟踪任务完成情况</li>
+<li><strong>依赖管理</strong>：识别和管理任务之间的依赖关系</li>
+</ul>
+<p><strong>使用示例</strong>：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">请将登录功能拆解为具体的开发任务，并列出任务优先级<br></code></pre></td></tr></table></figure>
+<h5 id="实施工作流">4.实施工作流</h5>
+<p>系统化的实施方法：</p>
+<ul>
+<li><strong>代码生成</strong>：基于设计文档生成初始代码</li>
+<li><strong>测试用例</strong>：自动生成测试用例</li>
+<li><strong>文档同步</strong>：保持代码与文档的一致性</li>
+<li><strong>质量检查</strong>：集成代码质量检查</li>
+</ul>
+<h4 id="仪表板功能">3.5.3 仪表板功能</h4>
+<h5 id="启动仪表板">启动仪表板</h5>
+<p>Spec Workflow MCP 提供可选的工作流可视化仪表板：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 使用命令行启动仪表板</span><br>npx -y @pimzino/spec-workflow-mcp@latest --dashboard<br></code></pre></td></tr></table></figure>
+<p>仪表板会在默认浏览器中打开，提供：</p>
+<ul>
+<li>📊 <strong>工作流可视化</strong>：图形化展示工作流状态</li>
+<li>📋 <strong>任务列表</strong>：查看和管理所有任务</li>
+<li>📈 <strong>进度统计</strong>：查看整体进度和统计数据</li>
+<li>🔍 <strong>搜索和筛选</strong>：快速查找特定任务或需求</li>
+</ul>
+<h5 id="vs-code-扩展">VS Code 扩展</h5>
+<p>也可以安装 VS Code 扩展获得更好的集成体验：</p>
+<ol type="1">
+<li>打开 VS Code 扩展市场</li>
+<li>搜索 “Spec Workflow MCP”</li>
+<li>安装 <a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=Pimzino.spec-workflow-mcp">Pimzino.spec-workflow-mcp</a>
+扩展</li>
+</ol>
+<p>扩展提供：</p>
+<ul>
+<li>🎯 <strong>侧边栏集成</strong>：在 VS Code 侧边栏直接访问工作流</li>
+<li>🔔 <strong>通知提醒</strong>：任务状态变更时自动提醒</li>
+<li>📝 <strong>快速操作</strong>：直接在编辑器中执行工作流操作</li>
+</ul>
+<h4 id="工作流阶段-2">3.5.4 工作流阶段</h4>
+<p>Spec 工作流通常包含以下阶段：</p>
+<ol type="1">
+<li><strong>需求收集</strong> → 收集和分析功能需求</li>
+<li><strong>需求验证</strong> → 验证需求的完整性和可行性</li>
+<li><strong>方案设计</strong> → 设计技术方案和架构</li>
+<li><strong>任务拆解</strong> → 将需求拆解为可执行任务</li>
+<li><strong>实施开发</strong> → 按照任务进行开发</li>
+<li><strong>测试验证</strong> → 编写和执行测试用例</li>
+<li><strong>文档更新</strong> → 更新相关文档</li>
+<li><strong>评审验收</strong> → 进行代码评审和功能验收</li>
+</ol>
+<h4 id="使用示例">3.5.5 使用示例</h4>
+<h5 id="完整工作流示例">完整工作流示例</h5>
+<p>假设要开发一个”用户评论”功能：</p>
+<p><strong>步骤 1：需求分析</strong></p>
+<p><strong>步骤 2：设计阶段</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">基于刚才的需求，请设计评论功能的技术方案，包括数据模型和 API 接口<br></code></pre></td></tr></table></figure>
+<p><strong>步骤 3：任务拆解</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">将评论功能拆解为具体的开发任务，并列出任务依赖关系<br></code></pre></td></tr></table></figure>
+<p><strong>步骤 4：实施开发</strong></p>
+<h5 id="与-zcf-工作流结合">与 ZCF 工作流结合</h5>
+<p>Spec 工作流可以与 ZCF 的其他工作流结合使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 在 Claude Code 中</span><br>/zcf:workflow 开发用户评论功能，使用 Spec 工作流进行需求分析<br><br><span class="hljs-comment"># 或使用功能开发工作流</span><br>/zcf:feat 用户评论功能<br></code></pre></td></tr></table></figure>
+<p>在 Codex 中，虽然 Spec 工作流可以作为 MCP 服务使用，但没有对应的
+<code>/prompts:</code> 命令，需要直接在对话中使用。</p>
+<h4 id="最佳实践">3.5.6 最佳实践</h4>
+<h5 id="项目早期使用">项目早期使用</h5>
+<p>在项目早期使用 Spec 工作流锁定需求范围：</p>
+<ul>
+<li>✅
+<strong>减少返工</strong>：通过结构化需求分析，避免后期需求变更</li>
+<li>✅
+<strong>明确目标</strong>：清晰的需求文档帮助团队理解项目目标</li>
+<li>✅ <strong>风险识别</strong>：早期识别技术风险和实现难点</li>
+</ul>
+<h5 id="团队协作">团队协作</h5>
+<p>在团队环境中：</p>
+<ul>
+<li><strong>统一模板</strong>：使用统一的需求和设计模板</li>
+<li><strong>定期评审</strong>：定期进行需求评审和设计评审</li>
+<li><strong>文档同步</strong>：保持代码、文档和需求的一致性</li>
+</ul>
+<h5 id="自定义模板">自定义模板</h5>
+<p>结合 <code>advanced/templates.md</code> 自定义 Spec
+模板以适配团队规范：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 查看模板配置</span><br><span class="hljs-built_in">cat</span> ~/.claude/templates/spec-requirements.md<br><br><span class="hljs-comment"># 自定义模板</span><br><span class="hljs-comment"># 编辑模板文件以符合团队规范</span><br></code></pre></td></tr></table></figure>
+<h5 id="版本控制">版本控制</h5>
+<p>建议将 Spec 工作流生成的文档纳入版本控制：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 创建工作流文档目录</span><br><span class="hljs-built_in">mkdir</span> -p .spec-workflow/{requirements,design,tasks}<br><br><span class="hljs-comment"># 将生成的文档保存到对应目录</span><br><span class="hljs-comment"># 纳入 Git 版本控制</span><br>git add .spec-workflow/<br>git commit -m <span class="hljs-string">"docs: add spec workflow documents"</span><br></code></pre></td></tr></table></figure>
+<h4 id="与其他工具的集成">3.5.7 与其他工具的集成</h4>
+<h5 id="context7-集成">Context7 集成</h5>
+<p>结合 Context7 MCP 服务获取库文档：</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs txt">请查询 React Hook Form 的最新文档，用于评论功能的表单验证<br></code></pre></td></tr></table></figure>
+<h5 id="deepwiki-集成">DeepWiki 集成</h5>
+<p>使用 DeepWiki 获取项目背景信息：</p>
+<h4 id="git-工作流集成">Git 工作流集成</h4>
+<p>与 ZCF Git 工作流结合，自动生成提交信息：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 完成需求分析后</span><br>/git-commit -m <span class="hljs-string">"docs: add comment feature requirements spec"</span><br></code></pre></td></tr></table></figure>
+<h3 id="git-智能命令">3.6 Git 智能命令</h3>
+<p>Git 工作流提供了一系列智能 Git 操作命令，简化版本控制流程。</p>
+<p><strong>命令列表</strong></p>
+<table>
+
+<thead>
+<tr>
+<th>命令</th>
+<th>Claude Code</th>
+<th>Codex</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>智能提交</strong></td>
+<td><code>/git-commit</code></td>
+<td><code>/prompts:git-commit</code></td>
+<td>智能生成提交信息并拆分提交</td>
+</tr>
+<tr>
+<td><strong>安全回滚</strong></td>
+<td><code>/git-rollback</code></td>
+<td><code>/prompts:git-rollback</code></td>
+<td>安全回滚到指定提交</td>
+</tr>
+<tr>
+<td><strong>清理分支</strong></td>
+<td><code>/git-cleanBranches</code></td>
+<td><code>/prompts:git-cleanBranches</code></td>
+<td>清理已合并分支</td>
+</tr>
+<tr>
+<td><strong>工作树管理</strong></td>
+<td><code>/git-worktree</code></td>
+<td><code>/prompts:git-worktree</code></td>
+<td>管理 Git Worktree，支持创建、迁移、删除</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 <strong>提示</strong>：Codex 使用 <code>/prompts:</code> 前缀，而
+Claude Code 直接使用 <code>/</code> 前缀。</p>
+</blockquote>
+<h4 id="命令详解">3.6.1 命令详解</h4>
+<h5 id="git-commit-promptsgit-commit"><code>/git-commit</code> /
+<code>/prompts:git-commit</code></h5>
+<p>智能 Git 提交命令，功能包括：</p>
+<ul>
+<li>🔍 <strong>自动分析改动</strong>：使用 Git 分析代码变更</li>
+<li>✍️ <strong>生成提交信息</strong>：自动生成符合 Conventional Commits
+规范的提交信息</li>
+<li>🎨 <strong>可选 Emoji</strong>：支持在提交信息中添加 emoji</li>
+<li>📦
+<strong>智能拆分</strong>：必要时建议拆分提交，保持提交原子性</li>
+<li>✅ <strong>Git 钩子</strong>：默认运行本地 Git 钩子（可用
+<code>--no-verify</code> 跳过）</li>
+</ul>
+<p><strong>使用示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">/git-commit<br><span class="hljs-comment"># 或 Codex 中：</span><br>/prompts:git-commit<br></code></pre></td></tr></table></figure>
+<h5 id="git-rollback-promptsgit-rollback"><code>/git-rollback</code> /
+<code>/prompts:git-rollback</code></h5>
+<p>安全回滚命令，功能包括：</p>
+<ul>
+<li>📋 <strong>列出分支</strong>：显示所有可用的分支</li>
+<li>🔍 <strong>列出版本</strong>：显示指定分支的提交历史</li>
+<li>⚠️ <strong>二次确认</strong>：执行前要求用户确认</li>
+<li>🔄 <strong>执行回滚</strong>：支持 <code>reset</code> 和
+<code>revert</code> 两种方式</li>
+<li>💾 <strong>备份机制</strong>：回滚前自动备份</li>
+</ul>
+<p><strong>使用示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">/git-rollback<br><span class="hljs-comment"># 或 Codex 中：</span><br>/prompts:git-rollback<br></code></pre></td></tr></table></figure>
+<h5 id="git-cleanbranches-promptsgit-cleanbranches"><code>/git-cleanBranches</code>
+/ <code>/prompts:git-cleanBranches</code></h5>
+<p>安全清理已合并分支，功能包括：</p>
+<ul>
+<li>🔍 <strong>查找分支</strong>：自动查找已合并或过期的 Git 分支</li>
+<li>🧪 <strong>Dry-run
+模式</strong>：支持预览模式，先查看将要删除的分支</li>
+<li>⚙️ <strong>自定义配置</strong>：支持自定义基准分支和保护分支</li>
+<li>🛡️ <strong>安全机制</strong>：防止误删重要分支</li>
+</ul>
+<p><strong>使用示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">/git-cleanBranches<br><span class="hljs-comment"># 或 Codex 中：</span><br>/prompts:git-cleanBranches<br></code></pre></td></tr></table></figure>
+<h5 id="git-worktree-promptsgit-worktree"><code>/git-worktree</code> /
+<code>/prompts:git-worktree</code></h5>
+<p>Git 工作树管理，功能包括：</p>
+<ul>
+<li>📁 <strong>智能默认</strong>：在项目平级的
+<code>../.zcf/项目名/</code> 目录下创建工作树</li>
+<li>🔧 <strong>IDE 集成</strong>：自动配置 IDE 打开新工作树</li>
+<li>📦 <strong>内容迁移</strong>：支持将现有内容迁移到工作树</li>
+<li>🔄 <strong>完整管理</strong>：支持创建、迁移、删除等完整操作</li>
+</ul>
+<p><strong>使用示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">/git-worktree 新建 feat/add-i18n 并打开<br><span class="hljs-comment"># 或 Codex 中：</span><br>/prompts:git-worktree 新建 feat/add-i18n 并打开<br></code></pre></td></tr></table></figure>
+<h4 id="使用技巧">3.6.2 使用技巧</h4>
+<ul>
+<li>通过自然语言描述即可让 AI 执行多个 Git 操作</li>
+<li>搭配 <code>best-practices/worktree.md</code>
+可大幅提升多任务并行效率</li>
+<li>在项目初始化后，建议先运行 <code>/init-project</code>（Claude
+Code）生成项目配置</li>
+</ul>
+<blockquote>
+<p>⚠️ <strong>注意</strong>：项目初始化工具（init-project）仅在 Claude
+Code 中提供，Codex 暂不支持</p>
+</blockquote>
+<h2 id="reference">Reference</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://zcf.ufomiao.com/zh-CN/">ZCF文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/UfoMiao/zcf">zcf(GitHub)</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/1954950981457544102">告别繁琐！ZCF+Claude一键配置终极方案，1分钟搞定所有设置！</a></li>
+<li><a target="_blank" rel="noopener" href="https://linux.do/t/topic/860998">【开源自荐】ZCF - Claude
+Code &amp; Codex
+一键配置工具（含CCR配置、BMad和spec工作流、CCometixLine集成）</a></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Claude-Code/" class="category-chain-item">Claude Code</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Claude-Code/ZCF/" class="category-chain-item">ZCF</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Claude-Code/" class="print-no-link">#Claude Code</a>
+      
+        <a href="/tags/ZCF/" class="print-no-link">#ZCF</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Claude Code（九）:Claude Code配置工具ZCF</div>
+      <div>https://mztchaoqun.com.cn/posts/D96_ClaudeCode/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年11月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D97_ClaudeCode/" title="Claude Code（十）:Claude Code Skills">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Claude Code（十）:Claude Code Skills</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D95_ClaudeCode/" title="Claude Code（八）:基于 Figma MCP 直出 App">
+                        <span class="hidden-mobile">Claude Code（八）:基于 Figma MCP 直出 App</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

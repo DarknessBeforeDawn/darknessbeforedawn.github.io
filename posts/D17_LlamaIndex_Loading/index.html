@@ -1,0 +1,1227 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="LlamaIndex 中数据提取的关键是加载和转换。 加载文档后，您可以通过转换和输出节点来处理它们。 一、文档和节点 文档和节点对象是 LlamaIndex 中的核心抽象。文档可以处理很多类型的数据源，例如，PDF,API输出或者数据库检索。通过LlamaIndex可以手动构建数据，也可以通过数据加载器自动创建。默认情况下，文档会存储文本以及一些其他属性：  metadata-可以附加到文本的注">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LlamaIndex(四)——LlamaIndex Loading">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D17_LlamaIndex_Loading/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="LlamaIndex 中数据提取的关键是加载和转换。 加载文档后，您可以通过转换和输出节点来处理它们。 一、文档和节点 文档和节点对象是 LlamaIndex 中的核心抽象。文档可以处理很多类型的数据源，例如，PDF,API输出或者数据库检索。通过LlamaIndex可以手动构建数据，也可以通过数据加载器自动创建。默认情况下，文档会存储文本以及一些其他属性：  metadata-可以附加到文本的注">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/LlamaIndex.jpg">
+<meta property="article:published_time" content="2024-04-18T14:01:47.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.269Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="LLM学习笔记">
+<meta property="article:tag" content="LlamaIndex">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/LlamaIndex.jpg">
+  
+  
+  
+  <title>LlamaIndex(四)——LlamaIndex Loading - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LlamaIndex(四)——LlamaIndex Loading"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-04-18 22:01" pubdate>
+          2024年4月18日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          45 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LlamaIndex(四)——LlamaIndex Loading</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>LlamaIndex 中数据提取的关键是加载和转换。
+加载文档后，您可以通过转换和输出节点来处理它们。</p>
+<h2 id="一文档和节点">一、文档和节点</h2>
+<p>文档和节点对象是 LlamaIndex
+中的核心抽象。文档可以处理很多类型的数据源，例如，PDF,API输出或者数据库检索。通过LlamaIndex可以手动构建数据，也可以通过数据加载器自动创建。默认情况下，文档会存储文本以及一些其他属性：</p>
+<ul>
+<li><code>metadata</code>-可以附加到文本的注释字典。</li>
+<li><code>relationships</code>-包含与其他文档/节点的关系的字典。</li>
+</ul>
+<p>文档还支持存储图像，并且LlamaIndex正在积极地改进其多模态能力。</p>
+<p>一个<code>Node</code>代表源文档的一个<code>chunk</code>，无论是文本块、图像块还是其他类型的块。与文档类似，它们包含元数据和与其他节点的关系信息。</p>
+<p>节点在 LlamaIndex
+中级别最高。可以直接定义节点及其所有属性。也可以选择通过
+<code>NodeParser</code>
+类将源文档解析为节点。默认情况下，从文档派生的每个节点都会继承该文档的相同元数据（例如，文档中的
+<code>file_name</code>字段会传播到每个节点）。</p>
+<h3 id="文档">1.1 文档</h3>
+<h4 id="定义文档">1.1.1 定义文档</h4>
+<p>默认情况下，所有的数据加载器通过<code>load_data</code>函数返回
+<code>Document</code> 对象。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> SimpleDirectoryReader<br><br>documents = SimpleDirectoryReader(<span class="hljs-string">"./data/paul_graham/"</span>).load_data()<br></code></pre></td></tr></table></figure>
+<p>也可以选择手动构建文档。LlamaIndex 提供了 <code>Document</code>
+结构体。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Document<br><br>text_list = [text1, text2, ...]<br>documents = [Document(text=t) <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> text_list]<br></code></pre></td></tr></table></figure>
+<h4 id="自定义文档">1.1.2 自定义文档</h4>
+<p>本节介绍自定义 <code>Document</code> 对象的各种方法。由于
+<code>Document</code> 对象是 <code>TextNode</code>
+对象的子类，所有这些设置和细节也适用于 <code>TextNode</code>
+对象类。</p>
+<p><strong>Metadata</strong></p>
+<p>文档还提供了包含有用元数据的功能。使用每个文档上的<code>metadata</code>字典，可以包含额外的信息，以帮助提供查询响应的信息并追踪查询响应的来源。这些信息可以是任何东西，比如文件名或类别。如果你正在与向量数据库集成，一些向量数据库要求<code>keys</code>必须是字符串，值必须是扁平的（要么是
+<code>str</code>，要么是 <code>float</code>，或者是
+<code>int</code>）。</p>
+<p>在每个文档的<code>metadata</code>字典中设置的任何信息都会出现在使用该文档创建的每个源节点的<code>metadata</code>中。此外，这些信息包含在节点中，使索引能够在查询和响应中使用它。默认情况下，<code>metadata</code>被注入到文本中，用于嵌入和大语言模型调用。
+有几种设置这个字典的方法：</p>
+<ol type="1">
+<li>在文档构造器中</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python">document = Document(<br>    text=<span class="hljs-string">"text"</span>,<br>    metadata={<span class="hljs-string">"filename"</span>: <span class="hljs-string">"&lt;doc_file_name&gt;"</span>, <span class="hljs-string">"category"</span>: <span class="hljs-string">"&lt;category&gt;"</span>},<br>)<br></code></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>文档创建后</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">document.metadata = {<span class="hljs-string">"filename"</span>: <span class="hljs-string">"&lt;doc_file_name&gt;"</span>}<br></code></pre></td></tr></table></figure>
+<ol start="3" type="1">
+<li>使用 <code>SimpleDirectoryReader</code> 和
+<code>file_metadata</code>
+钩子自动设置文件名。这将自动在每个文档上运行钩子以设置元数据字段</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> SimpleDirectoryReader<br><br>filename_fn = <span class="hljs-keyword">lambda</span> filename: {<span class="hljs-string">"file_name"</span>: filename}<br><br><span class="hljs-comment"># automatically sets the metadata of each document according to filename_fn</span><br>documents = SimpleDirectoryReader(<br>    <span class="hljs-string">"./data"</span>, file_metadata=filename_fn<br>).load_data()<br></code></pre></td></tr></table></figure>
+<p><strong>自定义文档id</strong></p>
+<p><code>doc_id</code> 用于在索引中高效地刷新文档。当使用
+<code>SimpleDirectoryReader</code>
+时，可以自动将<code>doc_id</code>设置为每个文档的完整路径</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> SimpleDirectoryReader<br><br>documents = SimpleDirectoryReader(<span class="hljs-string">"./data"</span>, filename_as_id=<span class="hljs-literal">True</span>).load_data()<br><span class="hljs-built_in">print</span>([x.doc_id <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> documents])<br></code></pre></td></tr></table></figure>
+<p>还可以直接设置任何<code>Document</code> 的 <code>doc_id</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">document.doc_id = <span class="hljs-string">"My new document id!"</span><br></code></pre></td></tr></table></figure>
+<h4 id="高级metadata自定义">1.1.3 高级<code>Metadata</code>自定义</h4>
+<p>上述提到的关键细节是，默认情况下，你设置的任何元数据都包含在embeddings生成和LLM中。</p>
+<p><strong>自定义LLM Metadata文本</strong></p>
+<p>通常，文档可能有很多metadata
+keys，但你可能不想让大语言模型在响应合成期间看到所有的metadata
+keys。在上面的例子中，可能不希望LLM读取文档的<code>file_name</code>。然而，<code>file_name</code>可能包含有助于生成更好embeddings的信息。这样做的一个关键优势是在不改变LLM最终阅读内容的情况下，可以不影响检索embeddings。</p>
+<p>可以这样排除它： <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">document.excluded_llm_metadata_keys = [<span class="hljs-string">"file_name"</span>]<br></code></pre></td></tr></table></figure></p>
+<p>然后，可以使用 <code>get_content()</code> 函数并指定
+<code>MetadataMode.LLM</code> 来测试LLM实际上最终会读取什么：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.schema <span class="hljs-keyword">import</span> MetadataMode<br><br><span class="hljs-built_in">print</span>(document.get_content(metadata_mode=MetadataMode.LLM))<br></code></pre></td></tr></table></figure>
+<p><strong>自定义Embedding Metadata文本</strong></p>
+<p>类似于自定义LLM可见的元数据，也可以自定义Embedding模型可见的元数据。在这种情况下，你可以特别排除Embedding模型可见的元数据，以防你不希望特定文本影响Embedding
+。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">document.excluded_embed_metadata_keys = [<span class="hljs-string">"file_name"</span>]<br></code></pre></td></tr></table></figure>
+<p>然后，可以使用 <code>get_content()</code> 函数并指定
+<code>MetadataMode.EMBED</code> 来测试Embedding
+模型实际上最终会读取什么：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.schema <span class="hljs-keyword">import</span> MetadataMode<br><br><span class="hljs-built_in">print</span>(document.get_content(metadata_mode=MetadataMode.EMBED))<br></code></pre></td></tr></table></figure>
+<p><strong>自定义metadata格式</strong></p>
+<p>元数据在发送到LLM或Embedding模型时被注入到每个文档/节点的实际文本中。默认情况下，此元数据的格式由三个属性控制：</p>
+<ol type="1">
+<li><code>Document.metadata_seperator -&gt; default = "\n"</code></li>
+</ol>
+<p>在连接元数据的所有key/value字段时，此字段控制每个key/value对之间的分隔符。</p>
+<ol start="2" type="1">
+<li><code>Document.metadata_template -&gt; default = "{key}: {value}"</code></li>
+</ol>
+<p>此属性控制元数据中每个key/value对的格式。两个变量 key 和 value
+字符串键是必需的。</p>
+<ol start="3" type="1">
+<li><code>Document.text_template -&gt; default = {metadata_str}\n\n{content}</code></li>
+</ol>
+<p>当元数据使用 <code>metadata_seperator</code> 和
+<code>metadata_template</code>
+转换为字符串时，此模板控制该元数据与你的文档/节点的文本内容连接后的格式。元数据和内容字符串key是必需的。</p>
+<h4 id="总结">1.1.4 总结</h4>
+<p>创建一个使用所有这些功能的简短示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Document<br><span class="hljs-keyword">from</span> llama_index.core.schema <span class="hljs-keyword">import</span> MetadataMode<br><br>document = Document(<br>    text=<span class="hljs-string">"This is a super-customized document"</span>,<br>    metadata={<br>        <span class="hljs-string">"file_name"</span>: <span class="hljs-string">"super_secret_document.txt"</span>,<br>        <span class="hljs-string">"category"</span>: <span class="hljs-string">"finance"</span>,<br>        <span class="hljs-string">"author"</span>: <span class="hljs-string">"LlamaIndex"</span>,<br>    },<br>    excluded_llm_metadata_keys=[<span class="hljs-string">"file_name"</span>],<br>    metadata_seperator=<span class="hljs-string">"::"</span>,<br>    metadata_template=<span class="hljs-string">"{key}=&gt;{value}"</span>,<br>    text_template=<span class="hljs-string">"Metadata: {metadata_str}\n-----\nContent: {content}"</span>,<br>)<br><br><span class="hljs-built_in">print</span>(<br>    <span class="hljs-string">"The LLM sees this: \n"</span>,<br>    document.get_content(metadata_mode=MetadataMode.LLM),<br>)<br><span class="hljs-built_in">print</span>(<br>    <span class="hljs-string">"The Embedding model sees this: \n"</span>,<br>    document.get_content(metadata_mode=MetadataMode.EMBED),<br>)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs text">The LLM sees this: <br> Metadata: category=&gt;finance::author=&gt;LlamaIndex<br>-----<br>Content: This is a super-customized document<br>The Embedding model sees this: <br> Metadata: file_name=&gt;super_secret_document.txt::category=&gt;finance::author=&gt;LlamaIndex<br>-----<br>Content: This is a super-customized document<br></code></pre></td></tr></table></figure>
+<h3 id="节点">1.2 节点</h3>
+<p>Nodes代表源文档的<code>chunk</code>，无论是文本块、图像还是更多。它们还包含元数据以及与其他节点和索引结构的关系信息。</p>
+<p>在 LlamaIndex
+中，节点是最高级别的。你可以选择直接定义节点及其所有属性。你也可以选择通过
+<code>NodeParser</code> 类将源文档“解析”成节点。</p>
+<p>自动构建</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SentenceSplitter<br><br>parser = SentenceSplitter()<br><br>nodes = parser.get_nodes_from_documents(documents)<br></code></pre></td></tr></table></figure>
+<p>手动构建 Node 对象</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.schema <span class="hljs-keyword">import</span> TextNode, NodeRelationship, RelatedNodeInfo<br><br>node1 = TextNode(text=<span class="hljs-string">"&lt;text_chunk&gt;"</span>, id_=<span class="hljs-string">"&lt;node_id&gt;"</span>)<br>node2 = TextNode(text=<span class="hljs-string">"&lt;text_chunk&gt;"</span>, id_=<span class="hljs-string">"&lt;node_id&gt;"</span>)<br><span class="hljs-comment"># set relationships</span><br>node1.relationships[NodeRelationship.NEXT] = RelatedNodeInfo(<br>    node_id=node2.node_id<br>)<br>node2.relationships[NodeRelationship.PREVIOUS] = RelatedNodeInfo(<br>    node_id=node1.node_id<br>)<br>nodes = [node1, node2]<br></code></pre></td></tr></table></figure>
+<p><code>RelatedNodeInfo</code> 类还可以存储额外的元数据：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">node2.relationships[NodeRelationship.PARENT] = RelatedNodeInfo(<br>    node_id=node1.node_id, metadata={<span class="hljs-string">"key"</span>: <span class="hljs-string">"val"</span>}<br>)<br></code></pre></td></tr></table></figure>
+<p><strong>定制node_id</strong></p>
+<p>每个节点都有一个 <code>node_id</code>
+属性，如果没有手动指定，则会自动生成。这个 ID
+可以用于多种目的，包括能够更新存储中的节点，通过 <code>IndexNode</code>
+定义节点之间的关系等。</p>
+<p>也可以直接获取和设置任何 <code>TextNode</code> 的
+<code>node_id</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-built_in">print</span>(node.node_id)<br>node.node_id = <span class="hljs-string">"My new node_id!"</span><br></code></pre></td></tr></table></figure>
+<h3 id="元数据提取metadata-extraction">1.3 元数据提取(Metadata
+Extraction)</h3>
+<p>可以使用LLM通过元数据提取器模块来自动化元数据提取。元数据提取器模块包括以下<code>feature extractors</code>：</p>
+<ul>
+<li><code>SummaryExtractor</code> - 自动提取一组节点的摘要</li>
+<li><code>QuestionsAnsweredExtractor</code> -
+提取每个节点能够回答的一组问题</li>
+<li><code>TitleExtractor</code> - 提取每个节点上下文的标题</li>
+<li><code>EntityExtractor</code> -
+提取每个节点内容中提到的实体（例如地名、人名、事物名）</li>
+</ul>
+<p>然后，将元数据提取器与节点解析器串联起来：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.extractors <span class="hljs-keyword">import</span> (<br>    TitleExtractor,<br>    QuestionsAnsweredExtractor,<br>)<br><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> TokenTextSplitter<br><br>text_splitter = TokenTextSplitter(<br>    separator=<span class="hljs-string">" "</span>, chunk_size=<span class="hljs-number">512</span>, chunk_overlap=<span class="hljs-number">128</span><br>)<br>title_extractor = TitleExtractor(nodes=<span class="hljs-number">5</span>)<br>qa_extractor = QuestionsAnsweredExtractor(questions=<span class="hljs-number">3</span>)<br><br><span class="hljs-comment"># assume documents are defined -&gt; extract nodes</span><br><span class="hljs-keyword">from</span> llama_index.core.ingestion <span class="hljs-keyword">import</span> IngestionPipeline<br><br>pipeline = IngestionPipeline(<br>    transformations=[text_splitter, title_extractor, qa_extractor]<br>)<br><br>nodes = pipeline.run(<br>    documents=documents,<br>    in_place=<span class="hljs-literal">True</span>,<br>    show_progress=<span class="hljs-literal">True</span>,<br>)<br></code></pre></td></tr></table></figure>
+<p>或者插入到索引中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex<br><br>index = VectorStoreIndex.from_documents(<br>    documents, transformations=[text_splitter, title_extractor, qa_extractor]<br>)<br></code></pre></td></tr></table></figure>
+<p>其他一些例子:<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/loading/documents_and_nodes/usage_metadata_extractor/#resources">https://docs.llamaindex.ai/en/stable/module_guides/loading/documents_and_nodes/usage_metadata_extractor/#resources</a></p>
+<h2 id="二simpledirectoryreader">二、SimpleDirectoryReader</h2>
+<p><code>SimpleDirectoryReader</code> 是将本地文件数据加载到 LlamaIndex
+的最简单方式。对于生产用例，可以要使用 <a target="_blank" rel="noopener" href="https://llamahub.ai/">LlamaHub</a> 上提供的 Readers。</p>
+<h3 id="支持的文件类型">2.1 支持的文件类型</h3>
+<p>默认情况下，<code>SimpleDirectoryReader</code>
+会尝试读取它找到的任何文件，并将它们全部视为文本。除了纯文本之外，它还明确支持以下文件类型，这些文件类型会根据文件扩展名自动被检测：</p>
+<ul>
+<li>.csv - 逗号分隔值</li>
+<li>.docx - Microsoft Word</li>
+<li>.epub - EPUB 电子书格式</li>
+<li>.hwp - Hangul Word Processor</li>
+<li>.ipynb - Jupyter Notebook</li>
+<li>.jpeg, .jpg - JPEG 图像</li>
+<li>.mbox - MBOX 电子邮件存档</li>
+<li>.md - Markdown</li>
+<li>.mp3, .mp4 - 音频和视频</li>
+<li>.pdf - 便携式文档格式</li>
+<li>.png - 便携式网络图形</li>
+<li>.ppt, .pptm, .pptx - Microsoft PowerPoint</li>
+</ul>
+<p>JSON Loader可以支持JSON格式的文件。</p>
+<h3 id="使用">2.2 使用</h3>
+<p>最基本的使用方式是传递一个
+<code>input_dir</code>，它将加载该目录下所有支持的文件：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> SimpleDirectoryReader<br><br>reader = SimpleDirectoryReader(input_dir=<span class="hljs-string">"./data/paul_graham/"</span>)<br>documents = reader.load_data()<br></code></pre></td></tr></table></figure>
+<p>如果从目录加载较多文件，可以使用<code>multiprocessing</code>来加载文档，使用多进程时，在
+Windows 和 Linux/MacOS
+机器上存在差异，这在<code>multiprocessing</code>文档中有所解释<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="">[1]</span></a></sup>。最终，Windows
+用户可能会看到较少或没有性能提升，而 Linux/MacOS
+用户在加载完全相同的文件集时会看到这些提升。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">...<br>documents = reader.load_data(num_workers=<span class="hljs-number">4</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="从子目录中读取">2.2.1 从子目录中读取</h4>
+<p>默认情况下，<code>SimpleDirectoryReader</code>
+只会读取目录顶层的文件。要读取子目录中的文件，设置
+<code>recursive=True</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">SimpleDirectoryReader(input_dir=<span class="hljs-string">"path/to/directory"</span>, recursive=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="在加载时迭代文件">2.2.2 在加载时迭代文件</h4>
+<p>使用 <code>iter_data()</code>
+方法，在加载文件时对文件进行迭代和处理：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python">reader = SimpleDirectoryReader(input_dir=<span class="hljs-string">"path/to/directory"</span>, recursive=<span class="hljs-literal">True</span>)<br>all_docs = []<br><span class="hljs-keyword">for</span> docs <span class="hljs-keyword">in</span> reader.iter_data():<br>    <span class="hljs-comment"># &lt;do something with the documents per file&gt;</span><br>    all_docs.extend(docs)<br></code></pre></td></tr></table></figure>
+<h4 id="限制加载的文件">2.2.3 限制加载的文件</h4>
+<p>可以传递一个文件路径列表：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">SimpleDirectoryReader(<br>    input_dir=<span class="hljs-string">"path/to/directory"</span>, required_exts=[<span class="hljs-string">".pdf"</span>, <span class="hljs-string">".docx"</span>]<br>)<br></code></pre></td></tr></table></figure>
+<p>使用 <code>exclude</code> 传递一个要排除的文件路径列表：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">SimpleDirectoryReader(<br>    input_dir=<span class="hljs-string">"path/to/directory"</span>, exclude=[<span class="hljs-string">"path/to/file1"</span>, <span class="hljs-string">"path/to/file2"</span>]<br>)<br></code></pre></td></tr></table></figure>
+<p>还可以将 <code>required_exts</code>
+设置为一个文件扩展名列表，以仅加载具有这些扩展名的文件：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">SimpleDirectoryReader(<br>    input_dir=<span class="hljs-string">"path/to/directory"</span>, required_exts=[<span class="hljs-string">".pdf"</span>, <span class="hljs-string">".docx"</span>]<br>)<br></code></pre></td></tr></table></figure>
+<p>还可以使用 <code>num_files_limit</code>
+设置要加载的文件的最大数量：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">SimpleDirectoryReader(input_dir=<span class="hljs-string">"path/to/directory"</span>, num_files_limit=<span class="hljs-number">100</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="指定文件编码">2.2.4 指定文件编码</h4>
+<p><code>SimpleDirectoryReader</code> 默认是 <code>utf-8</code>
+编码的，但您可以使用 <code>encoding</code> 参数来覆盖它：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">SimpleDirectoryReader(input_dir=<span class="hljs-string">"path/to/directory"</span>, encoding=<span class="hljs-string">"latin-1"</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="读取metadata">2.2.5 读取metadata</h4>
+<p>可以通过 <code>file_metadata</code>
+传递来指定一个函数，该函数将读取每个文件并提取附加到每个文件的
+<code>Document</code> 对象的元数据：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_meta</span>(<span class="hljs-params">file_path</span>):<br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"foo"</span>: <span class="hljs-string">"bar"</span>, <span class="hljs-string">"file_path"</span>: file_path}<br><br><br>SimpleDirectoryReader(input_dir=<span class="hljs-string">"path/to/directory"</span>, file_metadata=get_meta)<br></code></pre></td></tr></table></figure>
+<p>该函数应该接受单个参数，即文件路径，并返回一个元数据字典。</p>
+<h4 id="扩展到其他文件类型">2.2.6 扩展到其他文件类型</h4>
+<p>可以通过将文件扩展名字典传递给 <code>BaseReader</code> 实例作为
+<code>file_extractor</code> 来扩展 <code>SimpleDirectoryReader</code>
+以读取其他文件类型。<code>BaseReader</code> 应该读取文件并返回一个
+<code>Document</code> 对象列表。例如，要添加对
+<code>.myfile</code>文件的自定义支持：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> SimpleDirectoryReader<br><span class="hljs-keyword">from</span> llama_index.core.readers.base <span class="hljs-keyword">import</span> BaseReader<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Document<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyFileReader</span>(<span class="hljs-title class_ inherited__">BaseReader</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">load_data</span>(<span class="hljs-params">self, file, extra_info=<span class="hljs-literal">None</span></span>):<br>        <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(file, <span class="hljs-string">"r"</span>) <span class="hljs-keyword">as</span> f:<br>            text = f.read()<br>        <span class="hljs-comment"># load_data returns a list of Document objects</span><br>        <span class="hljs-keyword">return</span> [Document(text=text + <span class="hljs-string">"Foobar"</span>, extra_info=extra_info <span class="hljs-keyword">or</span> {})]<br><br><br>reader = SimpleDirectoryReader(<br>    input_dir=<span class="hljs-string">"./data"</span>, file_extractor={<span class="hljs-string">".myfile"</span>: MyFileReader()}<br>)<br><br>documents = reader.load_data()<br><span class="hljs-built_in">print</span>(documents)<br></code></pre></td></tr></table></figure>
+<p>这个映射将覆盖指定的文件类型的默认文件提取器，因此如果想要重新覆盖的类型，需要将它们重新添加回去。</p>
+<h4 id="支持外部文件系统">2.2.7 支持外部文件系统</h4>
+<p>与其他模块一样，<code>SimpleDirectoryReader</code> 接受一个可选的
+<code>fs</code> 参数，可以用来遍历远程文件系统。</p>
+<p>由 <code>fsspec</code> 协议实现的任何文件系统对象。
+<code>fsspec</code> 协议具有针对各种远程文件系统的开源实现，包括
+<code>AWS S3、Azure Blob</code> 和
+<code>DataLake、Google Drive、SFTP</code> 等。</p>
+<p>以下是连接到 S3 的示例:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> s3fs <span class="hljs-keyword">import</span> S3FileSystem<br><br>s3_fs = S3FileSystem(key=<span class="hljs-string">"..."</span>, secret=<span class="hljs-string">"..."</span>)<br>bucket_name = <span class="hljs-string">"my-document-bucket"</span><br><br>reader = SimpleDirectoryReader(<br>    input_dir=bucket_name,<br>    fs=s3_fs,<br>    recursive=<span class="hljs-literal">True</span>,  <span class="hljs-comment"># recursively searches all subdirectories</span><br>)<br><br>documents = reader.load_data()<br><span class="hljs-built_in">print</span>(documents)<br></code></pre></td></tr></table></figure>
+<p>可以查看<a target="_blank" rel="noopener" href="https://github.com/run-llama/llama_index/blob/main/docs/docs/examples/data_connectors/simple_directory_reader_remote_fs.ipynb">完整的例子</a></p>
+<h2 id="三data-connectors">三、Data Connectors</h2>
+<p>数据连接器（也称为<code>Reader</code>）从不同的数据源和数据格式中提取数据，将其转换为简单的<code>Document</code>表示形式（文本和简单的元数据）。</p>
+<p>数据连接器通过 <a target="_blank" rel="noopener" href="https://llamahub.ai/">LlamaHub</a>
+提供，LlamaHub 是一个开源仓库。</p>
+<h3 id="使用-1">3.1 使用</h3>
+<p>每个数据加载器都包含一个<code>Usage</code>部分，展示了如何使用该加载器。使用每个加载器的核心是一个
+<code>download_loader</code>
+函数，该函数将加载器文件下载到在应用程序中可以使用的模块。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex, download_loader<br><br><span class="hljs-keyword">from</span> llama_index.readers.google <span class="hljs-keyword">import</span> GoogleDocsReader<br><br>gdoc_ids = [<span class="hljs-string">"1wf-y2pd9C878Oh-FmLH7Q_BQkljdm6TQal-c1pUfrec"</span>]<br>loader = GoogleDocsReader()<br>documents = loader.load_data(document_ids=gdoc_ids)<br>index = VectorStoreIndex.from_documents(documents)<br>query_engine = index.as_query_engine()<br>query_engine.query(<span class="hljs-string">"Where did the author go to school?"</span>)<br></code></pre></td></tr></table></figure>
+<h3 id="llamaparse">3.2 LlamaParse</h3>
+<p>LlamaParse 是由 LlamaIndex 创建的
+API，用于高效地解析和表示文件，以便使用 LlamaIndex
+框架进行高效的检索和上下文增强。LlamaParse 直接与 LlamaIndex 集成。</p>
+<p>首先，从 https://cloud.llamaindex.ai 获取一个
+api-key。运行以下代码来解析你的第一个 PDF 文件：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> nest_asyncio<br><br>nest_asyncio.apply()<br><br><span class="hljs-keyword">from</span> llama_parse <span class="hljs-keyword">import</span> LlamaParse<br><br>parser = LlamaParse(<br>    api_key=<span class="hljs-string">"llx-..."</span>,  <span class="hljs-comment"># can also be set in your env as LLAMA_CLOUD_API_KEY</span><br>    result_type=<span class="hljs-string">"markdown"</span>,  <span class="hljs-comment"># "markdown" and "text" are available</span><br>    verbose=<span class="hljs-literal">True</span>,<br>)<br><br><span class="hljs-comment"># sync</span><br>documents = parser.load_data(<span class="hljs-string">"./my_file.pdf"</span>)<br><br><span class="hljs-comment"># sync batch</span><br>documents = parser.load_data([<span class="hljs-string">"./my_file1.pdf"</span>, <span class="hljs-string">"./my_file2.pdf"</span>])<br><br><span class="hljs-comment"># async</span><br>documents = <span class="hljs-keyword">await</span> parser.aload_data(<span class="hljs-string">"./my_file.pdf"</span>)<br><br><span class="hljs-comment"># async batch</span><br>documents = <span class="hljs-keyword">await</span> parser.aload_data([<span class="hljs-string">"./my_file1.pdf"</span>, <span class="hljs-string">"./my_file2.pdf"</span>])<br></code></pre></td></tr></table></figure>
+<p>也可以将解析器集成为 <code>SimpleDirectoryReader</code> 的默认 PDF
+加载器：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> nest_asyncio<br><br>nest_asyncio.apply()<br><br><span class="hljs-keyword">from</span> llama_parse <span class="hljs-keyword">import</span> LlamaParse<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> SimpleDirectoryReader<br><br>parser = LlamaParse(<br>    api_key=<span class="hljs-string">"llx-..."</span>,  <span class="hljs-comment"># can also be set in your env as LLAMA_CLOUD_API_KEY</span><br>    result_type=<span class="hljs-string">"markdown"</span>,  <span class="hljs-comment"># "markdown" and "text" are available</span><br>    verbose=<span class="hljs-literal">True</span>,<br>)<br><br>file_extractor = {<span class="hljs-string">".pdf"</span>: parser}<br>documents = SimpleDirectoryReader(<br>    <span class="hljs-string">"./data"</span>, file_extractor=file_extractor<br>).load_data()<br></code></pre></td></tr></table></figure>
+<p>更多例子:<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/loading/connector/llama_parse/#examples">https://docs.llamaindex.ai/en/stable/module_guides/loading/connector/llama_parse/#examples</a></p>
+<p>Data Connectors Module Guides:<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/loading/connector/modules/">https://docs.llamaindex.ai/en/stable/module_guides/loading/connector/modules/</a></p>
+<h2 id="四node-parsers">四、Node Parsers</h2>
+<p>Node parsers 是一种简单的抽象，它们接受一组文档列表，并将它们分解成
+<code>Node</code>
+对象，使得每个节点都是父文档的一个特定部分。当文档被分解成节点时，它的所有属性（即元数据、文本和元数据模板等）都会被继承到子节点中。</p>
+<h3 id="使用-2">4.1 使用</h3>
+<h4 id="独立使用">4.1.1 独立使用</h4>
+<p>Node parsers 可以独立使用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Document<br><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SentenceSplitter<br><br>node_parser = SentenceSplitter(chunk_size=<span class="hljs-number">1024</span>, chunk_overlap=<span class="hljs-number">20</span>)<br><br>nodes = node_parser.get_nodes_from_documents(<br>    [Document(text=<span class="hljs-string">"long text"</span>)], show_progress=<span class="hljs-literal">False</span><br>)<br></code></pre></td></tr></table></figure>
+<h4 id="transformation">4.1.2 Transformation</h4>
+<p>Node parsers 可以包含在任何转换集中，与提取管道一起使用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> SimpleDirectoryReader<br><span class="hljs-keyword">from</span> llama_index.core.ingestion <span class="hljs-keyword">import</span> IngestionPipeline<br><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> TokenTextSplitter<br><br>documents = SimpleDirectoryReader(<span class="hljs-string">"./data"</span>).load_data()<br><br>pipeline = IngestionPipeline(transformations=[TokenTextSplitter(), ...])<br><br>nodes = pipeline.run(documents=documents)<br></code></pre></td></tr></table></figure>
+<h4 id="index">4.1.3 Index</h4>
+<p>在<code>transformations</code>或全局设置中设置，在.from_documents()
+构建索引时自动使用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> SimpleDirectoryReader, VectorStoreIndex<br><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SentenceSplitter<br><br>documents = SimpleDirectoryReader(<span class="hljs-string">"./data"</span>).load_data()<br><br><span class="hljs-comment"># global</span><br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Settings<br><br>Settings.text_splitter = SentenceSplitter(chunk_size=<span class="hljs-number">1024</span>, chunk_overlap=<span class="hljs-number">20</span>)<br><br><span class="hljs-comment"># per-index</span><br>index = VectorStoreIndex.from_documents(<br>    documents,<br>    transformations=[SentenceSplitter(chunk_size=<span class="hljs-number">1024</span>, chunk_overlap=<span class="hljs-number">20</span>)],<br>)<br></code></pre></td></tr></table></figure>
+<h3 id="node-parser-modules">4.2 Node Parser Modules</h3>
+<h4 id="基于文件的节点解析器">4.2.1 基于文件的节点解析器</h4>
+<p>基于文件的节点解析器可以根据不同的内容类型（如JSON、Markdown等）创建节点。最简单的流程是将<code>FlatFileReader</code>与<code>SimpleFileNodeParser</code>结合使用，以自动为每种内容类型使用最佳的节点解析器。考虑文本的实际长度，可以将基于文件的节点解析器与基于文本的节点解析器串联起来。</p>
+<p><strong>SimpleFileNodeParser</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SimpleFileNodeParser<br><span class="hljs-keyword">from</span> llama_index.readers.file <span class="hljs-keyword">import</span> FlatReader<br><span class="hljs-keyword">from</span> pathlib <span class="hljs-keyword">import</span> Path<br><br>md_docs = FlatReader().load_data(Path(<span class="hljs-string">"./test.md"</span>))<br><br>parser = SimpleFileNodeParser()<br>md_nodes = parser.get_nodes_from_documents(md_docs)<br></code></pre></td></tr></table></figure>
+<p><strong>HTMLNodeParser</strong></p>
+<p>此节点解析器使用<code>beautifulsoup</code>解析原始HTML。默认情况下，它将解析选定的HTML标签子集，但设置可以改变。</p>
+<p>默认标签为：<code>["p", "h1", "h2", "h3", "h4", "h5", "h6", "li", "b", "i", "u", "section"]</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> HTMLNodeParser<br><br>parser = HTMLNodeParser(tags=[<span class="hljs-string">"p"</span>, <span class="hljs-string">"h1"</span>])  <span class="hljs-comment"># optional list of tags</span><br>nodes = parser.get_nodes_from_documents(html_docs)<br></code></pre></td></tr></table></figure>
+<p><strong>JSONNodeParser</strong></p>
+<p><code>JSONNodeParser</code>解析原始JSON</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> JSONNodeParser<br><br>parser = JSONNodeParser()<br><br>nodes = parser.get_nodes_from_documents(json_docs)<br></code></pre></td></tr></table></figure>
+<p><strong>MarkdownNodeParser</strong></p>
+<p><code>MarkdownNodeParser</code>解析原始markdown文本。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> MarkdownNodeParser<br><br>parser = MarkdownNodeParser()<br><br>nodes = parser.get_nodes_from_documents(markdown_docs)<br></code></pre></td></tr></table></figure>
+<h4 id="text-splitters">4.2.2 Text-Splitters</h4>
+<p><strong>CodeSplitter</strong>
+根据编写的语言分割原始代码文本。支持语言的<a target="_blank" rel="noopener" href="https://github.com/grantjenks/py-tree-sitter-languages#license">完整列表</a>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> CodeSplitter<br><br>splitter = CodeSplitter(<br>    language=<span class="hljs-string">"python"</span>,<br>    chunk_lines=<span class="hljs-number">40</span>,  <span class="hljs-comment"># lines per chunk</span><br>    chunk_lines_overlap=<span class="hljs-number">15</span>,  <span class="hljs-comment"># lines overlap between chunks</span><br>    max_chars=<span class="hljs-number">1500</span>,  <span class="hljs-comment"># max chars per chunk</span><br>)<br>nodes = splitter.get_nodes_from_documents(documents)<br></code></pre></td></tr></table></figure>
+<p><strong>LangchainNodeParser</strong></p>
+<p>还可以使用节点解析器包装任何现有的langchain文本分割器。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.text_splitter <span class="hljs-keyword">import</span> RecursiveCharacterTextSplitter<br><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> LangchainNodeParser<br><br>parser = LangchainNodeParser(RecursiveCharacterTextSplitter())<br>nodes = parser.get_nodes_from_documents(documents)<br></code></pre></td></tr></table></figure>
+<p><strong>SentenceSplitter</strong></p>
+<p><code>SentenceSplitter</code>尝试在考虑句子边界的同时分割文本。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SentenceSplitter<br><br>splitter = SentenceSplitter(<br>    chunk_size=<span class="hljs-number">1024</span>,<br>    chunk_overlap=<span class="hljs-number">20</span>,<br>)<br>nodes = splitter.get_nodes_from_documents(documents)<br></code></pre></td></tr></table></figure>
+<p><strong>SentenceWindowNodeParser</strong>
+<code>SentenceWindowNodeParser</code>与其他节点解析器类似，但它将所有文档分割成单独的句子。结果节点还在元数据中包含了每个节点周围<code>window</code>的句子。请注意，此元数据对LLM或Embedding模型不可见。</p>
+<p>这在生成具有非常特定范围的Embedding时最有用。然后，结合<code>MetadataReplacementNodePostProcessor</code>使用，可以在将节点发送到LLM之前，用其周围上下文替换句子。</p>
+<p>以下是使用默认设置设置解析器的示例。在实践中，通常只需要调整句子窗口的大小。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> nltk<br><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SentenceWindowNodeParser<br><br>node_parser = SentenceWindowNodeParser.from_defaults(<br>    <span class="hljs-comment"># how many sentences on either side to capture</span><br>    window_size=<span class="hljs-number">3</span>,<br>    <span class="hljs-comment"># the metadata key that holds the window of surrounding sentences</span><br>    window_metadata_key=<span class="hljs-string">"window"</span>,<br>    <span class="hljs-comment"># the metadata key that holds the original sentence</span><br>    original_text_metadata_key=<span class="hljs-string">"original_sentence"</span>,<br>)<br></code></pre></td></tr></table></figure>
+<p>与MetadataReplacementNodePostProcessor结合使用的<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/node_postprocessor/MetadataReplacementDemo/">完整示例</a></p>
+<p><strong>SemanticSplitterNodeParser</strong></p>
+<p><code>Semantic chunking</code>是Greg
+Kamradt在他的视频教程中提出的一个新概念，关于5个<code>embedding chunking</code>级别的教程：<a target="_blank" rel="noopener" href="https://youtu.be/8OJC21T2SL4?t=1933">https://youtu.be/8OJC21T2SL4?t=1933</a>。</p>
+<p>与使用固定块大小分割文本不同，语义分割器会使用embedding相似性自适应地选择句子之间的断点。这确保了一个“块”包含了语义上相关联的句子。</p>
+<ul>
+<li>该正则表达式主要用于英语句子</li>
+<li>可能需要调整断点百分位阈值。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SemanticSplitterNodeParser<br><span class="hljs-keyword">from</span> llama_index.embeddings.openai <span class="hljs-keyword">import</span> OpenAIEmbedding<br><br>embed_model = OpenAIEmbedding()<br>splitter = SemanticSplitterNodeParser(<br>    buffer_size=<span class="hljs-number">1</span>, breakpoint_percentile_threshold=<span class="hljs-number">95</span>, embed_model=embed_model<br>)<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/node_parsers/semantic_chunking/">完整示例</a></p>
+<p><strong>TokenTextSplitter</strong></p>
+<p><code>TokenTextSplitter</code>试图根据原始Token计数分割成一致的块大小。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> TokenTextSplitter<br><br>splitter = TokenTextSplitter(<br>    chunk_size=<span class="hljs-number">1024</span>,<br>    chunk_overlap=<span class="hljs-number">20</span>,<br>    separator=<span class="hljs-string">" "</span>,<br>)<br>nodes = splitter.get_nodes_from_documents(documents)<br></code></pre></td></tr></table></figure>
+<h4 id="relation-based-node-parsers">4.2.3 Relation-Based Node
+Parsers</h4>
+<p><strong>HierarchicalNodeParser</strong></p>
+<p>此节点解析器将节点分块成层次化的节点。这意味着单个输入将被分块成几个层次的块大小，每个节点都包含对其父节点的引用。</p>
+<p>当与<code>AutoMergingRetriever</code>结合使用时，这使我们能够自动地用其父节点替换检索到的节点，当大多数子节点被检索到时。这个过程为响应合成提供了更完整的上下文给LLM。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> HierarchicalNodeParser<br><br>node_parser = HierarchicalNodeParser.from_defaults(<br>    chunk_sizes=[<span class="hljs-number">2048</span>, <span class="hljs-number">512</span>, <span class="hljs-number">128</span>]<br>)<br></code></pre></td></tr></table></figure>
+<p>与AutoMergingRetriever结合使用的<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/retrievers/auto_merging_retriever/">完整示例</a></p>
+<h2 id="五ingestion-pipeline">五、Ingestion Pipeline</h2>
+<p><code>IngestionPipeline</code>使用了一个<code>Transformations</code>的概念，这些转换应用于输入数据。这些转换应用于您的输入数据，生成的节点要么被返回，要么被插入到给定的向量数据库中。每个节点+转换对都会被缓存，这样在后续运行中（如果缓存被保留）使用相同的节点+转换组合时，就可以使用缓存结果，从而节省时间。</p>
+<p>要查看<code>IngestionPipeline</code>的实际应用示例，请查看 <a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/getting_started/starter_tools/rag_cli/">RAG
+CLI</a>。</p>
+<h3 id="ingestion-pipeline">5.1 Ingestion Pipeline</h3>
+<p>最简单的使用方式是实例化一个<code>IngestionPipeline</code>，如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Document<br><span class="hljs-keyword">from</span> llama_index.embeddings.openai <span class="hljs-keyword">import</span> OpenAIEmbedding<br><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SentenceSplitter<br><span class="hljs-keyword">from</span> llama_index.core.extractors <span class="hljs-keyword">import</span> TitleExtractor<br><span class="hljs-keyword">from</span> llama_index.core.ingestion <span class="hljs-keyword">import</span> IngestionPipeline, IngestionCache<br><br><span class="hljs-comment"># create the pipeline with transformations</span><br>pipeline = IngestionPipeline(<br>    transformations=[<br>        SentenceSplitter(chunk_size=<span class="hljs-number">25</span>, chunk_overlap=<span class="hljs-number">0</span>),<br>        TitleExtractor(),<br>        OpenAIEmbedding(),<br>    ]<br>)<br><br><span class="hljs-comment"># run the pipeline</span><br>nodes = pipeline.run(documents=[Document.example()])<br></code></pre></td></tr></table></figure>
+<h4 id="连接向量数据库">5.1.1 连接向量数据库</h4>
+<p>在运行<code>IngestionPipeline</code>时，您还可以选择自动将生成的节点插入到远程向量存储中。然后，您可以稍后从该向量存储构建索引。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Document<br><span class="hljs-keyword">from</span> llama_index.embeddings.openai <span class="hljs-keyword">import</span> OpenAIEmbedding<br><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SentenceSplitter<br><span class="hljs-keyword">from</span> llama_index.core.extractors <span class="hljs-keyword">import</span> TitleExtractor<br><span class="hljs-keyword">from</span> llama_index.core.ingestion <span class="hljs-keyword">import</span> IngestionPipeline<br><span class="hljs-keyword">from</span> llama_index.vector_stores.qdrant <span class="hljs-keyword">import</span> QdrantVectorStore<br><br><span class="hljs-keyword">import</span> qdrant_client<br><br>client = qdrant_client.QdrantClient(location=<span class="hljs-string">":memory:"</span>)<br>vector_store = QdrantVectorStore(client=client, collection_name=<span class="hljs-string">"test_store"</span>)<br><br>pipeline = IngestionPipeline(<br>    transformations=[<br>        SentenceSplitter(chunk_size=<span class="hljs-number">25</span>, chunk_overlap=<span class="hljs-number">0</span>),<br>        TitleExtractor(),<br>        OpenAIEmbedding(),<br>    ],<br>    vector_store=vector_store,<br>)<br><br><span class="hljs-comment"># Ingest directly into a vector db</span><br>pipeline.run(documents=[Document.example()])<br><br><span class="hljs-comment"># Create your index</span><br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex<br><br>index = VectorStoreIndex.from_vector_store(vector_store)<br></code></pre></td></tr></table></figure>
+<p>在上述示例中，Embedding是在管道的一部分计算的。如果您将管道连接到向量存储，Embedding必须是您管道的一个阶段，否则您后续实例化索引将会失败。如果您没有连接到向量存储，只是生成节点列表，您可以从管道中省略嵌入。</p>
+<p>在<code>IngestionPipeline</code>中，每个节点 +
+转换组合都会被哈希并缓存。这在后续使用相同数据的运行中节省了时间。</p>
+<h4 id="本地缓存管理">5.1.2 本地缓存管理</h4>
+<p>一旦有了pipeline，您可能想要存储和加载缓存。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># save</span><br>pipeline.persist(<span class="hljs-string">"./pipeline_storage"</span>)<br><br><span class="hljs-comment"># load and restore state</span><br>new_pipeline = IngestionPipeline(<br>    transformations=[<br>        SentenceSplitter(chunk_size=<span class="hljs-number">25</span>, chunk_overlap=<span class="hljs-number">0</span>),<br>        TitleExtractor(),<br>    ],<br>)<br>new_pipeline.load(<span class="hljs-string">"./pipeline_storage"</span>)<br><br><span class="hljs-comment"># will run instantly due to the cache</span><br>nodes = pipeline.run(documents=[Document.example()])<br><br><span class="hljs-comment"># delete all context of the cache</span><br>cache.clear()<br></code></pre></td></tr></table></figure>
+<h4 id="远程缓存管理">5.1.3 远程缓存管理</h4>
+<p>支持多个远程存储后端用于缓存</p>
+<ul>
+<li><code>RedisCache</code></li>
+<li><code>MongoDBCache</code></li>
+<li><code>FirestoreCache</code></li>
+</ul>
+<p>以下是使用 <code>RedisCache</code> 的示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Document<br><span class="hljs-keyword">from</span> llama_index.embeddings.openai <span class="hljs-keyword">import</span> OpenAIEmbedding<br><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SentenceSplitter<br><span class="hljs-keyword">from</span> llama_index.core.extractors <span class="hljs-keyword">import</span> TitleExtractor<br><span class="hljs-keyword">from</span> llama_index.core.ingestion <span class="hljs-keyword">import</span> IngestionPipeline, IngestionCache<br><span class="hljs-keyword">from</span> llama_index.core.ingestion.cache <span class="hljs-keyword">import</span> RedisCache<br><br><br>pipeline = IngestionPipeline(<br>    transformations=[<br>        SentenceSplitter(chunk_size=<span class="hljs-number">25</span>, chunk_overlap=<span class="hljs-number">0</span>),<br>        TitleExtractor(),<br>        OpenAIEmbedding(),<br>    ],<br>    cache=IngestionCache(<br>        cache=RedisCache(<br>            redis_uri=<span class="hljs-string">"redis://127.0.0.1:6379"</span>, collection=<span class="hljs-string">"test_cache"</span><br>        )<br>    ),<br>)<br><br><span class="hljs-comment"># Ingest directly into a vector db</span><br>nodes = pipeline.run(documents=[Document.example()])<br></code></pre></td></tr></table></figure>
+<p>这里不需要 persist 步骤，因为一切都在指定的远程集合中缓存。</p>
+<h4 id="异步支持">5.1.4 异步支持</h4>
+<p><code>IngestionPipeline</code>还支持异步操作</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">nodes = <span class="hljs-keyword">await</span> pipeline.arun(documents=documents)<br></code></pre></td></tr></table></figure>
+<h4 id="document-management">5.1.5 Document Management</h4>
+<p>将文档存储 (docstore)
+附加到<code>IngestionPipeline</code>将启用文档管理。使用
+<code>document.doc_id</code>或
+<code>node.ref_doc_id</code>作为基准点，<code>IngestionPipeline</code>将积极寻找重复文档。</p>
+<p>它的工作原理是：</p>
+<ul>
+<li><p>存储一个 <code>doc_id -&gt; document_hash</code> 的映射</p></li>
+<li><p>如果附加了向量存储：</p>
+<ul>
+<li><p>如果检测到重复的
+<code>doc_id</code>，并且哈希已更改，则文档将被重新处理并更新插入</p></li>
+<li><p>如果检测到重复的 <code>doc_id</code>
+并且哈希未更改，则跳过该节点</p></li>
+</ul></li>
+<li><p>如果没有附加向量存储：</p>
+<ul>
+<li><p>检查每个节点的所有现有哈希</p></li>
+<li><p>如果发现重复项，则跳过该节点</p></li>
+<li><p>否则，处理该节点</p></li>
+</ul></li>
+</ul>
+<p>注意：如果我们没有附加向量存储，我们只能检查并删除重复的输入。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.ingestion <span class="hljs-keyword">import</span> IngestionPipeline<br><span class="hljs-keyword">from</span> llama_index.core.storage.docstore <span class="hljs-keyword">import</span> SimpleDocumentStore<br><br>pipeline = IngestionPipeline(<br>    transformations=[...], docstore=SimpleDocumentStore()<br>)<br></code></pre></td></tr></table></figure>
+<p>完整例子 <a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/ingestion/document_management_pipeline/">1</a>,<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/ingestion/redis_ingestion_pipeline/">2</a></p>
+<h4 id="parallel-processing">5.1.6 Parallel Processing</h4>
+<p><code>IngestionPipeline</code> 的 <code>run</code>
+方法可以使用并行执行。它通过使用 <code>multiprocessing.Pool</code>
+将节点批次分配到多个处理器中来实现。</p>
+<p>要使用并行处理执行，请将
+<code>num_workers</code>设置为您想要使用的进程数量：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.ingestion <span class="hljs-keyword">import</span> IngestionPipeline<br><br>pipeline = IngestionPipeline(<br>    transformations=[...],<br>)<br>pipeline.run(documents=[...], num_workers=<span class="hljs-number">4</span>)<br></code></pre></td></tr></table></figure>
+<p>更多：<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/loading/ingestion_pipeline/#modules">https://docs.llamaindex.ai/en/stable/module_guides/loading/ingestion_pipeline/#modules</a></p>
+<h3 id="transformations">5.2 Transformations</h3>
+<p>变换是一种输入节点列表并返回节点列表的操作。实现变换基类（Transformation
+base class）的每个组件都具有同步的 <code>__call__()</code> 定义和异步的
+<code>acall()</code> 定义。</p>
+<p>目前，以下组件是<code>Transformation</code>对象：</p>
+<ul>
+<li>文本分割器（TextSplitter）</li>
+<li>节点解析器（NodeParser）</li>
+<li>元数据提取器（MetadataExtractor）</li>
+<li><code>Embeddings</code>模型（支持的Embeddings模型<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/models/embeddings/#list-of-supported-embeddings">列表</a>）</li>
+</ul>
+<h4 id="使用-3">5.2.1 使用</h4>
+<p>变换最好与<code>IngestionPipeline</code>一起使用，但也可以直接使用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SentenceSplitter<br><span class="hljs-keyword">from</span> llama_index.core.extractors <span class="hljs-keyword">import</span> TitleExtractor<br><br>node_parser = SentenceSplitter(chunk_size=<span class="hljs-number">512</span>)<br>extractor = TitleExtractor()<br><br><span class="hljs-comment"># use transforms directly</span><br>nodes = node_parser(documents)<br><br><span class="hljs-comment"># or use a transformation in async</span><br>nodes = <span class="hljs-keyword">await</span> extractor.acall(nodes)<br></code></pre></td></tr></table></figure>
+<h4 id="与索引结合使用">5.2.2 与索引结合使用</h4>
+<p>变换可以传递到索引或整体全局设置中，并在调用索引上的
+<code>from_documents()</code> 或<code>insert()</code> 时使用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex<br><span class="hljs-keyword">from</span> llama_index.core.extractors <span class="hljs-keyword">import</span> (<br>    TitleExtractor,<br>    QuestionsAnsweredExtractor,<br>)<br><span class="hljs-keyword">from</span> llama_index.core.ingestion <span class="hljs-keyword">import</span> IngestionPipeline<br><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> TokenTextSplitter<br><br>transformations = [<br>    TokenTextSplitter(chunk_size=<span class="hljs-number">512</span>, chunk_overlap=<span class="hljs-number">128</span>),<br>    TitleExtractor(nodes=<span class="hljs-number">5</span>),<br>    QuestionsAnsweredExtractor(questions=<span class="hljs-number">3</span>),<br>]<br><br><span class="hljs-comment"># global</span><br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Settings<br><br>Settings.transformations = [text_splitter, title_extractor, qa_extractor]<br><br><span class="hljs-comment"># per-index</span><br>index = VectorStoreIndex.from_documents(<br>    documents, transformations=transformations<br>)<br></code></pre></td></tr></table></figure>
+<h4 id="自定义变换">5.2.3 自定义变换</h4>
+<p>通过实现基类来实现任何自定义变换。以下自定义变换将从文本中移除任何特殊字符或标点符号。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> re<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Document<br><span class="hljs-keyword">from</span> llama_index.embeddings.openai <span class="hljs-keyword">import</span> OpenAIEmbedding<br><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SentenceSplitter<br><span class="hljs-keyword">from</span> llama_index.core.ingestion <span class="hljs-keyword">import</span> IngestionPipeline<br><span class="hljs-keyword">from</span> llama_index.core.schema <span class="hljs-keyword">import</span> TransformComponent<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">TextCleaner</span>(<span class="hljs-title class_ inherited__">TransformComponent</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__call__</span>(<span class="hljs-params">self, nodes, **kwargs</span>):<br>        <span class="hljs-keyword">for</span> node <span class="hljs-keyword">in</span> nodes:<br>            node.text = re.sub(<span class="hljs-string">r"[^0-9A-Za-z ]"</span>, <span class="hljs-string">""</span>, node.text)<br>        <span class="hljs-keyword">return</span> nodes<br></code></pre></td></tr></table></figure>
+<p>可以直接使用或在任何IngestionPipeline中使用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># use in a pipeline</span><br>pipeline = IngestionPipeline(<br>    transformations=[<br>        SentenceSplitter(chunk_size=<span class="hljs-number">25</span>, chunk_overlap=<span class="hljs-number">0</span>),<br>        TextCleaner(),<br>        OpenAIEmbedding(),<br>    ],<br>)<br><br>nodes = pipeline.run(documents=[Document.example()])<br></code></pre></td></tr></table></figure>
+<h2 id="官方资源">官方资源</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/loading/">官方文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.llamaindex.ai/blog">官方博客</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples">官方全部例子</a></li>
+</ul>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/multiprocessing.html?highlight=process#the-spawn-and-forkserver-start-methods" class="uri">https://docs.python.org/3/library/multiprocessing.html?highlight=process#the-spawn-and-forkserver-start-methods</a>
+<a href="#fnref:1" rev="footnote" class="footnote-backref">
+↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LlamaIndex/" class="category-chain-item">LlamaIndex</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#LLM学习笔记</a>
+      
+        <a href="/tags/LlamaIndex/" class="print-no-link">#LlamaIndex</a>
+      
+        <a href="/tags/Agent/" class="print-no-link">#Agent</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LlamaIndex(四)——LlamaIndex Loading</div>
+      <div>https://mztchaoqun.com.cn/posts/D17_LlamaIndex_Loading/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年4月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D18_LlamaIndex_Indexing/" title="LlamaIndex(五)——LlamaIndex Indexing">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LlamaIndex(五)——LlamaIndex Indexing</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D16_LlamaIndex_Prompt/" title="LlamaIndex(三)——LlamaIndex Prompt">
+                        <span class="hidden-mobile">LlamaIndex(三)——LlamaIndex Prompt</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

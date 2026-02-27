@@ -1,0 +1,913 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、 LangGraph for Code Generation 1.1 动机 代码生成和分析是大型语言模型（LLMs）最重要的应用之一，这一点从GitHub Copilot这样的产品的普遍性以和GPT-engineer这样的项目的受欢迎程度就可见一斑。最近AlphaCodium的研究工作表明，通过使用流程范式而不是简单的prompt:answer，可以改进代码生成，答案可以通过迭代没（1）测试答">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LangGraph(七)——Code Generation">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D38_LangGraph_Code_Generation/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、 LangGraph for Code Generation 1.1 动机 代码生成和分析是大型语言模型（LLMs）最重要的应用之一，这一点从GitHub Copilot这样的产品的普遍性以和GPT-engineer这样的项目的受欢迎程度就可见一斑。最近AlphaCodium的研究工作表明，通过使用流程范式而不是简单的prompt:answer，可以改进代码生成，答案可以通过迭代没（1）测试答">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/AI-Code-Generator.webp">
+<meta property="article:published_time" content="2024-09-21T13:27:22.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.272Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="LLM学习笔记">
+<meta property="article:tag" content="LangGraph">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/AI-Code-Generator.webp">
+  
+  
+  
+  <title>LangGraph(七)——Code Generation - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LangGraph(七)——Code Generation"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-09-21 21:27" pubdate>
+          2024年9月21日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          18 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LangGraph(七)——Code Generation</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一-langgraph-for-code-generation">一、 LangGraph for Code
+Generation</h2>
+<h3 id="动机">1.1 动机</h3>
+<p>代码生成和分析是大型语言模型（LLMs）最重要的应用之一，这一点从<a target="_blank" rel="noopener" href="https://github.com/features/copilot">GitHub
+Copilot</a>这样的产品的普遍性以和<a target="_blank" rel="noopener" href="https://github.com/gpt-engineer-org/gpt-engineer">GPT-engineer</a>这样的项目的受欢迎程度就可见一斑。最近<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2401.08500">AlphaCodium</a>的研究工作表明，通过使用<a target="_blank" rel="noopener" href="https://x.com/karpathy/status/1748043513156272416">流程范式</a>而不是简单的<code>prompt:answer</code>，可以改进代码生成，答案可以通过迭代没（1）测试答案和（2）反思这些测试的结果来提升生成的质量。</p>
+<p><img src="/images/AlphaCodium.png" srcset="/img/loading.gif" lazyload></p>
+<p>通过使用LangGraph构建两种不同的Code生成方式:</p>
+<ol type="1">
+<li>通过提示和上下文填充进行代码生成。</li>
+<li>涉及检查和运行代码的代码生成流程，如果出现错误，则将其传回以自我纠正。</li>
+</ol>
+<p>来看看第二种方式到底有多大提升。（结果表明55%-&gt;81%）</p>
+<h3 id="评估集">1.2 评估集</h3>
+<p>LangChain官方做了以下工作：</p>
+<p>选择LangChain表达式语言（LCEL）的LangChain文档的子集，它既限定了范围（约60k
+token）。挖掘30天的<a target="_blank" rel="noopener" href="https://chat.langchain.com/">chat-langchain</a>中与LCEL相关的问题（<a target="_blank" rel="noopener" href="https://github.com/langchain-ai/lcel-teacher/blob/main/eval/build_eval_set.ipynb">code</a>）。筛选提到LCEL的问题，从超过60k个聊天中筛选出大约500个。对这大约500个问题进行聚类，并使用一个大型语言模型（GPT-4，128k）对聚类进行总结，为每个类别提供有代表性的问题。并手动审查并为每个问题生成了一个真实的答案（评估集包含20个问题,<a target="_blank" rel="noopener" href="https://github.com/langchain-ai/lcel-teacher/blob/main/eval/eval.csv">data</a>）。并将这个<a target="_blank" rel="noopener" href="https://smith.langchain.com/public/ea1f6ca5-de52-4d36-bd7b-fde3faa74a70/d">数据集</a>添加到了LangSmith中。</p>
+<p><img src="/images/Eval_Set_workflow.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="二使用langgraph实现-code-generation-with-reflection">二、使用LangGraph实现
+Code generation with Reflection</h2>
+<p>使用LangGraph实现一个带有Relection的 Code
+Generator，包含以下组件：</p>
+<p>我们实现了一个包含以下组件的代码生成流程：</p>
+<ol type="1">
+<li><p><strong>上下文填充</strong>：受到长上下文大型语言模型（LLMs）最近<a target="_blank" rel="noopener" href="https://blog.google/technology/ai/google-gemini-next-generation-model-february-2024">趋势</a>的启发，使用具有128k个token上下文窗口的GPT-4对60k个token的LCEL文档进行上下文填充。将有关LCEL的问题传递给填充了上下文的LCEL
+chain，以生成初步答案。</p></li>
+<li><p><strong>输出解析</strong>：使用OpenAI工具将<a target="_blank" rel="noopener" href="https://python.langchain.com/docs/modules/model_io/output_parsers/types/pydantic">输出解析</a>为一个包含三个部分的<a target="_blank" rel="noopener" href="https://docs.pydantic.dev/latest">Pydantic</a>对象：(1)
+描述问题的前言，(2) import块，(3) 代码。</p></li>
+<li><p><strong>执行import检查</strong>：首先执行import检查，因为在代码生成过程中，<a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1SkHHw52AHFFBnmljKW3Vq_YvnPpAhhBVhd1SF9mPFUk/edit">幻觉</a>（hallucinations，指生成的代码中的错误或不准确的部分）可能会悄悄进入import语句。</p></li>
+<li><p><strong>代码可执行性检查</strong>：如果import检查通过，接着检查代码本身是否可以执行。在生成提示中，指导LLM在代码解决方案中不使用伪代码或未定义的变量，这应该会产生可执行的代码。</p></li>
+<li><p><strong>错误反馈与重试</strong>：如果任一检查失败，会将堆栈跟踪（stack
+trace，记录程序运行时出现错误的详细信息）连同之前的答案一起传回给生成节点进行反思。允许这个过程重试3次（这只是默认值），但当然可以根据需要进行扩展。</p></li>
+</ol>
+<p>这个流程展示了一个自我修正的代码生成系统，它通过测试生成的代码并根据测试结果进行迭代改进，从而提高了代码生成系统的性能。</p>
+<p><img src="/images/LangGraph_Code_Generation_Flow.png" srcset="/img/loading.gif" lazyload></p>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-616a1529" role="button" aria-expanded="false" aria-controls="collapse-616a1529">
+        <div class="fold-arrow">▶</div>LangGraph代码示例
+      </div>
+      <div class="fold-collapse collapse" id="collapse-616a1529">
+        <div class="fold-content">
+          <p><strong>DOCS</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> bs4 <span class="hljs-keyword">import</span> BeautifulSoup <span class="hljs-keyword">as</span> Soup<br><span class="hljs-keyword">from</span> langchain_community.document_loaders.recursive_url_loader <span class="hljs-keyword">import</span> RecursiveUrlLoader<br><br><span class="hljs-comment"># LCEL docs</span><br>url = <span class="hljs-string">"https://python.langchain.com/docs/expression_language/"</span><br>loader = RecursiveUrlLoader(<br>    url=url, max_depth=<span class="hljs-number">20</span>, extractor=<span class="hljs-keyword">lambda</span> x: Soup(x, <span class="hljs-string">"html.parser"</span>).text<br>)<br>docs = loader.load()<br><br><span class="hljs-comment"># Sort the list based on the URLs and get the text</span><br>d_sorted = <span class="hljs-built_in">sorted</span>(docs, key=<span class="hljs-keyword">lambda</span> x: x.metadata[<span class="hljs-string">"source"</span>])<br>d_reversed = <span class="hljs-built_in">list</span>(<span class="hljs-built_in">reversed</span>(d_sorted))<br>concatenated_content = <span class="hljs-string">"\n\n\n --- \n\n\n"</span>.join(<br>    [doc.page_content <span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> d_reversed]<br>)<br></code></pre></td></tr></table></figure><p><strong>LLMs</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">from</span> langchain_core.prompts <span class="hljs-keyword">import</span> ChatPromptTemplate<br><span class="hljs-keyword">from</span> langchain_core.pydantic_v1 <span class="hljs-keyword">import</span> BaseModel, Field<br><br><span class="hljs-comment">### OpenAI</span><br><br><span class="hljs-comment"># Grader prompt </span><br>code_gen_prompt = ChatPromptTemplate.from_messages(<br>    [(<span class="hljs-string">"system"</span>,<span class="hljs-string">"""You are a coding assistant with expertise in LCEL, LangChain expression language. \n </span><br><span class="hljs-string">    Here is a full set of LCEL documentation:  \n ------- \n  {context} \n ------- \n Answer the user </span><br><span class="hljs-string">    question based on the above provided documentation. Ensure any code you provide can be executed \n </span><br><span class="hljs-string">    with all required imports and variables defined. Structure your answer with a description of the code solution. \n</span><br><span class="hljs-string">    Then list the imports. And finally list the functioning code block. Here is the user question:"""</span>),<br>    (<span class="hljs-string">"placeholder"</span>, <span class="hljs-string">"{messages}"</span>)]<br>)<br><br><span class="hljs-comment"># Data model</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">code</span>(<span class="hljs-title class_ inherited__">BaseModel</span>):<br>    <span class="hljs-string">"""Code output"""</span><br><br>    prefix: <span class="hljs-built_in">str</span> = Field(description=<span class="hljs-string">"Description of the problem and approach"</span>)<br>    imports: <span class="hljs-built_in">str</span> = Field(description=<span class="hljs-string">"Code block import statements"</span>)<br>    code: <span class="hljs-built_in">str</span> = Field(description=<span class="hljs-string">"Code block not including import statements"</span>)<br>    description = <span class="hljs-string">"Schema for code solutions to questions about LCEL."</span><br><br>expt_llm = <span class="hljs-string">"gpt-4-turbo"</span><br>llm = ChatOpenAI(temperature=<span class="hljs-number">0</span>, model=expt_llm)<br>code_gen_chain = code_gen_prompt | llm.with_structured_output(code)<br>question = <span class="hljs-string">"How do I build a RAG chain in LCEL?"</span><br><span class="hljs-comment"># solution = code_gen_chain_oai.invoke({"context":concatenated_content,"messages":[("user",question)]})</span><br></code></pre></td></tr></table></figure><p><strong>Graph State</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">Dict</span>, TypedDict, <span class="hljs-type">List</span><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">GraphState</span>(<span class="hljs-title class_ inherited__">TypedDict</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Represents the state of our graph.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Attributes:</span><br><span class="hljs-string">        error : Binary flag for control flow to indicate whether test error was tripped</span><br><span class="hljs-string">        messages : With user question, error messages, reasoning</span><br><span class="hljs-string">        generation : Code solution</span><br><span class="hljs-string">        iterations : Number of tries </span><br><span class="hljs-string">    """</span><br><br>    error : <span class="hljs-built_in">str</span><br>    messages : <span class="hljs-type">List</span><br>    generation : <span class="hljs-built_in">str</span><br>    iterations : <span class="hljs-built_in">int</span><br></code></pre></td></tr></table></figure><p><strong>Nodes</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> operator <span class="hljs-keyword">import</span> itemgetter<br><span class="hljs-keyword">from</span> langchain.prompts <span class="hljs-keyword">import</span> PromptTemplate<br><span class="hljs-keyword">from</span> langchain_core.pydantic_v1 <span class="hljs-keyword">import</span> BaseModel, Field<br><span class="hljs-keyword">from</span> langchain_core.runnables <span class="hljs-keyword">import</span> RunnablePassthrough<br><br><span class="hljs-comment">### Parameter</span><br><br><span class="hljs-comment"># Max tries</span><br>max_iterations = <span class="hljs-number">3</span><br><span class="hljs-comment"># Reflect</span><br><span class="hljs-comment"># flag = 'reflect'</span><br>flag = <span class="hljs-string">'do not reflect'</span><br> <br><span class="hljs-comment">### Nodes</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">generate</span>(<span class="hljs-params">state: GraphState</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Generate a code solution</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        state (dict): The current graph state</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        state (dict): New key added to state, generation</span><br><span class="hljs-string">    """</span><br><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"---GENERATING CODE SOLUTION---"</span>)<br>    <br>    <span class="hljs-comment"># State</span><br>    messages = state[<span class="hljs-string">"messages"</span>]<br>    iterations = state[<span class="hljs-string">"iterations"</span>]<br>    error = state[<span class="hljs-string">"error"</span>]<br><br>    <span class="hljs-comment"># We have been routed back to generation with an error</span><br>    <span class="hljs-keyword">if</span> error == <span class="hljs-string">"yes"</span>:<br>        messages += [(<span class="hljs-string">"user"</span>,<span class="hljs-string">"Now, try again. Invoke the code tool to structure the output with a prefix, imports, and code block:"</span>)]<br>        <br>    <span class="hljs-comment"># Solution</span><br>    code_solution = code_gen_chain.invoke({<span class="hljs-string">"context"</span>: concatenated_content, <span class="hljs-string">"messages"</span> : messages})<br>    messages += [(<span class="hljs-string">"assistant"</span>,<span class="hljs-string">f"<span class="hljs-subst">{code_solution.prefix}</span> \n Imports: <span class="hljs-subst">{code_solution.imports}</span> \n Code: <span class="hljs-subst">{code_solution.code}</span>"</span>)]<br>    <br>    <span class="hljs-comment"># Increment</span><br>    iterations = iterations + <span class="hljs-number">1</span><br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"generation"</span>: code_solution, <span class="hljs-string">"messages"</span>: messages, <span class="hljs-string">"iterations"</span>: iterations}<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">code_check</span>(<span class="hljs-params">state: GraphState</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Check code</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        state (dict): The current graph state</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        state (dict): New key added to state, error</span><br><span class="hljs-string">    """</span><br><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"---CHECKING CODE---"</span>)<br>    <br>    <span class="hljs-comment"># State</span><br>    messages = state[<span class="hljs-string">"messages"</span>]<br>    code_solution = state[<span class="hljs-string">"generation"</span>]<br>    iterations = state[<span class="hljs-string">"iterations"</span>]<br><br>    <span class="hljs-comment"># Get solution components</span><br>    prefix = code_solution.prefix<br>    imports = code_solution.imports<br>    code = code_solution.code<br><br>    <span class="hljs-comment"># Check imports</span><br>    <span class="hljs-keyword">try</span>:<br>        <span class="hljs-built_in">exec</span>(imports)<br>    <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"---CODE IMPORT CHECK: FAILED---"</span>)<br>        error_message = [(<span class="hljs-string">"user"</span>, <span class="hljs-string">f"Your solution failed the import test: <span class="hljs-subst">{e}</span>"</span>)]<br>        messages += error_message<br>        <span class="hljs-keyword">return</span> {<span class="hljs-string">"generation"</span>: code_solution, <span class="hljs-string">"messages"</span>: messages, <span class="hljs-string">"iterations"</span>: iterations, <span class="hljs-string">"error"</span>: <span class="hljs-string">"yes"</span>}<br>    <br>    <span class="hljs-comment"># Check execution</span><br>    <span class="hljs-keyword">try</span>:<br>        <span class="hljs-built_in">exec</span>(imports + <span class="hljs-string">"\n"</span> + code)<br>    <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"---CODE BLOCK CHECK: FAILED---"</span>)<br>        error_message = [(<span class="hljs-string">"user"</span>, <span class="hljs-string">f"Your solution failed the code execution test: <span class="hljs-subst">{e}</span>"</span>)]<br>        messages += error_message<br>        <span class="hljs-keyword">return</span> {<span class="hljs-string">"generation"</span>: code_solution, <span class="hljs-string">"messages"</span>: messages, <span class="hljs-string">"iterations"</span>: iterations, <span class="hljs-string">"error"</span>: <span class="hljs-string">"yes"</span>}<br>  <br>    <span class="hljs-comment"># No errors</span><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"---NO CODE TEST FAILURES---"</span>)<br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"generation"</span>: code_solution, <span class="hljs-string">"messages"</span>: messages, <span class="hljs-string">"iterations"</span>: iterations, <span class="hljs-string">"error"</span>: <span class="hljs-string">"no"</span>}<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">reflect</span>(<span class="hljs-params">state: GraphState</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Reflect on errors</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        state (dict): The current graph state</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        state (dict): New key added to state, generation</span><br><span class="hljs-string">    """</span><br><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"---GENERATING CODE SOLUTION---"</span>)<br>    <br>    <span class="hljs-comment"># State</span><br>    messages = state[<span class="hljs-string">"messages"</span>]<br>    iterations = state[<span class="hljs-string">"iterations"</span>]<br>    code_solution = state[<span class="hljs-string">"generation"</span>]<br><br>    <span class="hljs-comment"># Prompt reflection</span><br>    reflection_message = [(<span class="hljs-string">"user"</span>, <span class="hljs-string">"""You tried to solve this problem and failed a unit test. Reflect on this failure</span><br><span class="hljs-string">                                    given the provided documentation. Write a few key suggestions based on the </span><br><span class="hljs-string">                                    documentation to avoid making this mistake again."""</span>)]<br>    <br>    <span class="hljs-comment"># Add reflection</span><br>    reflections = code_gen_chain.invoke({<span class="hljs-string">"context"</span>  : concatenated_content, <span class="hljs-string">"messages"</span> : messages})<br>    messages += [(<span class="hljs-string">"assistant"</span> , <span class="hljs-string">f"Here are reflections on the error: <span class="hljs-subst">{reflections}</span>"</span>)]<br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"generation"</span>: code_solution, <span class="hljs-string">"messages"</span>: messages, <span class="hljs-string">"iterations"</span>: iterations}<br><br><span class="hljs-comment">### Edges</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">decide_to_finish</span>(<span class="hljs-params">state: GraphState</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Determines whether to finish.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        state (dict): The current graph state</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        str: Next node to call</span><br><span class="hljs-string">    """</span><br>    error = state[<span class="hljs-string">"error"</span>]<br>    iterations = state[<span class="hljs-string">"iterations"</span>]<br><br>    <span class="hljs-keyword">if</span> error == <span class="hljs-string">"no"</span> <span class="hljs-keyword">or</span> iterations == max_iterations:<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"---DECISION: FINISH---"</span>)<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">"end"</span><br>    <span class="hljs-keyword">else</span>:<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"---DECISION: RE-TRY SOLUTION---"</span>)<br>        <span class="hljs-keyword">if</span> flag == <span class="hljs-string">'reflect'</span>:<br>            <span class="hljs-keyword">return</span> <span class="hljs-string">"reflect"</span><br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-keyword">return</span> <span class="hljs-string">"generate"</span><br></code></pre></td></tr></table></figure><p><strong>Graph</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langgraph.graph <span class="hljs-keyword">import</span> END, StateGraph<br><br>workflow = StateGraph(GraphState)<br><br><span class="hljs-comment"># Define the nodes</span><br>workflow.add_node(<span class="hljs-string">"generate"</span>, generate)  <span class="hljs-comment"># generation solution</span><br>workflow.add_node(<span class="hljs-string">"check_code"</span>, code_check)  <span class="hljs-comment"># check code</span><br>workflow.add_node(<span class="hljs-string">"reflect"</span>, reflect)  <span class="hljs-comment"># reflect</span><br><br><span class="hljs-comment"># Build graph</span><br>workflow.set_entry_point(<span class="hljs-string">"generate"</span>)<br>workflow.add_edge(<span class="hljs-string">"generate"</span>, <span class="hljs-string">"check_code"</span>)<br>workflow.add_conditional_edges(<br>    <span class="hljs-string">"check_code"</span>,<br>    decide_to_finish,<br>    {<br>        <span class="hljs-string">"end"</span>: END,<br>        <span class="hljs-string">"reflect"</span>: <span class="hljs-string">"reflect"</span>,<br>        <span class="hljs-string">"generate"</span>: <span class="hljs-string">"generate"</span>,<br>    },<br>)<br>workflow.add_edge(<span class="hljs-string">"reflect"</span>, <span class="hljs-string">"generate"</span>)<br>app = workflow.<span class="hljs-built_in">compile</span>()<br></code></pre></td></tr></table></figure><p><strong>Graph预览</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> IPython.display <span class="hljs-keyword">import</span> Image<br><br>Image(app.get_graph().draw_png())<br></code></pre></td></tr></table></figure><p><img src="/images/Code_Generation.png" srcset="/img/loading.gif" lazyload></p><p><strong>执行</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">question = <span class="hljs-string">"How can I directly pass a string to a runnable and use it to construct the input needed for my prompt?"</span><br>app.invoke({<span class="hljs-string">"messages"</span>:[(<span class="hljs-string">"user"</span>,question)],<span class="hljs-string">"iterations"</span>:<span class="hljs-number">0</span>})<br></code></pre></td></tr></table></figure><p>输出</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs text">---GENERATING CODE SOLUTION---<br>---CHECKING CODE---<br>messages=[HumanMessage(content='Process this input: Hello, this is a direct string input!')]<br>---NO CODE TEST FAILURES---<br>---DECISION: FINISH---<br>{'error': 'no',<br> 'messages': [('user',<br>   'How can I directly pass a string to a runnable and use it to construct the input needed for my prompt?'),<br>  ('assistant',<br>   'Directly passing a string to a runnable for constructing input for a prompt in LCEL \n Imports: from langchain_core.runnables import RunnableLambda\nfrom langchain_core.prompts import ChatPromptTemplate \n Code: # Define the prompt template\nprompt = ChatPromptTemplate.from_template("Process this input: {input}")\n\n# Define a runnable that constructs the input for the prompt\nconstruct_input = RunnableLambda(lambda x: {\'input\': x})\n\n# Chain the input constructor with the prompt\nchain = construct_input | prompt\n\n# Example usage\nresult = chain.invoke(\'Hello, this is a direct string input!\')\nprint(result)')],<br> 'generation': code(prefix='Directly passing a string to a runnable for constructing input for a prompt in LCEL', imports='from langchain_core.runnables import RunnableLambda\nfrom langchain_core.prompts import ChatPromptTemplate', code='# Define the prompt template\nprompt = ChatPromptTemplate.from_template("Process this input: {input}")\n\n# Define a runnable that constructs the input for the prompt\nconstruct_input = RunnableLambda(lambda x: {\'input\': x})\n\n# Chain the input constructor with the prompt\nchain = construct_input | prompt\n\n# Example usage\nresult = chain.invoke(\'Hello, this is a direct string input!\')\nprint(result)', description='Schema for code solutions to questions about LCEL.'),<br> 'iterations': 1}<br></code></pre></td></tr></table></figure><p>LangSmith流程展示：</p><p><img src="/images/LangSmith_Code_Generation.png" srcset="/img/loading.gif" lazyload></p>
+        </div>
+      </div>
+    </div>
+<h2 id="三使用langsmith进行评估">三、使用LangSmith进行评估</h2>
+<p>首先实现了一个没有使用LangGraph的上下文填充作为基本对照，这是graph中的第一个节点，没有任何检查或反馈：使用具有128k个token上下文窗口的GPT-4对60k个token的LCEL文档进行上下文填充。将有关LCEL的问题传递给填充了上下文的LCEL
+chain，以生成答案。</p>
+<p>为以下两个方面在LangSmith中实现了<a target="_blank" rel="noopener" href="https://docs.smith.langchain.com/evaluation/faq/custom-evaluators">自定义评估器</a>：</p>
+<ol type="1">
+<li>导入评估</li>
+<li>代码执行</li>
+</ol>
+<p>使用20个问题的评估集对上下文填充进行了四次评估,<a target="_blank" rel="noopener" href="https://smith.langchain.com/public/ea1f6ca5-de52-4d36-bd7b-fde3faa74a70/d">评估结果</a>。在上下文填充中，大约<code>98%</code>的导入测试是正确的，而大约<code>55%</code>的代码执行测试是正确的（<code>N=79</code>次成功的试验）。使用LangSmith来查看失败案例：这里有一个例子，它没有意识到<code>RunnableLambda</code>函数的输入将是一个字典，并错误地认为它是一个字符串：<code>AttributeError: 'dict' object has no attribute 'upper'</code>。</p>
+<p>然后，测试了上下文填充 + LangGraph，以：</p>
+<ol type="1">
+<li>在导入和代码执行中执行检查，以发现此类错误；</li>
+<li>在执行更新答案生成时反思任何错误。</li>
+</ol>
+<p>在同一评估集上，看到100%的导入测试是正确的，以及大约81%的代码执行测试是正确的（<code>N=78</code>次试验）。</p>
+<p>我们可以重新审视上述失败案例，以说明原因：完整的跟踪显示我们确实在第二次尝试回答问题时遇到了相同的错误。我们在反思步骤中包含了这个错误，其中先前的解决方案和由此产生的错误都包含在提示中，用于生成最终（正确）的答案：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">You previously tried to solve this problem. <br>...<br>--- Most recent run error --- <br>Execution error: 'dict' object has no attribute 'upper'  <br>...<br>Please re-try to answer this.<br>...<br></code></pre></td></tr></table></figure>
+<p>最终生成的代码正确处理了<code>RunnableLambda</code>函数中的输入字典，绕过了在上下文填充基线案例中观察到的错误。总体而言，通过添加这个简单的反思步骤并使用LangGraph进行重试，代码执行的性能有了显著提升，提高了约<code>47%</code>。如图：</p>
+<p><img src="/images/improvement.png" srcset="/img/loading.gif" lazyload></p>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-7402c3ad" role="button" aria-expanded="false" aria-controls="collapse-7402c3ad">
+        <div class="fold-arrow">▶</div>评估代码示例
+      </div>
+      <div class="fold-collapse collapse" id="collapse-7402c3ad">
+        <div class="fold-content">
+          <p><strong>Download DataSet</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> langsmith<br>client = langsmith.Client()<br><br><span class="hljs-comment"># Clone the dataset to your tenant to use it</span><br>public_dataset = (<span class="hljs-string">"https://smith.langchain.com/public/326674a6-62bd-462d-88ae-eea49d503f9d/d"</span>)<br>client.clone_public_dataset(public_dataset)<br></code></pre></td></tr></table></figure><p><strong>Custom evals</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langsmith.schemas <span class="hljs-keyword">import</span> Example, Run<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">check_import</span>(<span class="hljs-params">run: Run, example: Example</span>) -&gt; <span class="hljs-built_in">dict</span>: <br>    imports = run.outputs.get(<span class="hljs-string">"imports"</span>)<br>    <span class="hljs-keyword">try</span>:<br>        <span class="hljs-built_in">exec</span>(imports)<br>        <span class="hljs-keyword">return</span> {<span class="hljs-string">"key"</span>: <span class="hljs-string">"import_check"</span> , <span class="hljs-string">"score"</span>: <span class="hljs-number">1</span>} <br>    <span class="hljs-keyword">except</span>:<br>        <span class="hljs-keyword">return</span> {<span class="hljs-string">"key"</span>: <span class="hljs-string">"import_check"</span> , <span class="hljs-string">"score"</span>: <span class="hljs-number">0</span>} <br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">check_execution</span>(<span class="hljs-params">run: Run, example: Example</span>) -&gt; <span class="hljs-built_in">dict</span>: <br>    imports = run.outputs.get(<span class="hljs-string">"imports"</span>)<br>    code = run.outputs.get(<span class="hljs-string">"code"</span>)<br>    <span class="hljs-keyword">try</span>:<br>        <span class="hljs-built_in">exec</span>(imports + <span class="hljs-string">"\n"</span> + code)<br>        <span class="hljs-keyword">return</span> {<span class="hljs-string">"key"</span>: <span class="hljs-string">"code_execution_check"</span> , <span class="hljs-string">"score"</span>: <span class="hljs-number">1</span>} <br>    <span class="hljs-keyword">except</span>:<br>        <span class="hljs-keyword">return</span> {<span class="hljs-string">"key"</span>: <span class="hljs-string">"code_execution_check"</span> , <span class="hljs-string">"score"</span>: <span class="hljs-number">0</span>} <br></code></pre></td></tr></table></figure><p><strong>Compare LangGraph to Context Stuffing</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">predict_base_case</span>(<span class="hljs-params">example: <span class="hljs-built_in">dict</span></span>):<br>    <span class="hljs-string">""" Context stuffing """</span><br>    solution = code_gen_chain.invoke({<span class="hljs-string">"context"</span>  : concatenated_content, <span class="hljs-string">"messages"</span> : [(<span class="hljs-string">"user"</span>,example[<span class="hljs-string">"question"</span>])]})<br>    solution_structured = structured_code_formatter.invoke([(<span class="hljs-string">"code"</span>,solution)])<br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"imports"</span>: solution_structured.imports, <span class="hljs-string">"code"</span>: solution_structured.code}<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">predict_langgraph</span>(<span class="hljs-params">example: <span class="hljs-built_in">dict</span></span>):<br>    <span class="hljs-string">""" LangGraph """</span><br>    graph = app.invoke({<span class="hljs-string">"messages"</span>:[(<span class="hljs-string">"user"</span>,example[<span class="hljs-string">"question"</span>])],<span class="hljs-string">"iterations"</span>:<span class="hljs-number">0</span>})<br>    solution = graph[<span class="hljs-string">"generation"</span>]<br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"imports"</span>: solution.imports, <span class="hljs-string">"code"</span>: solution.code}<br></code></pre></td></tr></table></figure><p><strong>Eval</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langsmith.evaluation <span class="hljs-keyword">import</span> evaluate<br><br><span class="hljs-comment"># Evaluator</span><br>code_evalulator = [check_import,check_execution]<br><br><span class="hljs-comment"># Dataset</span><br>dataset_name = <span class="hljs-string">"test-LCEL-code-gen"</span><br></code></pre></td></tr></table></figure><p>Base Case</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># Run base case</span><br>experiment_results_ = evaluate(<br>    predict_base_case,<br>    data=dataset_name,<br>    evaluators=code_evalulator,<br>    experiment_prefix=<span class="hljs-string">f"test-without-langgraph-<span class="hljs-subst">{expt_llm}</span>"</span>, <br>    max_concurrency=<span class="hljs-number">2</span>,<br>    metadata={<br>      <span class="hljs-string">"llm"</span>: expt_llm,<br>    },<br>)<br></code></pre></td></tr></table></figure><p><strong>LangGraph</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># Run with langgraph</span><br>experiment_results = evaluate(<br>    predict_langgraph,<br>    data=dataset_name,<br>    evaluators=code_evalulator,<br>    experiment_prefix=<span class="hljs-string">f"test-with-langgraph-<span class="hljs-subst">{expt_llm}</span>-<span class="hljs-subst">{flag}</span>"</span>,<br>    max_concurrency=<span class="hljs-number">2</span>,<br>    metadata={<br>      <span class="hljs-string">"llm"</span>: expt_llm,<br>      <span class="hljs-string">"feedback"</span>: flag,<br>    },<br>)<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<p>评估结果LangSmith展示：<a target="_blank" rel="noopener" href="https://smith.langchain.com/public/78a3d858-c811-4e46-91cb-0f10ef56260b/d">https://smith.langchain.com/public/78a3d858-c811-4e46-91cb-0f10ef56260b/d</a></p>
+<h2 id="官方资源">官方资源</h2>
+<p>代码示例更详细说明：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langgraph/blob/main/examples/code_assistant/langgraph_code_assistant.ipynb">Code
+Reneration</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=MvNdgmM7uyc">官方YouTube</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.langchain.dev/code-execution-with-langgraph/">官方Blog</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1ct42157aB">B站视频</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LangGraph/" class="category-chain-item">LangGraph</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#LLM学习笔记</a>
+      
+        <a href="/tags/Agent/" class="print-no-link">#Agent</a>
+      
+        <a href="/tags/LangGraph/" class="print-no-link">#LangGraph</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LangGraph(七)——Code Generation</div>
+      <div>https://mztchaoqun.com.cn/posts/D38_LangGraph_Code_Generation/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年9月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D39_LLM/" title="LLM(一)——LLM简介">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LLM(一)——LLM简介</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D37_Refection_Agents/" title="LangGraph(六)——Reflection Agents">
+                        <span class="hidden-mobile">LangGraph(六)——Reflection Agents</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

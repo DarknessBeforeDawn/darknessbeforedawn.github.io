@@ -1,0 +1,1024 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、简介 LLM开发中，评估和基准测试是至关重要的概念。为了提高一个LLM应用（例如RAG、agent）的性能，必须有一种方法来衡量它。LlamaIndex提供了关键模块来衡量生成结果的质量。还提供关键模块来衡量检索质量。  Response Evaluation: 响应是否与检索到的上下文相匹配？它是否也与查询相匹配？它是否与参考答案或指南相匹配？ Retrieval Evaluation: 检">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LlamaIndex(九)——LlamaIndex Evaluation">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D22_LlamaIndex_Evaluating/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、简介 LLM开发中，评估和基准测试是至关重要的概念。为了提高一个LLM应用（例如RAG、agent）的性能，必须有一种方法来衡量它。LlamaIndex提供了关键模块来衡量生成结果的质量。还提供关键模块来衡量检索质量。  Response Evaluation: 响应是否与检索到的上下文相匹配？它是否也与查询相匹配？它是否与参考答案或指南相匹配？ Retrieval Evaluation: 检">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/LlamaIndex9.webp">
+<meta property="article:published_time" content="2024-05-31T06:47:55.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.270Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="LLM学习笔记">
+<meta property="article:tag" content="LlamaIndex">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/LlamaIndex9.webp">
+  
+  
+  
+  <title>LlamaIndex(九)——LlamaIndex Evaluation - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LlamaIndex(九)——LlamaIndex Evaluation"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-05-31 14:47" pubdate>
+          2024年5月31日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          22 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LlamaIndex(九)——LlamaIndex Evaluation</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一简介">一、简介</h2>
+<p>LLM开发中，评估和基准测试是至关重要的概念。为了提高一个LLM应用（例如RAG、agent）的性能，必须有一种方法来衡量它。LlamaIndex提供了关键模块来衡量生成结果的质量。还提供关键模块来衡量检索质量。</p>
+<ul>
+<li><strong>Response Evaluation</strong>:
+响应是否与检索到的上下文相匹配？它是否也与查询相匹配？它是否与参考答案或指南相匹配？</li>
+<li><strong>Retrieval Evaluation</strong>:
+检索到的来源是否与查询相关？</li>
+</ul>
+<h2 id="二response-evaluation">二、Response Evaluation</h2>
+<p>评估生成结果可能很困难，因为与传统机器学习不同，预测结果不是一个单一的数字，而且很难为此问题定义定量指标。LlamaIndex提供了基于LLM的评估模块来衡量结果的质量。这使用一个LLM（例如GPT-4）以多种方式决定预测答案是否正确。多当前的评估模块不需要真实标签。评估可以通过查询、上下文、响应的某种组合，并与LLM调用结合来完成。</p>
+<p>这些评估模块以以下形式存在：</p>
+<ul>
+<li><strong>Correctness</strong>:
+生成的答案是否与给定查询的参考答案相匹配（需要标签）。</li>
+<li><strong>Semantic
+Similarity</strong>：预测答案是否在语义上与参考答案相似（需要标签）。</li>
+<li><strong>Faithfulness</strong>:
+评估答案是否忠实于检索到的上下文（换句话说，是否有幻觉）。</li>
+<li><strong>Context Relevancy</strong>:
+检索到的上下文是否与查询相关。</li>
+<li><strong>Answer Relevancy</strong>: 生成的答案是否与查询相关。</li>
+<li><strong>Guideline Adherence</strong>:
+预测答案是否遵循特定指南。</li>
+</ul>
+<p>除了评估查询外，LlamaIndex还可以使用数据生成问题以进行评估。这意味着可以自动生成问题，然后运行一个评估管道来测试LLM是否能够使用数据准确回答这些问题。</p>
+<h3 id="baseevaluator">2.1 BaseEvaluator</h3>
+<p>LlamaIndex 中的所有评估模块都实现了 <code>BaseEvaluator</code>
+类，主要包含两个方法：</p>
+<p><code>evaluate</code> 方法接受<code>query</code>,
+<code>contexts</code>, <code>response</code>以及额外的关键字参数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">evaluate</span>(<span class="hljs-params"></span><br><span class="hljs-params">    self,</span><br><span class="hljs-params">    query: <span class="hljs-type">Optional</span>[<span class="hljs-built_in">str</span>] = <span class="hljs-literal">None</span>,</span><br><span class="hljs-params">    contexts: <span class="hljs-type">Optional</span>[<span class="hljs-type">Sequence</span>[<span class="hljs-built_in">str</span>]] = <span class="hljs-literal">None</span>,</span><br><span class="hljs-params">    response: <span class="hljs-type">Optional</span>[<span class="hljs-built_in">str</span>] = <span class="hljs-literal">None</span>,</span><br><span class="hljs-params">    **kwargs: <span class="hljs-type">Any</span>,</span><br><span class="hljs-params"></span>) -&gt; EvaluationResult:<br></code></pre></td></tr></table></figure>
+<p><code>evaluate_response</code> 方法提供了一个替代接口，它接受一个
+llamaindex
+<code>Response</code>对象（其中包含响应字符串和源节点），而不是单独的<code>contexts</code>和<code>response</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">evaluate_response</span>(<span class="hljs-params"></span><br><span class="hljs-params">    self,</span><br><span class="hljs-params">    query: <span class="hljs-type">Optional</span>[<span class="hljs-built_in">str</span>] = <span class="hljs-literal">None</span>,</span><br><span class="hljs-params">    response: <span class="hljs-type">Optional</span>[Response] = <span class="hljs-literal">None</span>,</span><br><span class="hljs-params">    **kwargs: <span class="hljs-type">Any</span>,</span><br><span class="hljs-params"></span>) -&gt; EvaluationResult:<br></code></pre></td></tr></table></figure>
+<p>它的功能与 <code>evaluate</code> 相同，只是在使用 llamaindex
+对象时更方便。</p>
+<h3 id="evaluationresult">2.2 EvaluationResult</h3>
+<p>每个评估器在执行时都会输出一个 <code>EvaluationResult</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python">eval_result = evaluator.evaluate(query=..., contexts=..., response=...)<br>eval_result.passing  <span class="hljs-comment"># binary pass/fail</span><br>eval_result.score  <span class="hljs-comment"># numerical score</span><br>eval_result.feedback  <span class="hljs-comment"># string feedback</span><br></code></pre></td></tr></table></figure>
+<p>不同的评估器可能会填充结果字段的一个子集。</p>
+<h3 id="evaluating-response-faithfulness">2.3 Evaluating Response
+Faithfulness</h3>
+<p><code>FaithfulnessEvaluator</code>
+评估答案是否忠实于检索到的上下文（换句话说，是否有幻觉）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex<br><span class="hljs-keyword">from</span> llama_index.llms.openai <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> llama_index.core.evaluation <span class="hljs-keyword">import</span> FaithfulnessEvaluator<br><br><span class="hljs-comment"># create llm</span><br>llm = OpenAI(model=<span class="hljs-string">"gpt-4"</span>, temperature=<span class="hljs-number">0.0</span>)<br><br><span class="hljs-comment"># build index</span><br>...<br><br><span class="hljs-comment"># define evaluator</span><br>evaluator = FaithfulnessEvaluator(llm=llm)<br><br><span class="hljs-comment"># query index</span><br>query_engine = vector_index.as_query_engine()<br>response = query_engine.query(<br>    <span class="hljs-string">"What battles took place in New York City in the American Revolution?"</span><br>)<br>eval_result = evaluator.evaluate_response(response=response)<br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">str</span>(eval_result.passing))<br></code></pre></td></tr></table></figure>
+<p><img src="/images/eval_response_context.png" srcset="/img/loading.gif" lazyload></p>
+<p>也可以选择单独评估每个源上下文：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex<br><span class="hljs-keyword">from</span> llama_index.llms.openai <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> llama_index.core.evaluation <span class="hljs-keyword">import</span> FaithfulnessEvaluator<br><br><span class="hljs-comment"># create llm</span><br>llm = OpenAI(model=<span class="hljs-string">"gpt-4"</span>, temperature=<span class="hljs-number">0.0</span>)<br><br><span class="hljs-comment"># build index</span><br>...<br><br><span class="hljs-comment"># define evaluator</span><br>evaluator = FaithfulnessEvaluator(llm=llm)<br><br><span class="hljs-comment"># query index</span><br>query_engine = vector_index.as_query_engine()<br>response = query_engine.query(<br>    <span class="hljs-string">"What battles took place in New York City in the American Revolution?"</span><br>)<br>response_str = response.response<br><span class="hljs-keyword">for</span> source_node <span class="hljs-keyword">in</span> response.source_nodes:<br>    eval_result = evaluator.evaluate(<br>        response=response_str, contexts=[source_node.get_content()]<br>    )<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">str</span>(eval_result.passing))<br></code></pre></td></tr></table></figure>
+<p>将得到一个结果列表，对应于<code>response.source_nodes</code>
+中的每个源节点。</p>
+<h3 id="evaluating-query-response-relevancy">2.4 Evaluating Query +
+Response Relevancy</h3>
+<p><code>RelevancyEvaluator</code>
+评估检索到的上下文和答案对于给定查询是否相关且一致。此评估器除了<code>Response</code>对象外，还需要传递<code>query</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex<br><span class="hljs-keyword">from</span> llama_index.llms.openai <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> llama_index.core.evaluation <span class="hljs-keyword">import</span> RelevancyEvaluator<br><br><span class="hljs-comment"># create llm</span><br>llm = OpenAI(model=<span class="hljs-string">"gpt-4"</span>, temperature=<span class="hljs-number">0.0</span>)<br><br><span class="hljs-comment"># build index</span><br>...<br><br><span class="hljs-comment"># define evaluator</span><br>evaluator = RelevancyEvaluator(llm=llm)<br><br><span class="hljs-comment"># query index</span><br>query_engine = vector_index.as_query_engine()<br>query = <span class="hljs-string">"What battles took place in New York City in the American Revolution?"</span><br>response = query_engine.query(query)<br>eval_result = evaluator.evaluate_response(query=query, response=response)<br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">str</span>(eval_result))<br></code></pre></td></tr></table></figure>
+<p><img src="/images/eval_query_response_context.png" srcset="/img/loading.gif" lazyload></p>
+<p>同样，也可以在特定源节点上进行评估。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex<br><span class="hljs-keyword">from</span> llama_index.llms.openai <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> llama_index.core.evaluation <span class="hljs-keyword">import</span> RelevancyEvaluator<br><br><span class="hljs-comment"># create llm</span><br>llm = OpenAI(model=<span class="hljs-string">"gpt-4"</span>, temperature=<span class="hljs-number">0.0</span>)<br><br><span class="hljs-comment"># build index</span><br>...<br><br><span class="hljs-comment"># define evaluator</span><br>evaluator = RelevancyEvaluator(llm=llm)<br><br><span class="hljs-comment"># query index</span><br>query_engine = vector_index.as_query_engine()<br>query = <span class="hljs-string">"What battles took place in New York City in the American Revolution?"</span><br>response = query_engine.query(query)<br>response_str = response.response<br><span class="hljs-keyword">for</span> source_node <span class="hljs-keyword">in</span> response.source_nodes:<br>    eval_result = evaluator.evaluate(<br>        query=query,<br>        response=response_str,<br>        contexts=[source_node.get_content()],<br>    )<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">str</span>(eval_result.passing))<br></code></pre></td></tr></table></figure>
+<p><img src="/images/eval_query_sources.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="question-generation">2.5 Question Generation</h3>
+<p>LlamaIndex
+还可以使用数据生成问题以进行回答。结合上述评估器，可以创建一个完全自动化的评估管道来评估数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> SimpleDirectoryReader<br><span class="hljs-keyword">from</span> llama_index.llms.openai <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> llama_index.core.llama_dataset.generator <span class="hljs-keyword">import</span> RagDatasetGenerator<br><br><span class="hljs-comment"># create llm</span><br>llm = OpenAI(model=<span class="hljs-string">"gpt-4"</span>, temperature=<span class="hljs-number">0.0</span>)<br><br><span class="hljs-comment"># build documents</span><br>documents = SimpleDirectoryReader(<span class="hljs-string">"./data"</span>).load_data()<br><br><span class="hljs-comment"># define generator, generate questions</span><br>dataset_generator = RagDatasetGenerator.from_documents(<br>    documents=documents,<br>    llm=llm,<br>    num_questions_per_chunk=<span class="hljs-number">10</span>,  <span class="hljs-comment"># set the number of questions per nodes</span><br>)<br><br>rag_dataset = dataset_generator.generate_questions_from_nodes()<br>questions = [e.query <span class="hljs-keyword">for</span> e <span class="hljs-keyword">in</span> rag_dataset.examples]<br></code></pre></td></tr></table></figure>
+<h3 id="batch-evaluation">2.6 Batch Evaluation</h3>
+<p>LlamaIndex还提供了一个批量评估运行器，用于在多个问题上运行一组评估器。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.evaluation <span class="hljs-keyword">import</span> BatchEvalRunner<br><br>runner = BatchEvalRunner(<br>    {<span class="hljs-string">"faithfulness"</span>: faithfulness_evaluator, <span class="hljs-string">"relevancy"</span>: relevancy_evaluator},<br>    workers=<span class="hljs-number">8</span>,<br>)<br><br>eval_results = <span class="hljs-keyword">await</span> runner.aevaluate_queries(<br>    vector_index.as_query_engine(), queries=questions<br>)<br></code></pre></td></tr></table></figure>
+<h3 id="integrations">2.7 Integrations</h3>
+<p>LlamaIndex集成了社区评估工具。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/uptrain-ai/uptrain">UpTrain</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/confident-ai/deepeval">DeepEval</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/explodinggradients/ragas/blob/main/docs/howtos/integrations/llamaindex.ipynb">Ragas</a></li>
+</ul>
+<h4 id="deepeval">2.7.1 DeepEval</h4>
+<p><a target="_blank" rel="noopener" href="https://github.com/confident-ai/deepeval">DeepEval</a>提供了
+6 个评估器（包括 3 个 RAG
+评估器，用于检索器和生成器评估），由其专有的评估指标提供支持。安装
+<code>deepeval</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">pip install -U deepeval<br></code></pre></td></tr></table></figure>
+<p>然后可以导入并使用 <code>deepeval</code> 中的评估器。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex, SimpleDirectoryReader<br><span class="hljs-keyword">from</span> deepeval.integrations.llama_index <span class="hljs-keyword">import</span> DeepEvalAnswerRelevancyEvaluator<br><br>documents = SimpleDirectoryReader(<span class="hljs-string">"YOUR_DATA_DIRECTORY"</span>).load_data()<br>index = VectorStoreIndex.from_documents(documents)<br>rag_application = index.as_query_engine()<br><br><span class="hljs-comment"># An example input to your RAG application</span><br>user_input = <span class="hljs-string">"What is LlamaIndex?"</span><br><br><span class="hljs-comment"># LlamaIndex returns a response object that contains</span><br><span class="hljs-comment"># both the output string and retrieved nodes</span><br>response_object = rag_application.query(user_input)<br><br>evaluator = DeepEvalAnswerRelevancyEvaluator()<br>evaluation_result = evaluator.evaluate_response(<br>    query=user_input, response=response_object<br>)<br><span class="hljs-built_in">print</span>(evaluation_result)<br></code></pre></td></tr></table></figure>
+<p>以下是如何从 <code>deepeval</code> 导入所有 6 个评估器：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> deepeval.integrations.llama_index <span class="hljs-keyword">import</span> (<br>    DeepEvalAnswerRelevancyEvaluator,<br>    DeepEvalFaithfulnessEvaluator,<br>    DeepEvalContextualRelevancyEvaluator,<br>    DeepEvalSummarizationEvaluator,<br>    DeepEvalBiasEvaluator,<br>    DeepEvalToxicityEvaluator,<br>)<br></code></pre></td></tr></table></figure>
+<p>关于如何使用 deepeval 的评估指标与 LlamaIndex 并利用其完整的 LLM
+测试套件：<a target="_blank" rel="noopener" href="https://docs.confident-ai.com/docs/integrations-llamaindex">https://docs.confident-ai.com/docs/integrations-llamaindex</a></p>
+<h2 id="三retrieval-evaluation">三、Retrieval Evaluation</h2>
+<p>LlamaIndex还提供模块来帮助独立评估检索。检索评估的概念并不新鲜；给定一个问题数据集和真实排名，可以使用排名指标如平均倒数排名（MRR）、命中率、精确度等来评估检索器。</p>
+<p>核心检索评估步骤围绕以下内容：</p>
+<ul>
+<li><strong>Dataset generation</strong>:
+给定一个非结构化文本语料库，合成地生成（问题，上下文）对。</li>
+<li><strong>Retrieval Evaluation</strong>:
+给定一个检索器和一组问题，使用排名指标评估检索结果。</li>
+</ul>
+<h3 id="retrieverevaluator">3.1 RetrieverEvaluator</h3>
+<p>这会在给定检索器的情况下，对单个查询 +
+真实文档集进行评估。标准做法是从 <code>from_metrics</code>
+中指定一组有效的指标。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.evaluation <span class="hljs-keyword">import</span> RetrieverEvaluator<br><br><span class="hljs-comment"># define retriever somewhere (e.g. from index)</span><br><span class="hljs-comment"># retriever = index.as_retriever(similarity_top_k=2)</span><br>retriever = ...<br><br>retriever_evaluator = RetrieverEvaluator.from_metric_names(<br>    [<span class="hljs-string">"mrr"</span>, <span class="hljs-string">"hit_rate"</span>], retriever=retriever<br>)<br><br>retriever_evaluator.evaluate(<br>    query=<span class="hljs-string">"query"</span>, expected_ids=[<span class="hljs-string">"node_id1"</span>, <span class="hljs-string">"node_id2"</span>]<br>)<br></code></pre></td></tr></table></figure>
+<h3 id="building-an-evaluation-dataset">3.2 Building an Evaluation
+Dataset</h3>
+<p>可以手动策划一个检索评估数据集，包括问题 + 节点
+ID。LlamaIndex还提供了一个 <code>generate_question_context_pairs</code>
+函数，可以在现有文本语料库上生成合成数据集：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.evaluation <span class="hljs-keyword">import</span> generate_question_context_pairs<br><br>qa_dataset = generate_question_context_pairs(<br>    nodes, llm=llm, num_questions_per_chunk=<span class="hljs-number">2</span><br>)<br></code></pre></td></tr></table></figure>
+<p>返回的结果是一个 <code>EmbeddingQAFinetuneDatase</code>t
+对象（包含<code>queries</code>, <code>relevant_docs</code>,
+和<code>corpus</code>）。</p>
+<p>LlamaIndex提供了一个方便的函数，用于在批量模式下对数据集运行
+<code>RetrieverEvaluator</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">eval_results = <span class="hljs-keyword">await</span> retriever_evaluator.aevaluate_dataset(qa_dataset)<br></code></pre></td></tr></table></figure>
+<p>这应该比尝试对每个查询分别调用 <code>.evaluate</code> 要快得多。</p>
+<h2 id="四llamadatasets">四、LLamaDatasets</h2>
+<h3 id="evaluating-with-labelledragdataset">4.1 Evaluating With
+LabelledRagDataset</h3>
+<p>评估模块中的核心抽象概念已经了解过了，这些概念支持对基于LLM的应用程序或系统（包括RAG系统）进行各种类型的评估方法。当然，要评估一个系统，需要一个评估方法、系统本身以及评估数据集。最佳实践是在来自不同来源和领域的多个不同数据集上测试LLM应用程序，这样做有助于确保系统的总体鲁棒性（即系统在未见过的新案例中工作的级别）。</p>
+<p>为此，LlamaIndex在库中包含了 <code>LabelledRagDataset</code>
+抽象。它们的核心目的是通过使这些数据集易于创建、易于使用和广泛可用，来促进对各种数据集上的系统进行评估。该数据集由示例组成，其中示例带有<code>query</code>、<code>reference_answer</code>以及<code>reference_contexts</code>。
+使用 <code>LabelledRagDataset</code> 的主要原因是为了测试 RAG
+系统的性能，方法是首先预测对给定<code>query</code>的响应，然后将预测（或生成）的响应与
+<code>reference_answer</code> 进行比较。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.llama_dataset <span class="hljs-keyword">import</span> (<br>    LabelledRagDataset,<br>    CreatedBy,<br>    CreatedByType,<br>    LabelledRagDataExample,<br>)<br><br>example1 = LabelledRagDataExample(<br>    query=<span class="hljs-string">"This is some user query."</span>,<br>    query_by=CreatedBy(<span class="hljs-built_in">type</span>=CreatedByType.HUMAN),<br>    reference_answer=<span class="hljs-string">"This is a reference answer. Otherwise known as ground-truth answer."</span>,<br>    reference_contexts=[<br>        <span class="hljs-string">"This is a list"</span>,<br>        <span class="hljs-string">"of contexts used to"</span>,<br>        <span class="hljs-string">"generate the reference_answer"</span>,<br>    ],<br>    reference_by=CreatedBy(<span class="hljs-built_in">type</span>=CreatedByType.HUMAN),<br>)<br><br><span class="hljs-comment"># a sad dataset consisting of one measely example</span><br>rag_dataset = LabelledRagDataset(examples=[example1])<br></code></pre></td></tr></table></figure>
+<h4 id="构建-labelledragdataset">4.1.1 构建 LabelledRagDataset</h4>
+<p>可以通过逐个构建 <code>LabelledRagDataExample</code> 来手动构建一个
+<code>LabelledRagDataset</code>。然而，这有点繁琐，尽管人工标注的数据集非常有价值，但由强大的LLM生成的数据集也非常有用。
+因此，<code>lamma_dataset</code> 模块配备了
+<code>RagDatasetGenerator</code>，能够基于一组源<code>Document</code>生成
+<code>LabelledRagDataset</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.llama_dataset.generator <span class="hljs-keyword">import</span> RagDatasetGenerator<br><span class="hljs-keyword">from</span> llama_index.llms.openai <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">import</span> nest_asyncio<br><br>nest_asyncio.apply()<br><br>documents = ...  <span class="hljs-comment"># a set of documents loaded by using for example a Reader</span><br><br>llm = OpenAI(model=<span class="hljs-string">"gpt-4"</span>)<br><br>dataset_generator = RagDatasetGenerator.from_documents(<br>    documents=documents,<br>    llm=llm,<br>    num_questions_per_chunk=<span class="hljs-number">10</span>,  <span class="hljs-comment"># set the number of questions per nodes</span><br>)<br><br>rag_dataset = dataset_generator.generate_dataset_from_nodes()<br></code></pre></td></tr></table></figure>
+<h4 id="使用-labelledragdataset">4.1.2 使用 LabelledRagDataset</h4>
+<p>使用 <code>LabelledRagDataset</code>
+来评估一个基于相同源<code>Document</code>构建的 RAG
+系统的性能。需要执行两个步骤：(1)
+在数据集上进行预测（即生成每个单独例子的查询响应），以及 (2)
+通过将其与参考答案进行比较来评估预测的响应。在步骤 (2) 中，还评估 RAG
+系统的检索上下文，并将其与参考上下文进行比较，以获得对 RAG
+系统检索组件的评估。 为了方便，LlamaIndex有一个名为
+<code>RagEvaluatorPack</code> 的
+<code>LlamaPack</code>，它可以简化这个评估过程！</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.llama_pack <span class="hljs-keyword">import</span> download_llama_pack<br><br>RagEvaluatorPack = download_llama_pack(<span class="hljs-string">"RagEvaluatorPack"</span>, <span class="hljs-string">"./pack"</span>)<br><br>rag_evaluator = RagEvaluatorPack(<br>    query_engine=query_engine,  <span class="hljs-comment"># built with the same source Documents as the rag_dataset</span><br>    rag_dataset=rag_dataset,<br>)<br>benchmark_df = <span class="hljs-keyword">await</span> rag_evaluator.run()<br></code></pre></td></tr></table></figure>
+<p>上述 <code>benchmark_df</code>
+包含了之前介绍的评估指标的平均分数：<code>Correctness</code>,
+<code>Relevancy</code>,
+<code>Faithfulness</code>以及<code>Context Similarity</code>该指标衡量参考上下文以及
+RAG 系统为生成预测响应而检索的上下文之间的语义相似性。</p>
+<h4 id="labelledragdataset在哪">4.1.3 LabelledRagDataset在哪</h4>
+<p>可以在 <a target="_blank" rel="noopener" href="https://llamahub.ai/">llamahub</a> 上找到所有的
+<code>LabelledRagDataset</code>。你可以浏览每一个，并决定是否使用它来评估你的
+RAG
+流水线。如果决定使用它，可以通过以下两种方式方便地下载数据集以及源文档：<code>llamaindex-cli</code>
+或者通过使用 <code>download_llama_dataset</code> 实用程序函数的 Python
+代码。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">using cli</span><br>llamaindex-cli download-llamadataset PaulGrahamEssayDataset --download-dir ./data<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># using python</span><br><span class="hljs-keyword">from</span> llama_index.core.llama_dataset <span class="hljs-keyword">import</span> download_llama_dataset<br><br><span class="hljs-comment"># a LabelledRagDataset and a list of source Document's</span><br>rag_dataset, documents = download_llama_dataset(<br>    <span class="hljs-string">"PaulGrahamEssayDataset"</span>, <span class="hljs-string">"./data"</span><br>)<br></code></pre></td></tr></table></figure>
+<h4 id="resources">4.1.4 Resources</h4>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/llama_dataset/labelled-rag-datasets/">Labelled
+RAG datasets</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/llama_dataset/downloading_llama_datasets/">Downloading
+Llama datasets</a></li>
+</ul>
+<h3 id="evaluating-evaluators-with-labelledevaluatordataset">4.2
+Evaluating Evaluators with LabelledEvaluatorDataset</h3>
+<p><code>Llama-datasets</code> 的目的是为构建者提供快速基准测试 LLM
+系统或任务的手段。本着这种精神，<code>LabelledEvaluatorDataset</code>
+旨在以无缝且毫不费力的方式促进评估器的评估。该数据集包含主要包含以下属性的示例：<code>query</code>,
+<code>answer</code>, <code>ground_truth_answer</code>,
+<code>reference_score</code>, 和
+<code>reference_feedback</code>，以及一些其他补充属性。使用此数据集进行评估的用户流程包括使用提供的
+LLM
+评估器对数据集进行预测，然后通过与相应的参考进行计算比较，计算衡量评估好坏的指标。</p>
+<p>以下是一段代码片段，它利用 <code>EvaluatorBenchmarkerPack</code>
+便捷地处理上述流程。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.llama_dataset <span class="hljs-keyword">import</span> download_llama_dataset<br><span class="hljs-keyword">from</span> llama_index.core.llama_pack <span class="hljs-keyword">import</span> download_llama_pack<br><span class="hljs-keyword">from</span> llama_index.core.evaluation <span class="hljs-keyword">import</span> CorrectnessEvaluator<br><span class="hljs-keyword">from</span> llama_index.llms.gemini <span class="hljs-keyword">import</span> Gemini<br><br><span class="hljs-comment"># download dataset</span><br>evaluator_dataset, _ = download_llama_dataset(<br>    <span class="hljs-string">"MiniMtBenchSingleGradingDataset"</span>, <span class="hljs-string">"./mini_mt_bench_data"</span><br>)<br><br><span class="hljs-comment"># define evaluator</span><br>gemini_pro_llm = Gemini(model=<span class="hljs-string">"models/gemini-pro"</span>, temperature=<span class="hljs-number">0</span>)<br>evaluator = CorrectnessEvaluator(llm=gemini_pro_llm)<br><br><span class="hljs-comment"># download EvaluatorBenchmarkerPack and define the benchmarker</span><br>EvaluatorBenchmarkerPack = download_llama_pack(<br>    <span class="hljs-string">"EvaluatorBenchmarkerPack"</span>, <span class="hljs-string">"./pack"</span><br>)<br>evaluator_benchmarker = EvaluatorBenchmarkerPack(<br>    evaluator=evaluators[<span class="hljs-string">"gpt-3.5"</span>],<br>    eval_dataset=evaluator_dataset,<br>    show_progress=<span class="hljs-literal">True</span>,<br>)<br><br><span class="hljs-comment"># produce the benchmark result</span><br>benchmark_df = <span class="hljs-keyword">await</span> evaluator_benchmarker.arun(<br>    batch_size=<span class="hljs-number">5</span>, sleep_time_in_seconds=<span class="hljs-number">0.5</span><br>)<br></code></pre></td></tr></table></figure>
+<p>另一个相关的 <code>llama-dataset</code> 是
+<code>LabelledPairwiseEvaluatorDataset</code>，它同样旨在评估评估器，但这次评估器的任务是比较一对
+LLM 响应对给定查询，并确定其中更好的一个。上述描述的使用流程与
+<code>LabelledEvaluatorDataset</code> 完全相同，唯一的区别是 LLM
+评估器必须能够执行成对评估任务——即，应该是一个
+<code>PairwiseComparisonEvaluator</code>。</p>
+<p>更多资料：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/evaluation/mt_bench_single_grading/">MTBench
+Single Grading</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/evaluation/mt_bench_human_judgement/">MTBench
+Human Judge</a></li>
+</ul>
+<h2 id="官方资源">官方资源</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/evaluating/modules/">Evaluation
+Module Guides</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/deploying/agents/">官方文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.llamaindex.ai/blog">官方博客</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples">官方全部例子</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LlamaIndex/" class="category-chain-item">LlamaIndex</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#LLM学习笔记</a>
+      
+        <a href="/tags/LlamaIndex/" class="print-no-link">#LlamaIndex</a>
+      
+        <a href="/tags/Agent/" class="print-no-link">#Agent</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LlamaIndex(九)——LlamaIndex Evaluation</div>
+      <div>https://mztchaoqun.com.cn/posts/D22_LlamaIndex_Evaluating/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年5月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D23_LlamaIndex_Observability/" title="LlamaIndex(十)——LlamaIndex Observability">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LlamaIndex(十)——LlamaIndex Observability</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D21_LlamaIndex_Agents/" title="LlamaIndex(八)——LlamaIndex Agents">
+                        <span class="hidden-mobile">LlamaIndex(八)——LlamaIndex Agents</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,973 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、背景 扩散模型现状：  主流架构从CNN-注意力混合（如U-Net）转向纯Transformer（如DiT、U-ViT），生成质量优异但推理速度慢（自注意力计算开销大）。 加速尝试（如高效注意力、SSM架构）效果有限，难以满足实时需求。  卷积的潜力：  Conv3x3是硬件友好的极速操作（支持Winograd加速），但传统设计在扩散模型中性能不足（感受野有限，扩展性差）。    构建 3x3">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DiC：重新思考扩散模型中的 3×3 卷积">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D83_DiC/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、背景 扩散模型现状：  主流架构从CNN-注意力混合（如U-Net）转向纯Transformer（如DiT、U-ViT），生成质量优异但推理速度慢（自注意力计算开销大）。 加速尝试（如高效注意力、SSM架构）效果有限，难以满足实时需求。  卷积的潜力：  Conv3x3是硬件友好的极速操作（支持Winograd加速），但传统设计在扩散模型中性能不足（感受野有限，扩展性差）。    构建 3x3">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/DiC.webp">
+<meta property="article:published_time" content="2025-08-24T09:05:21.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.281Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="DiC">
+<meta property="article:tag" content="Diffusion Model">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/DiC.webp">
+  
+  
+  
+  <title>DiC：重新思考扩散模型中的 3×3 卷积 - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="DiC：重新思考扩散模型中的 3×3 卷积"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-08-24 17:05" pubdate>
+          2025年8月24日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          23 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">DiC：重新思考扩散模型中的 3×3 卷积</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一背景">一、背景</h2>
+<p>扩散模型现状：</p>
+<ul>
+<li>主流架构从CNN-注意力混合（如U-Net）转向纯Transformer（如DiT、U-ViT），生成质量优异但推理速度慢（自注意力计算开销大）。</li>
+<li>加速尝试（如高效注意力、SSM架构）效果有限，难以满足实时需求。</li>
+</ul>
+<p>卷积的潜力：</p>
+<ul>
+<li>Conv3x3是硬件友好的极速操作（支持<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/409050916">Winograd</a>加速），但传统设计在扩散模型中性能不足（感受野有限，扩展性差）。</li>
+</ul>
+<figure>
+<img src="/images/DiC.png" srcset="/img/loading.gif" lazyload alt="构建 3x3 卷积扩散模型的演进路线图">
+<figcaption aria-hidden="true">构建 3x3
+卷积扩散模型的演进路线图</figcaption>
+</figure>
+<p>性能通过在训练 200K 次迭代时的
+FID（↓）指标进行评估。一系列提出的模型改进使 DiC 相较于 Diffusion
+Transformer 拥有明显优势。</p>
+<p><strong>核心问题</strong></p>
+<p>如何设计纯Conv3x3架构，使其在扩散模型中同时实现：</p>
+<ul>
+<li>高生成质量（对标Transformer）</li>
+<li>极快推理速度</li>
+<li>强可扩展性（模型增大时性能持续提升）</li>
+</ul>
+<h2 id="二架构设计">二、架构设计</h2>
+<h3 id="基础模块conv-3x3">2.1 基础模块:Conv 3x3</h3>
+<p>选择3x3卷积作为基础操作单元，是因为它速度极快，硬件（GPU）和算法（如Winograd）对其进行了极好的优化，计算量远低于其他卷积类型（如深度可分离卷积），并行度高且内存访问开销小，简单说就是“性价比”最高的基础模块；我们的目标正是仅用这个最简单的积木块来搭建高性能模型。在设计中，我们借鉴了老牌扩散模型（如DDPM的U-Net）中的卷积块结构，但进行了关键简化：直接移除自注意力模块，只保留纯卷积操作。具体而言，每个基本块由GroupNorm、SiLU激活、3x3卷积、GroupNorm、SiLU激活和3x3卷积顺序组成，并采用残差连接（输入直接加到输出上）且通道数保持不变，这构成了纯卷积扩散模型的起点，既保持了结构的简洁高效，又确保了高吞吐量和硬件友好性。</p>
+<p><img src="/images/DiC1.png" srcset="/img/loading.gif" lazyload></p>
+<p>相比于广泛使用的复杂 Transformer 模块，我们的 Conv 3x3
+基础模块更加简单，且具有更好的硬件支持，是实现高吞吐量的关键。</p>
+<h3 id="模型结构">2.2 模型结构</h3>
+<p>几种网络结构的探讨：</p>
+<p><img src="/images/DiC2.png" srcset="/img/loading.gif" lazyload></p>
+<ul>
+<li><strong>直筒型 (Isotropic)：</strong>像 DiT/Transformer
+那样，从头到尾特征图大小不变（不上下采样），就是一层层堆叠基本块。</li>
+<li><strong>带跳跃的直筒型 (Isotropic +
+Skip)：</strong>还是特征图大小不变，但在堆叠的块之间加长距离跳跃连接（像
+U-ViT）。</li>
+<li><strong>沙漏型/U-Net (U-Net
+Hourglass)：5</strong>经典编码器-解码器结构。编码器一路下采样（缩小图，增大感受野），解码器一路上采样（放大图），中间还有密集的跳跃连接（把编码器信息直接传给解码器对应层）。</li>
+</ul>
+<p><img src="/images/DiC4.png" srcset="/img/loading.gif" lazyload></p>
+<p>实验分析表明，尽管基于 Conv3×3
+的多种架构在初步测试中性能普遍有限，但我们从中识别出若干关键规律，为构建高效的纯卷积扩散模型提供了重要依据。</p>
+<p>首先，对于完全由 3x3
+卷积组成的扩散模型而言，编码器-解码器沙漏架构是必不可少的。这源于 3x3
+卷积的一个基本局限：其感受野天然受限。在一个完全各向同性、类 Transformer
+的标准架构中，每个 3x3
+卷积仅能在每个方向扩展一个像素的感受野。因此，要获得全局感受野就必须堆叠大量卷积层，从而导致计算与参数上的低效。相较之下，编码器-解码器架构能显著缓解这一限制。通过在编码器中逐步下采样，并在解码器中对称上采样，高层阶段的
+3x3 卷积能有效感知输入的更大区域。例如，在较深层级中，一个 3x3
+卷积即可覆盖原始图像空间中的 6x6 或 12x12
+区域，显著扩大模型的感受野。这种层级结构使模型能够高效捕捉局部与全局上下文信息，使其在生成任务中更加有效。</p>
+<p>其次，在基于 Conv3x3
+的架构中，跳跃连接至关重要。一方面，在编码器-解码器结构中，它们通过将特征图直接传递给解码器，缓解了下采样过程中的信息丢失，增强了解码器的表达能力。另一方面，跳跃连接通过提供额外的梯度路径与保留关键特征，加速了模型训练并提升了生成质量，从而实现更高效、更有效的扩散建模。</p>
+<p>综上所述，我们采用 U-Net 作为主要的模型架构。</p>
+<p>通过步进跳跃改进 U-Net。然而，随着我们扩展基于 Conv3x3
+的扩散模型，需要堆叠大量卷积层，密集的块级跳跃连接成为一个瓶颈。大量块级跳跃特征必须在对应的解码模块中按通道维度拼接并融合，造成了高昂的计算成本。这种低效性限制了模型的可扩展性。
+为了解决这一问题，我们提出了步进跳跃连接（strided skip
+connections），即每隔几个模块才添加一次跳跃连接，而非每个模块之后都连接。该方法提高了性能，并且我们的实验结果（见上表）显示其相比于密集跳跃连接在生成质量上取得了更优表现。</p>
+<h3 id="其他改进">2.3 其他改进</h3>
+<h4 id="阶段特定嵌入stage-specific-embeddings">2.3.1
+阶段特定嵌入（Stage-Specific Embeddings）</h4>
+<p>在传统扩散模型中，以前的模型共享一个唯一的 Embedding。Conv3×3
+模型依靠 Encoder-Decoder 结构来扩展感受野。Encoder-Decoder 结构的每个
+stage 都使用不同的 channel 进行操作，反映了 stage
+之间显著的结构和功能差异。鉴于特征维度因 stage
+而异，在不同阶段的所有块上均匀地应用相同的 Condition Embedding
+可能不是理想的。单个 Embedding 可能无法充分捕获每个 stage
+的不同特征，因此对不同 stage 定制 Condition Embedding 可能更有效。</p>
+<p>作者提出使用 Stage-Specific 的 Condition Embedding，对每个 stage
+使用不一样的 Embedding，Embedding 的维度与这个 stage
+的特征维度对齐。值得一提的是，作者分析了 Stage-Specific 的 Embedding
+引入的开销。结果显示增加的开销很小。只会令模型大小增加了 14.06M
+参数，仅占总模型大小的 2%。引入的计算开销仅增加了 12M
+FLOPs，对整体计算效率的影响很小。</p>
+<p><img src="/images/DiC5.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="条件注入位置condition-injection-position">2.3.2
+条件注入位置（Condition Injection Position）</h4>
+<p>另一个重要的点是确定注入 Condition
+信息的最佳位置。扩散模型中有两种流行的条件注入策略。第一种方法在每个
+Block 的一开始就注入条件，通常通过 LayerNorm，如 DiT
+等模型。第二种方法在 Block 中间引入条件，如 ADM。</p>
+<p>通过实验，作者发现对于全卷积扩散架构，将条件注入每个 Block 内的第 2
+个卷积层(就是图scale and
+shift的地方)会产生最佳性能。此放置有效地调制特征表示，在不影响其效率的情况下增强模型的生成质量。</p>
+<h4 id="条件门控conditional-gating">2.3.3 条件门控（Conditional
+Gating）</h4>
+<p>那么选好了输入的地方，该怎么输入呢？</p>
+<p>为增强条件响应的灵活性，DiC直接借鉴了Diffusion Transformer (DiT)
+中的AdaLN机制，引入条件门控（Conditional
+Gating），其核心不仅对特征图进行常规的缩放（scale）和平移（shift），还额外学习一个通道维度的门控向量，如同为每个特征通道配置可动态调节的“小开关”，实现更精细的特征调控，使模型能自适应不同条件（如图像类别），进一步将FID降至6.54；尽管该设计非原创，但因其高效易集成且收益显著，成为提升模型性能的关键补充。</p>
+<h4 id="采用gelu而不是silu-借助convnext的成功经验">2.3.4
+采用GELU而不是SiLU （借助ConvNeXt的成功经验）</h4>
+<p>作为一项次要但有效的优化，DiC 模型将原先广泛用于 CNN 的
+SiLU（Swish）激活函数统一替换为 Transformer 领域标配的
+GELU；这一改动直接借鉴了 ConvNeXt 的成功经验（该工作通过引入 Transformer
+风格组件显著提升了 CNN 性能），在 DiC
+的纯卷积结构中验证有效——尽管提升幅度有限，却能稳定优化生成质量（FID
+指标从 6.54 降至
+6.26）；作者虽知存在更新的激活函数候选，但为兼顾实现简单性与训练稳定性，最终选择了经过大规模实践验证的
+GELU，以最小代价换取可靠收益。</p>
+<h2 id="三实验结果性能与速度双丰收">三、实验结果：性能与速度双丰收</h2>
+<h3 id="超越-dit性能更优">3.1 超越 DiT，性能更优</h3>
+<p><img src="/images/DiC1.webp" srcset="/img/loading.gif" lazyload></p>
+<p>在同等计算量（FLOPs）和参数规模下，DiC 在各个尺寸上都显著优于 DiT。以
+XL 尺寸为例，DiC-XL 的 FID 分数（越低越好）从 DiT-XL/2 的 20 降低到了
+13，IS
+分数（越高越好）也大幅提升，生成图像的质量和多样性都更胜一筹。</p>
+<p>DiC
+生成能力的超越已经足够亮眼，而速度的优势则更具颠覆性。由于纯卷积架构对硬件的高度友好，DiC
+的推理吞吐量（Throughput）远超同级别的 Transformer
+模型。例如，在相同模型参数量和算力的情况下，DiC-XL 的吞吐量达到了
+313.7，是 DiT-XL/2（66.8）的近 5 倍！</p>
+<h3 id="scaling-law-上的探索">3.2 Scaling Law 上的探索</h3>
+<p><img src="/images/DiC2.webp" srcset="/img/loading.gif" lazyload> <img src="/images/DiC6.png" srcset="/img/loading.gif" lazyload>
+研究者们积极探索 DiC 图像生成能力的上限，发现模型收敛速度快。当不使用
+cfg 时，在相同设定下 DiC 的收敛速度是 DiT 的十倍；在使用 cfg 时，FID
+可以达到 2.25。</p>
+<figure>
+<img src="/images/DiC3.webp" srcset="/img/loading.gif" lazyload alt="DiC 生成效果出众，输出图像十分逼真">
+<figcaption aria-hidden="true">DiC
+生成效果出众，输出图像十分逼真</figcaption>
+</figure>
+<h3 id="大图上的探索">3.3 大图上的探索</h3>
+<p>当生成图像尺寸扩大时，Transformer 的二次方复杂度问题会急剧恶化。而
+DiC 的线性复杂度使其优势更加突出。实验表明，在 512x512 分辨率下，DiC-XL
+模型可以用比 DiT-XL/2
+更少的计算量，远超后者的速度，达到更好的生成效果。</p>
+<p><img src="/images/DiC7.png" srcset="/img/loading.gif" lazyload></p>
+<p>DiC
+的出现，有力地挑战了「生成模型必须依赖自注意力」的固有观念。它向我们展示了，通过深入的理解和精巧的架构设计，简单、高效的卷积网络依然可以构建强大的生成模型。卷积，在视觉
+AIGC 的广阔天地中仍然大有可为！</p>
+<h2 id="reference">Reference</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2501.00603">DiC: Rethinking Conv3x3
+Designs in Diffusion Models</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/YuchuanTian/DiC">DiC: Rethinking Conv3x3
+Designs in Diffusion Models(GitHub)</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/pb6JwZetsjSY-bXMYHVd9Q?scene=1&amp;poc_token=HMdalGijCB9l0F4lexmIjEzu5GWbtdH2SVrfZAS0">告别Transformer！北大、北邮、华为开源纯卷积DiC：3x3卷积实现SOTA性能，比DiT快5倍！</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/16293856584">扩散模型解读
+(二十二)：DiC：重新思考扩散模型中的 3×3 卷积</a></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Diffusion-Model/" class="category-chain-item">Diffusion Model</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Diffusion-Model/CNN/" class="category-chain-item">CNN</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Diffusion-Model/" class="print-no-link">#Diffusion Model</a>
+      
+        <a href="/tags/DiC/" class="print-no-link">#DiC</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>DiC：重新思考扩散模型中的 3×3 卷积</div>
+      <div>https://mztchaoqun.com.cn/posts/D83_DiC/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年8月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D84_MoR/" title="Mixture-of-Recursions:混合递归模型，通过学习动态递归深度，以实现对自适应Token级计算的有效适配">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Mixture-of-Recursions:混合递归模型，通过学习动态递归深度，以实现对自适应Token级计算的有效适配</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D82_V-JEPA2/" title="Meta世界模型 V-JEPA 2">
+                        <span class="hidden-mobile">Meta世界模型 V-JEPA 2</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

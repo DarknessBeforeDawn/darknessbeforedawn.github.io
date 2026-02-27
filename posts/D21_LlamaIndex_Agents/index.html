@@ -1,0 +1,1074 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、Agents简介 数据Agents是 LlamaIndex 中由 LLM 支持的knowledge workers，可以通过read和write功能智能地对数据执行各种任务。它们有能力做到以下几点：  对不同类型的数据（非结构化、半结构化和结构化）执行自动搜索和检索。 以结构化方式调用任何外部服务 API。 他们可以立即处理响应，也可以索引&#x2F;缓存该数据以供将来使用。 存储对话历史记录。 使用上">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LlamaIndex(八)——LlamaIndex Agents">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D21_LlamaIndex_Agents/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、Agents简介 数据Agents是 LlamaIndex 中由 LLM 支持的knowledge workers，可以通过read和write功能智能地对数据执行各种任务。它们有能力做到以下几点：  对不同类型的数据（非结构化、半结构化和结构化）执行自动搜索和检索。 以结构化方式调用任何外部服务 API。 他们可以立即处理响应，也可以索引&#x2F;缓存该数据以供将来使用。 存储对话历史记录。 使用上">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/SuperAGI-x-LlamaIndex.png">
+<meta property="article:published_time" content="2024-05-22T01:17:13.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.270Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="LLM学习笔记">
+<meta property="article:tag" content="LlamaIndex">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/SuperAGI-x-LlamaIndex.png">
+  
+  
+  
+  <title>LlamaIndex(八)——LlamaIndex Agents - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LlamaIndex(八)——LlamaIndex Agents"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-05-22 09:17" pubdate>
+          2024年5月22日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          31 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LlamaIndex(八)——LlamaIndex Agents</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一agents简介">一、Agents简介</h2>
+<p>数据Agents是 LlamaIndex 中由 LLM
+支持的<code>knowledge workers</code>，可以通过<code>read</code>和<code>write</code>功能智能地对数据执行各种任务。它们有能力做到以下几点：</p>
+<ul>
+<li>对不同类型的数据（非结构化、半结构化和结构化）执行自动搜索和检索。</li>
+<li>以结构化方式调用任何外部服务 API。
+他们可以立即处理响应，也可以索引/缓存该数据以供将来使用。</li>
+<li>存储对话历史记录。</li>
+<li>使用上述所有内容来完成简单和复杂的数据任务。</li>
+</ul>
+<p><img src="/images/LlamaIndex_Agent.webp" srcset="/img/loading.gif" lazyload></p>
+<p>从这个意义上说，Agents不仅仅是查询引擎，它们不仅可以从静态数据源<code>read</code>，还可以动态地提取和修改来自各种不同工具的数据。</p>
+<p>构建数据Agents需要以下核心组件：</p>
+<ul>
+<li>一个推理循环</li>
+<li>工具抽象</li>
+</ul>
+<p>数据Agent初始化时会设置一组 API 或工具，以进行交互；这些 API
+可以被Agent调用以返回信息或修改状态。给定一个输入任务，数据Agent使用推理循环来决定使用哪些工具，以什么顺序，以及调用每个工具的参数。</p>
+<p><img src="/images/LlamaIndex_Agent1.webp" srcset="/img/loading.gif" lazyload></p>
+<h3 id="推理循环reasoning-loop">1.1 推理循环(Reasoning Loop)</h3>
+<p>推理循环取决于Agent的类型。LlamaIndex支持以下代Agent：</p>
+<ul>
+<li>Function Calling Agents（与任何调用 LLM 的函数集成）</li>
+<li>ReAct Agent （适用于任何chat/text completion）。</li>
+<li>“Advanced Agents”: <a target="_blank" rel="noopener" href="https://llamahub.ai/l/llama-packs/llama-index-packs-agents-llm-compiler?from=">LLMCompiler</a>,
+<a target="_blank" rel="noopener" href="https://llamahub.ai/l/llama-packs/llama-index-packs-agents-coa?from=">Chain-of-Abstraction</a>,
+<a target="_blank" rel="noopener" href="https://llamahub.ai/l/llama-packs/llama-index-packs-agents-lats?from=">Language
+Agent Tree Search</a>等等.</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.agent <span class="hljs-keyword">import</span> OpenAIAgent, ReActAgent<br><span class="hljs-keyword">from</span> llama_index.llms <span class="hljs-keyword">import</span> OpenAI<br><br><span class="hljs-comment"># import and define tools</span><br>...<br><span class="hljs-comment"># initialize llm</span><br>llm = OpenAI(model=<span class="hljs-string">"gpt-3.5-turbo-0613"</span>)<br><span class="hljs-comment"># initialize openai agent</span><br>agent = OpenAIAgent.from_tools(tools, llm=llm, verbose=<span class="hljs-literal">True</span>)<br><span class="hljs-comment"># initialize ReAct agent</span><br>agent = ReActAgent.from_tools(tools, llm=llm, verbose=<span class="hljs-literal">True</span>)<br><span class="hljs-comment"># use agent</span><br>response = agent.chat(<span class="hljs-string">"What is (121 * 3) + 42?"</span>)<br></code></pre></td></tr></table></figure>
+<p>每个Agent都有一套工具。每个Agent还支持两种接受输入任务的主要方法——聊天和查询。
+请注意，这些分别是 <code>ChatEngine</code> 和 <code>QueryEngine</code>
+中使用的核心方法。 事实上，Agent基类（<code>BaseAgent</code>）只是继承自
+<code>BaseChatEngine</code> 和 <code>BaseQueryEngine</code>。
+聊天允许Agent利用先前存储的对话历史记录，而查询是一个无状态调用——历史/状态不会随时间保留。</p>
+<p>推理循环取决于Agent的类型。Function Calling Agents 在 while
+循环中调用
+<code>function call API</code>，因为工具决策逻辑已经内置在<code>function call API</code>
+中。给定一个输入prompt和之前的聊天历史（包括之前的函数调用），<code>function call API</code>
+将决定是否进行另一个函数调用（选择一个工具），或者返回一个assistant消息。如果
+API
+返回一个函数调用，那么我们就负责执行该函数并传递一个函数消息到聊天历史中。如果
+API 返回一个assistant消息，那么循环就完成了。</p>
+<p>ReAct Agent使用<code>general text completion</code>，因此它可以与任何
+LLM 一起使用。<code>general text completion</code>有一个简单的
+<code>input str → output str</code>格式，这意味着推理逻辑必须编码在提示中。ReAct
+Agent使用一个受到 ReAct
+论文启发的输入提示（并适应到其他版本），以决定选择哪个工具。它看起来像这样：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs text">...<br>You have access to the following tools:<br>{tool_desc}<br><br>To answer the question, please use the following format.<br><br>```<br>Thought: I need to use a tool to help me answer the question.<br>Action: tool name (one of {tool_names})<br>Action Input: the input to the tool, in a JSON format representing the kwargs (e.g. {{"text": "hello world", "num_beams": 5}})<br>```<br>Please use a valid JSON format for the action input. Do NOT do this {{'text': 'hello world', 'num_beams': 5}}.<br><br>If this format is used, you will receive a response in the following format:<br><br>```<br>Observation: tool response<br>```<br>...<br></code></pre></td></tr></table></figure>
+<p>LlamaIndex在chat prompts上原生实现
+ReAct；推理循环被实现为assistant消息和user消息交替的系列。<code>Thought/Action/Action Input</code>
+部分被表示为assistant消息，而 Observation 部分被表示为user消息。ReAct
+prompt不仅期望选择工具的名称，还期望以 JSON
+格式填写工具的参数。这使得输出与 OpenAI function call API
+的输出类似——主要区别在于，在function call
+API的情况下，工具选择逻辑是内置在 API
+本身中的（通过微调模型），而在这里则是通过明确的提示引出的。</p>
+<h2 id="二tool-abstractions">二、Tool Abstractions</h2>
+<p>拥有适当的工具抽象是构建数据agents的核心。定义一组工具类似于定义任何API接口，不同之处在于这些工具是为agent而不是人类使用而设计的。LlamaIndex允许用户定义工具以及包含一系列底层函数的ToolSpec。</p>
+<p>在使用agent或具有函数调用功能的LLM时，所选工具（以及为该工具编写的参数）强烈依赖于工具名称和工具目的及参数的描述。花时间调整这些参数可以显著改变LLM调用这些工具的方式。</p>
+<p>工具实现了一个非常通用的接口——只需定义<code>__call__</code>，同时返回一些基本的元数据（名称、描述、函数模式）。</p>
+<p>LlamaIndex提供了几种不同类型的工具：</p>
+<ul>
+<li><code>FunctionTool</code>：函数工具允许用户轻松地将任何用户定义的函数转换为工具。它还可以自动推断函数模式。</li>
+<li><code>QueryEngineTool</code>：一个包装现有查询引擎的工具。由于LlamaIndex的agent抽象继承自<code>BaseQueryEngine</code>，这些工具也可以包装其他agent。</li>
+<li>社区贡献的<code>ToolSpec</code>，定义了围绕单个服务（如Gmail）的一个或多个工具。</li>
+<li>用于包装其他工具的Utiltiy tools，以处理从工具返回的大量数据。</li>
+</ul>
+<h3 id="functiontool">2.1 FunctionTool</h3>
+<p>FunctionTool是对任何现有函数（同步和异步都支持）的简单包装。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.tools <span class="hljs-keyword">import</span> FunctionTool<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_weather</span>(<span class="hljs-params">location: <span class="hljs-built_in">str</span></span>) -&gt; <span class="hljs-built_in">str</span>:<br>    <span class="hljs-string">"""Usfeful for getting the weather for a given location."""</span><br>    ...<br><br><br>tool = FunctionTool.from_defaults(<br>    get_weather,<br>    <span class="hljs-comment"># async_fn=aget_weather,  # optional!</span><br>)<br><br>agent = ReActAgent.from_tools(tools, llm=llm, verbose=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure>
+<p>为了更好的函数定义，还可以利用pydantic来处理函数参数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pydantic <span class="hljs-keyword">import</span> Field<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_weather</span>(<span class="hljs-params"></span><br><span class="hljs-params">    location: <span class="hljs-built_in">str</span> = Field(<span class="hljs-params"></span></span><br><span class="hljs-params"><span class="hljs-params">        description=<span class="hljs-string">"A city name and state, formatted like '&lt;name&gt;, &lt;state&gt;'"</span></span></span><br><span class="hljs-params"><span class="hljs-params">    </span>),</span><br><span class="hljs-params"></span>) -&gt; <span class="hljs-built_in">str</span>:<br>    <span class="hljs-string">"""Usfeful for getting the weather for a given location."""</span><br>    ...<br><br><br>tool = FunctionTool.from_defaults(get_weather)<br></code></pre></td></tr></table></figure>
+<p>默认情况下，工具名称将是函数名称，文档字符串将是工具描述。但也可以覆盖此设置。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">tool = FunctionTool.from_defaults(get_weather, name=<span class="hljs-string">"..."</span>, description=<span class="hljs-string">"..."</span>)<br></code></pre></td></tr></table></figure>
+<h3 id="queryenginetool">2.2 QueryEngineTool</h3>
+<p>任何查询引擎都可以使用<code>QueryEngineTool</code>转换为工具：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.tools <span class="hljs-keyword">import</span> QueryEngineTool<br><br>tool = QueryEngineTool.from_defaults(<br>    query_engine, name=<span class="hljs-string">"..."</span>, description=<span class="hljs-string">"..."</span><br>)<br></code></pre></td></tr></table></figure>
+<h3 id="tool-specs">2.3 Tool Specs</h3>
+<p>LlamaIndex还通过<a target="_blank" rel="noopener" href="https://llamahub.ai/">LlamaHub</a>提供了丰富的工具和工具规范集。可以将工具规范视为旨在一起使用的工具包。通常，这些涵盖了单个接口/服务（如Gmail）中的有用工具。
+要与Agent一起使用，可以安装特定的工具规范集成：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install llama-index-tools-google<br></code></pre></td></tr></table></figure>
+<p>然后使用它：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.agent.openai <span class="hljs-keyword">import</span> OpenAIAgent<br><span class="hljs-keyword">from</span> llama_index.tools.google <span class="hljs-keyword">import</span> GmailToolSpec<br><br>tool_spec = GmailToolSpec()<br>agent = OpenAIAgent.from_tools(tool_spec.to_tool_list(), verbose=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure>
+<p>可以查看LlamaHub以获取社区贡献的工具规范的完整列表</p>
+<h3 id="utiltiy-tools">2.4 Utiltiy tools</h3>
+<p>通常，直接查询API可能会返回大量数据，这本身可能会超出LLM的上下文窗口（或者至少不必要地增加正在使用的Token数量）。为了解决这个问题，LlamaIndex在LlamaHub工具中提供了一组初始的“实用工具”——实用工具在概念上并不与特定服务（例如Gmail、Notion）相关联，而是可以增强现有工具的功能。在这种情况下，实用工具有助于抽象出需要缓存/索引和查询任何API请求返回的数据的常见模式。</p>
+<h4 id="ondemandloadertool">2.4.1 OnDemandLoaderTool</h4>
+<p>此工具将任何现有的LlamaIndex数据加载器（<code>BaseReader</code>类）转换为Agent可以使用的工具。该工具可以调用数据加载器所需的所有参数，以及一个自然语言查询字符串。在执行期间，首先从数据加载器加载数据，将其索引（例如使用向量存储），然后“按需”查询。这三个步骤在单个工具调用中发生。</p>
+<p><img src="/images/LlamaIndex_Agent_OnDemand.webp" srcset="/img/loading.gif" lazyload></p>
+<p>这通常比弄清楚如何自己加载和索引API数据更可取。虽然这可能允许数据重用，但用户通常只需要一个临时索引来抽象掉任何API调用的提示窗口限制。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.readers.wikipedia <span class="hljs-keyword">import</span> WikipediaReader<br><span class="hljs-keyword">from</span> llama_index.core.tools.ondemand_loader_tool <span class="hljs-keyword">import</span> OnDemandLoaderTool<br><br>tool = OnDemandLoaderTool.from_defaults(<br>    reader,<br>    name=<span class="hljs-string">"Wikipedia Tool"</span>,<br>    description=<span class="hljs-string">"A tool for loading data and querying articles from Wikipedia"</span>,<br>)<br></code></pre></td></tr></table></figure>
+<h4 id="loadandsearchtoolspec">2.4.2 LoadAndSearchToolSpec</h4>
+<p>LoadAndSearchToolSpec接受任何现有的工具作为输入。作为一个工具规范，它实现了<code>to_tool_list</code>，当调用该函数时，会返回两个工具：一个加载工具，然后是一个搜索工具。</p>
+<p>加载工具的执行将调用底层工具，并使用向量索引（默认情况下）索引输出。搜索工具的执行将接受一个查询字符串作为输入，并调用底层索引。</p>
+<p><img src="/images/LoadAndSearchToolSpec.webp" srcset="/img/loading.gif" lazyload></p>
+<p>这对于默认情况下返回大量数据的任何API都很有帮助——例如，<code>WikipediaToolSpec</code>默认将返回整个Wikipedia页面，这很容易溢出大多数LLM上下文窗口。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.tools.wikipedia <span class="hljs-keyword">import</span> WikipediaToolSpec<br><span class="hljs-keyword">from</span> llama_index.core.tools.tool_spec.load_and_search <span class="hljs-keyword">import</span> (<br>    LoadAndSearchToolSpec,<br>)<br><br>wiki_spec = WikipediaToolSpec()<br><span class="hljs-comment"># Get the search wikipedia tool</span><br>tool = wiki_spec.to_tool_list()[<span class="hljs-number">1</span>]<br><br><span class="hljs-comment"># Create the Agent with load/search tools</span><br>agent = OpenAIAgent.from_tools(<br>    LoadAndSearchToolSpec.from_defaults(tool).to_tool_list(), verbose=<span class="hljs-literal">True</span><br>)<br></code></pre></td></tr></table></figure>
+<h4 id="return-direc">2.4.3 Return Direc</h4>
+<p>工具类构造函数中的<code>return_direct</code>选项。如果将其设置为True，则直接返回agent的响应，而不会被agent解释和重写。这对于减少运行时间或设计/指定将结束agent推理循环的工具非常有用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python">tool = QueryEngineTool.from_defaults(<br>    query_engine,<br>    name=<span class="hljs-string">"&lt;name&gt;"</span>,<br>    description=<span class="hljs-string">"&lt;description&gt;"</span>,<br>    return_direct=<span class="hljs-literal">True</span>,<br>)<br><br>agent = OpenAIAgent.from_tools([tool])<br><br>response = agent.chat(<span class="hljs-string">"&lt;question that invokes tool&gt;"</span>)<br></code></pre></td></tr></table></figure>
+<p>在上面的示例中，将调用查询引擎工具，并且该工具的响应将直接作为响应返回，并且执行循环将结束。
+如果使用了<code>return_direct=False</code>，那么agent将使用聊天历史的上下文重写响应，甚至可能再次调用工具。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/agent/return_direct_agent/">完整示例</a></p>
+<h4 id="debugging-tools">2.4.4 Debugging Tools</h4>
+<p>通常，调试正在发送到API的工具定义的确切内容可能会很有用。可以通过使用底层函数来获取当前工具模式的一瞥，该模式在OpenAI和Anthropic等API中被使用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">schema = tool.metadata.get_parameters_dict()<br><span class="hljs-built_in">print</span>(schema)<br></code></pre></td></tr></table></figure>
+<h2 id="三lower-level-agent-api">三、Lower-Level Agent API</h2>
+<p>LlamaIndex提供了一个Lower-Level Agent
+API，它提供了一系列超越简单执行用户查询端到端的能力。这些能力允许以更细粒度的方式逐步控制
+agent。最终目标是，可以在数据上创建可靠的agent软件系统。</p>
+<p>灵感来源</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://agentprotocol.ai/">Agent Protocol</a></li>
+<li><a target="_blank" rel="noopener" href="https://platform.openai.com/docs/assistants/overview">OpenAI
+Assistants API</a></li>
+<li>Agent Research Papers
+<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="">[1]</span></a></sup>
+<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="">[2]</span></a></sup>
+<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="">[3]</span></a></sup></li>
+</ul>
+<h3 id="high-level-agent-architecture">3.1 High-Level Agent
+Architecture</h3>
+<p>LlamaIndex的Agents由与 <code>AgentWorkers</code> 交互的
+<code>AgentRunner</code> 对象组成：</p>
+<ul>
+<li><code>AgentRunners</code>
+是存储状态（包括对话记忆）的协调器，创建和维护任务，通过每个任务运行步骤，并向用户提供用于交互的面向High-Level的接口。</li>
+<li><code>AgentWorkers</code>
+<strong>控制任务的逐步执行</strong>。给定一个输入步骤，agent worker
+负责生成下一个步骤。它们可以初始化参数，并根据从 Task/TaskStep
+对象传递下来的状态采取行动，但本身不存储状态。外部的
+<code>AgentRunner</code> 负责调用 <code>AgentWorker</code>
+并收集/聚合结果。</li>
+</ul>
+<p>一些辅助类：</p>
+<ul>
+<li><code>Task</code>：High-Level任务，接收用户查询 +
+传递其他信息，如记忆</li>
+<li><code>TaskStep</code>：代表单个步骤。将其作为输入输入到
+<code>AgentWorker</code>，得到
+<code>TaskStepOutput</code>。完成一个任务可能涉及多个
+<code>TaskStep</code>。</li>
+<li><code>TaskStepOutput</code>：给定步骤执行的输出。输出任务是否完成。</li>
+</ul>
+<p><img src="/images/agent_step_execute.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="benefits">3.1.1 Benefits</h4>
+<p>以下是使用lower-level API 的一些好处：</p>
+<ul>
+<li>将任务创建与执行解耦 - 控制何时执行特定任务。</li>
+<li>获取每个步骤执行的更大调试性。</li>
+<li>获取更大的可见性：查看完成的步骤和下一步。</li>
+<li>[即将推出] 可控性：通过注入人为反馈直接控制/修改中间步骤</li>
+<li>放弃任务：如果任务在执行过程中偏离轨道，可以放弃，而不影响核心Agent记忆。</li>
+<li>[即将推出] 撤销步骤。</li>
+<li>更容易定制：通过实现
+<code>AgentWorker</code>，很容易子类化/实现新的Agent算法（包括
+ReAct、OpenAI，但也包括计划+解决，LLMCompiler）。</li>
+</ul>
+<h4 id="示例">3.1.2 示例</h4>
+<p>可以使用 <code>OpenAIAgent</code> 或
+<code>ReActAgent</code>，或者通过 <code>AgentRunner</code> 和
+<code>AgentWorker</code> 创建：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.agent <span class="hljs-keyword">import</span> AgentRunner<br><span class="hljs-keyword">from</span> llama_index.agent.openai <span class="hljs-keyword">import</span> OpenAIAgentWorker<br><br><span class="hljs-comment"># construct OpenAIAgent from tools</span><br>openai_step_engine = OpenAIAgentWorker.from_tools(tools, llm=llm, verbose=<span class="hljs-literal">True</span>)<br>agent = AgentRunner(openai_step_engine)<br><br><span class="hljs-comment"># create task</span><br>task = agent.create_task(<span class="hljs-string">"What is (121 * 3) + 42?"</span>)<br><br><span class="hljs-comment"># execute step</span><br>step_output = agent.run_step(task)<br><br><span class="hljs-comment"># if step_output is done, finalize response</span><br><span class="hljs-keyword">if</span> step_output.is_last:<br>    response = agent.finalize_response(task.task_id)<br><br><span class="hljs-comment"># list tasks</span><br>task.list_tasks()<br><br><span class="hljs-comment"># get completed steps</span><br>task.get_completed_steps(task.task_id)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">str</span>(response))<br></code></pre></td></tr></table></figure>
+<h2 id="四使用示例">四、使用示例</h2>
+<p>一个agent是从一组工具（Tools）初始化的。以下是从一组工具中实例化一个ReAct
+agent的示例。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.tools <span class="hljs-keyword">import</span> FunctionTool<br><span class="hljs-keyword">from</span> llama_index.llms.openai <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> llama_index.core.agent <span class="hljs-keyword">import</span> ReActAgent<br><br><br><span class="hljs-comment"># define sample Tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">multiply</span>(<span class="hljs-params">a: <span class="hljs-built_in">int</span>, b: <span class="hljs-built_in">int</span></span>) -&gt; <span class="hljs-built_in">int</span>:<br>    <span class="hljs-string">"""Multiple two integers and returns the result integer"""</span><br>    <span class="hljs-keyword">return</span> a * b<br><br><br>multiply_tool = FunctionTool.from_defaults(fn=multiply)<br><br><span class="hljs-comment"># initialize llm</span><br>llm = OpenAI(model=<span class="hljs-string">"gpt-3.5-turbo-0613"</span>)<br><br><span class="hljs-comment"># initialize ReAct agent</span><br>agent = ReActAgent.from_tools([multiply_tool], llm=llm, verbose=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure>
+<p>agent支持聊天和查询，分别继承自<code>ChatEngine</code>和<code>QueryEngine</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">agent.chat(<span class="hljs-string">"What is 2123 * 215123"</span>)<br></code></pre></td></tr></table></figure>
+<p>要自动选择根据LLM的最佳Agent，可以使用from_llm方法来生成一个Agent。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.agent <span class="hljs-keyword">import</span> AgentRunner<br><br>agent = AgentRunner.from_llm([multiply_tool], llm=llm, verbose=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure>
+<h3 id="定义tools">4.1 定义Tools</h3>
+<h4 id="query-engine-tools">4.1.1 Query Engine Tools</h4>
+<p>将查询引擎作为工具包装到Agent中也很容易。只需执行以下操作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.agent <span class="hljs-keyword">import</span> ReActAgent<br><span class="hljs-keyword">from</span> llama_index.core.tools <span class="hljs-keyword">import</span> QueryEngineTool<br><br><span class="hljs-comment"># <span class="hljs-doctag">NOTE:</span> lyft_index and uber_index are both SimpleVectorIndex instances</span><br>lyft_engine = lyft_index.as_query_engine(similarity_top_k=<span class="hljs-number">3</span>)<br>uber_engine = uber_index.as_query_engine(similarity_top_k=<span class="hljs-number">3</span>)<br><br>query_engine_tools = [<br>    QueryEngineTool(<br>        query_engine=lyft_engine,<br>        metadata=ToolMetadata(<br>            name=<span class="hljs-string">"lyft_10k"</span>,<br>            description=<span class="hljs-string">"Provides information about Lyft financials for year 2021. "</span><br>            <span class="hljs-string">"Use a detailed plain text question as input to the tool."</span>,<br>        ),<br>        return_direct=<span class="hljs-literal">False</span>,<br>    ),<br>    QueryEngineTool(<br>        query_engine=uber_engine,<br>        metadata=ToolMetadata(<br>            name=<span class="hljs-string">"uber_10k"</span>,<br>            description=<span class="hljs-string">"Provides information about Uber financials for year 2021. "</span><br>            <span class="hljs-string">"Use a detailed plain text question as input to the tool."</span>,<br>        ),<br>        return_direct=<span class="hljs-literal">False</span>,<br>    ),<br>]<br><br><span class="hljs-comment"># initialize ReAct agent</span><br>agent = ReActAgent.from_tools(query_engine_tools, llm=llm, verbose=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="使用其他agents作为tools">4.1.2 使用其他Agents作为Tools</h4>
+<p>Agent的一个巧妙特性是，由于它们继承自<code>BaseQueryEngine</code>，你以很容易地通过<code>QueryEngineTool</code>将其他Agent定义为工具。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.tools <span class="hljs-keyword">import</span> QueryEngineTool<br><br>query_engine_tools = [<br>    QueryEngineTool(<br>        query_engine=sql_agent,<br>        metadata=ToolMetadata(<br>            name=<span class="hljs-string">"sql_agent"</span>, description=<span class="hljs-string">"Agent that can execute SQL queries."</span><br>        ),<br>    ),<br>    QueryEngineTool(<br>        query_engine=gmail_agent,<br>        metadata=ToolMetadata(<br>            name=<span class="hljs-string">"gmail_agent"</span>,<br>            description=<span class="hljs-string">"Tool that can send emails on Gmail."</span>,<br>        ),<br>    ),<br>]<br><br>outer_agent = ReActAgent.from_tools(query_engine_tools, llm=llm, verbose=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure>
+<h3 id="agent-with-planning">4.2 Agent With Planning</h3>
+<p>将初始任务分解为更易于消化的子任务是一种强大的模式。LlamaIndex提供了一个Agent规划模块，正是为此而设计的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.agent.openai <span class="hljs-keyword">import</span> OpenAIAgentWorker<br><span class="hljs-keyword">from</span> llama_index.core.agent <span class="hljs-keyword">import</span> (<br>    StructuredPlannerAgent,<br>    FunctionCallingAgentWorker,<br>)<br><br>worker = FunctionCallingAgentWorker.from_tools(tools, llm=llm)<br>agent = StructuredPlannerAgent(worker)<br></code></pre></td></tr></table></figure>
+<p>通常，这个Agent可能比基本的<code>AgentRunner</code>类响应时间更长，但输出通常会更完整。另一个需要考虑的权衡是规划通常需要一个能力较强的LLM（就上下文而言，gpt-3.5-turbo在规划方面有时不稳定，而gpt-4-turbo表现得更好。）</p>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/agent/structured_planner/">完整例子</a></p>
+<h3 id="lower-level-api">4.3 Lower-Level API</h3>
+<p>OpenAIAgent和ReActAgent是<code>AgentRunner</code>与<code>AgentWorker</code>交互的简单包装。
+所有Agent都可以以这种方式定义。例如，对于OpenAIAgent：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.agent <span class="hljs-keyword">import</span> AgentRunner<br><span class="hljs-keyword">from</span> llama_index.agent.openai <span class="hljs-keyword">import</span> OpenAIAgentWorker<br><br><span class="hljs-comment"># construct OpenAIAgent from tools</span><br>openai_step_engine = OpenAIAgentWorker.from_tools(tools, llm=llm, verbose=<span class="hljs-literal">True</span>)<br>agent = AgentRunner(openai_step_engine)<br></code></pre></td></tr></table></figure>
+<h3 id="自定义agent">4.4 自定义Agent</h3>
+<p>如果你想自定义Agent，可以选择继承<code>CustomSimpleAgentWorker</code>，并将其插入到AgentRunner中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.agent <span class="hljs-keyword">import</span> CustomSimpleAgentWorker<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyAgentWorker</span>(<span class="hljs-title class_ inherited__">CustomSimpleAgentWorker</span>):<br>    <span class="hljs-string">"""Custom agent worker."""</span><br><br>    <span class="hljs-comment"># define class here</span><br>    <span class="hljs-keyword">pass</span><br><br><br><span class="hljs-comment"># Wrap the worker into an AgentRunner</span><br>agent = MyAgentWorker(...).as_agent()<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/agent/custom_agent/">完整例子</a></p>
+<h3 id="高级概念针对openaiagent测试版">4.5
+高级概念（针对OpenAIAgent，测试版）</h3>
+<p>还可以在更高级的设置中使用Agent。例如，在查询时能够从一个索引中检索工具，并能够对一组现有的工具执行查询规划。
+这些主要是通过<code>OpenAIAgent</code>类实现的（它们依赖于OpenAI
+Function API）。</p>
+<h4 id="function-retrieval-agents">4.5.1 Function Retrieval Agents</h4>
+<p>如果工具集非常大，可以创建一个<code>ObjectIndex</code>来索引这些工具，然后在查询时将一个<code>ObjectRetriever</code>传递给Agent，以便首先动态检索相关工具，然后让Agent从候选工具中选择。</p>
+<p>首先构建一个现有的工具集上的<code>ObjectIndex</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># define an "object" index over these tools</span><br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex<br><span class="hljs-keyword">from</span> llama_index.core.objects <span class="hljs-keyword">import</span> ObjectIndex<br><br>obj_index = ObjectIndex.from_objects(<br>    all_tools,<br>    index_cls=VectorStoreIndex,<br>)<br></code></pre></td></tr></table></figure>
+<p>定义<code>OpenAIAgent</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.agent.openai <span class="hljs-keyword">import</span> OpenAIAgent<br><br>agent = OpenAIAgent.from_tools(<br>    tool_retriever=obj_index.as_retriever(similarity_top_k=<span class="hljs-number">2</span>), verbose=<span class="hljs-literal">True</span><br>)<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/objects/object_index/">完整例子</a></p>
+<h4 id="context-retrieval-agents">4.5.2 Context Retrieval Agents</h4>
+<p>上下文增强型OpenAI Agent在调用任何工具之前总是执行检索。
+这有助于提供额外的上下文，可以帮助Agent更好地选择工具，而不仅仅是在没有任何上下文的情况下尝试做出决定。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Document<br><span class="hljs-keyword">from</span> llama_index.agent.openai_legacy <span class="hljs-keyword">import</span> ContextRetrieverOpenAIAgent<br><br><br><span class="hljs-comment"># toy index - stores a list of Abbreviations</span><br>texts = [<br>    <span class="hljs-string">"Abbreviation: X = Revenue"</span>,<br>    <span class="hljs-string">"Abbreviation: YZ = Risk Factors"</span>,<br>    <span class="hljs-string">"Abbreviation: Z = Costs"</span>,<br>]<br>docs = [Document(text=t) <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> texts]<br>context_index = VectorStoreIndex.from_documents(docs)<br><br><span class="hljs-comment"># add context agent</span><br>context_agent = ContextRetrieverOpenAIAgent.from_tools_and_retriever(<br>    query_engine_tools,<br>    context_index.as_retriever(similarity_top_k=<span class="hljs-number">1</span>),<br>    verbose=<span class="hljs-literal">True</span>,<br>)<br>response = context_agent.chat(<span class="hljs-string">"What is the YZ of March 2022?"</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="query-planning">4.5.3 Query Planning</h4>
+<p>OpenAI Function
+Agents能够进行高级查询规划。诀窍是为Agent提供一个<code>QueryPlanTool</code>
+-
+如果Agent调用<code>QueryPlanTool</code>，它将被迫推断一个完整的Pydantic模式，代表对一组子工具的查询计划。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># define query plan tool</span><br><span class="hljs-keyword">from</span> llama_index.core.tools <span class="hljs-keyword">import</span> QueryPlanTool<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> get_response_synthesizer<br><br>response_synthesizer = get_response_synthesizer(<br>    service_context=service_context<br>)<br>query_plan_tool = QueryPlanTool.from_defaults(<br>    query_engine_tools=[query_tool_sept, query_tool_june, query_tool_march],<br>    response_synthesizer=response_synthesizer,<br>)<br><br><span class="hljs-comment"># initialize agent</span><br>agent = OpenAIAgent.from_tools(<br>    [query_plan_tool],<br>    max_function_calls=<span class="hljs-number">10</span>,<br>    llm=OpenAI(temperature=<span class="hljs-number">0</span>, model=<span class="hljs-string">"gpt-4-0613"</span>),<br>    verbose=<span class="hljs-literal">True</span>,<br>)<br><br><span class="hljs-comment"># should output a query plan to call march, june, and september tools</span><br>response = agent.query(<br>    <span class="hljs-string">"Analyze Uber revenue growth in March, June, and September"</span><br>)<br></code></pre></td></tr></table></figure>
+<h2 id="官方资源">官方资源</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/deploying/agents/modules/">Agent
+Module Guides</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/deploying/agents/">官方文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.llamaindex.ai/blog/data-agents-eed797d7972f">Data
+Agents</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.llamaindex.ai/blog">官方博客</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples">官方全部例子</a></li>
+</ul>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2210.03629" class="uri">https://arxiv.org/abs/2210.03629</a>
+<a href="#fnref:1" rev="footnote" class="footnote-backref">
+↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2305.18323" class="uri">https://arxiv.org/abs/2305.18323</a>
+<a href="#fnref:2" rev="footnote" class="footnote-backref">
+↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2312.04511" class="uri">https://arxiv.org/abs/2312.04511</a>
+<a href="#fnref:3" rev="footnote" class="footnote-backref">
+↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LlamaIndex/" class="category-chain-item">LlamaIndex</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#LLM学习笔记</a>
+      
+        <a href="/tags/LlamaIndex/" class="print-no-link">#LlamaIndex</a>
+      
+        <a href="/tags/Agent/" class="print-no-link">#Agent</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LlamaIndex(八)——LlamaIndex Agents</div>
+      <div>https://mztchaoqun.com.cn/posts/D21_LlamaIndex_Agents/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年5月22日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D22_LlamaIndex_Evaluating/" title="LlamaIndex(九)——LlamaIndex Evaluation">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LlamaIndex(九)——LlamaIndex Evaluation</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D20_LlamaIndex_Quering/" title="LlamaIndex(七)——LlamaIndex Quering">
+                        <span class="hidden-mobile">LlamaIndex(七)——LlamaIndex Quering</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

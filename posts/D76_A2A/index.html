@@ -1,0 +1,984 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="谷歌在25年4月初发布了A2A协议，作为MCP协议的补充。Agent2Agent协议致力于促进独立agent间的通信，帮助不同生态系统的agent沟通和协作。  一、核心概念  Agent Card：一个公共元数据文件（通常位于 &#x2F;.well-known&#x2F;agent.json），用于描述Agent的能力、技能、端点 URL 以及认证要求。客户端通过它来发现Agent。 Agent Card通常包括">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A2A">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D76_A2A/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="谷歌在25年4月初发布了A2A协议，作为MCP协议的补充。Agent2Agent协议致力于促进独立agent间的通信，帮助不同生态系统的agent沟通和协作。  一、核心概念  Agent Card：一个公共元数据文件（通常位于 &#x2F;.well-known&#x2F;agent.json），用于描述Agent的能力、技能、端点 URL 以及认证要求。客户端通过它来发现Agent。 Agent Card通常包括">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/A2A.png">
+<meta property="article:published_time" content="2025-06-23T07:23:31.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.280Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="A2A">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/A2A.png">
+  
+  
+  
+  <title>A2A - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="A2A"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-06-23 15:23" pubdate>
+          2025年6月23日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          29 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">A2A</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>谷歌在25年4月初发布了A2A协议，作为MCP协议的补充。Agent2Agent协议致力于促进独立agent间的通信，帮助不同生态系统的agent沟通和协作。</p>
+<p><img src="/images/A2A.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="一核心概念">一、核心概念</h2>
+<ul>
+<li><strong>Agent Card</strong>：一个公共元数据文件（通常位于
+<code>/.well-known/agent.json</code>），用于描述Agent的能力、技能、端点
+URL 以及认证要求。客户端通过它来发现Agent。 Agent
+Card通常包括agent的技能说明、供应商、身份验证、链接、名称等：</li>
+</ul>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><code class="hljs angelscript"><span class="hljs-comment">// An AgentCard conveys key information:</span><br><span class="hljs-comment">// - Overall details (version, name, description, uses)</span><br><span class="hljs-comment">// - Skills: A set of capabilities the agent can perform</span><br><span class="hljs-comment">// - Default modalities/content types supported by the agent.</span><br><span class="hljs-comment">// - Authentication requirements</span><br><span class="hljs-keyword">interface</span> <span class="hljs-symbol">AgentCard</span> {<br>  <span class="hljs-comment">// Human readable name of the agent.</span><br>  <span class="hljs-comment">// (e.g. "Recipe Agent")</span><br>  name: <span class="hljs-built_in">string</span>;<br>  <span class="hljs-comment">// A human-readable description of the agent. Used to assist users and</span><br>  <span class="hljs-comment">// other agents in understanding what the agent can do.</span><br>  <span class="hljs-comment">// (e.g. "Agent that helps users with recipes and cooking.")</span><br>  description: <span class="hljs-built_in">string</span>;<br>  <span class="hljs-comment">// A URL to the address the agent is hosted at.</span><br>  url: <span class="hljs-built_in">string</span>;<br>  <span class="hljs-comment">// The service provider of the agent</span><br>  provider?: {<br>    organization: <span class="hljs-built_in">string</span>;<br>    url: <span class="hljs-built_in">string</span>;<br>  };<br>  <span class="hljs-comment">// The version of the agent - format is up to the provider. (e.g. "1.0.0")</span><br>  version: <span class="hljs-built_in">string</span>;<br>  <span class="hljs-comment">// A URL to documentation for the agent.</span><br>  documentationUrl?: <span class="hljs-built_in">string</span>;<br>  <span class="hljs-comment">// Optional capabilities supported by the agent.</span><br>  capabilities: {<br>    streaming?: <span class="hljs-built_in">bool</span>ean; <span class="hljs-comment">// true if the agent supports SSE</span><br>    pushNotifications?: <span class="hljs-built_in">bool</span>ean; <span class="hljs-comment">// true if the agent can notify updates to client</span><br>    stateTransitionHistory?: <span class="hljs-built_in">bool</span>ean; <span class="hljs-comment">//true if the agent exposes status change history for tasks</span><br>  };<br>  <span class="hljs-comment">// Authentication requirements for the agent.</span><br>  <span class="hljs-comment">// Intended to match OpenAPI authentication structure.</span><br>  authentication: {<br>    schemes: <span class="hljs-built_in">string</span>[]; <span class="hljs-comment">// e.g. Basic, Bearer</span><br>    credentials?: <span class="hljs-built_in">string</span>; <span class="hljs-comment">//credentials a client should use for private cards</span><br>  };<br>  <span class="hljs-comment">// The set of interaction modes that the agent</span><br>  <span class="hljs-comment">// supports across all skills. This can be overridden per-skill.</span><br>  defaultInputModes: <span class="hljs-built_in">string</span>[]; <span class="hljs-comment">// supported mime types for input</span><br>  defaultOutputModes: <span class="hljs-built_in">string</span>[]; <span class="hljs-comment">// supported mime types for output</span><br>  <span class="hljs-comment">// Skills are a unit of capability that an agent can perform.</span><br>  skills: {<br>    id: <span class="hljs-built_in">string</span>; <span class="hljs-comment">// unique identifier for the agent's skill</span><br>    name: <span class="hljs-built_in">string</span>; <span class="hljs-comment">//human readable name of the skill</span><br>    <span class="hljs-comment">// description of the skill - will be used by the client or a human</span><br>    <span class="hljs-comment">// as a hint to understand what the skill does.</span><br>    description: <span class="hljs-built_in">string</span>;<br>    <span class="hljs-comment">// Set of tag words describing classes of capabilities for this specific</span><br>    <span class="hljs-comment">// skill (e.g. "cooking", "customer support", "billing")</span><br>    tags: <span class="hljs-built_in">string</span>[];<br>    <span class="hljs-comment">// The set of example scenarios that the skill can perform.</span><br>    <span class="hljs-comment">// Will be used by the client as a hint to understand how the skill can be</span><br>    <span class="hljs-comment">// used. (e.g. "I need a recipe for bread")</span><br>    examples?: <span class="hljs-built_in">string</span>[]; <span class="hljs-comment">// example prompts for tasks</span><br>    <span class="hljs-comment">// The set of interaction modes that the skill supports</span><br>    <span class="hljs-comment">// (if different than the default)</span><br>    inputModes?: <span class="hljs-built_in">string</span>[]; <span class="hljs-comment">// supported mime types for input</span><br>    outputModes?: <span class="hljs-built_in">string</span>[]; <span class="hljs-comment">// supported mime types for output</span><br>  }[];<br>}<br></code></pre></td></tr></table></figure>
+<ul>
+<li><p><strong>A2A Server</strong>：一个实现了 A2A 协议方法（在 JSON
+规范中定义）的 HTTP
+端点，由Agent公开，用于接收请求并管理任务执行。</p></li>
+<li><p><strong>A2A Client</strong>：消费 A2A
+服务的应用程序或其他代理。它向 A2A Server 的 URL
+发送请求（如 <code>tasks/send</code>）。</p></li>
+<li><p><strong>Task（任务）</strong>：工作的核心单元。客户端通过发送消息（<code>tasks/send</code> 或 <code>tasks/sendSubscribe</code>）来发起任务。任务拥有唯一
+ID，并依次经历不同状态（<code>submitted</code>、<code>working</code>、<code>input-required</code>、<code>completed</code>、<code>failed</code>、<code>canceled</code>）。</p></li>
+<li><p><strong>Message（消息）</strong>：表示客户端（<code>role: "user"</code>）与Agent（<code>role: "agent"</code>）之间的交互轮次。消息由多个
+Part 组成。</p></li>
+<li><p><strong>Part（消息部分）</strong>：消息或工件中的基本内容单元，可为 <code>TextPart</code>、<code>FilePart</code>（内联字节或
+URI）或 <code>DataPart</code>（结构化 JSON，例如表单）。</p></li>
+<li><p><strong>Artifact（工件）</strong>：代理在任务执行过程中生成的输出，例如生成的文件或最终结构化数据。工件同样由多个
+Part 组成。</p></li>
+<li><p><strong>Streaming（流式传输）</strong>：对于长时间运行的任务，支持流式功能的服务器可使用 <code>tasks/sendSubscribe</code>。客户端会接收包含 <code>TaskStatusUpdateEvent</code> 或 <code>TaskArtifactUpdateEvent</code> 的
+Server-Sent Events（SSE），以获取实时进度。</p></li>
+<li><p><strong>Push
+Notifications（推送通知）</strong>：支持推送通知的服务器可以主动将任务更新发送到客户端提供的
+webhook URL，该 URL
+可通过 <code>tasks/pushNotification/set</code> 进行配置。</p></li>
+</ul>
+<h2 id="二典型工作流程">二、典型工作流程</h2>
+<ol type="1">
+<li><p><strong>发现</strong>：客户端从服务器的 well‑known
+URL（通常是 <code>https://DOMAIN/.well-known/agent.json</code>）获取
+Agent Card。</p></li>
+<li><p><strong>发起</strong>：客户端发送包含初始用户消息和唯一任务 ID
+的 <code>tasks/send</code> 或 <code>tasks/sendSubscribe</code> 请求。</p></li>
+<li><p><strong>处理</strong>：</p>
+<ul>
+<li><p><strong>流式</strong>：服务器在任务进展过程中，通过 Server‑Sent
+Events（SSE）发送状态更新或 Artifact 更新事件。</p></li>
+<li><p><strong>非流式</strong>：服务器同步处理任务，并在 HTTP
+响应中返回最终的 Task 对象。</p></li>
+</ul></li>
+<li><p><strong>交互（可选）</strong>：如果任务进入 <code>input-required</code> 状态，客户端可使用相同的任务
+ID，通过 <code>tasks/send</code> 或 <code>tasks/sendSubscribe</code> 发送后续消息以提供所需输入。</p></li>
+<li><p><strong>完成</strong>：任务最终达到终止状态之一：<code>completed</code>、<code>failed</code> 或 <code>canceled</code>。</p></li>
+</ol>
+<h2 id="三agent发现">三、Agent发现</h2>
+<h3 id="发现-agent-card">3.1 发现 Agent Card</h3>
+<ul>
+<li><p><strong>开放发现（Open Discovery）</strong></p>
+<p>A2A协议建议企业将 Agent Card
+托管在一个约定路径上，例如：<code>https://DOMAIN/.well-known/agent.json</code>客户端通过
+DNS 解析域名，向该路径发送 GET 请求，即可获取 Agent Card。
+这允许网页爬虫和应用程序轻松发现已知或配置的代理，实质上将“发现Agent”简化为“找到域名”。</p></li>
+<li><p><strong>筛选式发现（Curated Discovery，基于注册表）</strong></p>
+<p>企业可能通过目录界面提供代理注册表，供公司或团队内部使用。这种方式便于由管理员进行管理与筛选。
+谷歌官方正在考虑将注册表支持加入协议标准。</p></li>
+<li><p><strong>私有发现（Private Discovery，基于 API）</strong></p>
+<p>某些Agent可能托管于私有“Agent商店”或通过自定义 API 交换 Agent Card。
+A2A 协议目前不打算将私有发现 API 纳入标准。</p></li>
+</ul>
+<h3 id="保护-agent-cardsecuring-agent-cards">3.2 保护 Agent
+Card（Securing Agent Cards）</h3>
+<p>Agent Card
+可能包含敏感信息，实现方可根据需要为其设置身份验证和访问控制。
+例如，即使是放在 <code>.well-known</code> 路径上的 Agent
+Card，也可以通过 <strong>mTLS（双向
+TLS）</strong> 进行限制，仅允许特定客户端访问。注册表和私有 API
+更应强制认证，并根据不同身份返回不同内容。</p>
+<p>注意：Agent Card 中可能会包含认证信息（如 API
+Key），<strong>强烈建议</strong>此类内容不得在未验证身份的情况下公开访问。</p>
+<h2 id="四enterprise-readiness">四、Enterprise Readiness</h2>
+<p>A2A 协议旨在支持企业级需求，与现有企业基础设施无缝集成。它将 Agent
+看作标准的基于 HTTP
+的企业应用，因此依赖现有的认证、安全、隐私、追踪与监控机制。</p>
+<ul>
+<li><strong>传输层安全（Transport Level Security）</strong>：A2A 基于
+HTTP，生产环境必须使用 HTTPS，并启用现代 TLS 加密套件。</li>
+<li><strong>服务器身份验证（Server
+Identity）</strong>：服务器应使用由受信任证书颁发机构签发的数字证书，客户端需验证证书以确认身份。</li>
+<li><strong>客户端和用户身份（Client and User Identity）</strong>：A2A
+协议本身不定义客户端或用户标识，而是通过 Agent Card
+指明所需的认证方式。客户端需通过外部认证机制（如 OAuth）获取凭证，并通过
+HTTP 头传输。</li>
+<li><strong>客户端认证（Authenticating Clients）</strong>：A2A
+服务器应在 Agent Card 中公布其支持的认证协议，如 API Key、OAuth、OIDC
+等，并要求客户端每次请求都进行认证。认证失败将返回标准 HTTP 401 或 403
+错误码。</li>
+<li><strong>授权与数据隐私（Authorization and Data
+Privacy）</strong>：A2A 建议基于 <strong>技能（skills）</strong> 和
+<strong>工具（tools）</strong> 两个维度进行授权管理：
+<ul>
+<li><strong>技能授权</strong>：如通过 OAuth 范围控制访问特定技能；</li>
+<li><strong>工具授权</strong>：如通过 API
+管理工具限制访问敏感操作或数据。</li>
+</ul></li>
+<li><strong>可观测性与追踪（Tracing and Observability）</strong>：A2A
+基于 HTTP，因此可直接使用企业现有的日志、追踪与监控工具（如
+OpenTracing）。客户端和服务器应插入必要的追踪头，并记录日志与事件。</li>
+</ul>
+<h2 id="五与mcp协议的互补关系">五、与MCP协议的互补关系</h2>
+<p><img src="/images/A2A.gif" srcset="/img/loading.gif" lazyload></p>
+<p>构建agent应用需要同时使用A2A和MCP协议。agent通过MCP连接工具，通过A2A协议连接其他agent。</p>
+<ul>
+<li><p><strong>MCP（Model Context Protocol）</strong>
+是正在兴起的标准，用于连接大模型与工具、数据等资源，正在统一“函数调用”接口，降低了工具接入的复杂度，已被多个框架和平台采纳。</p></li>
+<li><p><strong>A2A</strong> 则聚焦另一个层面 ——
+它是一个应用层协议，允许agent之间以“agent”的方式进行自然交流（而非简单工具调用）。谷歌希望
+A2A 能与 MCP 形成互补，共同推动智能代理生态的发展。</p></li>
+</ul>
+<p><img src="/images/A2A.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>例如一个汽车修理店，员工使用各种专用工具（如升降机、电压表、扳手）来诊断和修理汽车问题。他们经常处理以前没见过的故障，过程中可能还需与客户交谈、查资料、与零件供应商合作。
+现在把这些员工抽象为Agent：</p>
+<blockquote>
+<p>MCP协议用来连接agent与结构化工具（例如：“升高平台2米”、“扳手右转4毫米”）。 </p>
+<p>A2A协议用来让最终用户或其他代理与员工交流（例如：“我的车有异响”）。A2A
+支持多轮对话和任务计划的演进（如：“拍张左车轮的照片”、“我看到有液体泄漏，这种情况多久了？”），也让修理工可以与其他代理（如零件供应商）协作。</p>
+</blockquote>
+<h2 id="六案例实战基于a2a协议实现mindsdb企业数据agent">六、案例实战：基于A2A协议实现MindsDB企业数据agent</h2>
+<p>通过A2A协议实现自然语言查询和跨多个企业数据源的数据分析，基座模型使用Gemini
+2.5 Flash 模型，MindsDB提供文本到SQL的能力，A2A
+协议作为通信协议，实现智能体之间的协作和任务分发。 </p>
+<p>具体流程为：</p>
+<ul>
+<li><p><strong>自然语言输入</strong>：用户通过智能体输入自然语言查询，例如：“查询过去三个月的销售数据”。</p></li>
+<li><p><strong>任务解析与分发</strong>：智能体将用户的查询解析为任务，并通过
+A2A 协议将任务分发给适当的执行代理。</p></li>
+<li><p><strong>数据查询与分析</strong>：执行代理接收到任务后，使用
+MindsDB 的文本到 SQL（Text-to-SQL）技能，将自然语言查询转换为 SQL
+查询，并在多个数据源上执行这些查询。 </p></li>
+<li><p><strong>结果整合与反馈</strong>：执行代理将查询结果整合，并通过
+A2A 协议将结果反馈给用户。</p></li>
+</ul>
+<p><img src="/images/A2A2.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>Agent的实现：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> json<br><span class="hljs-keyword">import</span> aiohttp<br><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">Any</span>, AsyncIterable, <span class="hljs-type">Dict</span>, <span class="hljs-type">Optional</span><br><span class="hljs-keyword">from</span> dotenv <span class="hljs-keyword">import</span> load_dotenv<br><br><span class="hljs-comment"># 加载 .env 文件中的环境变量</span><br>load_dotenv()<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MindsDBAgent</span>:<br>    <span class="hljs-string">"""An agent that data requests from any database, datawarehouse, app."""</span><br><br>    <span class="hljs-comment"># 支持的内容类型列表，仅文本</span><br>    SUPPORTED_CONTENT_TYPES = [<span class="hljs-string">"text"</span>, <span class="hljs-string">"text/plain"</span>]<br>    <span class="hljs-comment"># MindsDB API 的基础 URL</span><br>    API_URL = <span class="hljs-string">"https://ai.staging.mindsdb.com/chat/completions"</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-comment"># 从环境变量获取 MindsDB API Key</span><br>        <span class="hljs-variable language_">self</span>.api_key = os.getenv(<span class="hljs-string">'MINDS_API_KEY'</span>)<br>        ifnot <span class="hljs-variable language_">self</span>.api_key:<br>            <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">"MINDS_API_KEY environment variable is not set"</span>)<br><br>        <span class="hljs-comment"># 从环境变量获取默认的 Mind 名称</span><br>        <span class="hljs-variable language_">self</span>.model = os.getenv(<span class="hljs-string">'MIND_NAME'</span>)<br>        ifnot <span class="hljs-variable language_">self</span>.model:<br>            <span class="hljs-comment"># 如果未设置，则使用示例中默认的 Mind</span><br>            <span class="hljs-variable language_">self</span>.model = <span class="hljs-string">"Sales_Data_Expert_Demo_Mind"</span><br><br>        <span class="hljs-comment"># HTTP 请求头，包含认证信息</span><br>        <span class="hljs-variable language_">self</span>.headers = {<br>            <span class="hljs-string">"Content-Type"</span>: <span class="hljs-string">"application/json"</span>,<br>            <span class="hljs-string">"Authorization"</span>: <span class="hljs-string">f"Bearer <span class="hljs-subst">{self.api_key}</span>"</span><br>        }<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">invoke</span>(<span class="hljs-params">self, query, session_id</span>) -&gt; <span class="hljs-built_in">str</span>:<br>        <span class="hljs-comment"># 同步调用接口占位，提示使用流式获取真实结果</span><br>        <span class="hljs-keyword">return</span> {<span class="hljs-string">"content"</span>: <span class="hljs-string">"Use stream method to get the results!"</span>}<br><br>    asyncdef stream(<span class="hljs-variable language_">self</span>, query, session_id) -&gt; AsyncIterable[<span class="hljs-type">Dict</span>[<span class="hljs-built_in">str</span>, <span class="hljs-type">Any</span>]]:<br>        <span class="hljs-string">"""</span><br><span class="hljs-string">        流式方法：针对长时任务返回 SSE 流，每次 yield 一个消息段或完成事件</span><br><span class="hljs-string">        """</span><br>        <span class="hljs-comment"># 构造请求的 JSON 负载，包含 system 和 user 消息，以及 stream 标志</span><br>        payload = {<br>            <span class="hljs-string">"model"</span>: <span class="hljs-variable language_">self</span>.model,<br>            <span class="hljs-string">"messages"</span>: [<br>                {<span class="hljs-string">"role"</span>: <span class="hljs-string">"system"</span>, <span class="hljs-string">"content"</span>: <span class="hljs-string">"You are a helpful assistant."</span>},<br>                {<span class="hljs-string">"role"</span>: <span class="hljs-string">"user"</span>, <span class="hljs-string">"content"</span>: query}<br>            ],<br>            <span class="hljs-string">"stream"</span>: <span class="hljs-literal">True</span><br>        }<br><br>        <span class="hljs-comment"># 使用 aiohttp 发送异步 HTTP POST 请求</span><br>        asyncwith aiohttp.ClientSession() <span class="hljs-keyword">as</span> session:<br>            asyncwith session.post(<span class="hljs-variable language_">self</span>.API_URL, headers=<span class="hljs-variable language_">self</span>.headers, json=payload) <span class="hljs-keyword">as</span> response:<br>                <span class="hljs-comment"># 解析响应内容为字节流，按行处理 SSE</span><br>                asyncfor line <span class="hljs-keyword">in</span> response.content:<br>                    ifnot line:<br>                        <span class="hljs-keyword">continue</span><span class="hljs-comment"># 跳过空行</span><br>                    line = line.decode(<span class="hljs-string">'utf-8'</span>).strip()<br>                    ifnot line.startswith(<span class="hljs-string">"data: "</span>):<br>                        <span class="hljs-keyword">continue</span><span class="hljs-comment"># 只处理带 "data: " 前缀的行</span><br><br>                    <span class="hljs-comment"># 去除前缀并尝试解析 JSON</span><br>                    json_str = line[<span class="hljs-number">6</span>:]<br>                    <span class="hljs-keyword">try</span>:<br>                        data = json.loads(json_str)<br>                    <span class="hljs-keyword">except</span> json.JSONDecodeError:<br>                        <span class="hljs-keyword">continue</span><span class="hljs-comment"># 跳过无法解析的行</span><br><br>                    <span class="hljs-comment"># 处理 choices 数组，通常只有一个元素</span><br>                    <span class="hljs-keyword">if</span><span class="hljs-string">"choices"</span><span class="hljs-keyword">in</span> data:<br>                        choice = data[<span class="hljs-string">"choices"</span>][<span class="hljs-number">0</span>]<br>                        delta = choice.get(<span class="hljs-string">"delta"</span>, {})<br>                        content = delta.get(<span class="hljs-string">"content"</span>)<br>                        role = delta.get(<span class="hljs-string">"role"</span>, <span class="hljs-string">""</span>)<br><br>                        <span class="hljs-comment"># 构造基本的消息部分列表</span><br>                        parts = [{<span class="hljs-string">"type"</span>: <span class="hljs-string">"text"</span>, <span class="hljs-string">"text"</span>: content}]<br><br>                        <span class="hljs-comment"># 判断是否已完成</span><br>                        <span class="hljs-keyword">if</span> choice.get(<span class="hljs-string">"finish_reason"</span>) == <span class="hljs-string">"stop"</span>:<br>                            <span class="hljs-keyword">yield</span> {<br>                                <span class="hljs-string">"is_task_complete"</span>: <span class="hljs-literal">True</span>,<br>                                <span class="hljs-string">"parts"</span>: parts<br>                            }<br>                            <span class="hljs-keyword">continue</span><br><br>                        <span class="hljs-comment"># 默认子类型为推理</span><br>                        subtype = <span class="hljs-string">"analysis"</span><br>                        tool_calls = delta.get(<span class="hljs-string">"tool_calls"</span>, [])<br><br>                        <span class="hljs-comment"># 如果是助手角色发言，转换为 ack 类型</span><br>                        <span class="hljs-keyword">if</span> role == <span class="hljs-string">"assistant"</span>:<br>                            subtype = <span class="hljs-string">"acknowledge"</span><br><br>                        <span class="hljs-comment"># 处理工具调用示例（例如 SQL 查询）</span><br>                        <span class="hljs-keyword">if</span> tool_calls:<br>                            tool_call = tool_calls[<span class="hljs-number">0</span>]<br>                            function = tool_call.get(<span class="hljs-string">"function"</span>, {})<br>                            function_name = function.get(<span class="hljs-string">"name"</span>)<br>                            arguments = function.get(<span class="hljs-string">"arguments"</span>, {})<br>                            <span class="hljs-keyword">if</span> function_name == <span class="hljs-string">"sql_db_query"</span>:<br>                                subtype = <span class="hljs-string">"execute_query"</span><br>                                <span class="hljs-comment"># 将查询参数也作为一个 message part</span><br>                                parts.append({<br>                                    <span class="hljs-string">"type"</span>: <span class="hljs-string">"text"</span>,<br>                                    <span class="hljs-string">"text"</span>: <span class="hljs-built_in">str</span>(arguments)<br>                                })<br><br>                        <span class="hljs-comment"># 返回中间事件，is_task_complete 为 False</span><br>                        <span class="hljs-keyword">yield</span> {<br>                            <span class="hljs-string">"is_task_complete"</span>: <span class="hljs-literal">False</span>,<br>                            <span class="hljs-string">"parts"</span>: parts,<br>                            <span class="hljs-string">"metadata"</span>: {<span class="hljs-string">"type"</span>: <span class="hljs-string">"reasoning"</span>, <span class="hljs-string">"subtype"</span>: subtype}<br>                        }<br>                        <span class="hljs-keyword">continue</span><br></code></pre></td></tr></table></figure>
+<p><strong>task manager的实现：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> json<br><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> AsyncIterable, <span class="hljs-type">Union</span><br><span class="hljs-keyword">import</span> logging<br><br><span class="hljs-comment"># 引入 A2A 协议相关类型</span><br><span class="hljs-keyword">from</span> common.types <span class="hljs-keyword">import</span> (<br>    SendTaskRequest,<br>    TaskSendParams,<br>    Message,<br>    TaskStatus,<br>    Artifact,<br>    TaskStatusUpdateEvent,<br>    TaskArtifactUpdateEvent,<br>    TextPart,<br>    TaskState,<br>    Task,<br>    SendTaskResponse,<br>    InternalError,<br>    JSONRPCResponse,<br>    SendTaskStreamingRequest,<br>    SendTaskStreamingResponse,<br>)<br><br><span class="hljs-comment"># 引入任务管理基类（内存实现）</span><br><span class="hljs-keyword">from</span> common.server.task_manager <span class="hljs-keyword">import</span> InMemoryTaskManager<br><span class="hljs-comment"># 引入具体的 MindsDBAgent 实现</span><br><span class="hljs-keyword">from</span> agent <span class="hljs-keyword">import</span> MindsDBAgent<br><span class="hljs-comment"># 通用工具函数，用于检查内容类型兼容性等</span><br><span class="hljs-keyword">import</span> common.server.utils <span class="hljs-keyword">as</span> utils<br><br>logger = logging.getLogger(__name__)<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">AgentTaskManager</span>(<span class="hljs-title class_ inherited__">InMemoryTaskManager</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    A2A 协议任务管理器：</span><br><span class="hljs-string">    继承自 InMemoryTaskManager，处理 tasks/send 与 tasks/sendSubscribe。</span><br><span class="hljs-string">    调用 MindsDBAgent 执行实际任务，并将结果按 A2A 事件流式推送。</span><br><span class="hljs-string">    """</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, agent: MindsDBAgent</span>):<br>        <span class="hljs-built_in">super</span>().__init__()<br>        <span class="hljs-comment"># 注入具体的代理实例</span><br>        <span class="hljs-variable language_">self</span>.agent = agent<br><br>    asyncdef _stream_generator(<br>        <span class="hljs-variable language_">self</span>, request: SendTaskStreamingRequest<br>    ) -&gt; AsyncIterable[SendTaskStreamingResponse] | JSONRPCResponse:<br>        <span class="hljs-string">"""</span><br><span class="hljs-string">        实现流式订阅：</span><br><span class="hljs-string">        接收 A2A 客户端的 tasks/sendSubscribe 请求</span><br><span class="hljs-string">        并将代理 stream() 方法的输出转换为 A2A 事件流。</span><br><span class="hljs-string">        """</span><br>        <span class="hljs-comment"># 从请求中获取 Task 参数</span><br>        task_send_params: TaskSendParams = request.params<br>        query = <span class="hljs-variable language_">self</span>._get_user_query(task_send_params)<br>        <span class="hljs-keyword">try</span>:<br>            <span class="hljs-comment"># 调用代理的 SSE 流方法</span><br>            asyncfor item <span class="hljs-keyword">in</span> <span class="hljs-variable language_">self</span>.agent.stream(query, task_send_params.sessionId):<br>                is_complete = item[<span class="hljs-string">"is_task_complete"</span>]<br>                parts = item[<span class="hljs-string">"parts"</span>]<br><br>                ifnot is_complete:<br>                    <span class="hljs-comment"># 未完成：状态为 WORKING</span><br>                    task_state = TaskState.WORKING<br>                    metadata = item.get(<span class="hljs-string">"metadata"</span>)<br>                    <span class="hljs-comment"># 构造 A2A 消息</span><br>                    message = Message(role=<span class="hljs-string">"agent"</span>, parts=parts, metadata=metadata)<br>                    task_status = TaskStatus(state=task_state, message=message)<br>                    <span class="hljs-comment"># 更新内存任务状态</span><br>                    <span class="hljs-keyword">await</span> <span class="hljs-variable language_">self</span>._update_store(task_send_params.<span class="hljs-built_in">id</span>, task_status, [])<br>                    <span class="hljs-comment"># 构造 TaskStatusUpdateEvent</span><br>                    update_event = TaskStatusUpdateEvent(<br>                        <span class="hljs-built_in">id</span>=task_send_params.<span class="hljs-built_in">id</span>,<br>                        status=task_status,<br>                        final=<span class="hljs-literal">False</span><br>                    )<br>                    <span class="hljs-comment"># 推送给客户端</span><br>                    <span class="hljs-keyword">yield</span> SendTaskStreamingResponse(<span class="hljs-built_in">id</span>=request.<span class="hljs-built_in">id</span>, result=update_event)<br>                <span class="hljs-keyword">else</span>:<br>                    <span class="hljs-comment"># 完成：状态为 COMPLETED</span><br>                    task_state = TaskState.COMPLETED<br>                    <span class="hljs-comment"># 构造 Artifact（仅一段 parts）</span><br>                    artifact = Artifact(parts=parts, index=<span class="hljs-number">0</span>, append=<span class="hljs-literal">False</span>)<br>                    <span class="hljs-comment"># 首先发送工件更新事件</span><br>                    <span class="hljs-keyword">yield</span> SendTaskStreamingResponse(<br>                        <span class="hljs-built_in">id</span>=request.<span class="hljs-built_in">id</span>,<br>                        result=TaskArtifactUpdateEvent(<br>                            <span class="hljs-built_in">id</span>=task_send_params.<span class="hljs-built_in">id</span>,<br>                            artifact=artifact<br>                        )<br>                    )<br>                    <span class="hljs-comment"># 更新内存中的任务状态与工件列表</span><br>                    task_status = TaskStatus(state=task_state)<br>                    <span class="hljs-keyword">await</span> <span class="hljs-variable language_">self</span>._update_store(task_send_params.<span class="hljs-built_in">id</span>, task_status, [artifact])<br>                    <span class="hljs-comment"># 最终发送状态完成事件</span><br>                    <span class="hljs-keyword">yield</span> SendTaskStreamingResponse(<br>                        <span class="hljs-built_in">id</span>=request.<span class="hljs-built_in">id</span>,<br>                        result=TaskStatusUpdateEvent(<br>                            <span class="hljs-built_in">id</span>=task_send_params.<span class="hljs-built_in">id</span>,<br>                            status=TaskStatus(state=task_state),<br>                            final=<span class="hljs-literal">True</span><br>                        )<br>                    )<br>        <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:<br>            <span class="hljs-comment"># 异常处理：返回 JSON-RPC 错误</span><br>            logger.error(<span class="hljs-string">f"Streaming error: <span class="hljs-subst">{e}</span>"</span>)<br>            <span class="hljs-keyword">yield</span> JSONRPCResponse(<br>                <span class="hljs-built_in">id</span>=request.<span class="hljs-built_in">id</span>,<br>                error=InternalError(message=<span class="hljs-string">"Error streaming response"</span>)<br>            )<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_validate_request</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self, request: <span class="hljs-type">Union</span>[SendTaskRequest, SendTaskStreamingRequest]</span><br><span class="hljs-params">    </span>) -&gt; <span class="hljs-type">Optional</span>[JSONRPCResponse]:<br>        <span class="hljs-string">"""</span><br><span class="hljs-string">        验证客户端请求的输出模式与代理支持的内容类型是否兼容。</span><br><span class="hljs-string">        不兼容时返回 JSON-RPC 错误响应。</span><br><span class="hljs-string">        """</span><br>        params: TaskSendParams = request.params<br>        ifnot utils.are_modalities_compatible(<br>            params.acceptedOutputModes,<br>            MindsDBAgent.SUPPORTED_CONTENT_TYPES<br>        ):<br>            logger.warning(<span class="hljs-string">"Incompatible modes: %s"</span>, params.acceptedOutputModes)<br>            <span class="hljs-keyword">return</span> utils.new_incompatible_types_error(request.<span class="hljs-built_in">id</span>)<br>        returnNone<br><br>    asyncdef on_send_task(<span class="hljs-variable language_">self</span>, request: SendTaskRequest) -&gt; SendTaskResponse:<br>        <span class="hljs-string">"""</span><br><span class="hljs-string">        处理 tasks/send 同步请求，返回最终 Task 或 INPUT_REQUIRED。</span><br><span class="hljs-string">        """</span><br>        error = <span class="hljs-variable language_">self</span>._validate_request(request)<br>        <span class="hljs-keyword">if</span> error:<br>            <span class="hljs-keyword">return</span> error<br>        <span class="hljs-comment"># 插入或更新任务初始记录</span><br>        <span class="hljs-keyword">await</span> <span class="hljs-variable language_">self</span>.upsert_task(request.params)<br>        <span class="hljs-comment"># 调用同步 invoke 实现</span><br>        returnawait <span class="hljs-variable language_">self</span>._invoke(request)<br><br>    asyncdef on_send_task_subscribe(<br>        <span class="hljs-variable language_">self</span>, request: SendTaskStreamingRequest<br>    ) -&gt; AsyncIterable[SendTaskStreamingResponse] | JSONRPCResponse:<br>        <span class="hljs-string">"""</span><br><span class="hljs-string">        处理 tasks/sendSubscribe 流式请求，返回一个事件流。</span><br><span class="hljs-string">        """</span><br>        error = <span class="hljs-variable language_">self</span>._validate_request(request)<br>        <span class="hljs-keyword">if</span> error:<br>            <span class="hljs-keyword">return</span> error<br>        <span class="hljs-keyword">await</span> <span class="hljs-variable language_">self</span>.upsert_task(request.params)<br>        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>._stream_generator(request)<br><br>    asyncdef _update_store(<br>        <span class="hljs-variable language_">self</span>, task_id: <span class="hljs-built_in">str</span>, status: TaskStatus, artifacts: <span class="hljs-built_in">list</span>[Artifact]<br>    ) -&gt; Task:<br>        <span class="hljs-string">"""</span><br><span class="hljs-string">        更新内存中任务的状态和工件列表，用于后续查询与状态回放。</span><br><span class="hljs-string">        """</span><br>        asyncwith <span class="hljs-variable language_">self</span>.lock:<br>            task = <span class="hljs-variable language_">self</span>.tasks.get(task_id)<br>            ifnot task:<br>                logger.error(<span class="hljs-string">f"Task <span class="hljs-subst">{task_id}</span> not found"</span>)<br>                <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">f"Task <span class="hljs-subst">{task_id}</span> not found"</span>)<br>            task.status = status<br>            <span class="hljs-keyword">if</span> artifacts:<br>                task.artifacts = (task.artifacts <span class="hljs-keyword">or</span> []) + artifacts<br>            <span class="hljs-keyword">return</span> task<br><br>    asyncdef _invoke(<span class="hljs-variable language_">self</span>, request: SendTaskRequest) -&gt; SendTaskResponse:<br>        <span class="hljs-string">"""</span><br><span class="hljs-string">        同步调用代理的 invoke，处理简单或需要额外输入的场景。</span><br><span class="hljs-string">        """</span><br>        params: TaskSendParams = request.params<br>        query = <span class="hljs-variable language_">self</span>._get_user_query(params)<br>        <span class="hljs-keyword">try</span>:<br>            result = <span class="hljs-variable language_">self</span>.agent.invoke(query, params.sessionId)<br>        <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:<br>            logger.error(<span class="hljs-string">f"Invoke error: <span class="hljs-subst">{e}</span>"</span>)<br>            <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">f"Error invoking agent: <span class="hljs-subst">{e}</span>"</span>)<br>        <span class="hljs-comment"># 将返回内容封装为 TextPart</span><br>        parts = [{<span class="hljs-string">"type"</span>: <span class="hljs-string">"text"</span>, <span class="hljs-string">"text"</span>: result}]<br>        <span class="hljs-comment"># 根据返回结果判断是否需要更多输入</span><br>        state = TaskState.INPUT_REQUIRED <span class="hljs-keyword">if</span><span class="hljs-string">"MISSING_INFO:"</span><span class="hljs-keyword">in</span> result <span class="hljs-keyword">else</span> TaskState.COMPLETED<br>        <span class="hljs-comment"># 更新存储并返回完整 Task</span><br>        task = <span class="hljs-keyword">await</span> <span class="hljs-variable language_">self</span>._update_store(<br>            params.<span class="hljs-built_in">id</span>,<br>            TaskStatus(state=state, message=Message(role=<span class="hljs-string">"agent"</span>, parts=parts)),<br>            [Artifact(parts=parts)]<br>        )<br>        <span class="hljs-keyword">return</span> SendTaskResponse(<span class="hljs-built_in">id</span>=request.<span class="hljs-built_in">id</span>, result=task)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_get_user_query</span>(<span class="hljs-params">self, params: TaskSendParams</span>) -&gt; <span class="hljs-built_in">str</span>:<br>        <span class="hljs-string">"""</span><br><span class="hljs-string">        从 TaskSendParams.message.parts 中提取用户文本查询，目前仅支持 TextPart。</span><br><span class="hljs-string">        """</span><br>        part = params.message.parts[<span class="hljs-number">0</span>]<br>        ifnot <span class="hljs-built_in">isinstance</span>(part, TextPart):<br>            <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">"Only text parts are supported"</span>)<br>        <span class="hljs-keyword">return</span> part.text<br></code></pre></td></tr></table></figure>
+<h2 id="reference">Reference</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/">Announcing
+the Agent2Agent Protocol (A2A)</a></li>
+<li><a target="_blank" rel="noopener" href="https://a2aproject.github.io/A2A/latest/#a2a-unlock-collaborative-agent-to-agent-scenarios-with-a-new-open-protocol">Agent2Agent
+(A2A) Protocol</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/google/A2A">GitHub A2A</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/spatial_coder/article/details/147717253/">Agent2Agent(谷歌A2A)协议原理讲解</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.wallarm.com/what/a2a-vs-mcp-a-comparison">A2A
+vs. MCP: A Comparison</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloudedponderings.medium.com/a-deep-dive-into-model-context-protocol-mcp-and-agent-to-agent-a2a-communication-for-advanced-f65b3ac016ea">A
+Deep Dive into Model Context Protocol (MCP) and Agent-to-Agent (A2A)
+Communication for Advanced AI Systems</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/Makun1995/article/details/147353798">Function
+Calling、MCP 与 A2A 的区别与使用方式</a></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/LLM/A2A/" class="category-chain-item">A2A</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/A2A/" class="print-no-link">#A2A</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>A2A</div>
+      <div>https://mztchaoqun.com.cn/posts/D76_A2A/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年6月23日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D77_FC_MCP_A2A_AG-UI/" title="Function Calling vs. MCP vs. A2A vs. AG-UI">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Function Calling vs. MCP vs. A2A vs. AG-UI</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D75_MCP/" title="MCP">
+                        <span class="hidden-mobile">MCP</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

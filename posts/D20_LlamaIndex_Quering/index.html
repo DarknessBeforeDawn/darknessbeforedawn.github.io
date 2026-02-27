@@ -1,0 +1,1657 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="Querying是LLM应用中最重要的部分。 一、Query Engine 查询引擎是一个通用的接口，允许对数据提出问题。查询引擎接收自然语言查询，并返回一个丰富的响应。它通常是通过检索器建立在一个或多个索引之上。可以组合多个查询引擎以实现更高级的功能。 1.1 使用示例 从索引构建查询引擎： 12query_engine &#x3D; index.as_query_engine()response &#x3D; q">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LlamaIndex(七)——LlamaIndex Quering">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D20_LlamaIndex_Quering/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="Querying是LLM应用中最重要的部分。 一、Query Engine 查询引擎是一个通用的接口，允许对数据提出问题。查询引擎接收自然语言查询，并返回一个丰富的响应。它通常是通过检索器建立在一个或多个索引之上。可以组合多个查询引擎以实现更高级的功能。 1.1 使用示例 从索引构建查询引擎： 12query_engine &#x3D; index.as_query_engine()response &#x3D; q">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/LlamaIndex7.png">
+<meta property="article:published_time" content="2024-05-11T07:23:48.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.270Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="LLM学习笔记">
+<meta property="article:tag" content="LlamaIndex">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/LlamaIndex7.png">
+  
+  
+  
+  <title>LlamaIndex(七)——LlamaIndex Quering - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LlamaIndex(七)——LlamaIndex Quering"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-05-11 15:23" pubdate>
+          2024年5月11日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          77 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LlamaIndex(七)——LlamaIndex Quering</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>Querying是LLM应用中最重要的部分。</p>
+<h2 id="一query-engine">一、Query Engine</h2>
+<p>查询引擎是一个通用的接口，允许对数据提出问题。查询引擎接收自然语言查询，并返回一个丰富的响应。它通常是通过检索器建立在一个或多个索引之上。可以组合多个查询引擎以实现更高级的功能。</p>
+<h3 id="使用示例">1.1 使用示例</h3>
+<p>从索引构建查询引擎：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">query_engine = index.as_query_engine()<br>response = query_engine.query(<span class="hljs-string">"Who is Paul Graham?"</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="配置query-engine">1.1.1 配置Query Engine</h4>
+<p><strong>High-Level API</strong></p>
+<p>可以直接用一行代码构建并配置一个查询引擎：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python">query_engine = index.as_query_engine(<br>    response_mode=<span class="hljs-string">"tree_summarize"</span>,<br>    verbose=<span class="hljs-literal">True</span>,<br>)<br></code></pre></td></tr></table></figure>
+<p>虽然High-Level API
+优化了易用性，但它并没有暴露全部的可配置性范围。更多<a href="#response-modes">response_mode</a></p>
+<p><strong>Low-Level Composition API</strong></p>
+<p>如果你需要更精细的控制，可以使用Low-Level Composition API。
+具体来说，需要显式构造一个 <code>QueryEngine</code>对象，而不是调用
+i<code>ndex.as_query_engine(...)</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex, get_response_synthesizer<br><span class="hljs-keyword">from</span> llama_index.core.retrievers <span class="hljs-keyword">import</span> VectorIndexRetriever<br><span class="hljs-keyword">from</span> llama_index.core.query_engine <span class="hljs-keyword">import</span> RetrieverQueryEngine<br><br><span class="hljs-comment"># build index</span><br>index = VectorStoreIndex.from_documents(documents)<br><br><span class="hljs-comment"># configure retriever</span><br>retriever = VectorIndexRetriever(<br>    index=index,<br>    similarity_top_k=<span class="hljs-number">2</span>,<br>)<br><br><span class="hljs-comment"># configure response synthesizer</span><br>response_synthesizer = get_response_synthesizer(<br>    response_mode=<span class="hljs-string">"tree_summarize"</span>,<br>)<br><br><span class="hljs-comment"># assemble query engine</span><br>query_engine = RetrieverQueryEngine(<br>    retriever=retriever,<br>    response_synthesizer=response_synthesizer,<br>)<br><br><span class="hljs-comment"># query</span><br>response = query_engine.query(<span class="hljs-string">"What did the author do growing up?"</span>)<br><span class="hljs-built_in">print</span>(response)<br></code></pre></td></tr></table></figure>
+<p><strong>Streaming</strong></p>
+<p>要启用流式传输，只需要传入一个 <code>streaming=True</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python">query_engine = index.as_query_engine(<br>    streaming=<span class="hljs-literal">True</span>,<br>)<br>streaming_response = query_engine.query(<br>    <span class="hljs-string">"What did the author do growing up?"</span>,<br>)<br>streaming_response.print_response_stream()<br></code></pre></td></tr></table></figure>
+<p>详细可查看<a href="#streaming">Streaming</a>和<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/customization/streaming/SimpleIndexDemo-streaming/">具体例子</a></p>
+<h4 id="定义自定义query-engine">1.1.2 定义自定义Query Engine</h4>
+<p>也可以定义一个自定义查询引擎。只需继承 <code>CustomQueryEngine</code>
+类，定义想要的任何属性（类似于定义一个
+<code>Pydantic</code>类），并实现一个返回 <code>Response</code>
+对象或字符串的 <code>custom_query</code> 函数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.query_engine <span class="hljs-keyword">import</span> CustomQueryEngine<br><span class="hljs-keyword">from</span> llama_index.core.retrievers <span class="hljs-keyword">import</span> BaseRetriever<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> get_response_synthesizer<br><span class="hljs-keyword">from</span> llama_index.core.response_synthesizers <span class="hljs-keyword">import</span> BaseSynthesizer<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">RAGQueryEngine</span>(<span class="hljs-title class_ inherited__">CustomQueryEngine</span>):<br>    <span class="hljs-string">"""RAG Query Engine."""</span><br><br>    retriever: BaseRetriever<br>    response_synthesizer: BaseSynthesizer<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">custom_query</span>(<span class="hljs-params">self, query_str: <span class="hljs-built_in">str</span></span>):<br>        nodes = <span class="hljs-variable language_">self</span>.retriever.retrieve(query_str)<br>        response_obj = <span class="hljs-variable language_">self</span>.response_synthesizer.synthesize(query_str, nodes)<br>        <span class="hljs-keyword">return</span> response_obj<br></code></pre></td></tr></table></figure>
+<p>可以查看<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/query_engine/custom_query_engine/">详细例子</a></p>
+<h3 id="response-modes">1.2 Response Modes</h3>
+<p>目前，支持以下选项：</p>
+<ul>
+<li><code>refine</code>：通过顺序遍历每个检索到的文本块来<strong>创建和完善</strong>答案。这会为每个节点/检索到的块进行单独的LLM调用。</li>
+</ul>
+<p><strong>Details</strong>：使用<code>text_qa_template</code>
+prompt在查询中使用第一块。然后，使用答案和下一块（以及原始问题）在另一个查询中使用<code>refine_template</code>
+prompt。如此继续，直到解析完所有块。
+如果一个块太大而无法适应窗口（考虑到prompt大小），则使用<code>TokenTextSplitter</code>进行分割（允许块之间有一些文本重叠），并且（新的）额外块被视为原始块集合的块（因此也使用<code>refine_template</code>进行查询）。适用于更详细的答案。</p>
+<ul>
+<li><code>compact</code>（默认）：类似于<code>refine</code>，但是事先将块进行<strong>compact</strong>（串联）处理，从而减少LLM调用。</li>
+</ul>
+<p><strong>Details</strong>：填充尽可能多的可以适合上下文窗口的文本（从检索到的块连接/打包）（考虑<code>text_qa_template</code>和<code>refine_template</code>之间的最大prompt大小）。
+如果文本太长而无法容纳在一个提示中，则会根据需要将其拆分为多个部分（使用
+<code>TokenTextSplitter</code>，从而允许文本块之间存在一些重叠）。每个文本部分都被视为一个“块”，并被发送到<code>refine</code>合成器。简而言之，它就像<code>refine</code>一样，但
+LLM 调用较少。</p>
+<ul>
+<li><code>tree_summarize</code>：根据需要多次使用<code>summary_template</code>
+prompt查询LLM，以便查询所有串联的块，从而产生尽可能多的答案，这些答案本身在<code>tree_summarize</code>
+LLM调用中递归地用作块，依此类推，直到只剩下一个块
+，因此只有一个最终答案。</li>
+</ul>
+<p><strong>Details</strong>：使用<code>summary_template</code>
+prompt尽可能多地连接块以适合上下文窗口，并在需要时分割它们（再次使用<code>TokenTextSplitter</code>和一些文本重叠）。
+然后，根据<code>summary_template</code>查询每个生成的块/分割（没有细化查询！）并获得尽可能多的答案。如果只有一个答案（因为只有一大块），那么它就是最终答案。如果有多个答案，则这些本身被视为块并递归发送到
+<code>tree_summarize</code>
+进程（连接/拆分以适合/查询）。适用于总结目的。</p>
+<ul>
+<li><p><code>simple_summarize</code>：截断所有文本块以适合单个 LLM
+prompt。 适合快速总结，但可能会因截断而丢失细节。</p></li>
+<li><p><code>no_text</code>：仅运行检索器来获取本应发送到 LLM
+的节点，而不实际发送它们。
+然后可以通过检查<code>response.source_nodes</code>来检查。</p></li>
+<li><p><code>accumulate</code>：给定一组文本块和查询，将查询应用于每个文本块，同时将响应累积到数组中。
+返回所有响应的串联字符串。
+适合当需要对每个文本块单独运行相同的查询时。</p></li>
+<li><p><code>compact_accumulate</code>：与<code>accumulate</code>
+相同，但会像<code>compact</code> 一样“压缩”每个LLM
+prompt，并对每个文本块运行相同的查询。</p></li>
+</ul>
+<p>更多请查看<a href="#五response-synthesizer">Response
+Synthesizer</a></p>
+<h3 id="streaming">1.3 Streaming</h3>
+<p>LlamaIndex
+支持在生成响应的同时进行流式传输。这样，可以在完整响应生成完毕之前就开始打印或处理响应的开始部分。这可以显著减少查询的感知延迟。</p>
+<h4 id="设置">1.3.1 设置</h4>
+<p>要启用流式处理，需要使用支持流式处理的 LLM。目前，流式处理由
+<code>OpenAI</code>、<code>HuggingFaceLLM</code> 和大多数 LangChain
+LLMs（通过 <code>LangChainLLM</code>）支持。如果选择的 LLM
+不支持流式处理，将会引发<code>NotImplementedError</code>。要使用high-level
+API 配置查询引擎以使用流式处理，构建查询引擎时设置
+<code>streaming=True</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">query_engine = index.as_query_engine(streaming=<span class="hljs-literal">True</span>, similarity_top_k=<span class="hljs-number">1</span>)<br></code></pre></td></tr></table></figure>
+<p>如果使用Low-Level API 组合查询引擎，在构建
+<code>Response Synthesizer</code> 时传递
+<code>streaming=True</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> get_response_synthesizer<br><br>synth = get_response_synthesizer(streaming=<span class="hljs-literal">True</span>, ...)<br>query_engine = RetrieverQueryEngine(response_synthesizer=synth, ...)<br></code></pre></td></tr></table></figure>
+<h4 id="流式响应">1.3.2 流式响应</h4>
+<p>在正确配置了 LLM 和查询引擎之后，调用 <code>query</code> 返回一个
+<code>StreamingResponse</code> 对象。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">streaming_response = query_engine.query(<br>    <span class="hljs-string">"What did the author do growing up?"</span>,<br>)<br></code></pre></td></tr></table></figure>
+<p>响应在 LLM 调用开始时立即返回，无需等待完全完成。在查询引擎进行多个
+LLM 调用的情况下，只有最后一个 LLM 调用会被流式传输，响应在最后一个 LLM
+调用开始时返回。</p>
+<p>可以从流式响应中获取一个<code>Generator</code>，并在
+<code>Token</code> 到达时迭代它们：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">for</span> text <span class="hljs-keyword">in</span> streaming_response.response_gen:<br>    <span class="hljs-comment"># do something with text as they arrive.</span><br>    <span class="hljs-keyword">pass</span><br></code></pre></td></tr></table></figure>
+<p>如果只想在它们到达时打印文本：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">streaming_response.print_response_stream()<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/customization/streaming/SimpleIndexDemo-streaming/">完整例子</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/deploying/query_engine/modules/">Module
+Guides</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/deploying/query_engine/supporting_modules/">Supporting
+Modules</a></p>
+<h2 id="二chat-engine">二、Chat Engine</h2>
+<p>聊天引擎是一个high-level接口，用于与数据进行对话（多轮问答而非单一的问答）。想象一下ChatGPT与知识库相结合。从概念上讲，它是一个有状态的<a href="#一query-engine">查询引擎</a>的类比。通过跟踪对话历史，它能够考虑过去的上下文来回答问题。如果想要在数据上提出独立问题（即不保留对话历史记录），请改用查询引擎。</p>
+<h3 id="使用示例-1">2.1 使用示例</h3>
+<p>从索引构建Chat Engine：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python">chat_engine = index.as_chat_engine()<br>response = chat_engine.chat(<span class="hljs-string">"Tell me a joke."</span>)<br><br><span class="hljs-comment">#重置聊天历史以开始新的对话</span><br>chat_engine.reset()<br><br><span class="hljs-comment">#输入交互式聊天 REPL</span><br>chat_engine.chat_repl()<br></code></pre></td></tr></table></figure>
+<h4 id="配置聊天引擎">2.1.1 配置聊天引擎</h4>
+<p>配置聊天引擎与配置查询引擎非常相似。</p>
+<p><strong>High-Level API</strong></p>
+<p>可以在一行代码中直接构建并配置聊天引擎：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">chat_engine = index.as_chat_engine(chat_mode=<span class="hljs-string">"condense_question"</span>, verbose=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure>
+<p><strong>可用的聊天模式</strong></p>
+<ul>
+<li><code>best</code> - 将查询引擎变成一个工具，与 <code>ReAct</code>
+数据代理或 <code>OpenAI</code> 数据代理一起使用，具体取决于 LLM
+支持的内容。 <code>OpenAI</code> 数据代理需要 <code>gpt-3.5-turbo</code>
+或 <code>gpt-4</code>，因为它们支持 <code>Function Calling</code>。</li>
+<li><code>condense_question</code> -
+查看聊天记录并重写用户消息作为索引的查询。
+从查询引擎读取响应后返回响应。</li>
+<li><code>context</code> - 使用每个用户消息从索引中检索节点。
+检索到的文本被插入到<code>system prompt</code>中，以便聊天引擎可以自然响应或使用来自查询引擎的上下文。</li>
+<li><code>condense_plus_context</code> - <code>condense_question</code>
+和 <code>context</code> 的组合。
+查看聊天记录，将用户消息重写为索引的检索查询。
+检索到的文本被插入到<code>system prompt</code>中，以便聊天引擎可以自然响应或使用来自查询引擎的上下文。</li>
+<li><code>simple</code> - 直接与 LLM
+进行简单的聊天，不涉及查询引擎。</li>
+<li><code>react</code> - 与<code>best</code>相同，但强制使用
+<code>ReAct</code> 数据代理。</li>
+<li><code>openai</code> - 与 <code>best</code> 相同，但强制使用
+<code>OpenAI</code> 数据代理。</li>
+</ul>
+<p><strong>Low-Level Composition API</strong></p>
+<p>如果您需要更细粒度的控制，可以使用低级组合 API。具体来说，明确构建
+<code>ChatEngine</code> 对象，而不是调用
+<code>index.as_chat_engine(...)</code>。</p>
+<p>这个示例配置了以下内容： - 配置
+<code>condense question prompt</code>， - 用一些现有历史初始化对话， -
+打印详细的调试消息。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> PromptTemplate<br><span class="hljs-keyword">from</span> llama_index.core.llms <span class="hljs-keyword">import</span> ChatMessage, MessageRole<br><span class="hljs-keyword">from</span> llama_index.core.chat_engine <span class="hljs-keyword">import</span> CondenseQuestionChatEngine<br><br>custom_prompt = PromptTemplate(<br>    <span class="hljs-string">"""\</span><br><span class="hljs-string">Given a conversation (between Human and Assistant) and a follow up message from Human, \</span><br><span class="hljs-string">rewrite the message to be a standalone question that captures all relevant context \</span><br><span class="hljs-string">from the conversation.</span><br><span class="hljs-string"></span><br><span class="hljs-string">&lt;Chat History&gt;</span><br><span class="hljs-string">{chat_history}</span><br><span class="hljs-string"></span><br><span class="hljs-string">&lt;Follow Up Message&gt;</span><br><span class="hljs-string">{question}</span><br><span class="hljs-string"></span><br><span class="hljs-string">&lt;Standalone question&gt;</span><br><span class="hljs-string">"""</span><br>)<br><br><span class="hljs-comment"># list of `ChatMessage` objects</span><br>custom_chat_history = [<br>    ChatMessage(<br>        role=MessageRole.USER,<br>        content=<span class="hljs-string">"Hello assistant, we are having a insightful discussion about Paul Graham today."</span>,<br>    ),<br>    ChatMessage(role=MessageRole.ASSISTANT, content=<span class="hljs-string">"Okay, sounds good."</span>),<br>]<br><br>query_engine = index.as_query_engine()<br>chat_engine = CondenseQuestionChatEngine.from_defaults(<br>    query_engine=query_engine,<br>    condense_question_prompt=custom_prompt,<br>    chat_history=custom_chat_history,<br>    verbose=<span class="hljs-literal">True</span>,<br>)<br></code></pre></td></tr></table></figure>
+<p><strong>Streaming</strong></p>
+<p>要启用流式传输，只需调用 <code>stream_chat</code> 而不是
+<code>chat</code>。这与查询引擎（传递一个 <code>streaming=True</code>
+标志）有些不同。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python">chat_engine = index.as_chat_engine()<br>streaming_response = chat_engine.stream_chat(<span class="hljs-string">"Tell me a joke."</span>)<br><span class="hljs-keyword">for</span> token <span class="hljs-keyword">in</span> streaming_response.response_gen:<br>    <span class="hljs-built_in">print</span>(token, end=<span class="hljs-string">""</span>)<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/customization/streaming/chat_engine_condense_question_stream_response/">完整例子</a></p>
+<h3 id="module-guides">2.2 Module Guides</h3>
+<p>LlamaINdex提供了一些简单的实现方式来开始，更复杂的模式即将推出！更具体地说，<code>SimpleChatEngine</code>
+不使用知识库，而其他所有引擎都使用基于知识库的查询引擎。</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/chat_engine/chat_engine_react/">ReAct
+Chat Engine</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/chat_engine/chat_engine_openai/">OpenAI
+Chat Engine</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/chat_engine/chat_engine_openai/">Condense
+Question Chat Engine</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/chat_engine/chat_engine_context/">Context
+Chat Engine</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/chat_engine/chat_engine_condense_plus_context/">Context
+Plus Condense Chat Engine</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/chat_engine/chat_engine_context/">Simple
+Chat Engine</a></p></li>
+</ul>
+<h2 id="三retriever">三、Retriever</h2>
+<p>检索器负责根据用户查询（或聊天消息）获取最相关的上下文。它可以建立在索引之上，也可以独立定义。它被用作查询引擎（和聊天引擎）中检索相关上下文的关键构建块。</p>
+<h3 id="使用示例-2">3.1 使用示例</h3>
+<p>从索引获取检索器:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">retriever = index.as_retriever()<br>nodes = retriever.retrieve(<span class="hljs-string">"Who is Paul Graham?"</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="high-level-api">3.1.1 High-Level API</h4>
+<p><strong>Selecting a Retriever</strong></p>
+<p>可以通过 <code>retriever_mode</code>
+选择特定于索引的检索器类。例如，使用 <code>SummaryIndex</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">retriever = summary_index.as_retriever(<br>    retriever_mode=<span class="hljs-string">"llm"</span>,<br>)<br></code></pre></td></tr></table></figure>
+<p>这会在摘要索引之上创建一个 <a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/api_reference/retrievers/summary/">SummaryIndexLLMRetriever</a>。</p>
+<p>查看<a href="#retriever-modes">检索器模式</a>以获取完整列表的（特定于索引的）检索器模式以及它们映射到的检索器类。</p>
+<p><strong>Configuring a Retriever</strong></p>
+<p>同样，可以传递 kwargs
+来配置所选的检索器。例如，如果选择<code>llm</code>检索器模式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python">retriever = summary_index.as_retriever(<br>    retriever_mode=<span class="hljs-string">"llm"</span>,<br>    choice_batch_size=<span class="hljs-number">5</span>,<br>)<br></code></pre></td></tr></table></figure>
+<h4 id="low-level-composition-api">3.1.2 Low-Level Composition API</h4>
+<p>如果你需要更细粒度的控制，可以使用低级组合
+API。为了实现与上述相同的结果，可以直接导入并构造所需的检索器类：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.retrievers <span class="hljs-keyword">import</span> SummaryIndexLLMRetriever<br><br>retriever = SummaryIndexLLMRetriever(<br>    index=summary_index,<br>    choice_batch_size=<span class="hljs-number">5</span>,<br>)<br></code></pre></td></tr></table></figure>
+<p>Retriever Modules:<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/querying/retriever/retrievers/">https://docs.llamaindex.ai/en/stable/module_guides/querying/retriever/retrievers/</a></p>
+<h3 id="retriever-modes">3.2 Retriever Modes</h3>
+<p>这里展示了从 <code>retriever_mode</code>
+配置到选定的检索器类的映射。</p>
+<h4 id="向量索引">3.2.1 向量索引</h4>
+<p>指定 <code>retriever_mode</code>
+没有效果（被静默忽略）。<code>vector_index.as_retriever(...)</code>
+总是返回一个 <code>VectorIndexRetriever</code>。</p>
+<h4 id="摘要索引">3.2.2 摘要索引</h4>
+<p><code>default</code>：SummaryIndexRetriever
+<code>embedding</code>：SummaryIndexEmbeddingRetriever
+<code>llm</code>：SummaryIndexLLMRetriever</p>
+<h4 id="树索引">3.2.3 树索引</h4>
+<p><code>select_leaf</code>：TreeSelectLeafRetriever
+<code>select_leaf_embedding</code>：TreeSelectLeafEmbeddingRetriever
+<code>all_leaf</code>：TreeAllLeafRetriever
+<code>root</code>：TreeRootRetriever</p>
+<h4 id="关键词表索引">3.2.4 关键词表索引</h4>
+<p><code>default</code>：KeywordTableGPTRetriever
+<code>simple</code>：KeywordTableSimpleRetriever
+<code>rake</code>：KeywordTableRAKERetriever</p>
+<h4 id="知识图谱索引">3.2.5 知识图谱索引</h4>
+<p><code>keyword</code>：KGTableRetriever
+<code>embedding</code>：KGTableRetriever
+<code>hybrid</code>：KGTableRetriever</p>
+<h4 id="文档摘要索引">3.2.6 文档摘要索引</h4>
+<p><code>llm</code>：DocumentSummaryIndexLLMRetriever
+<code>embedding</code>：DocumentSummaryIndexEmbeddingRetrievers</p>
+<h2 id="四node-postprocessor">四、Node Postprocessor</h2>
+<p>Node
+Postprocessor是一组模块，它们接收一组节点，应用某种转换或过滤，然后返回这些节点。在
+LlamaIndex 中，Node
+Postprocessor通常在查询引擎中应用，在节点检索步骤之后和响应合成步骤之前。LlamaIndex
+提供了几个立即可用的Node Postprocessor，并提供了一个简单的 API
+用于添加自定义Postprocessor。</p>
+<h3 id="使用示例-3">4.1 使用示例</h3>
+<h4 id="和query-engine一起用">4.1.1 和Query Engine一起用</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex, SimpleDirectoryReader<br><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> TimeWeightedPostprocessor<br><br>documents = SimpleDirectoryReader(<span class="hljs-string">"./data"</span>).load_data()<br><br>index = VectorStoreIndex.from_documents(documents)<br><br>query_engine = index.as_query_engine(<br>    node_postprocessors=[<br>        TimeWeightedPostprocessor(<br>            time_decay=<span class="hljs-number">0.5</span>, time_access_refresh=<span class="hljs-literal">False</span>, top_k=<span class="hljs-number">1</span><br>        )<br>    ]<br>)<br><br><span class="hljs-comment"># all node post-processors will be applied during each query</span><br>response = query_engine.query(<span class="hljs-string">"query string"</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="和retrieved-nodes一起用">4.1.2 和Retrieved Nodes一起用</h4>
+<p>作为独立对象用于过滤检索到的节点：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> SimilarityPostprocessor<br><br>nodes = index.as_retriever().retrieve(<span class="hljs-string">"test query str"</span>)<br><br><span class="hljs-comment"># filter nodes below 0.75 similarity score</span><br>processor = SimilarityPostprocessor(similarity_cutoff=<span class="hljs-number">0.75</span>)<br>filtered_nodes = processor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<h4 id="和自己的nodes一起用">4.1.3 和自己的Nodes一起用</h4>
+<p>PostProcessor接受 <code>NodeWithScore</code>
+对象作为输入，这只是一个带有节点和得分值的包装类。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> SimilarityPostprocessor<br><span class="hljs-keyword">from</span> llama_index.postprocessor.cohere_rerank <span class="hljs-keyword">import</span> CohereRerank<br><span class="hljs-keyword">from</span> llama_index.core.data_structs <span class="hljs-keyword">import</span> Node<br><span class="hljs-keyword">from</span> llama_index.core.schema <span class="hljs-keyword">import</span> NodeWithScore<br><br>nodes = [<br>    NodeWithScore(node=Node(text=<span class="hljs-string">"text1"</span>), score=<span class="hljs-number">0.7</span>),<br>    NodeWithScore(node=Node(text=<span class="hljs-string">"text2"</span>), score=<span class="hljs-number">0.8</span>),<br>]<br><br><span class="hljs-comment"># similarity postprocessor: filter nodes below 0.75 similarity score</span><br>processor = SimilarityPostprocessor(similarity_cutoff=<span class="hljs-number">0.75</span>)<br>filtered_nodes = processor.postprocess_nodes(nodes)<br><br><span class="hljs-comment"># cohere rerank: rerank nodes given query using trained model</span><br>reranker = CohereRerank(api_key=<span class="hljs-string">"&lt;COHERE_API_KEY&gt;"</span>, top_n=<span class="hljs-number">2</span>)<br>reranker.postprocess_nodes(nodes, query_str=<span class="hljs-string">"&lt;user_query&gt;"</span>)<br></code></pre></td></tr></table></figure>
+<p><code>postprocess_nodes</code> 可以接收一个 <code>query_str</code> 或
+<code>query_bundle</code>
+(<code>QueryBundle</code>)，但不能同时接收两者。</p>
+<h4 id="自定义node-postprocessor">4.1.4 自定义Node PostProcessor</h4>
+<p>基础类是 <code>BaseNodePostprocessor</code>，API 接口非常简单：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">BaseNodePostprocessor</span>:<br>    <span class="hljs-string">"""Node postprocessor."""</span><br><br><span class="hljs-meta">    @abstractmethod</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_postprocess_nodes</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self, nodes: <span class="hljs-type">List</span>[NodeWithScore], query_bundle: <span class="hljs-type">Optional</span>[QueryBundle]</span><br><span class="hljs-params">    </span>) -&gt; <span class="hljs-type">List</span>[NodeWithScore]:<br>        <span class="hljs-string">"""Postprocess nodes."""</span><br></code></pre></td></tr></table></figure>
+<p>只需几行代码即可实现虚拟Node PostProcessor：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> QueryBundle<br><span class="hljs-keyword">from</span> llama_index.core.postprocessor.types <span class="hljs-keyword">import</span> BaseNodePostprocessor<br><span class="hljs-keyword">from</span> llama_index.core.schema <span class="hljs-keyword">import</span> NodeWithScore<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">DummyNodePostprocessor</span>(<span class="hljs-title class_ inherited__">BaseNodePostprocessor</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_postprocess_nodes</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self, nodes: <span class="hljs-type">List</span>[NodeWithScore], query_bundle: <span class="hljs-type">Optional</span>[QueryBundle]</span><br><span class="hljs-params">    </span>) -&gt; <span class="hljs-type">List</span>[NodeWithScore]:<br>        <span class="hljs-comment"># subtracts 1 from the score</span><br>        <span class="hljs-keyword">for</span> n <span class="hljs-keyword">in</span> nodes:<br>            n.score -= <span class="hljs-number">1</span><br><br>        <span class="hljs-keyword">return</span> nodes<br></code></pre></td></tr></table></figure>
+<h3 id="node-postprocessor-modules">4.2 Node Postprocessor Modules</h3>
+<h4 id="similaritypostprocessor">4.2.1 SimilarityPostprocessor</h4>
+<p>用于移除相似度得分低于阈值的节点。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> SimilarityPostprocessor<br><br>postprocessor = SimilarityPostprocessor(similarity_cutoff=<span class="hljs-number">0.7</span>)<br><br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<h4 id="keywordnodepostprocessor">4.2.2 KeywordNodePostprocessor</h4>
+<p>用于确保某些关键词要么被排除要么被包含。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> KeywordNodePostprocessor<br><br>postprocessor = KeywordNodePostprocessor(<br>    required_keywords=[<span class="hljs-string">"word1"</span>, <span class="hljs-string">"word2"</span>], exclude_keywords=[<span class="hljs-string">"word3"</span>, <span class="hljs-string">"word4"</span>]<br>)<br><br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<h4 id="metadatareplacementpostprocessor">4.2.3
+MetadataReplacementPostProcessor</h4>
+<p>用于将节点内容替换为节点元数据中的字段。如果元数据中没有该字段，则节点文本保持不变。通常与
+<code>SentenceWindowNodeParser</code> 结合使用时最有用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> MetadataReplacementPostProcessor<br><br>postprocessor = MetadataReplacementPostProcessor(<br>    target_metadata_key=<span class="hljs-string">"window"</span>,<br>)<br><br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<h4 id="longcontextreorder">4.2.4 LongContextReorder</h4>
+<p>模型很难获取扩展上下文中心的重要细节。 <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2307.03172">一项研究发现</a>，当关键数据位于输入上下文的开头或结尾时，通常会出现最佳性能。
+此外，随着输入上下文的延长，即使在为长上下文设计的模型中，性能也会显着下降。该模块将对检索到的节点重新排序，这在需要大的
+top-k 的情况下非常有用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> LongContextReorder<br><br>postprocessor = LongContextReorder()<br><br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<h4 id="sentenceembeddingoptimizer">4.2.5
+SentenceEmbeddingOptimizer</h4>
+<p>该postprocessor通过移除与查询不相关的句段（这是通过Embedding来完成的）来优化
+Token
+使用。百分位截止是一个使用相关句段的顶部百分比的度量。也可以指定阈值截止，它使用原始相似度截止来选择要保留的句段。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> SentenceEmbeddingOptimizer<br><br>postprocessor = SentenceEmbeddingOptimizer(<br>    embed_model=service_context.embed_model,<br>    percentile_cutoff=<span class="hljs-number">0.5</span>,<br>    <span class="hljs-comment"># threshold_cutoff=0.7</span><br>)<br><br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/node_postprocessor/OptimizerDemo/">完整例子</a></p>
+<h4 id="coherererank">4.2.6 CohereRerank</h4>
+<p>使用<code>Cohere ReRank</code>功能对节点重新排序，并返回前 N
+个节点。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.postprocessor.cohere_rerank <span class="hljs-keyword">import</span> CohereRerank<br><br>postprocessor = CohereRerank(<br>    top_n=<span class="hljs-number">2</span>, model=<span class="hljs-string">"rerank-english-v2.0"</span>, api_key=<span class="hljs-string">"YOUR COHERE API KEY"</span><br>)<br><br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/node_postprocessor/CohereRerank/">完整例子</a></p>
+<h4 id="sentencetransformerrerank">4.2.7 SentenceTransformerRerank</h4>
+<p>使用entence-transformer包中的交叉编码器对节点重新排序，并返回前 N
+个节点。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> SentenceTransformerRerank<br><br><span class="hljs-comment"># We choose a model with relatively high speed and decent accuracy.</span><br>postprocessor = SentenceTransformerRerank(<br>    model=<span class="hljs-string">"cross-encoder/ms-marco-MiniLM-L-2-v2"</span>, top_n=<span class="hljs-number">3</span><br>)<br><br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/node_postprocessor/SentenceTransformerRerank/">完整例子</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.sbert.net/docs/pretrained-models/ce-msmarco.html">sentence-transformer</a>文档完整的模型列表（还显示了速度/准确性之间的权衡）。默认模型是
+<code>cross-encoder/ms-marco-TinyBERT-L-2-v2</code>。</p>
+<h4 id="llm-rerank">4.2.8 LLM Rerank</h4>
+<p>使用 LLM 通过要求 LLM
+返回相关文档和它们相关性的得分来重新排序节点。返回前 N
+个排名的节点。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> LLMRerank<br><br>postprocessor = LLMRerank(top_n=<span class="hljs-number">2</span>, service_context=service_context)<br><br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<p>完整例子:<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/node_postprocessor/LLMReranker-Gatsby/">Gatsby</a>,<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/node_postprocessor/LLMReranker-Lyft-10k/">Lyft-10k</a></p>
+<h4 id="jinarerank">4.2.9 JinaRerank</h4>
+<p>使用 <code>Jina ReRank</code>功能对节点重新排序，并返回前 N
+个节点。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.postprocessor.jinaai_rerank <span class="hljs-keyword">import</span> JinaRerank<br><br>postprocessor = JinaRerank(<br>    top_n=<span class="hljs-number">2</span>, model=<span class="hljs-string">"jina-reranker-v1-base-en"</span>, api_key=<span class="hljs-string">"YOUR JINA API KEY"</span><br>)<br><br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/node_postprocessor/JinaRerank/">完整例子</a></p>
+<h4 id="fixedrecencypostprocessor">4.2.10 FixedRecencyPostprocessor</h4>
+<p>该Postprocessor按日期返回前 K
+个节点。这假设每个节点的元数据中都有一个可解析的<code>date</code>字段。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> FixedRecencyPostprocessor<br><br>postprocessor = FixedRecencyPostprocessor(<br>    tok_k=<span class="hljs-number">1</span>, date_key=<span class="hljs-string">"date"</span>  <span class="hljs-comment"># the key in the metadata to find the date</span><br>)<br><br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<p><img src="/images/recency.png" srcset="/img/loading.gif" lazyload></p>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/node_postprocessor/RecencyPostprocessorDemo/">完整例子</a></p>
+<h4 id="embeddingrecencypostprocessor">4.2.11
+EmbeddingRecencyPostprocessor</h4>
+<p>该Postprocessor在按日期排序并移除测量Embedding相似性后过于相似的旧节点后，返回前
+K 个节点。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> TimeWeightedPostprocessor<br><br>postprocessor = TimeWeightedPostprocessor(time_decay=<span class="hljs-number">0.99</span>, top_k=<span class="hljs-number">1</span>)<br><br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/node_postprocessor/RecencyPostprocessorDemo/">完整例子</a></p>
+<h4 id="timeweightedpostprocessor">4.2.12 TimeWeightedPostprocessor</h4>
+<p>该Postprocessor通过为每个节点应用时间加权重新排序来返回前 K
+个节点。每次检索节点时，都会记录检索的时间。这使得搜索偏向于尚未在查询中返回的信息。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> TimeWeightedPostprocessor<br><br>postprocessor = TimeWeightedPostprocessor(time_decay=<span class="hljs-number">0.99</span>, top_k=<span class="hljs-number">1</span>)<br><br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/node_postprocessor/TimeWeightedPostprocessorDemo/">完整例子</a></p>
+<h4 id="piinodepostprocessor-beta">4.2.13 PIINodePostprocessor
+(Beta)</h4>
+<p>PII（Personal Identifiable
+Information）Postprocessor通过使用命名实体识别（NER）（可以是专用的 NER
+模型，也可以是本地 LLM 模型）来移除可能是安全风险的信息。</p>
+<p><strong>LLM Version</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> PIINodePostprocessor<br><br>postprocessor = PIINodePostprocessor(<br>    service_context=service_context  <span class="hljs-comment"># this should be setup with an LLM you trust</span><br>)<br><br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<p><strong>NER Version</strong></p>
+<p>这个版本使用了 Hugging Face 默认的本地模型，该模型在运行
+<code>pipeline("ner")</code> 时加载。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> NERPIINodePostprocessor<br><br>postprocessor = NERPIINodePostprocessor()<br><br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/node_postprocessor/PII/">完整例子</a></p>
+<h4 id="prevnextnodepostprocessor-beta">4.2.14 PrevNextNodePostprocessor
+(Beta)</h4>
+<p>使用预定义的设置读取<code>Node</code>关系，并获取所有之前、之后或两者的节点。当知道关系指向重要数据（无论是之前的、之后的，还是两者）并且如果检索到该节点，则应将其发送到
+LLM 时，这非常有用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> PrevNextNodePostprocessor<br><br>postprocessor = PrevNextNodePostprocessor(<br>    docstore=index.docstore,<br>    num_nodes=<span class="hljs-number">1</span>,  <span class="hljs-comment"># number of nodes to fetch when looking forawrds or backwards</span><br>    mode=<span class="hljs-string">"next"</span>,  <span class="hljs-comment"># can be either 'next', 'previous', or 'both'</span><br>)<br><br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<p><img src="/images/prev_next.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="autoprevnextnodepostprocessor-beta">4.2.15
+AutoPrevNextNodePostprocessor (Beta)</h4>
+<p>与PrevNextNodePostprocessor相同，但让 LLM
+决定模式（下一个、上一个或两者）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.postprocessor <span class="hljs-keyword">import</span> AutoPrevNextNodePostprocessor<br><br>postprocessor = AutoPrevNextNodePostprocessor(<br>    docstore=index.docstore,<br>    service_context=service_context,<br>    num_nodes=<span class="hljs-number">1</span>,  <span class="hljs-comment"># number of nodes to fetch when looking forawrds or backwards)</span><br>)<br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/node_postprocessor/PrevNextPostprocessorDemo/">完整例子</a></p>
+<h4 id="rankgptbeta">4.2.16 RankGPT（Beta）</h4>
+<p>使用 RankGPT 代理根据相关性对文档重新排序。返回前 N
+个排名的节点。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.postprocessor.rankgpt_rerank <span class="hljs-keyword">import</span> RankGPTRerank<br><br>postprocessor = RankGPTRerank(top_n=<span class="hljs-number">3</span>, llm=OpenAI(model=<span class="hljs-string">"gpt-3.5-turbo-16k"</span>))<br><br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/node_postprocessor/rankGPT/">完整例子</a></p>
+<h4 id="colbertrerank">4.2.17 ColbertRerank</h4>
+<p>使用 Colbert V2
+模型作为重排序器，根据查询词元和段落词元之间的细粒度相似性对文档重新排序。返回前
+N 个排名的节点。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.postprocessor.colbert_rerank <span class="hljs-keyword">import</span> ColbertRerank<br><br>colbert_reranker = ColbertRerank(<br>    top_n=<span class="hljs-number">5</span>,<br>    model=<span class="hljs-string">"colbert-ir/colbertv2.0"</span>,<br>    tokenizer=<span class="hljs-string">"colbert-ir/colbertv2.0"</span>,<br>    keep_retrieval_score=<span class="hljs-literal">True</span>,<br>)<br><br>query_engine = index.as_query_engine(<br>    similarity_top_k=<span class="hljs-number">10</span>,<br>    node_postprocessors=[colbert_reranker],<br>)<br>response = query_engine.query(<br>    query_str,<br>)<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/node_postprocessor/ColbertRerank/">完整例子</a></p>
+<h4 id="rankllm">4.2.18 rankLLM</h4>
+<p>使用 rankLLM 的模型对文档重新排序。返回前 N 个排名的节点。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.postprocessor <span class="hljs-keyword">import</span> RankLLMRerank<br><br>postprocessor = RankLLMRerank(top_n=<span class="hljs-number">5</span>, model=<span class="hljs-string">"zephyr"</span>)<br>postprocessor.postprocess_nodes(nodes)<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/node_postprocessor/rankLLM/">完整例子</a></p>
+<h2 id="五response-synthesizer">五、Response Synthesizer</h2>
+<p>Response Synthesizer使用用户查询和给定的一组文本块从 LLM 生成响应。
+Response Synthesizer的输出是一个 Response
+对象。执行此操作的方法可以采取多种形式，从简单的迭代文本块到复杂的构建树。
+这里的主要思想是简化使用 LLM
+跨数据生成响应的过程。当在查询引擎中使用时，Response
+Synthesizer在从检索器检索节点之后以及运行任何节点postprocessor之后使用。</p>
+<h3 id="使用示例-4">5.1 使用示例</h3>
+<p>为查询引擎配置响应合成器，使用<code>response_mode</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.data_structs <span class="hljs-keyword">import</span> Node<br><span class="hljs-keyword">from</span> llama_index.core.schema <span class="hljs-keyword">import</span> NodeWithScore<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> get_response_synthesizer<br><br>response_synthesizer = get_response_synthesizer(response_mode=<span class="hljs-string">"compact"</span>)<br><br>response = response_synthesizer.synthesize(<br>    <span class="hljs-string">"query text"</span>, nodes=[NodeWithScore(node=Node(text=<span class="hljs-string">"text"</span>), score=<span class="hljs-number">1.0</span>), ...]<br>)<br></code></pre></td></tr></table></figure>
+<p>在创建索引后的查询引擎中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">query_engine = index.as_query_engine(response_synthesizer=response_synthesizer)<br>response = query_engine.query(<span class="hljs-string">"query_text"</span>)<br></code></pre></td></tr></table></figure>
+<h3 id="response-mode">5.2 Response Mode</h3>
+<p>响应合成器通常通过 <code>response_mode</code> kwarg
+设置来指定。LlamaIndex 中已经实现了几个响应合成器：</p>
+<ul>
+<li><code>refine</code>：通过顺序遍历每个检索到的文本块来<strong>创建和完善</strong>答案。这会为每个节点/检索到的块进行单独的LLM调用。</li>
+</ul>
+<p><strong>Details</strong>：使用<code>text_qa_template</code>
+prompt在查询中使用第一块。然后，使用答案和下一块（以及原始问题）在另一个查询中使用<code>refine_template</code>
+prompt。如此继续，直到解析完所有块。
+如果一个块太大而无法适应窗口（考虑到prompt大小），则使用<code>TokenTextSplitter</code>进行分割（允许块之间有一些文本重叠），并且（新的）额外块被视为原始块集合的块（因此也使用<code>refine_template</code>进行查询）。适用于更详细的答案。</p>
+<ul>
+<li><code>compact</code>（默认）：类似于<code>refine</code>，但是事先将块进行<strong>compact</strong>（串联）处理，从而减少LLM调用。</li>
+</ul>
+<p><strong>Details</strong>：填充尽可能多的可以适合上下文窗口的文本（从检索到的块连接/打包）（考虑<code>text_qa_template</code>和<code>refine_template</code>之间的最大prompt大小）。
+如果文本太长而无法容纳在一个提示中，则会根据需要将其拆分为多个部分（使用
+<code>TokenTextSplitter</code>，从而允许文本块之间存在一些重叠）。每个文本部分都被视为一个“块”，并被发送到<code>refine</code>合成器。简而言之，它就像<code>refine</code>一样，但
+LLM 调用较少。</p>
+<ul>
+<li><code>tree_summarize</code>：根据需要多次使用<code>summary_template</code>
+prompt查询LLM，以便查询所有串联的块，从而产生尽可能多的答案，这些答案本身在<code>tree_summarize</code>
+LLM调用中递归地用作块，依此类推，直到只剩下一个块
+，因此只有一个最终答案。</li>
+</ul>
+<p><strong>Details</strong>：使用<code>summary_template</code>
+prompt尽可能多地连接块以适合上下文窗口，并在需要时分割它们（再次使用<code>TokenTextSplitter</code>和一些文本重叠）。
+然后，根据<code>summary_template</code>查询每个生成的块/分割（没有细化查询！）并获得尽可能多的答案。如果只有一个答案（因为只有一大块），那么它就是最终答案。如果有多个答案，则这些本身被视为块并递归发送到
+<code>tree_summarize</code>
+进程（连接/拆分以适合/查询）。适用于总结目的。</p>
+<ul>
+<li><p><code>simple_summarize</code>：截断所有文本块以适合单个 LLM
+prompt。 适合快速总结，但可能会因截断而丢失细节。</p></li>
+<li><p><code>no_text</code>：仅运行检索器来获取本应发送到 LLM
+的节点，而不实际发送它们。
+然后可以通过检查<code>response.source_nodes</code>来检查。</p></li>
+<li><p><code>accumulate</code>：给定一组文本块和查询，将查询应用于每个文本块，同时将响应累积到数组中。
+返回所有响应的串联字符串。
+适合当需要对每个文本块单独运行相同的查询时。</p></li>
+<li><p><code>compact_accumulate</code>：与<code>accumulate</code>
+相同，但会像<code>compact</code> 一样“压缩”每个LLM
+prompt，并对每个文本块运行相同的查询。</p></li>
+</ul>
+<h3 id="custom-response-synthesizers">5.3 Custom Response
+Synthesizers</h3>
+<p>每个响应合成器都继承自<code>llama_index.response_synthesizers.base.BaseSynthesizer</code>。基API非常简单，这使得创建自己的响应合成器变得容易。要自定义<code>tree_summarize</code>中每个步骤使用的模板，或者也许有一篇新的研究论文详细介绍了一种新的方法来生成对查询的响应，你可以创建自己的响应合成器并将其插入到任何查询引擎中，或者独立使用它。</p>
+<p>下面展示了<code>__init__()</code>函数，以及每个响应合成器必须实现的两个抽象方法。基本要求是处理查询和文本块，并返回一个字符串（或字符串生成器）响应。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Settings<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">BaseSynthesizer</span>(<span class="hljs-title class_ inherited__">ABC</span>):<br>    <span class="hljs-string">"""Response builder class."""</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self,</span><br><span class="hljs-params">        llm: <span class="hljs-type">Optional</span>[LLM] = <span class="hljs-literal">None</span>,</span><br><span class="hljs-params">        streaming: <span class="hljs-built_in">bool</span> = <span class="hljs-literal">False</span>,</span><br><span class="hljs-params">    </span>) -&gt; <span class="hljs-literal">None</span>:<br>        <span class="hljs-string">"""Init params."""</span><br>        <span class="hljs-variable language_">self</span>._llm = llm <span class="hljs-keyword">or</span> Settings.llm<br>        <span class="hljs-variable language_">self</span>._callback_manager = Settings.callback_manager<br>        <span class="hljs-variable language_">self</span>._streaming = streaming<br><br><span class="hljs-meta">    @abstractmethod</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">get_response</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self,</span><br><span class="hljs-params">        query_str: <span class="hljs-built_in">str</span>,</span><br><span class="hljs-params">        text_chunks: <span class="hljs-type">Sequence</span>[<span class="hljs-built_in">str</span>],</span><br><span class="hljs-params">        **response_kwargs: <span class="hljs-type">Any</span>,</span><br><span class="hljs-params">    </span>) -&gt; RESPONSE_TEXT_TYPE:<br>        <span class="hljs-string">"""Get response."""</span><br>        ...<br><br><span class="hljs-meta">    @abstractmethod</span><br>    <span class="hljs-keyword">async</span> <span class="hljs-keyword">def</span> <span class="hljs-title function_">aget_response</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self,</span><br><span class="hljs-params">        query_str: <span class="hljs-built_in">str</span>,</span><br><span class="hljs-params">        text_chunks: <span class="hljs-type">Sequence</span>[<span class="hljs-built_in">str</span>],</span><br><span class="hljs-params">        **response_kwargs: <span class="hljs-type">Any</span>,</span><br><span class="hljs-params">    </span>) -&gt; RESPONSE_TEXT_TYPE:<br>        <span class="hljs-string">"""Get response."""</span><br>        ...<br></code></pre></td></tr></table></figure>
+<h3 id="using-structured-answer-filtering">5.4 Using Structured Answer
+Filtering</h3>
+<p>当使用<code>refine</code>或<code>compact</code>响应合成模块时，使用
+<code>structured_answer_filtering</code> 选项是有益的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> get_response_synthesizer<br><br>response_synthesizer = get_response_synthesizer(structured_answer_filtering=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure>
+<p>将<code>structured_answer_filtering</code>设置为<code>True</code>时，<code>refine</code>模块能够过滤掉与所问问题不相关的任何输入节点。这对于涉及从外部向量存储中检索文本块的基于RAG的问答系统特别有用。
+如果你使用的是支持<code>Function Calling</code>的<code>OpenAI</code>模型，这个选项特别有用。其他没有<code>Function Calling</code>支持的LLM提供商或模型可能在产生此功能依赖的结构化响应方面不太可靠。</p>
+<h4 id="使用自定义prompt-templates">5.5 使用自定义Prompt Templates</h4>
+<p>自定义响应合成器中使用的Prompt，并且还想在查询时添加额外的变量。可以在<code>get_response</code>的<code>**kwargs</code>中指定这些额外的变量。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> PromptTemplate<br><span class="hljs-keyword">from</span> llama_index.core.response_synthesizers <span class="hljs-keyword">import</span> TreeSummarize<br><br><span class="hljs-comment"># <span class="hljs-doctag">NOTE:</span> we add an extra tone_name variable here</span><br>qa_prompt_tmpl = (<br>    <span class="hljs-string">"Context information is below.\n"</span><br>    <span class="hljs-string">"---------------------\n"</span><br>    <span class="hljs-string">"{context_str}\n"</span><br>    <span class="hljs-string">"---------------------\n"</span><br>    <span class="hljs-string">"Given the context information and not prior knowledge, "</span><br>    <span class="hljs-string">"answer the query.\n"</span><br>    <span class="hljs-string">"Please also write the answer in the tone of {tone_name}.\n"</span><br>    <span class="hljs-string">"Query: {query_str}\n"</span><br>    <span class="hljs-string">"Answer: "</span><br>)<br>qa_prompt = PromptTemplate(qa_prompt_tmpl)<br><br><span class="hljs-comment"># initialize response synthesizer</span><br>summarizer = TreeSummarize(verbose=<span class="hljs-literal">True</span>, summary_template=qa_prompt)<br><br><span class="hljs-comment"># get response</span><br>response = summarizer.get_response(<br>    <span class="hljs-string">"who is Paul Graham?"</span>, [text], tone_name=<span class="hljs-string">"a Shakespeare play"</span><br>)<br></code></pre></td></tr></table></figure>
+<h3 id="response-synthesis-modules">5.6 Response Synthesis Modules</h3>
+<p>以下是每个响应合成器的详细输入/输出信息。</p>
+<h4 id="api-example">5.6.1 API Example</h4>
+<p>以下展示了使用所有关键字参数的设置。 - <code>response_mode</code>
+指定使用哪个响应合成器 - <code>service_context</code> 定义了用于合成的
+LLM 及相关设置 - <code>text_qa_template</code> 和
+<code>refine_template</code> 是在不同阶段使用的prompt -
+<code>use_async</code> 目前仅用于 <code>tree_summarize</code>
+响应模式，用于异步构建摘要树 - <code>streaming</code>
+配置是否返回一个流式响应对象 - <code>structured_answer_filtering</code>
+启用对与给定问题不相关的文本块的主动过滤</p>
+<p>在 <code>synthesize/asyntheszie</code>
+函数中，可以选择性地提供额外的源节点，这些节点将被添加到
+r<code>esponse.source_nodes</code> 列表中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.data_structs <span class="hljs-keyword">import</span> Node<br><span class="hljs-keyword">from</span> llama_index.core.schema <span class="hljs-keyword">import</span> NodeWithScore<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> get_response_synthesizer<br><br>response_synthesizer = get_response_synthesizer(<br>    response_mode=<span class="hljs-string">"refine"</span>,<br>    service_context=service_context,<br>    text_qa_template=text_qa_template,<br>    refine_template=refine_template,<br>    use_async=<span class="hljs-literal">False</span>,<br>    streaming=<span class="hljs-literal">False</span>,<br>)<br><br><span class="hljs-comment"># synchronous</span><br>response = response_synthesizer.synthesize(<br>    <span class="hljs-string">"query string"</span>,<br>    nodes=[NodeWithScore(node=Node(text=<span class="hljs-string">"text"</span>), score=<span class="hljs-number">1.0</span>), ...],<br>    additional_source_nodes=[<br>        NodeWithScore(node=Node(text=<span class="hljs-string">"text"</span>), score=<span class="hljs-number">1.0</span>),<br>        ...,<br>    ],<br>)<br><br><span class="hljs-comment"># asynchronous</span><br>response = <span class="hljs-keyword">await</span> response_synthesizer.asynthesize(<br>    <span class="hljs-string">"query string"</span>,<br>    nodes=[NodeWithScore(node=Node(text=<span class="hljs-string">"text"</span>), score=<span class="hljs-number">1.0</span>), ...],<br>    additional_source_nodes=[<br>        NodeWithScore(node=Node(text=<span class="hljs-string">"text"</span>), score=<span class="hljs-number">1.0</span>),<br>        ...,<br>    ],<br>)<br></code></pre></td></tr></table></figure>
+<p>也可以直接返回一个字符串，使用lower-level <code>get_response</code>
+和 <code>aget_response</code> 函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">response_str = response_synthesizer.get_response(<br>    <span class="hljs-string">"query string"</span>, text_chunks=[<span class="hljs-string">"text1"</span>, <span class="hljs-string">"text2"</span>, ...]<br>)<br></code></pre></td></tr></table></figure>
+<h4 id="examples">5.6.2 Examples</h4>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/response_synthesizers/refine/">Refine</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/response_synthesizers/structured_refine/">Structured
+Refine</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/response_synthesizers/tree_summarize/">Tree
+Summarize</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/response_synthesizers/custom_prompt_synthesizer/">Custom
+Prompting</a></li>
+</ul>
+<h2 id="六routers">六、Routers</h2>
+<p>Routers是一类模块，它们接收用户查询和一组“choices”（由元数据定义），并返回一个或多个选定的选择。
+它们可以单独使用（作为“selector
+modules”），或者用作查询引擎或检索器（例如，位于其他查询引擎/检索器之上）。
+它们是简单但功能强大的模块，使用LLM进行决策能力。它们可以用于以下用例等：</p>
+<ul>
+<li>在多样化的数据源中选择正确的数据源</li>
+<li>决定是否进行摘要（例如，使用摘要索引查询引擎）或语义搜索（例如，使用向量索引查询引擎）</li>
+<li>决定是否“尝试”一次性使用多个选择并将结果组合起来（使用多路由能力）。</li>
+</ul>
+<p>核心路由模块以以下形式存在：</p>
+<ul>
+<li>LLM 选择器将选择作为文本转储放入prompt中，并使用 LLM
+文本完成端点进行决策</li>
+<li>Pydantic 选择器将选择作为 Pydantic schemas传递到函数调用，并返回
+Pydantic 对象</li>
+</ul>
+<h3 id="使用示例-5">6.1 使用示例</h3>
+<p>定义一个“selector”是定义路由器的核心。
+可以很容易地使用LlamaIndex的路由器作为查询引擎或检索器。在这些情况下，路由器将负责“选择”查询引擎或检索器来路由用户查询。
+<code>ToolRetrieverRouterQueryEngine</code> 用于增强检索的路由 -
+这是选择集本身可能非常大并且可能需要被索引的情况。Beta 功能。</p>
+<h4 id="定义selector">6.1.1 定义selector</h4>
+<p>以下是一些使用基于 LLM 和 Pydantic 的单个/多个选择器的示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.selectors <span class="hljs-keyword">import</span> LLMSingleSelector, LLMMultiSelector<br><span class="hljs-keyword">from</span> llama_index.core.selectors <span class="hljs-keyword">import</span> (<br>    PydanticMultiSelector,<br>    PydanticSingleSelector,<br>)<br><br><span class="hljs-comment"># pydantic selectors feed in pydantic objects to a function calling API</span><br><span class="hljs-comment"># single selector (pydantic)</span><br>selector = PydanticSingleSelector.from_defaults()<br><span class="hljs-comment"># multi selector (pydantic)</span><br>selector = PydanticMultiSelector.from_defaults()<br><br><span class="hljs-comment"># LLM selectors use text completion endpoints</span><br><span class="hljs-comment"># single selector (LLM)</span><br>selector = LLMSingleSelector.from_defaults()<br><span class="hljs-comment"># multi selector (LLM)</span><br>selector = LLMMultiSelector.from_defaults()<br></code></pre></td></tr></table></figure>
+<h3 id="作为query-engine使用">6.2 作为Query Engine使用</h3>
+<p>一个 <code>RouterQueryEngine</code>
+是由其他查询引擎作为工具组成的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.query_engine <span class="hljs-keyword">import</span> RouterQueryEngine<br><span class="hljs-keyword">from</span> llama_index.core.selectors <span class="hljs-keyword">import</span> PydanticSingleSelector<br><span class="hljs-keyword">from</span> llama_index.core.selectors.pydantic_selectors <span class="hljs-keyword">import</span> Pydantic<br><span class="hljs-keyword">from</span> llama_index.core.tools <span class="hljs-keyword">import</span> QueryEngineTool<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex, SummaryIndex<br><br><span class="hljs-comment"># define query engines</span><br>...<br><br><span class="hljs-comment"># initialize tools</span><br>list_tool = QueryEngineTool.from_defaults(<br>    query_engine=list_query_engine,<br>    description=<span class="hljs-string">"Useful for summarization questions related to the data source"</span>,<br>)<br>vector_tool = QueryEngineTool.from_defaults(<br>    query_engine=vector_query_engine,<br>    description=<span class="hljs-string">"Useful for retrieving specific context related to the data source"</span>,<br>)<br><br><span class="hljs-comment"># initialize router query engine (single selection, pydantic)</span><br>query_engine = RouterQueryEngine(<br>    selector=PydanticSingleSelector.from_defaults(),<br>    query_engine_tools=[<br>        list_tool,<br>        vector_tool,<br>    ],<br>)<br>query_engine.query(<span class="hljs-string">"&lt;query&gt;"</span>)<br></code></pre></td></tr></table></figure>
+<h3 id="作为retriever使用">6.3 作为Retriever使用</h3>
+<p>一个 <code>RouterRetriever</code>
+是由其他检索器作为工具组成的。下面给出了一个示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.query_engine <span class="hljs-keyword">import</span> RouterQueryEngine<br><span class="hljs-keyword">from</span> llama_index.core.selectors <span class="hljs-keyword">import</span> PydanticSingleSelector<br><span class="hljs-keyword">from</span> llama_index.core.tools <span class="hljs-keyword">import</span> RetrieverTool<br><br><span class="hljs-comment"># define indices</span><br>...<br><br><span class="hljs-comment"># define retrievers</span><br>vector_retriever = vector_index.as_retriever()<br>keyword_retriever = keyword_index.as_retriever()<br><br><span class="hljs-comment"># initialize tools</span><br>vector_tool = RetrieverTool.from_defaults(<br>    retriever=vector_retriever,<br>    description=<span class="hljs-string">"Useful for retrieving specific context from Paul Graham essay on What I Worked On."</span>,<br>)<br>keyword_tool = RetrieverTool.from_defaults(<br>    retriever=keyword_retriever,<br>    description=<span class="hljs-string">"Useful for retrieving specific context from Paul Graham essay on What I Worked On (using entities mentioned in query)"</span>,<br>)<br><br><span class="hljs-comment"># define retriever</span><br>retriever = RouterRetriever(<br>    selector=PydanticSingleSelector.from_defaults(llm=llm),<br>    retriever_tools=[<br>        list_tool,<br>        vector_tool,<br>    ],<br>)<br></code></pre></td></tr></table></figure>
+<h3 id="作为独立模块使用">6.4 作为独立模块使用</h3>
+<p>可以将选择器作为独立模块使用。将选择定义为 <code>ToolMetadata</code>
+的列表或字符串的列表。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.tools <span class="hljs-keyword">import</span> ToolMetadata<br><span class="hljs-keyword">from</span> llama_index.core.selectors <span class="hljs-keyword">import</span> LLMSingleSelector<br><br><br><span class="hljs-comment"># choices as a list of tool metadata</span><br>choices = [<br>    ToolMetadata(description=<span class="hljs-string">"description for choice 1"</span>, name=<span class="hljs-string">"choice_1"</span>),<br>    ToolMetadata(description=<span class="hljs-string">"description for choice 2"</span>, name=<span class="hljs-string">"choice_2"</span>),<br>]<br><br><span class="hljs-comment"># choices as a list of strings</span><br>choices = [<br>    <span class="hljs-string">"choice 1 - description for choice 1"</span>,<br>    <span class="hljs-string">"choice 2: description for choice 2"</span>,<br>]<br><br>selector = LLMSingleSelector.from_defaults()<br>selector_result = selector.select(<br>    choices, query=<span class="hljs-string">"What's revenue growth for IBM in 2007?"</span><br>)<br><span class="hljs-built_in">print</span>(selector_result.selections)<br></code></pre></td></tr></table></figure>
+<h3 id="更多例子">6.5 更多例子</h3>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/query_engine/RouterQueryEngine/">路由查询引擎</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/query_engine/RetrieverRouterQueryEngine/">检索器路由查询引擎</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/query_engine/SQLRouterQueryEngine/">SQL路由查询引擎</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/retrievers/router_retriever/">路由检索器</a></li>
+</ul>
+<h2 id="七query-pipeline">七、Query Pipeline</h2>
+<p>LlamaIndex 提供了一个声明式查询
+API，允许将不同的模块串联起来，以便在数据上编排简单到高级的工作流程。这一切都围绕着
+<code>QueryPipeline</code> 抽象。加载各种模块（从 LLM 到 prompt
+到检索器再到其他流水线），将它们全部连接成一个顺序链或有向无环图
+(DAG)，并端到端运行。可以在没有声明式流水线抽象的情况下编排所有这些工作流程（通过使用模块命令式地并编写你自己的函数）。那么
+<code>QueryPipeline</code> 的优势:</p>
+<ul>
+<li>用更少的代码/样板表达常见工作流程</li>
+<li>更高的可读性</li>
+<li>与常见的低代码/无代码解决方案（例如
+LangFlow）更好的一致性/更好的集成点</li>
+<li>[未来]
+声明式接口允许轻松序列化流水线组件，提供流水线的可移植性/更容易部署到不同的系统。</li>
+</ul>
+<p>LlamaIndex的查询流水线还通过所有子模块传播回调，这些回调与可观测性工具集成$。</p>
+<p><img src="/images/pipeline_rag_example.png" srcset="/img/loading.gif" lazyload></p>
+<p>要查看 <code>QueryPipeline</code> 使用的交互式示例，请查看 <a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/getting_started/starter_tools/rag_cli/">RAG
+CLI</a>。</p>
+<h3 id="使用示例-6">7.1 使用示例</h3>
+<h4 id="设置-pipeline">7.1.1 设置 Pipeline</h4>
+<p>有几种不同的方式来设置Query Pipeline。</p>
+<p><strong>定义 Sequential Chain</strong></p>
+<p>一些简单的管道本质上是纯线性的——前一个模块的输出直接进入下一个模块的输入。一些例子：</p>
+<ul>
+<li>prompt -&gt; LLM -&gt; output parsing</li>
+<li>prompt -&gt; LLM -&gt; prompt -&gt; LLM</li>
+<li>retriever -&gt; response synthesizer</li>
+</ul>
+<p>这些工作流程可以通过简化的链式语法在 <code>QueryPipeline</code>
+中轻松表达。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.query_pipeline <span class="hljs-keyword">import</span> QueryPipeline<br><br><span class="hljs-comment"># try chaining basic prompts</span><br>prompt_str = <span class="hljs-string">"Please generate related movies to {movie_name}"</span><br>prompt_tmpl = PromptTemplate(prompt_str)<br>llm = OpenAI(model=<span class="hljs-string">"gpt-3.5-turbo"</span>)<br><br>p = QueryPipeline(chain=[prompt_tmpl, llm], verbose=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure>
+<p><strong>定义 DAG</strong></p>
+<p>许多Pipeline将需要设置一个 DAG（例如，如果想实现标准 RAG
+Pipeline中的所有步骤）。 LlamaIndex提供了一个 lower-level API
+来添加模块以及它们的keys，并定义前一个模块输出到下一个模块输入之间的链接。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.postprocessor.cohere_rerank <span class="hljs-keyword">import</span> CohereRerank<br><span class="hljs-keyword">from</span> llama_index.core.response_synthesizers <span class="hljs-keyword">import</span> TreeSummarize<br><br><span class="hljs-comment"># define modules</span><br>prompt_str = <span class="hljs-string">"Please generate a question about Paul Graham's life regarding the following topic {topic}"</span><br>prompt_tmpl = PromptTemplate(prompt_str)<br>llm = OpenAI(model=<span class="hljs-string">"gpt-3.5-turbo"</span>)<br>retriever = index.as_retriever(similarity_top_k=<span class="hljs-number">3</span>)<br>reranker = CohereRerank()<br>summarizer = TreeSummarize(llm=llm)<br><br><span class="hljs-comment"># define query pipeline</span><br>p = QueryPipeline(verbose=<span class="hljs-literal">True</span>)<br>p.add_modules(<br>    {<br>        <span class="hljs-string">"llm"</span>: llm,<br>        <span class="hljs-string">"prompt_tmpl"</span>: prompt_tmpl,<br>        <span class="hljs-string">"retriever"</span>: retriever,<br>        <span class="hljs-string">"summarizer"</span>: summarizer,<br>        <span class="hljs-string">"reranker"</span>: reranker,<br>    }<br>)<br>p.add_link(<span class="hljs-string">"prompt_tmpl"</span>, <span class="hljs-string">"llm"</span>)<br>p.add_link(<span class="hljs-string">"llm"</span>, <span class="hljs-string">"retriever"</span>)<br>p.add_link(<span class="hljs-string">"retriever"</span>, <span class="hljs-string">"reranker"</span>, dest_key=<span class="hljs-string">"nodes"</span>)<br>p.add_link(<span class="hljs-string">"llm"</span>, <span class="hljs-string">"reranker"</span>, dest_key=<span class="hljs-string">"query_str"</span>)<br>p.add_link(<span class="hljs-string">"reranker"</span>, <span class="hljs-string">"summarizer"</span>, dest_key=<span class="hljs-string">"nodes"</span>)<br>p.add_link(<span class="hljs-string">"llm"</span>, <span class="hljs-string">"summarizer"</span>, dest_key=<span class="hljs-string">"query_str"</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="运行pipeline">7.1.2 运行Pipeline</h4>
+<p><strong>Single-Input/Single-Output</strong></p>
+<p>输入是kwargs第一个组件。
+如果最后一个组件的输出是单个对象（而不是对象字典），那么我们直接返回它。
+以前面示例中的Pipeline为例，输出将是 <code>Response</code>
+对象，因为最后一步是 <code>TreeSummarize</code> 响应合成模块。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">output = p.run(topic=<span class="hljs-string">"YC"</span>)<br><span class="hljs-comment"># output type is Response</span><br><span class="hljs-built_in">type</span>(output)<br></code></pre></td></tr></table></figure>
+<p><strong>Multi-Input/Multi-Output</strong></p>
+<p>如果 DAG
+有多个根节点和/或输出节点，可以尝试用<code>run_multi</code>。传入一个包含模块的<code>key -&gt; input</code>的字典。输出是模块<code>key -&gt; output</code>的字典。
+如果运行了前面的示例，</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python">output_dict = p.run_multi({<span class="hljs-string">"llm"</span>: {<span class="hljs-string">"topic"</span>: <span class="hljs-string">"YC"</span>}})<br><span class="hljs-built_in">print</span>(output_dict)<br><br><span class="hljs-comment"># output dict is {"summarizer": {"output": response}}</span><br></code></pre></td></tr></table></figure>
+<p><strong>定义partial</strong></p>
+<p>如果希望为模块预填某些输入，可以使用<code>partial</code>。然后 DAG
+只需连接到未填充的输入即可。 需要通过 <code>as_query_component</code>
+将模块转换。 以下是一个示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python">summarizer = TreeSummarize(llm=llm)<br>summarizer_c = summarizer.as_query_component(partial={<span class="hljs-string">"nodes"</span>: nodes})<br><span class="hljs-comment"># can define a chain because llm output goes into query_str, nodes is pre-filled</span><br>p = QueryPipeline(chain=[prompt_tmpl, llm, summarizer_c])<br><span class="hljs-comment"># run pipeline</span><br>p.run(topic=<span class="hljs-string">"YC"</span>)<br></code></pre></td></tr></table></figure>
+<p><strong>中间输出</strong></p>
+<p>如果希望获取 <code>QueryPipeline</code> 中模块的中间输出，可以使用
+<code>run_with_intermediates</code> 或
+r<code>un_multi_with_intermediates</code> 分别用于单输入和多输入。
+输出将是一个元组，包括正常输出和一个包含模块
+<code>key -&gt; ComponentIntermediates</code>
+的字典。<code>ComponentIntermediates</code> 有 2
+个字段：<code>inputs</code>字典和<code>outputs</code>字典。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python">output, intermediates = p.run_with_intermediates(topic=<span class="hljs-string">"YC"</span>)<br><span class="hljs-built_in">print</span>(output)<br><span class="hljs-built_in">print</span>(intermediates)<br><br><span class="hljs-comment"># output is (Response, {"module_key": ComponentIntermediates("inputs": {}, "outputs": {})})</span><br></code></pre></td></tr></table></figure>
+<h4 id="定义自定义query-component">7.1.3 定义自定义Query Component</h4>
+<p>可以轻松定义自定义组件：要么将函数传递给
+<code>FnComponent</code>，要么继承
+<code>CustomQueryComponent</code>。</p>
+<p><strong>将函数传递给 FnComponent</strong></p>
+<p>定义任何函数并将其传递给
+<code>FnComponent</code>。位置参数名称（<code>args</code>）将被转换为必需的输入键，关键字参数名称（<code>kwargs</code>）将被转换为可选的输入键。
+注:假设只有一个输出。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.query_pipeline <span class="hljs-keyword">import</span> FnComponent<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">add</span>(<span class="hljs-params">a: <span class="hljs-built_in">int</span>, b: <span class="hljs-built_in">int</span></span>) -&gt; <span class="hljs-built_in">int</span>:<br>    <span class="hljs-string">"""Adds two numbers."""</span><br>    <span class="hljs-keyword">return</span> a + b<br><br><br>add_component = FnComponent(fn=add, output_key=<span class="hljs-string">"output"</span>)<br><br><span class="hljs-comment"># input keys to add_component are "a" and "b", output key is 'output'</span><br></code></pre></td></tr></table></figure>
+<p><strong>继承 CustomQueryComponent</strong></p>
+<p>简单地继承 <code>CustomQueryComponent</code>，实现验证/运行函数 +
+一些助手，并将其插入。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.query_pipeline <span class="hljs-keyword">import</span> CustomQueryComponent<br><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">Dict</span>, <span class="hljs-type">Any</span><br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyComponent</span>(<span class="hljs-title class_ inherited__">CustomQueryComponent</span>):<br>    <span class="hljs-string">"""My component."""</span><br><br>    <span class="hljs-comment"># Pydantic class, put any attributes here</span><br>    ...<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_validate_component_inputs</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self, <span class="hljs-built_in">input</span>: <span class="hljs-type">Dict</span>[<span class="hljs-built_in">str</span>, <span class="hljs-type">Any</span>]</span><br><span class="hljs-params">    </span>) -&gt; <span class="hljs-type">Dict</span>[<span class="hljs-built_in">str</span>, <span class="hljs-type">Any</span>]:<br>        <span class="hljs-string">"""Validate component inputs during run_component."""</span><br>        <span class="hljs-comment"># <span class="hljs-doctag">NOTE:</span> this is OPTIONAL but we show you here how to do validation as an example</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">input</span><br><br><span class="hljs-meta">    @property</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_input_keys</span>(<span class="hljs-params">self</span>) -&gt; <span class="hljs-built_in">set</span>:<br>        <span class="hljs-string">"""Input keys dict."""</span><br>        <span class="hljs-keyword">return</span> {<span class="hljs-string">"input_key1"</span>, ...}<br><br><span class="hljs-meta">    @property</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_output_keys</span>(<span class="hljs-params">self</span>) -&gt; <span class="hljs-built_in">set</span>:<br>        <span class="hljs-comment"># can do multi-outputs too</span><br>        <span class="hljs-keyword">return</span> {<span class="hljs-string">"output_key"</span>}<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_run_component</span>(<span class="hljs-params">self, **kwargs</span>) -&gt; <span class="hljs-type">Dict</span>[<span class="hljs-built_in">str</span>, <span class="hljs-type">Any</span>]:<br>        <span class="hljs-string">"""Run the component."""</span><br>        <span class="hljs-comment"># run logic</span><br>        ...<br>        <span class="hljs-keyword">return</span> {<span class="hljs-string">"output_key"</span>: result}<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/pipeline/query_pipeline/">query
+transformations guide</a></p>
+<h4 id="确保输出兼容">7.1.4 确保输出兼容</h4>
+<p>通过在 <code>QueryPipeline</code>
+中链接模块，一个模块的输出进入下一个模块的输入。
+通常，必须确保链接正常工作，预期的输出和输入类型大致对齐。LlamaIndex对现有模块做了一些魔法，以确保“可字符串化(Stringable)”输出可以传递到可以作为“字符串”查询的输入中。
+某些输出类型被视为 Stringable -
+<code>CompletionResponse</code>、<code>ChatResponse</code>、<code>Response</code>、<code>QueryBundle</code>
+等。检索器/查询引擎将自动将字符串输入转换为 <code>QueryBundle</code>
+对象。
+这使您能够执行某些工作流程，如果自己编写，则需要编写样板字符串转换，例如，</p>
+<ul>
+<li>LLM -&gt; prompt, LLM -&gt; retriever, LLM -&gt; query engine</li>
+<li>query engine -&gt; prompt, query engine -&gt; retriever</li>
+</ul>
+<p>自定义组件，应该使用 <code>_validate_component_inputs</code>
+确保输入是正确的类型，并在它们不是时抛出错误。</p>
+<h3 id="module-guides-1">7.2 Module Guides</h3>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/pipeline/query_pipeline/">Query
+Pipeline</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/pipeline/query_pipeline_async/">Async
+Query Pipeline</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/pipeline/query_pipeline_pandas/">Pandas
+Query Pipeline</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/pipeline/query_pipeline_sql/">SQL
+Query Pipeline</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/agent/agent_runner/query_pipeline_agent/">Query
+Pipeline Agent</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/pipeline/query_pipeline_memory/">Query
+Pipeline with Memory</a></li>
+</ul>
+<h3 id="module-usage">7.3 Module Usage</h3>
+<p>在 QueryPipeline 中支持以下 LlamaIndex 模块(也可以自定义)</p>
+<h4 id="llms包括完成和聊天">7.3.1 LLMs（包括完成和聊天）</h4>
+<ul>
+<li>Base class：<code>LLM</code></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/models/llms/">Module
+Guide</a></li>
+<li>Chat model：
+<ul>
+<li>Input: <code>messages</code>。接受任何
+<code>List[ChatMessage]</code> 或任何可字符串化输入。</li>
+<li>Output: <code>output</code>。输出
+<code>ChatResponse</code>（可字符串化）</li>
+</ul></li>
+<li>Completion model:
+<ul>
+<li>Input: <code>prompt</code>. 接受任何可字符串化输入。</li>
+<li>Output: <code>output</code>. 输出
+<code>CompletionResponse</code>（可字符串化）</li>
+</ul></li>
+</ul>
+<h4 id="prompts">7.3.2 Prompts</h4>
+<ul>
+<li>Base class: <code>PromptTemplate</code></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/models/prompts/">Module
+Guide</a></li>
+<li>Input: Prompt template variables.
+每个变量可以是可字符串化输入。</li>
+<li>Output: <code>output</code>.
+输出格式化的提示字符串（可字符串化）</li>
+</ul>
+<h4 id="query-engines">7.3.3 Query Engines</h4>
+<ul>
+<li>Base class: <code>BaseQueryEngine</code></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/deploying/query_engine/">Module
+Guide</a></li>
+<li>Input: <code>input</code>. 接受任何可字符串化输入。</li>
+<li>Output: <code>output</code>.
+输出<code>Response</code>（可字符串化）</li>
+</ul>
+<h4 id="query-transforms">7.3.4 Query Transforms</h4>
+<ul>
+<li>Base class: <code>BaseQueryTransform</code></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/optimizing/advanced_retrieval/query_transformations/">Module
+Guide</a></li>
+<li>Input: <code>query_str</code>,
+<code>metadata</code>（可选）。<code>query_str</code>
+是任何可字符串化输入。</li>
+<li>Output: <code>query_str</code>. 输出字符串。</li>
+</ul>
+<h4 id="retrievers">7.3.5 Retrievers</h4>
+<ul>
+<li>Base class: <code>BaseRetriever</code></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/querying/retriever/">Module
+Guide</a></li>
+<li>Input: <code>input</code>. 接受任何可字符串化输入。</li>
+<li>Output: <code>output</code>. 输出节点列表
+<code>List[BaseNode]</code></li>
+</ul>
+<h4 id="output-parsers">7.3.6 Output Parsers</h4>
+<ul>
+<li>Base class:<code>BaseOutputParser</code></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/querying/structured_outputs/output_parser/">Module
+Guide</a></li>
+<li>Input: <code>input</code>. 接受任何可字符串化输入</li>
+<li>Output: <code>output</code>.
+输出输出解析器应该解析出的任何类型。</li>
+</ul>
+<h4 id="postprocessorsrerankers">7.3.7 Postprocessors/Rerankers</h4>
+<ul>
+<li>Base class: <code>BaseNodePostprocessor</code></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/querying/node_postprocessors/">Module
+Guide</a></li>
+<li>Input: <code>nodes</code>, <code>query_str</code> (可选).
+<code>nodes</code>是 <code>List[BaseNode]</code>, <code>query_str</code>
+是任何可字符串化输入.</li>
+<li>Output: <code>nodes</code>. 输出节点列表
+<code>List[BaseNode]</code>.</li>
+</ul>
+<h4 id="response-synthesizers">7.3.8 Response Synthesizers</h4>
+<ul>
+<li>Base class: <code>BaseSynthesizer</code></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/querying/pipeline/module_usage/">Module
+Guide</a></li>
+<li>Input: <code>nodes</code>, <code>query_str</code>.
+<code>nodes</code> 是 <code>List[BaseNode]</code>,
+<code>query_str</code> 是任何可字符串化输入.</li>
+<li>Output: <code>output</code>. 输出 <code>Response</code>
+对象（可字符串化）.</li>
+</ul>
+<h4 id="other-querypipeline-objects">7.3.9 Other QueryPipeline
+objects</h4>
+<p>You can define a QueryPipeline as a module within another query
+pipeline. This makes it easy for you to string together complex
+workflows.</p>
+<p><strong><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/querying/pipeline/usage_pattern/#defining-a-custom-query-component">Custom
+Components</a></strong></p>
+<h2 id="八structured-outputs">八、Structured Outputs</h2>
+<p>LLM产生结构化输出的能力对于依赖于可靠解析输出值的下游应用来说非常重要。LlamaIndex
+本身在以下几个方面依赖于结构化输出：</p>
+<ul>
+<li><strong>Document retrieval</strong>：LlamaIndex
+中的许多数据结构依赖于具有特定文档检索模式的 LLM 调用。 例如，树索引期望
+LLM 调用的格式为<code>ANSWER：(number)</code>。</li>
+<li><strong>Response
+synthesis</strong>：用户可能期望最终响应包含某种程度的结构（例如 JSON
+输出、格式化的 SQL 查询等）</li>
+</ul>
+<p>LlamaIndex 提供了多种模块，使 LLM
+能够以结构化格式产生输出。LlamaIndex提供了不同抽象层次的模块：</p>
+<ul>
+<li><strong>Output Parsers</strong>: 这些是在 LLM
+文本完成之前和之后运行的模块。 它们不与 LLM
+函数调用一起使用（因为它们包含开箱即用的结构化输出）。</li>
+<li><strong>Pydantic Programs</strong>: 这些是将输入prompt映射到由
+Pydantic 对象表示的结构化输出的通用模块。
+他们可能使用<code>function calling API</code>或<code>text completion APIs + output parsers</code>。
+这些也可以与查询引擎集成。</li>
+<li><strong>Pre-defined Pydantic Program</strong>: 预定义的 Pydantic
+程序，可将输入映射到特定的输出类型（如<code>dataframes</code>）。</li>
+</ul>
+<h3 id="结构化输出函数剖析">8.1 结构化输出函数剖析</h3>
+<p>在这里，描述了 LLM 支持的结构化输出函数的不同组件。
+pipeline取决于使用的是<code>generic LLM text completion API</code>或<code>LLM function calling API</code>。</p>
+<p><img src="/images/diagram1.png" srcset="/img/loading.gif" lazyload></p>
+<p>使用<code>generic completion APIs</code>，输入和输出由文本prompts处理。
+输出解析器在 LLM 调用之前和之后发挥作用，以确保结构化输出。 在 LLM
+调用之前，输出解析器可以将格式指令附加到prompts中。
+LLM调用后，输出解析器可以将输出解析为指定的指令。</p>
+<p><code>function calling APIs</code>，输出本质上是结构化格式，并且输入可以采用所需对象的签名。
+结构化输出只需要转换为正确的对象格式（例如 Pydantic）。</p>
+<h3 id="output-parsing-modules">8.2 Output Parsing Modules</h3>
+<p>LlamaIndex 支持与其他框架提供的输出解析模块集成。
+这些输出解析模块可以通过以下方式使用：</p>
+<ul>
+<li>为任何prompt/query
+提供格式化指令（通过<code>output_parser.format</code>）</li>
+<li>为LLM输出提供“解析”（通过<code>output_parser.parse</code>）</li>
+</ul>
+<h4 id="guardrails">8.2.1 Guardrails</h4>
+<p>Guardrails 是一个开源的 Python
+包，用于输出模式的规范/验证/校正。以下是代码示例。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex, SimpleDirectoryReader<br><span class="hljs-keyword">from</span> llama_index.output_parsers.guardrails <span class="hljs-keyword">import</span> GuardrailsOutputParser<br><span class="hljs-keyword">from</span> llama_index.llms.openai <span class="hljs-keyword">import</span> OpenAI<br><br><br><span class="hljs-comment"># load documents, build index</span><br>documents = SimpleDirectoryReader(<span class="hljs-string">"../paul_graham_essay/data"</span>).load_data()<br>index = VectorStoreIndex(documents, chunk_size=<span class="hljs-number">512</span>)<br><br><span class="hljs-comment"># define query / output spec</span><br>rail_spec = <span class="hljs-string">"""</span><br><span class="hljs-string">&lt;rail version="0.1"&gt;</span><br><span class="hljs-string"></span><br><span class="hljs-string">&lt;output&gt;</span><br><span class="hljs-string">    &lt;list name="points" description="Bullet points regarding events in the author's life."&gt;</span><br><span class="hljs-string">        &lt;object&gt;</span><br><span class="hljs-string">            &lt;string name="explanation" format="one-line" on-fail-one-line="noop" /&gt;</span><br><span class="hljs-string">            &lt;string name="explanation2" format="one-line" on-fail-one-line="noop" /&gt;</span><br><span class="hljs-string">            &lt;string name="explanation3" format="one-line" on-fail-one-line="noop" /&gt;</span><br><span class="hljs-string">        &lt;/object&gt;</span><br><span class="hljs-string">    &lt;/list&gt;</span><br><span class="hljs-string">&lt;/output&gt;</span><br><span class="hljs-string"></span><br><span class="hljs-string">&lt;prompt&gt;</span><br><span class="hljs-string"></span><br><span class="hljs-string">Query string here.</span><br><span class="hljs-string"></span><br><span class="hljs-string">@xml_prefix_prompt</span><br><span class="hljs-string"></span><br><span class="hljs-string">{output_schema}</span><br><span class="hljs-string"></span><br><span class="hljs-string">@json_suffix_prompt_v2_wo_none</span><br><span class="hljs-string">&lt;/prompt&gt;</span><br><span class="hljs-string">&lt;/rail&gt;</span><br><span class="hljs-string">"""</span><br><br><span class="hljs-comment"># define output parser</span><br>output_parser = GuardrailsOutputParser.from_rail_string(<br>    rail_spec, llm=OpenAI()<br>)<br><br><span class="hljs-comment"># Attach output parser to LLM</span><br>llm = OpenAI(output_parser=output_parser)<br><br><span class="hljs-comment"># obtain a structured response</span><br>query_engine = index.as_query_engine(llm=llm)<br>response = query_engine.query(<br>    <span class="hljs-string">"What are the three items the author did growing up?"</span>,<br>)<br><span class="hljs-built_in">print</span>(response)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">{'points': [{'explanation': 'Writing short stories', 'explanation2': 'Programming on an IBM 1401', 'explanation3': 'Using microcomputers'}]}<br></code></pre></td></tr></table></figure>
+<h4 id="langchain">8.2.2 Langchain</h4>
+<p>Langchain 也提供了输出解析模块，可以在 LlamaIndex 中使用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex, SimpleDirectoryReader<br><span class="hljs-keyword">from</span> llama_index.core.output_parsers <span class="hljs-keyword">import</span> LangchainOutputParser<br><span class="hljs-keyword">from</span> llama_index.llms.openai <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> langchain.output_parsers <span class="hljs-keyword">import</span> StructuredOutputParser, ResponseSchema<br><br><br><span class="hljs-comment"># load documents, build index</span><br>documents = SimpleDirectoryReader(<span class="hljs-string">"../paul_graham_essay/data"</span>).load_data()<br>index = VectorStoreIndex.from_documents(documents)<br><br><span class="hljs-comment"># define output schema</span><br>response_schemas = [<br>    ResponseSchema(<br>        name=<span class="hljs-string">"Education"</span>,<br>        description=<span class="hljs-string">"Describes the author's educational experience/background."</span>,<br>    ),<br>    ResponseSchema(<br>        name=<span class="hljs-string">"Work"</span>,<br>        description=<span class="hljs-string">"Describes the author's work experience/background."</span>,<br>    ),<br>]<br><br><span class="hljs-comment"># define output parser</span><br>lc_output_parser = StructuredOutputParser.from_response_schemas(<br>    response_schemas<br>)<br>output_parser = LangchainOutputParser(lc_output_parser)<br><br><span class="hljs-comment"># Attach output parser to LLM</span><br>llm = OpenAI(output_parser=output_parser)<br><br><span class="hljs-comment"># obtain a structured response</span><br>query_engine = index.as_query_engine(llm=llm)<br>response = query_engine.query(<br>    <span class="hljs-string">"What are a few things the author did growing up?"</span>,<br>)<br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">str</span>(response))<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">{'Education': 'Before college, the author wrote short stories and experimented with programming on an IBM 1401.', 'Work': 'The author worked on writing and programming outside of school.'}<br></code></pre></td></tr></table></figure>
+<p>更多例子：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/output_parsing/GuardrailsDemo/">Guardrails</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/output_parsing/LangchainOutputParserDemo/">Langchain</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/output_parsing/guidance_pydantic_program/">Guidance
+Pydantic Program</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/output_parsing/guidance_sub_question/">Guidance
+Sub-Question</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/output_parsing/openai_pydantic_program/">Openai
+Pydantic Program</a></li>
+</ul>
+<h3 id="query-engines-pydantic-outputs">8.3 Query Engines + Pydantic
+Outputs</h3>
+<p>使用<code>index.as_query_engine()</code>及其底层的<code>RetrieverQueryEngine</code>，LlamaIndex可以支持结构化的<code>pydantic</code>输出，而无需额外的LLM调用（与典型的输出解析器相比）。</p>
+<p>每个查询引擎都支持使用 <code>RetrieverQueryEngine</code> 中的以下
+<code>response_modes</code> 集成结构化响应：</p>
+<ul>
+<li><code>refine</code></li>
+<li><code>compact</code></li>
+<li><code>tree_summarize</code></li>
+<li><code>accumulate</code> (beta, 需要额外解析以转换为对象)</li>
+<li><code>compact_accumulate</code> (beta,
+需要额外解析以转换为对象)</li>
+</ul>
+<p>在底层，这取决于LLM的设置，使用 <code>OpenAIPydanitcProgam</code> 或
+<code>LLMTextCompletionProgram</code>。如果有中间的 LLM 响应（例如在
+<code>refine</code> 或 <code>tree_summarize</code> 期间进行了多次 LLM
+调用），Pydantic 对象会以 JSON 对象的形式注入到下一个 LLM prompt中。</p>
+<h4 id="使用示例-7">8.3.1 使用示例</h4>
+<p>首先，需要定义要提取的对象。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">List</span><br><span class="hljs-keyword">from</span> pydantic <span class="hljs-keyword">import</span> BaseModel<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Biography</span>(<span class="hljs-title class_ inherited__">BaseModel</span>):<br>    <span class="hljs-string">"""Data model for a biography."""</span><br><br>    name: <span class="hljs-built_in">str</span><br>    best_known_for: <span class="hljs-type">List</span>[<span class="hljs-built_in">str</span>]<br>    extra_info: <span class="hljs-built_in">str</span><br></code></pre></td></tr></table></figure>
+<p>然后，创建查询引擎</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">query_engine = index.as_query_engine(<br>    response_mode=<span class="hljs-string">"tree_summarize"</span>, output_cls=Biography<br>)<br></code></pre></td></tr></table></figure>
+<p>最后，获取响应并检查输出。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python">response = query_engine.query(<span class="hljs-string">"Who is Paul Graham?"</span>)<br><br><span class="hljs-built_in">print</span>(response.name)<br><span class="hljs-comment"># &gt; 'Paul Graham'</span><br><span class="hljs-built_in">print</span>(response.best_known_for)<br><span class="hljs-comment"># &gt; ['working on Bel', 'co-founding Viaweb', 'creating the programming language Arc']</span><br><span class="hljs-built_in">print</span>(response.extra_info)<br><span class="hljs-comment"># &gt; "Paul Graham is a computer scientist, entrepreneur, and writer. He is best known      for ..."</span><br></code></pre></td></tr></table></figure>
+<p>更多例子：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/query_engine/pydantic_query_engine/">Structured
+Outputs with a Query Engine</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/response_synthesizers/pydantic_tree_summarize/">Structured
+Outputs with a Tree Summarize</a></li>
+</ul>
+<h3 id="pydantic-program">8.4 Pydantic Program</h3>
+<p>Pydantic
+程序是一种通用的抽象，它接收一个输入字符串并将其转换为一个结构化的
+Pydantic 对象类型。由于这种抽象非常通用，它涵盖了广泛的 LLM
+工作流程。程序是可组合的，可以用于更通用或特定的用例。</p>
+<p>Pydantic 程序有几种一般类型：</p>
+<ul>
+<li><strong>Text Completion Pydantic Programs</strong>:
+这些程序通过<code>text completion API + output parsing</code>，将输入文本转换为用户指定的结构化对象。</li>
+<li><strong>Function Calling Pydantic Program</strong>: 这些程序通过 LLM
+<code>function calling API</code>，将输入文本转换为用户指定的结构化对象。</li>
+<li><strong>Prepackaged Pydantic Programs</strong>:
+这些程序将输入文本转换为预指定的结构化对象。</li>
+</ul>
+<h4 id="text-completion-pydantic-programs">8.4.1 Text Completion
+Pydantic Programs</h4>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/output_parsing/llm_program/">LLM
+Text Completion programs</a></li>
+</ul>
+<h4 id="function-calling-pydantic-programs">8.4.2 Function Calling
+Pydantic Programs</h4>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/output_parsing/function_program/">Function
+Calling Pydantic Program</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/output_parsing/openai_pydantic_program/">OpenAI
+Pydantic Program</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/output_parsing/guidance_pydantic_program/">Guidance
+Pydantic Program</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/output_parsing/guidance_sub_question/">Guidance
+Sub-Question Generator</a></li>
+</ul>
+<h4 id="prepackaged-pydantic-programs">8.4.3 Prepackaged Pydantic
+Programs</h4>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/output_parsing/df_program/">DF
+Program</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/output_parsing/evaporate_program/">Evaporate
+Program</a></li>
+</ul>
+<h2 id="官方资源">官方资源</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/querying/">官方文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.llamaindex.ai/blog/introducing-query-pipelines-025dc2bb0537">Query
+Pipelines</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.llamaindex.ai/blog">官方博客</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples">官方全部例子</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LlamaIndex/" class="category-chain-item">LlamaIndex</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#LLM学习笔记</a>
+      
+        <a href="/tags/LlamaIndex/" class="print-no-link">#LlamaIndex</a>
+      
+        <a href="/tags/Agent/" class="print-no-link">#Agent</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LlamaIndex(七)——LlamaIndex Quering</div>
+      <div>https://mztchaoqun.com.cn/posts/D20_LlamaIndex_Quering/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年5月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D21_LlamaIndex_Agents/" title="LlamaIndex(八)——LlamaIndex Agents">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LlamaIndex(八)——LlamaIndex Agents</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D19_LlamaIndex_Storing/" title="LlamaIndex(六)——LlamaIndex Storing">
+                        <span class="hidden-mobile">LlamaIndex(六)——LlamaIndex Storing</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

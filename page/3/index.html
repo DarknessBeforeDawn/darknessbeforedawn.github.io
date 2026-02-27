@@ -1,0 +1,2275 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="An elegant Material-Design theme for Hexo">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Suny的文章">
+<meta property="og:url" content="https://mztchaoqun.com.cn/page/3/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="An elegant Material-Design theme for Hexo">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="hexo,theme,fluid,material,material-design,blog">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 100vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Welcome To Suny&#39;s Blog"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+        <div class="scroll-down-bar">
+          <i class="iconfont icon-arrowdown"></i>
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          style="margin-top: 0">
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D60_Optimization/" target="_self">
+          <img src="/images/Algorithm-Optimization-for-Machine-Learning_blog-post.webp" srcset="/img/loading.gif" lazyload alt="神经网络(七)——优化算法">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D60_Optimization/" target="_self">
+          神经网络(七)——优化算法
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D60_Optimization/" target="_self">
+        <div>
+          优化算法在神经网络训练中至关重要，它们决定了如何调整模型参数以最小化损失函数。以下是对神经网络中常用优化算法的详细总结，包括梯度下降及其变种。 一、梯度下降（Gradient Descent） 梯度下降是最基础的优化算法，通过沿着损失函数梯度的反方向更新参数，逐步减少损失。 算法步骤  初始化参数：随机初始化参数 。 计算梯度：计算损失函数  对参数  的梯度 。 更新参数：沿梯度反方向更新参数：
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-02-16 14:57" pubdate>
+              2025-02-16
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/DL/" class="category-chain-item">DL</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/DL/">#DL</a>
+            
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">#神经网络</a>
+            
+              <a href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/">#优化算法</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D59_RNN_More/" target="_self">
+          <img src="/images/RNN1.png" srcset="/img/loading.gif" lazyload alt="神经网络(六)——更多RNN">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D59_RNN_More/" target="_self">
+          神经网络(六)——更多RNN
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D59_RNN_More/" target="_self">
+        <div>
+          一、门控循环单元（GRU） 门控循环单元与普通的循环神经网络之间的关键区别在于：前者支持隐状态的门控。这意味着模型有专门的机制来确定应该何时更新隐状态，以及应该何时重置隐状态。这些机制是可学习的，并且能够解决了上面列出的问题。例如，如果第一个词元非常重要，模型将学会在第一次观测之后不更新隐状态。同样，模型也可以学会跳过不相关的临时观测。最后，模型还将学会在需要的时候重置隐状态。 1.1 重置门和更
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-01-27 19:46" pubdate>
+              2025-01-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/DL/" class="category-chain-item">DL</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/DL/">#DL</a>
+            
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">#神经网络</a>
+            
+              <a href="/tags/RNN/">#RNN</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D58_RNN/" target="_self">
+          <img src="/images/RNN.png" srcset="/img/loading.gif" lazyload alt="神经网络(五)——循环神经网络（Recurrent Neural Network，RNN）">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D58_RNN/" target="_self">
+          神经网络(五)——循环神经网络（Recurrent Neural Network，RNN）
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D58_RNN/" target="_self">
+        <div>
+          循环神经网络（Recurrent Neural Network，RNN）是一类用于处理序列数据的神经网络，它在时间步上有循环连接，能够捕捉序列中的时间依赖关系。RNN广泛应用于自然语言处理（NLP）、时间序列预测、语音识别等领域。 一、序列模型 1.1 自回归模型 对于股票，用表示价格，即在时间步（time step）时，观察到的价格。对于本文中的序列通常是离散的，并在整数或其子集上变化。在日的股
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-01-20 15:33" pubdate>
+              2025-01-20
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/DL/" class="category-chain-item">DL</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/DL/">#DL</a>
+            
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">#神经网络</a>
+            
+              <a href="/tags/RNN/">#RNN</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D57_CNN_More/" target="_self">
+          <img src="/images/CNN.png" srcset="/img/loading.gif" lazyload alt="神经网络(四)——更多CNN">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D57_CNN_More/" target="_self">
+          神经网络(四)——更多CNN
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D57_CNN_More/" target="_self">
+        <div>
+          一、深度卷积神经网络（AlexNet） AlexNet和LeNet的架构非常相似，这里是一个稍微精简版本的AlexNet。   从LeNet（左）到AlexNet（右）  AlexNet和LeNet的设计理念非常相似，但也存在显著差异。  AlexNet比相对较小的LeNet5要深得多。AlexNet由八层组成：五个卷积层、两个全连接隐藏层和一个全连接输出层。 AlexNet使用ReLU而不是si
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-01-15 12:11" pubdate>
+              2025-01-15
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/DL/" class="category-chain-item">DL</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/DL/">#DL</a>
+            
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">#神经网络</a>
+            
+              <a href="/tags/CNN/">#CNN</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D56_CNN/" target="_self">
+          <img src="/images/CNN.jpeg" srcset="/img/loading.gif" lazyload alt="神经网络(三)——卷积神经网络（Convolutional Neural Network）">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D56_CNN/" target="_self">
+          神经网络(三)——卷积神经网络（Convolutional Neural Network）
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D56_CNN/" target="_self">
+        <div>
+          卷积神经网络（Convolutional Neural Network, CNN）是一种专门用于处理具有网格状拓扑数据（如图像）的深度学习模型。CNN在计算机视觉领域表现卓越，广泛应用于图像分类、对象检测、图像分割等任务。  输入层：接收原始图像数据，通常为三维数组（宽度、高度、通道数）。 卷积层：对输入图像进行卷积操作，生成特征图。 激活函数：对卷积结果应用激活函数，如ReLU。 池化层：对特征
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-01-10 17:21" pubdate>
+              2025-01-10
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/DL/" class="category-chain-item">DL</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/DL/">#DL</a>
+            
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">#神经网络</a>
+            
+              <a href="/tags/CNN/">#CNN</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D54_NN/" target="_self">
+          <img src="/images/NN.webp" srcset="/img/loading.gif" lazyload alt="神经网络(一)——线性神经网络">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D54_NN/" target="_self">
+          神经网络(一)——线性神经网络
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D54_NN/" target="_self">
+        <div>
+          神经网络（Neural Network）是一种模仿人脑神经系统的计算模型，广泛应用于人工智能（AI）和机器学习领域。它的核心思想是通过多个简单的计算单元（神经元）之间的连接和权重调整，来处理和学习复杂的任务。 一、线性神经网络 尽管神经网络涵盖了更多更为丰富的模型，但是依然可以用描述神经网络的方式来描述线性模型， 从而把线性模型看作一个神经网络。线性回归是一个单层神经网络。  如图所示的神经网络中
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-12-30 15:22" pubdate>
+              2024-12-30
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/DL/" class="category-chain-item">DL</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/DL/">#DL</a>
+            
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">#神经网络</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D53_Vision/" target="_self">
+          <img src="/images/Generative_Models.png" srcset="/img/loading.gif" lazyload alt="Generative Model">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D53_Vision/" target="_self">
+          Generative Model
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D53_Vision/" target="_self">
+        <div>
+          一、简介 生成式模型是指无监督和半监督的机器学习算法，使计算机能够使用文本、音频和视频文件、图像甚至代码等现有内容来创建新的可能内容。生成式模型主要功能是理解并捕获给定数据集中的潜在模式或分布。一旦学习了这些模式，模型就可以生成与原始数据集具有相似特征的新数据。 1.1 判别式模型 vs. 生成式模型  判别式模型  学习策略函数Y=f(X)或者条件概率P(Y|X) 不能反映训练数据本身的特性 学
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-12-23 17:23" pubdate>
+              2024-12-23
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Generative-Model/" class="category-chain-item">Generative Model</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/Generative-Model/">#Generative Model</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D52_MLLM/" target="_self">
+          <img src="/images/AnyGPT-any-to-any-multimodal-large-language-model.webp.jpeg" srcset="/img/loading.gif" lazyload alt="多模态大型语言模型(MLLM)">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D52_MLLM/" target="_self">
+          多模态大型语言模型(MLLM)
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D52_MLLM/" target="_self">
+        <div>
+          一、简介  模态的定义:模态（modal）是事情经历和发生的方式，我们生活在一个由多种模态（Multimodal）信息构成的世界，包括视觉信息、听觉信息、文本信息、嗅觉信息等等。 MLLMs 的定义:由LLM扩展而来的具有接收与推理多模态信息能力的模型。 多种模型概念：  单模态大模型 跨模态模型 多模态模型 多模态语言大模型   1.1 单模态大模型 单模态大模型是指模型输入和输出是同一种模态，
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-12-17 10:21" pubdate>
+              2024-12-17
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/MLLM/">#MLLM</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D51_DeepSpeed/" target="_self">
+          <img src="/images/DeepSpeed_logo.svg.png" srcset="/img/loading.gif" lazyload alt="DeepSpeed">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D51_DeepSpeed/" target="_self">
+          DeepSpeed
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D51_DeepSpeed/" target="_self">
+        <div>
+          DeepSpeed是一个深度学习优化软件套件，使分布式训练和推理变得简单、高效和有效。它可以做训练/推理具有数十亿或数万亿参数的密集或稀疏模型；实现出色的系统吞吐量并有效扩展到数千个GPU；在资源受限的GPU系统上进行训练/推理；实现前所未有的低延迟和高吞吐量的推理；以低成本实现极限压缩，实现无与伦比的推理延迟和模型尺寸减小。 一、DeepSpeed简介   DeepSpeed四大创新支柱   D
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-12-10 14:41" pubdate>
+              2024-12-10
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/DeepSpeed/">#DeepSpeed</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D50_Megatron-LM/" target="_self">
+          <img src="/images/Megatron-LM.png" srcset="/img/loading.gif" lazyload alt="Megatron-LM">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D50_Megatron-LM/" target="_self">
+          Megatron-LM
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D50_Megatron-LM/" target="_self">
+        <div>
+          一、 通讯原语操作 NCCL 英伟达集合通信库，是一个专用于多个 GPU 乃至多个节点间通信的实现。它专为英伟达的计算卡和网络优化，能带来更低的延迟和更高的带宽。 Broadcast Broadcast代表广播行为，执行Broadcast时，数据从主节点0广播至其他各个指定的节点（0~3）   广播操作：所有rank都从“root”rank接收数据  Scatter Scatter与Broadca
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-12-03 16:15" pubdate>
+              2024-12-03
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/Megatron-LM/">#Megatron-LM</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D49_Mamba/" target="_self">
+          <img src="/images/SSM.png" srcset="/img/loading.gif" lazyload alt="LLM(十一)——Mamba">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D49_Mamba/" target="_self">
+          LLM(十一)——Mamba
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D49_Mamba/" target="_self">
+        <div>
+          一、SSM(State Space Model) 1.1 State Space 下图中每个小框代表迷宫中的一个位置，并有某些隐式的信息，例如你距离出口有多远:  而上述迷宫可以简化建模为一个“状态空间表示state space representation”，每一个小框显示:  当前所在位置（当前状态Current State） 下一步可以前往哪里(未来可能的状态Possible Future
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-11-28 17:25" pubdate>
+              2024-11-28
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/Mamba/">#Mamba</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D55_MLP/" target="_self">
+          <img src="/images/MultiLayerPerceptron.png" srcset="/img/loading.gif" lazyload alt="神经网络(二)——多层感知机（Multilayer Perceptron）">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D55_MLP/" target="_self">
+          神经网络(二)——多层感知机（Multilayer Perceptron）
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D55_MLP/" target="_self">
+        <div>
+          在现实世界中有很多数据无法通过线性变换来表示，可以通过在网络中加入一个或多个隐藏层来克服线性模型的限制， 使其能处理更普遍的函数关系类型。最简单的方法是将许多全连接层堆叠在一起，每一层都输出到上面的层，直到生成最后的输出。可以把前层看作表示，把最后一层看作线性预测器。这种架构通常称为多层感知机（multilayer perceptron），通常缩写为MLP。一个单隐藏层的多层感知机，具有5个隐藏单
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-11-24 13:42" pubdate>
+              2024-11-24
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/DL/" class="category-chain-item">DL</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/DL/">#DL</a>
+            
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">#神经网络</a>
+            
+              <a href="/tags/MLP/">#MLP</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D48_Infini%20_transformer/" target="_self">
+          <img src="/images/Infini.jpg" srcset="/img/loading.gif" lazyload alt="LLM(十)——Infini Transformer">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D48_Infini%20_transformer/" target="_self">
+          LLM(十)——Infini Transformer
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D48_Infini%20_transformer/" target="_self">
+        <div>
+          Infini-attention不同于过去的Attention机制，每次在处理一个新的输入时都会重新计算整个序列的 Attention 权重，也就代表会将过去的 K, V 都丢弃。  而 infini-attention 则是将 K, V 都保存在压缩记忆体里面，这样可以有两个优点：  处理较长(甚至无限)的文本、上下文比较有帮助 可以减少复杂度。因为不需要一直重复计算，可以提升效率、减少计算资源
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-11-22 19:36" pubdate>
+              2024-11-22
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/Infini-Transformer/">#Infini_Transformer</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D47_MoD/" target="_self">
+          <img src="/images/MoD.jpeg" srcset="/img/loading.gif" lazyload alt="LLM(九)——Mixture-of-Depths Transformers">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D47_MoD/" target="_self">
+          LLM(九)——Mixture-of-Depths Transformers
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D47_MoD/" target="_self">
+        <div>
+          一、Mixture-of-Depths Transformers MoD(Mixture-of-Depths)采用的技术类似于混合专家(Mixture of Experts，MoE) transformer，其中动态token级路由决策是在整个网络深度上做出的。然而，与 MoE 的想法不同，MoD要么将计算应用于像标准transformer那样的token，要么通过残差连接(Residual Co
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-11-15 16:21" pubdate>
+              2024-11-15
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/MoD/">#MoD</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D46_MoE/" target="_self">
+          <img src="/images/MoE_1.png" srcset="/img/loading.gif" lazyload alt="LLM(八)——MoE">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D46_MoE/" target="_self">
+          LLM(八)——MoE
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D46_MoE/" target="_self">
+        <div>
+          一、混合专家模型（Mixtral of Experts） 在 Transformer 模型的背景下，MoE 主要由两个部分组成：  稀疏 MoE 层 代替了传统的密集前馈网络 (FFN) 层。MoE 层包含若干“专家”（如 8 个），每个专家都是一个独立的神经网络。实际上，这些专家通常是 FFN，但它们也可以是更复杂的网络，甚至可以是 MoE 本身，形成一个层级结构的 MoE。 一个门控网络或路由
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-11-07 11:32" pubdate>
+              2024-11-07
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/MoE/">#MoE</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D45_Fine-tuning/" target="_self">
+          <img src="/images/PEFT.webp" srcset="/img/loading.gif" lazyload alt="LLM(七)——参数高效微调（Parameter-efficient fine-tuning,PEFT）">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D45_Fine-tuning/" target="_self">
+          LLM(七)——参数高效微调（Parameter-efficient fine-tuning,PEFT）
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D45_Fine-tuning/" target="_self">
+        <div>
+          随着模型变得越来越大，在消费级硬件上对模型进行全部参数的微调变得不可行。此外，为每个下游任务独立存储和部署微调模型变得非常昂贵，因为微调模型与原始预训练模型的大小相同。参数高效微调(PEFT) 方法旨在解决这两个问题！PEFT 方法使您能够获得与全参数微调相当的性能，同时只有少量可训练参数。 一、PEFT类型  Additive methods Additive methods的主要思想是通过添加
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-11-02 18:47" pubdate>
+              2024-11-02
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/PEFT/">#PEFT</a>
+            
+              <a href="/tags/Fine-tuning/">#Fine-tuning</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D44_Position-Encoding/" target="_self">
+          <img src="/images/PE.png" srcset="/img/loading.gif" lazyload alt="LLM(六)——Position Encoding">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D44_Position-Encoding/" target="_self">
+          LLM(六)——Position Encoding
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D44_Position-Encoding/" target="_self">
+        <div>
+          RNN的结构包含了序列的时序信息，而Transformer却完全把时序信息给丢掉了，比如“狗咬我”，和“我咬狗”，两者的意思千差万别，故为了解决时序的问题，Transformer的作者用了一个绝妙的办法：位置编码(Positional Encoding) 一、绝对位置编码（Absolute Positional Encoding） 1.1 简介 将每个位置编号，从而每个编号对应一个向量，最终通过结
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-10-27 19:36" pubdate>
+              2024-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/Position-Encoding/">#Position Encoding</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D43_Hardware-Optimization-Attention/" target="_self">
+          <img src="/images/FlashAttention.png" srcset="/img/loading.gif" lazyload alt="LLM(五)——Hardware Optimization Attention">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D43_Hardware-Optimization-Attention/" target="_self">
+          LLM(五)——Hardware Optimization Attention
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D43_Hardware-Optimization-Attention/" target="_self">
+        <div>
+          一、PagedAttention vLLM发现LLM 服务的性能受到内存瓶颈的影响。在自回归 decoder 中，所有输入到 LLM 的 token 会产生注意力 key 和 value 的张量，这些张量保存在 GPU 显存中以生成下一个 token。这些缓存 key 和 value 的张量通常被称为 KV cache，其具有以下特点：  显存占用大：在 LLaMA-13B 中，缓存单个序列最多需
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-10-20 17:31" pubdate>
+              2024-10-20
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/Attention/">#Attention</a>
+            
+              <a href="/tags/PagedAttention/">#PagedAttention</a>
+            
+              <a href="/tags/FlashAttention/">#FlashAttention</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D42_Attention_Variant/" target="_self">
+          <img src="/images/ilustrated-transformer.png" srcset="/img/loading.gif" lazyload alt="LLM(四)——Attention变种">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D42_Attention_Variant/" target="_self">
+          LLM(四)——Attention变种
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D42_Attention_Variant/" target="_self">
+        <div>
+          一、Multi-Query Attention（MQA） 多查询注意力（MQA）是多头注意力（MHA）算法的改进版本，它可以在不牺牲模型精度的情况下提高计算效率。在标准 MHA 中，单独的线性变换应用于每个注意力头的查询 (Q)、键 (K) 和值 (V)。 MQA 与此不同，它在所有头中使用一组共享的键 (K) 和值 (V)，同时允许对每个查询 (Q) 进行单独的转换。  Multi-Query
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-10-16 11:22" pubdate>
+              2024-10-16
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/Attention/">#Attention</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D41_Self_Attention/" target="_self">
+          <img src="/images/self_attention_mechanism.svg" srcset="/img/loading.gif" lazyload alt="LLM(三)——Self-Attention、Multi-Head Attention和Transformer">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D41_Self_Attention/" target="_self">
+          LLM(三)——Self-Attention、Multi-Head Attention和Transformer
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D41_Self_Attention/" target="_self">
+        <div>
+          Self Attention就是Q、K、V均为同一个输入向量映射而来的Encoder-Decoder Attention，它可以无视词之间的距离直接计算依赖关系，能够学习一个句子的内部结构，实现也较为简单并且可以并行计算。 Multi-Head Attention同时计算多个Attention，并最终得到合并结果，通过计算多次来捕获不同子空间上的相关信息。 一、Self-Attention 首先，
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-10-10 16:07" pubdate>
+              2024-10-10
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/DL/">#DL</a>
+            
+              <a href="/tags/Attention/">#Attention</a>
+            
+              <a href="/tags/Transformer/">#Transformer</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D40_Attention/" target="_self">
+          <img src="/images/Attention_Mechanism.jpeg" srcset="/img/loading.gif" lazyload alt="LLM(二)——Attention机制">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D40_Attention/" target="_self">
+          LLM(二)——Attention机制
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D40_Attention/" target="_self">
+        <div>
+          Attention 机制很像人类看图片的逻辑，当我们看一张图片的时候，我们并没有看清图片的全部内容，而是将注意力集中在了图片的焦点上。我们的视觉系统就是一种 Attention机制，将有限的注意力集中在重点信息上，从而节省资源，快速获得最有效的信息。   seq2seq  在seq2seq中，有一个Encoder和一个Decoder，Encoder和Decoder都是RNN。seq2seq的缺点在
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-10-03 11:23" pubdate>
+              2024-10-03
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/DL/">#DL</a>
+            
+              <a href="/tags/Attention/">#Attention</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D39_LLM/" target="_self">
+          <img src="/images/LLM.jpg" srcset="/img/loading.gif" lazyload alt="LLM(一)——LLM简介">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D39_LLM/" target="_self">
+          LLM(一)——LLM简介
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D39_LLM/" target="_self">
+        <div>
+          一、语言模型的发展历程 语言模型的发展历程从最初的简单统计模型到如今的复杂神经网络模型，经历了多个重要阶段。  1. 统计语言模型（Statistical Language Model, SLM） 统计语言模型使用马尔可夫假设（Markov Assumption）来建立语言序列的预测模型，通常是根据词序列中若干个连续的上下文单词来预测下一个词的出现概率，即根据一个固定长度的前缀来预测目标单词。具有
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-09-27 16:31" pubdate>
+              2024-09-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D38_LangGraph_Code_Generation/" target="_self">
+          <img src="/images/AI-Code-Generator.webp" srcset="/img/loading.gif" lazyload alt="LangGraph(七)——Code Generation">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D38_LangGraph_Code_Generation/" target="_self">
+          LangGraph(七)——Code Generation
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D38_LangGraph_Code_Generation/" target="_self">
+        <div>
+          一、 LangGraph for Code Generation 1.1 动机 代码生成和分析是大型语言模型（LLMs）最重要的应用之一，这一点从GitHub Copilot这样的产品的普遍性以和GPT-engineer这样的项目的受欢迎程度就可见一斑。最近AlphaCodium的研究工作表明，通过使用流程范式而不是简单的prompt:answer，可以改进代码生成，答案可以通过迭代没（1）测试答
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-09-21 21:27" pubdate>
+              2024-09-21
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LangGraph/" class="category-chain-item">LangGraph</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">#LLM学习笔记</a>
+            
+              <a href="/tags/Agent/">#Agent</a>
+            
+              <a href="/tags/LangGraph/">#LangGraph</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D37_Refection_Agents/" target="_self">
+          <img src="/images/Reflection_Agents.jpeg" srcset="/img/loading.gif" lazyload alt="LangGraph(六)——Reflection Agents">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D37_Refection_Agents/" target="_self">
+          LangGraph(六)——Reflection Agents
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D37_Refection_Agents/" target="_self">
+        <div>
+          Reflection Agents Reflection是一种提升Agent和类似AI系统质量和成功率的prompt策略，它涉及prompt大型语言模型（LLM）回顾和评判其过去的行为，有时还会结合额外的外部信息，如工具观察结果。 System 2相比与System 1更系统化和并且具有反思性。当正确应用时，Reflection可以帮助大型语言模型（LLM）系统打破System 1的思维模式，更接
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-09-13 16:35" pubdate>
+              2024-09-13
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LangGraph/" class="category-chain-item">LangGraph</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">#LLM学习笔记</a>
+            
+              <a href="/tags/Agent/">#Agent</a>
+            
+              <a href="/tags/LangGraph/">#LangGraph</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/posts/D36_LangGraph_Plan_And_Execute/" target="_self">
+          <img src="/images/Plan_Execute_Agents.jpg" srcset="/img/loading.gif" lazyload alt="LangGraph(五)——Plan-and-Execute Agents">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/posts/D36_LangGraph_Plan_And_Execute/" target="_self">
+          LangGraph(五)——Plan-and-Execute Agents
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/posts/D36_LangGraph_Plan_And_Execute/" target="_self">
+        <div>
+          一、Plan-and-Execute Agents Plan-and-execute 架构：这是一种将规划（plan）和执行（execute）分离的智能代理设计模式。 LangGraph提出了三种 Plan-and-Execute 风格的 Agent，并且相对于传统ReAct风格的Agnet做了很多改进。  速度提升：无需在每个动作后咨询更大的代理，子任务可以独立执行，减少对大型语言模型（LLM）
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-09-07 23:58" pubdate>
+              2024-09-07
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LangGraph/" class="category-chain-item">LangGraph</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/LLM/">#LLM</a>
+            
+              <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">#LLM学习笔记</a>
+            
+              <a href="/tags/Agent/">#Agent</a>
+            
+              <a href="/tags/LangGraph/">#LangGraph</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+
+
+  <nav aria-label="navigation">
+    <span class="pagination" id="pagination">
+      <a class="extend prev" rel="prev" href="/page/2/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/#board">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/#board">4</a><a class="page-number" href="/page/5/#board">5</a><a class="extend next" rel="next" href="/page/4/#board"><i class="iconfont icon-arrowright"></i></a>
+    </span>
+  </nav>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

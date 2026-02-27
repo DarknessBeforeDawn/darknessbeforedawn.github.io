@@ -1,0 +1,1192 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、Function Calling 传统的函数调用方式，通过预定义接口传递参数并获取返回值，适用于结构化、明确的输入输出场景。例如：调用数学计算函数 sum(a, b)，返回 a + b 的结果。 应用场景  计算服务：calculate_distance(lat1, lon1, lat2, lon2)。 数据库查询：get_user_profile(user_id)。 第三方API集成：调用支">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Function Calling vs. MCP vs. A2A vs. AG-UI">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D77_FC_MCP_A2A_AG-UI/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、Function Calling 传统的函数调用方式，通过预定义接口传递参数并获取返回值，适用于结构化、明确的输入输出场景。例如：调用数学计算函数 sum(a, b)，返回 a + b 的结果。 应用场景  计算服务：calculate_distance(lat1, lon1, lat2, lon2)。 数据库查询：get_user_profile(user_id)。 第三方API集成：调用支">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/ALL.webp">
+<meta property="article:published_time" content="2025-06-30T14:43:38.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.280Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="A2A">
+<meta property="article:tag" content="AG-UI">
+<meta property="article:tag" content="MCP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/ALL.webp">
+  
+  
+  
+  <title>Function Calling vs. MCP vs. A2A vs. AG-UI - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Function Calling vs. MCP vs. A2A vs. AG-UI"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-06-30 22:43" pubdate>
+          2025年6月30日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          26 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Function Calling vs. MCP vs. A2A vs. AG-UI</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一function-calling">一、Function Calling</h2>
+<p>传统的函数调用方式，通过预定义接口传递参数并获取返回值，适用于结构化、明确的输入输出场景。例如：调用数学计算函数
+<code>sum(a, b)</code>，返回 <code>a + b</code> 的结果。</p>
+<p><strong>应用场景</strong></p>
+<ul>
+<li>计算服务：<code>calculate_distance(lat1, lon1, lat2, lon2)</code>。</li>
+<li>数据库查询：<code>get_user_profile(user_id)</code>。</li>
+<li>第三方API集成：调用支付接口
+<code>process_payment(order_id, amount)</code>。</li>
+</ul>
+<p><strong>优缺点对比</strong></p>
+<ul>
+<li>优点：简单高效、易调试、低延迟。</li>
+<li>缺点：无法处理上下文依赖，功能单一。</li>
+</ul>
+<p><img src="/images/Function_Calling.gif" srcset="/img/loading.gif" lazyload></p>
+<p><strong>技术实现</strong></p>
+<ul>
+<li>通过RESTful API、gRPC等实现，请求-响应模式。</li>
+<li>示例：HTTP POST请求调用云端函数。</li>
+</ul>
+<p>Function Calling适用于简单、独立的任务，追求高效率和低复杂度。</p>
+<h2 id="二mcp">二、MCP</h2>
+<p>MCP（模型上下文协议）由 Anthropic 于 2024
+年底提出，旨在标准化大语言模型（LLM）与外部工具和资源的交互接口。其核心目标是通过统一的
+API 和安全机制，降低 Agent
+调用外部资源（如数据库、API）的适配成本，并提升安全性。MCP 标准化了
+Agent 与工具（Tool）之间的通信。</p>
+<p><strong>核心功能</strong> - <strong>标准化接口</strong>： - 提供统一
+API，支持 Agent 快速接入数据库、文件系统、第三方 API 等资源。 -
+例如，Agent 可通过 MCP 查询 SQL 数据库或调用支付系统完成交易。 -
+<strong>安全机制</strong>： -
+通过权限控制和密钥隔离，防止越权访问和敏感信息泄露。 - MCP
+作为数据访问网关，代理 API 请求，确保安全合规。 -
+<strong>动态扩展性</strong>： -
+支持本地、云端或第三方平台部署，适应多样化场景。</p>
+<p><img src="/images/MCP.gif" srcset="/img/loading.gif" lazyload></p>
+<p><strong>技术特点</strong></p>
+<ul>
+<li><strong>架构</strong>：采用 Client-Server 模式，包含 MCP
+Host（任务发起方）、MCP Client（通信模块）和
+MCPServer（执行后端服务）。</li>
+<li><strong>兼容性</strong>：支持多模型（如
+GPT、Claude）和多工具协同。</li>
+<li><strong>组件</strong>：核心概念包括资源、提示、工具和采样，确保高效交互。</li>
+</ul>
+<p><img src="/images/MCP1.gif" srcset="/img/loading.gif" lazyload></p>
+<p><strong>应用场景</strong></p>
+<ul>
+<li><strong>智能客服系统</strong>：查询用户订单状态，调用数据库或支付
+API 实时响应。</li>
+<li><strong>自动化决策支持</strong>：金融领域通过 MCP
+访问实时市场数据生成报告。</li>
+<li><strong>代码开发与调试</strong>：如 Manus 平台利用 MCP 调用 GitHub
+仓库实现代码修复。</li>
+<li><strong>企业服务集成</strong>：阿里、腾讯等将支付、地图服务封装为
+MCP 接口，供开发者使用。</li>
+</ul>
+<p><strong>优缺点对比</strong></p>
+<ul>
+<li>优点：支持复杂交互，适应动态场景。</li>
+<li>缺点：实现复杂、维护成本高，潜在性能瓶颈。</li>
+</ul>
+<p><strong>技术实现</strong></p>
+<ul>
+<li>需要协议层设计，如：
+<ul>
+<li>在HTTP头部添加 <code>Context-ID</code> 标识会话。</li>
+<li>使用WebSocket长连接维护实时上下文。</li>
+<li>请求体中嵌入历史上下文（如OpenAI的对话式API）。</li>
+</ul></li>
+</ul>
+<p><strong>行业影响</strong> - <strong>生态发展</strong>：已被
+Cursor、OpenAI 等采用，HuggingFace 社区贡献超 1000 个
+MCPServer，覆盖数据库、图像处理等领域。 -
+<strong>商业价值</strong>：推动“Tool-as-a-Service”模式，降低开发门槛，加速
+AI 工具市场化。 - <strong>效率提升</strong>：统一接口将工具适配代码量从
+1000 行压缩至 10 行。</p>
+<p>MCP需处理多步交互、长期依赖的场景，愿意为灵活性承担额外开销。</p>
+<h2 id="三a2a">三、A2A</h2>
+<p>A2A（智能体间协议）由谷歌提出，专注于标准化 Agent
+之间的协作与通信。其目标是打破 Agent
+的孤立运行模式，通过统一协议实现跨平台、跨组织的高效协作。Agent2Agent
+协议标准化了 Agent 与 Agent 之间的通信。</p>
+<p><img src="/images/A2A1.webp" srcset="/img/loading.gif" lazyload></p>
+<p><strong>核心功能</strong></p>
+<ul>
+<li><strong>能力发现与协商</strong>：
+<ul>
+<li>每个 Agent 拥有“AgentCard”，记录其能力（如搜索、代码编写）。</li>
+<li>通过动态匹配选择最适合的 Agent 完成任务。</li>
+</ul></li>
+<li><strong>协作流程管理</strong>：
+<ul>
+<li>支持复杂任务分解、分配和状态同步。</li>
+<li>例如，招聘流程中 HR Agent 与 IT Agent 协同完成账号开通。</li>
+</ul></li>
+<li><strong>用户体验优化</strong>：
+<ul>
+<li>通过 UX 协商机制，Agent 协商最佳交互方式（如对话式或卡片式
+UI）。</li>
+</ul></li>
+</ul>
+<p><img src="/images/A2A.gif" srcset="/img/loading.gif" lazyload></p>
+<p><strong>技术特点</strong></p>
+<ul>
+<li><strong>协议设计</strong>：基于 HTTP 的标准化通信，支持 JSON
+数据交换。</li>
+<li><strong>注册机制</strong>：提供 Agent Protocol Registry，类似
+DNS，查询 Agent 能力与接口。</li>
+<li><strong>跨平台兼容</strong>：支持 GPT、Claude、LangChain
+等多种模型和框架。</li>
+</ul>
+<p><strong>应用场景</strong></p>
+<ul>
+<li><strong>招聘流程自动化</strong>：HR Agent
+协调简历筛选、面试安排和账号开通。</li>
+<li><strong>供应链管理</strong>：需求预测、库存优化和物流调度 Agent
+协作优化流程。</li>
+<li><strong>IT 服务管理</strong>：员工请求设备时，Agent
+协调库存、采购和配置。</li>
+<li><strong>客户支持增强</strong>：一线客服 Agent 将复杂问题转交专家
+Agent 处理。</li>
+<li><strong>个性化学习</strong>：学习平台 Agent
+协作推荐课程和跟踪进度。</li>
+</ul>
+<p><strong>行业影响</strong></p>
+<ul>
+<li><strong>生态扩展</strong>：微软、CrewAI、LangChain 等支持 A2A，推动
+Agent 生态协作。</li>
+<li><strong>效率提升</strong>：微软通过 A2A 将医疗行业 HIPAA 审计周期从
+14 天缩短至 4 天。</li>
+<li><strong>去中心化</strong>：支持 P2P
+架构，适用于物联网设备协作。</li>
+</ul>
+<p><img src="/images/A2AvsMCP.gif" srcset="/img/loading.gif" lazyload></p>
+<h2 id="四ag-ui">四、AG-UI</h2>
+<p><strong>AG-UI（Agent User Interaction
+Protocol，智能体用户交互协议）</strong>
+是一个开放的、轻量的、基于事件的协议，由 CopilotKit 公司发布，它通过标准
+HTTP 或可选的二进制通道，以流式方式传输一系列 JSON 事件，主要用来对 AI
+agent 和前端应用程序的交互进行标准化。</p>
+<p>AG-UI 为 AI agent
+和前端应用程序之间搭建了一座桥梁，让这两者之间的交互更加友好，为用户带来更好体验。示意图如下：</p>
+<p><img src="/images/AG-UI1.png" srcset="/img/loading.gif" lazyload></p>
+<ul>
+<li><strong>Application</strong>：用户交互用到的应用程序（比如 chat
+或其他任何 AI 应用）</li>
+<li><strong>AG-UI 客户端</strong>：通用的通信客户端，诸如
+<code>HttpAgent</code>，或用于连接现有协议的专用客户端</li>
+<li><strong>Agent</strong>：后端用户处理用户请求并生成流式响应的
+agent</li>
+<li><strong>Secure
+Proxy</strong>：能够提供额外能力或作为安全代理的后端服务</li>
+</ul>
+<h3 id="核心组件">4.1 核心组件</h3>
+<p>AG-UI 的核心组件包括<strong>协议层（Protocol
+Layer）</strong>、<strong>标准化 HTTP 客户端（Standard HTTP
+Client）</strong>、<strong>消息类型（Message
+Type）</strong>、<strong>运行智能体（Running
+Agent）</strong>、<strong>状态管理（State
+Management）</strong>、<strong>工具交接（Tools and
+Handoff）以及事件（Events）</strong>。</p>
+<ul>
+<li><p><strong>协议层（Protocol Layer）</strong>：AG-UI 协议层主要为
+agent 通信提供一个灵活的基础。协议的核心让应用程序能够运行 agent
+并且接受到事件流。</p></li>
+<li><p><strong>标准 HTTP 客户端</strong>：</p>
+<ul>
+<li>AG-UI 提供了一个标准的 HTTP 客户端
+<code>HttpAgent</code>，可用于连接任何支持 POST 请求的端点。该端点接收
+<code>RunAgentInput</code> 类型的请求体，并返回 <code>BaseEvent</code>
+对象的数据流。</li>
+<li><code>HttpAgent</code> 支持 <strong>HTTP SSE (Server-Sent
+Events)</strong> 和 <strong>HTTP binary protocol</strong>
+两种模式。</li>
+</ul></li>
+<li><p><strong>消息类型</strong>：AG-UI 为 agent
+通信的不同方面定义了一些事件策略，主要包括：</p>
+<ul>
+<li><strong>Lifecycle events</strong>：监控 Agent 的运行情况。Agent
+的运行状态可能包含
+<code>RunStarted</code>、<code>StepStarted/StepFinished</code>、<code>RunFinished</code>（成功）、<code>RunError</code>（失败）。</li>
+<li><strong>Text message
+events</strong>：用于处理文本流式内容的事件。这些事件遵循流模式，并以增量的方式交付内容。文本消息可能以
+<code>TextMessageStart</code> 开始，然后用
+<code>TextMessageContent</code> 事件来交付文本，最后以
+<code>TextMessageEnd</code> 事件结束。</li>
+<li><strong>Tool call events</strong>：管理 Agent 对工具的执行。当 Agent
+想要使用某个 tool 时，会触发一个 <code>ToolCallStart</code>
+事件，随后会有 <code>ToolCallArgs</code>
+事件，用于流式传输传递给工具的参数，最后以一个 <code>ToolCallEnd</code>
+事件结束。</li>
+<li><strong>State management events</strong>：同步 Agent 和 UI
+之间的状态。协议中的状态管理采用高效的“快照-增量”模式：<strong>初始或偶尔发送完整的状态快照，而持续的变更则通过增量更新（delta）来传递</strong>。快照能够确保前端有完整的状态上下文，而
+delta
+最小化了需要频繁更新的数据传输。两者的有效结合，可以使前端不进行不必要数据传输的情况下，保持对
+Agent 状态的准确呈现。包括的事件有 <code>StateSnapshot</code> 和
+<code>StateDelta</code>。</li>
+<li><strong>Special
+events</strong>：支持自定义功能，比如和外部系统集成。包括的事件由
+<code>Raw</code> 和 <code>Custom</code>。</li>
+</ul></li>
+<li><p><strong>运行 Agent</strong>: 创建 agent 客户端实例并启用
+agent。</p>
+<ul>
+<li><strong>状态管理</strong>：AG-UI
+通过专用事件对状态进行管理，目前提供的事件有：</li>
+<li><strong>STATE_SNAPSHOT</strong>：某一时刻的完整状态表示；</li>
+<li><strong>STATE_DELTA</strong>：使用 JSON 补丁格式（RFC
+6902）的增量状态变更；</li>
+<li><strong>MESSAGES_SNAPSHOT</strong>：表示完整的对话历史；</li>
+</ul></li>
+<li><p><strong>工具和交接</strong>：AG-UI 通过标准化事件来提供 agent
+之间的任务移交的和工具的使用。</p></li>
+<li><p><strong>事件</strong>：AG-UI
+中的所有通信都是基于类型事件。每一个事件都继承自
+<code>BaseEvent</code>，其接口如下：</p></li>
+</ul>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs fortran"><span class="hljs-keyword">interface</span> BaseEvent {<br>  <span class="hljs-keyword">type</span>: EventType<br>  timestamp?: <span class="hljs-keyword">number</span><br>  rawEvent?: <span class="hljs-built_in">any</span><br>}<br></code></pre></td></tr></table></figure>
+<p><img src="/images/AG-UI.webp" srcset="/img/loading.gif" lazyload></p>
+<p><strong>核心功能</strong></p>
+<ul>
+<li><strong>事件驱动通信</strong>：
+<ul>
+<li>定义五类事件：生命周期、文本信息、工具调用、状态管理和特殊事件。</li>
+<li>例如，生命周期事件（RUN_STARTED/RUN_FINISHED）标记任务状态。</li>
+</ul></li>
+<li><strong>双向状态同步</strong>：
+<ul>
+<li>前端根据 Agent 状态动态更新 UI，如任务失败时弹出提示。
+<strong>多传输方式</strong>：</li>
+<li>支持 SSE、WebSocket、Webhook 等流式通信协议。</li>
+</ul></li>
+</ul>
+<p><strong>技术特点</strong></p>
+<ul>
+<li><strong>架构</strong>：采用中间件层，兼容 LangGraph、CrewAI
+等框架，提供 TypeScript 和 Python SDK。</li>
+<li><strong>安全性</strong>：通过 Secure Proxy 确保通信安全。</li>
+<li><strong>事件类型</strong>：16 种事件支持实时交互，如 STATE_SNAPSHOT
+传递完整状态。</li>
+</ul>
+<p><strong>应用场景</strong></p>
+<ul>
+<li><strong>智能客服系统</strong>：前端实时显示 Agent
+处理进度，如“正在分析问题”。</li>
+<li><strong>AI 编辑器</strong>：动态展示 AI 生成内容的修改过程。</li>
+<li><strong>多 Agent 协作平台</strong>：统一界面管理 Agent
+任务状态，如招聘流程监控。</li>
+<li><strong>嵌入式设备交互</strong>：智能家电 App
+实时反馈设备状态，如空调温度调节。</li>
+</ul>
+<p><strong>行业影响</strong></p>
+<ul>
+<li><strong>用户体验优化</strong>：事件驱动机制减少用户等待感知。</li>
+<li><strong>生态闭环</strong>：与 MCP、A2A 协同，补齐 AI
+应用交互环节。</li>
+<li><strong>标准化交互</strong>：确保不同 Agent 与前端的兼容性。</li>
+</ul>
+<h2 id="五mcp-vs-a2a-vs-ag-ui">五、MCP vs A2A vs AG-UI</h2>
+<p>相比于 MCP 和 A2A，AG-UI
+主要聚焦在智能体和用户（agent-user）的交互层上。它和 MCP 于 A2A
+并不是竞争关系。这三者在 AI 生态中的作用不同：</p>
+<ul>
+<li><strong>AG-UI</strong>：主要处理由用户（人）参与的交互以及流式更新用户界面；</li>
+<li><strong>A2A</strong>：主要促进智能体（agent-to-agent）之间的通信和协作；</li>
+<li><strong>MCP</strong>：主要解决跨不同模型之间工具调用的标准化和上下文处理问题；</li>
+</ul>
+<p><img src="/images/ALL.webp" srcset="/img/loading.gif" lazyload></p>
+<p><strong>MCP 与 A2A 的协同</strong></p>
+<ul>
+<li><strong>MCP</strong>：解决 Agent 与外部工具的交互，如调用数据库或
+API。</li>
+<li><strong>A2A</strong>：实现 Agent 间的协作，如多个 Agent
+联动完成复杂任务。</li>
+<li><strong>结合场景</strong>：在供应链管理中，MCP 调用物流 API，A2A
+协调需求预测与库存优化。</li>
+</ul>
+<p><strong>AG-UI 的桥梁作用</strong></p>
+<ul>
+<li>AG-UI 规范 Agent 与用户界面的交互，基于 MCP 和 A2A 的功能，提供实时
+UI 更新。</li>
+<li>例如，在 AI 编辑器中，MCP 调用编辑工具，A2A 协调多个 Agent，AG-UI
+展示修改进度。</li>
+</ul>
+<p><strong>行业生态影响</strong></p>
+<ul>
+<li>微软、谷歌、Anthropic 等推动协议标准化，降低开发门槛，加速 AI
+落地。</li>
+<li>三者共同支持企业级应用（如自动化招聘、智能客服），实现全流程无人化。</li>
+</ul>
+<p><strong>总结</strong></p>
+<p>MCP、A2A 和 AG-UI 分别从外部工具交互、Agent
+间协作和用户界面交互三个层面，构建了高效、安全、可扩展的 AI
+应用生态：</p>
+<table>
+
+<thead>
+<tr>
+<th>协议</th>
+<th>核心角色</th>
+<th>典型场景</th>
+<th>行业价值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MCP</td>
+<td>连接 Agent 与外部资源</td>
+<td>智能客服、代码修复</td>
+<td>降低开发成本，提升安全性</td>
+</tr>
+<tr>
+<td>A2A</td>
+<td>实现 Agent 间协作</td>
+<td>招聘自动化、供应链管理</td>
+<td>跨生态协作，提升效率</td>
+</tr>
+<tr>
+<td>AG-UI</td>
+<td>优化 Agent 与 UI 交互</td>
+<td>AI 编辑器、嵌入式设备</td>
+<td>提升用户体验，构建闭环</td>
+</tr>
+</tbody>
+</table>
+<p>这三项协议通过互补协作，推动 AI
+从孤立功能向生态化方向发展，覆盖从底层工具调用到用户交互的全链路需求，为智能客服、自动化办公、物联网等领域的创新提供了坚实基础。</p>
+<h2 id="reference">Reference</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://copilotkit.ai/">CopilotKit 官网</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/ag-ui-protocol/ag-ui">AG-UI
+GitHub</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.ag-ui.com/">AG-UI docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/introduction">Model Context
+Protocol</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/google-a2a/A2A">A2A GitHub</a></li>
+<li><a target="_blank" rel="noopener" href="https://google-a2a.github.io/A2A/latest/">Agent2Agent (A2A)
+Protocol</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/27327515233">一文看懂：MCP(大模型上下文协议)</a></li>
+<li><a target="_blank" rel="noopener" href="https://x.com/_avichawla/status/1925804196630057239">X:Avi
+Chawla</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/7mjuil26LHDWPtQQei7-mg?scene=1">MCP、A2A
+后，AI 领域又新增 AG-UI 协议</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/zAFVeZdiskhbQuVIfG9eXw?scene=1">企业新基建：MCP
++ LLM + Agent架构，将打通AI Agent的“神经中枢”</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/Python_cocola/article/details/148618823">MCP
+和 A2A 之后又一 AI Agent 协议刷屏了：AG-UI 协议架构设计剖析</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/1906639020164887828">AG-UI:
+代理到用户交互协议, 继 MCP 和 A2A 之后，下一个急需的东西。</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/@anil.jain.baba/agentic-mcp-and-a2a-architecture-a-comprehensive-guide-0ddf4359e152">Agentic
+MCP and A2A Architecture: A Comprehensive Guide</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/SNNf2F1AKPOSvBFnZ76V4Q">Function
+Calling 与 MCP对比</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/DqIYKBQOt5IPQ3vb2z_i3w">MCP、A2A
+与 AG-UI 协议：定义、功能与应用场景</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/y28H4y9eiYDfryjDvH0t3w">谷歌A2A
+vs. Anthropic MCP：AI界的“工具人”与“团队协作”之争，一文看懂！</a></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/LLM/MCP/" class="category-chain-item">MCP</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/MCP/" class="print-no-link">#MCP</a>
+      
+        <a href="/tags/A2A/" class="print-no-link">#A2A</a>
+      
+        <a href="/tags/AG-UI/" class="print-no-link">#AG-UI</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Function Calling vs. MCP vs. A2A vs. AG-UI</div>
+      <div>https://mztchaoqun.com.cn/posts/D77_FC_MCP_A2A_AG-UI/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年6月30日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D78_Boltzmann_Machines/" title="Boltzmann Machines">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Boltzmann Machines</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D76_A2A/" title="A2A">
+                        <span class="hidden-mobile">A2A</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

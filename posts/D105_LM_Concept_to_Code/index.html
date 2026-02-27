@@ -1,0 +1,1102 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、简介 尽管大型语言模型（LLMs）已经取得了诸多成就，但驱动所有这些模型的核心概念却十分简单——我们只需要准确预测下一个token即可！尽管有些人（合理地）认为最近关于 LLMs 的研究已经超越了这一基本理念，但token预测仍然支撑着所有因果语言模型的预训练、微调（取决于具体变体）和推理过程，使其成为任何 LLMs 从业者必须理解的基本且重要的概念。 “令人惊讶的是，所有这些进展背后的仍然是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="语言模型训练与推理：从概念到代码">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D105_LM_Concept_to_Code/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、简介 尽管大型语言模型（LLMs）已经取得了诸多成就，但驱动所有这些模型的核心概念却十分简单——我们只需要准确预测下一个token即可！尽管有些人（合理地）认为最近关于 LLMs 的研究已经超越了这一基本理念，但token预测仍然支撑着所有因果语言模型的预训练、微调（取决于具体变体）和推理过程，使其成为任何 LLMs 从业者必须理解的基本且重要的概念。 “令人惊讶的是，所有这些进展背后的仍然是">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/CTC.webp">
+<meta property="article:published_time" content="2026-01-16T12:15:32.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.267Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="LLM">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/CTC.webp">
+  
+  
+  
+  <title>语言模型训练与推理：从概念到代码 - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="语言模型训练与推理：从概念到代码"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-16 20:15" pubdate>
+          2026年1月16日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          54 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">语言模型训练与推理：从概念到代码</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一简介">一、简介</h2>
+<p>尽管大型语言模型（LLMs）已经取得了诸多成就，但驱动所有这些模型的核心概念却十分简单——我们只需要准确预测下一个token即可！尽管有些人（合理地）认为最近关于
+LLMs
+的研究已经超越了这一基本理念，但token预测仍然支撑着所有因果语言模型的预训练、微调（取决于具体变体）和推理过程，使其成为任何
+LLMs 从业者必须理解的基本且重要的概念。</p>
+<p>“令人惊讶的是，所有这些进展背后的仍然是原始的自回归机制，该机制逐个、从左到右地做出token级别的决策。”</p>
+<p>在本概述中，我们将深入并实际地探讨token预测的概念，以了解语言模型如何在训练和推理过程中使用它。首先，我们将从概念层面学习这些理念。然后，我们将通过一个实际的实现（使用
+PyTorch）来展示语言模型的预训练和推理过程，使token预测的概念更加具体。</p>
+<h3 id="相关背景概念">1.1 相关背景概念</h3>
+<p>在深入探讨本概述主题之前，我们需要理解一些基本概念。在本节中，我们将快速概述这些重要概念，并为每个概念提供进一步阅读的链接。</p>
+<p><strong>Transformer 架构</strong>。首先，我们需要对 Transformer
+架构有一个基本理解，特别是仅解码器的变体。幸运的是，我们之前已经广泛讨论过这些概念：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://cameronrwolfe.substack.com/p/graph-based-prompting-and-reasoning?open=false#%C2%A7the-transformer-from-top-to-bottom">Transformer架构</a></li>
+<li><a target="_blank" rel="noopener" href="https://cameronrwolfe.substack.com/p/language-models-gpt-and-gpt-2?open=false#%C2%A7decoder-only-transformers">Decoder-Only
+Transformers</a></li>
+</ul>
+<p>更根本地说，我们还需要理解自注意力的概念及其在 Transformer
+架构中的作用。更具体地说，大型因果语言模型——我们将在本概述中研究的类型——使用一种特定的自注意力变体，称为多头因果自注意力。</p>
+<p><strong>使用 PyTorch
+训练神经网络</strong>。本概述中我们将查看的代码是用 PyTorch
+编写的，并且严重依赖于分布式训练技术，例如分布式数据并行（DDP）训练。要了解
+PyTorch 和分布式训练的基础知识，请查看以下文章：</p>
+<ul>
+<li><a href="pytorch.org/tutorials/beginner/blitz/neural_networks_tutorial.html">PyTorch
+中的神经网络</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.pytorch.org/tutorials/beginner/dist_overview.html">PyTorch
+分布式概述</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.pytorch.org/tutorials/intermediate/ddp_tutorial.html">PyTorch中的分布式数据并行</a></li>
+</ul>
+<p>在 PyTorch
+的基本（以及分布式）神经网络训练之外，我们还将看到自动混合精度（<a target="_blank" rel="noopener" href="https://developer.nvidia.com/automatic-mixed-precision">AMP</a>）训练的使用，它会在训练过程中选择性地调整神经网络内的精度——在完整精度（
+float32 ）和半精度（ float16 或 <a target="_blank" rel="noopener" href="https://cloud.google.com/tpu/docs/bfloat16">bfloat16</a>）之间——以提高效率。简单来说，我们在神经网络内进行大量的矩阵乘法，如果能够以较低精度运行其中一些乘法，训练就会更快。有关更详尽（且实用）的
+AMP 概述，请参见<a target="_blank" rel="noopener" href="https://docs.pytorch.org/tutorials/recipes/recipes/amp_recipe.html">此处</a>。</p>
+<p><strong>深度学习基础</strong>。本概述还需要对神经网络有一个基本的了解，包括它们是如何被训练和使用的。为了获得这些知识，我强烈推荐
+<a target="_blank" rel="noopener" href="https://www.fast.ai/">fast.ai</a> 的《<a target="_blank" rel="noopener" href="https://course.fast.ai/">为程序员准备的深度学习实践课程</a>》，该课程经常更新，并且（在我看来）是任何人都能得到的最佳深度学习实践入门课程。</p>
+<h2 id="二理解下一个token预测">二、理解下一个Token预测</h2>
+<p>我们现在将学习关于下一个词预测（也称为标准的语言建模目标）——所有因果语言模型背后的工作核心。在本节中，我们将首先涵盖与分词相关的一些基本概念，然后我们将概述语言模型的预训练和推理过程，以及它们与下一个词预测概念的关系。</p>
+<h3 id="词和词汇表">2.1 词和词汇表</h3>
+<p>在尝试理解下一个词预测时，我们可能首先会问：什么是词？简单来说，词就是一个文本序列中的单词或子词。给定一个原始文本序列作为输入，使用语言模型的第一步是将这个原始文本分词，或者将其分解为一系列离散的词；下面是一个示例。</p>
+<figure>
+<img src="/images/CTC1.webp" srcset="/img/loading.gif" lazyload alt="对原始文本序列进行分词">
+<figcaption aria-hidden="true">对原始文本序列进行分词</figcaption>
+</figure>
+<p>为了执行这项分词操作，我们依赖于一个<a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main_classes/tokenizer">分词器</a>。分词器是在未标记的文本语料库上进行训练的，以学习一组固定大小、唯一的现有token。这组固定大小的token被称为我们的词汇表，词汇表包含了语言模型所知的所有token。通常，我们应该确保用于训练分词器的数据能够准确反映模型在训练和推理过程中将看到的数据类型。鉴于词汇表的大小是固定的，这确保了我们看到的外部token在大多数情况下都存在于语言模型的词汇表中。</p>
+<p><strong>分词技术</strong>。存在多种不同的分词技术；<a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/tokenizer_summary">此处</a>提供了概述。有关为
+LLMs 训练和使用流行分词器的详细信息，请参阅<a target="_blank" rel="noopener" href="https://huggingface.co/learn/llm-course/chapter6/5?fw=pt">这篇文章</a>，该文详细介绍了字节对编码（BPE）分词器——LLMs
+中最常用的分词器。另一种最近变得流行的分词技术是<a target="_blank" rel="noopener" href="https://medium.com/@pierre_guillou/byte-level-bpe-an-universal-tokenizer-but-aff932332ffe">字节级
+BPE（BBPE）</a>，它依赖于字节（而不是文本字符）作为分词的基本单元。</p>
+<p><strong>词嵌入</strong>。一旦我们对文本进行了分词，我们就在语言模型参数的一部分中存储的嵌入层中查找每个词的嵌入
+2。之后，由我们的输入构建的文本词序列就变成了词嵌入向量序列；见下文。</p>
+<figure>
+<img src="/images/CTC2.webp" srcset="/img/loading.gif" lazyload alt="从原始文本生成 token 嵌入">
+<figcaption aria-hidden="true">从原始文本生成 token 嵌入</figcaption>
+</figure>
+<p>为了构建实际传递给我们的仅解码器 Transformer
+架构的输入，还需要进行最后一步——添加位置编码。位置编码与词嵌入的尺寸相同，并类似处理（即，它们作为语言模型的一部分进行存储，并与其他模型参数一同训练）。然而，我们不是将嵌入与每个独特的词关联，而是将嵌入与词化输入中可能存在的每个独特位置关联；下方有示意图。</p>
+<figure>
+<img src="/images/CTC3.webp" srcset="/img/loading.gif" lazyload alt="语言模型中的位置嵌入">
+<figcaption aria-hidden="true">语言模型中的位置嵌入</figcaption>
+</figure>
+<p>我们将这些嵌入添加到相应位置的词嵌入中。这种加性位置嵌入是必要的，因为自注意力操作没有任何方法来表示每个词的位置。通过添加位置嵌入，我们允许
+Transformer
+中的自注意力层在训练过程中将每个词的位置作为一个相关特征。最近的研究探索了将位置信息注入自注意力的新方法，从而产生了像
+<a target="_blank" rel="noopener" href="https://blog.eleuther.ai/rotary-embeddings/">RoPE</a>这样的技术。</p>
+<figure>
+<img src="/images/CTC4.webp" srcset="/img/loading.gif" lazyload alt="语言模型的上下文窗口">
+<figcaption aria-hidden="true">语言模型的上下文窗口</figcaption>
+</figure>
+<p><strong>上下文窗口</strong>。语言模型通过特定大小的token序列进行预训练，这个大小被称为上下文窗口的大小或上下文长度。这个大小——通常在
+1K 到 8K 个token的范围内（尽管<a target="_blank" rel="noopener" href="https://www.anthropic.com/news/100k-context-windows">有些模型</a>要大得多！）——通常是根据硬件和内存限制选择的
+3。由于我们只学习这种长度的输入的位置嵌入，因此上下文窗口限制了 LLM
+可以处理的输入数据量。然而，最近开发了像 <a href="paperswithcode.com/method/alibi">ALiBi</a>这样的技术，以实现超出训练期间所见输入的推断。</p>
+<h3 id="语言模型预训练">2.2 语言模型预训练</h3>
+<p><img src="/images/CTC5.webp" srcset="/img/loading.gif" lazyload></p>
+<p>语言模型在多个步骤中进行训练，如上图所示。第一步（也是最耗计算资源的步骤）是预训练，我们将在本概述中重点介绍预训练。在预训练期间，我们获取一个大型无标签文本语料库，并通过
+i) 从数据集中采样一些文本，以及 ii)
+训练模型以预测下一个token来训练模型。这是一个<a target="_blank" rel="noopener" href="https://cameronrwolfe.substack.com/p/language-understanding-with-bert#%C2%A7self-supervised-learning">自监督目标</a>，因为不需要标签。相反，真实的下一个token已经存在于语料库本身中——监督的来源是隐含的。这种训练目标被称为下一个token预测，或标准的语言建模目标。</p>
+<p><strong>预测下一个词</strong>。在我们获得词嵌入（包含位置嵌入）后，我们将这些向量输入到一个仅包含解码器的
+Transformer 中，该 Transformer
+为每个词嵌入生成相应的输出向量；见下文。</p>
+<figure>
+<img src="/images/CTC6.webp" srcset="/img/loading.gif" lazyload alt="decoder-only transformer 的输入和输出">
+<figcaption aria-hidden="true">decoder-only transformer
+的输入和输出</figcaption>
+</figure>
+<p>对于每个token，给定一个输出向量，我们可以通过 i)
+取出该token的输出向量，ii)
+使用这个向量来预测序列中下一个token。下方有图示说明。</p>
+<figure>
+<img src="/images/CTC7.webp" srcset="/img/loading.gif" lazyload alt="在单个 token 上可视化下一个 token 的预测">
+<figcaption aria-hidden="true">在单个 token 上可视化下一个 token
+的预测</figcaption>
+</figure>
+<p>如上图所示，通过将一个token的输出向量作为输入传递给线性层来预测下一个token，该线性层输出一个与词汇表大小相同的向量。应用
+softmax
+变换后，形成了一个覆盖token词汇表的概率分布，我们可以在推理时从这个分布中采样下一个token，或者在预训练时训练模型以最大化正确下一个token的概率。</p>
+<p>跨序列预测token。在预训练期间，我们不仅预测单个下一个token，而是对序列中的每个token都进行下一个token预测，并聚合它们的损失。由于使用了因果自注意力机制，每个输出token向量只考虑当前token以及序列中当前token之前的token。因此，可以使用单个解码器
+Transformer
+的前向传递来跨整个序列进行下一个token预测，因为每个token都不知道它之后的token。</p>
+<h3 id="自回归推理过程">2.3 自回归推理过程</h3>
+<p>现在，我们了解如何预训练语言模型，但在进行推理时，下一个token的预测也同样被使用！下一个token的预测是训练和使用
+LLMs
+的所有方面的基础。从初始（可能为空）的输入序列或前缀开始，语言模型通过遵循自回归下一个token预测过程（见上文）的以下步骤生成文本：</p>
+<ol type="1">
+<li>预测下一个token</li>
+<li>将预测的token添加到当前输入序列</li>
+<li>重复</li>
+</ol>
+<p><strong>选择下一个token</strong>。在上一节中，我们已经看到了如何创建一个token的概率分布。但是，我们实际上是如何从这个分布中选择下一个token的呢？通常，我们只是从这个分布中采样下一个token。然而，存在许多采样策略，它们通过修改token的概率分布来对这个方法进行微调。确切的解码方法取决于应用，但我们需要熟悉的主要概念和策略概述如下：</p>
+<ul>
+<li>温度(Temperature)</li>
+<li>贪婪解码(Greedy Decoding)</li>
+<li>核采样(Nucleus Sampling)</li>
+<li>Top-K 采样(<a target="_blank" rel="noopener" href="https://docs.cohere.com/docs/controlling-generation-with-top-k-top-p">Top-K
+Sampling</a>)</li>
+</ul>
+<h2 id="三创建一个最小实现">三、创建一个最小实现</h2>
+<p>现在我们已经理解了下一token预测的概念，我们需要将所学到的想法变得更加具体。在本节中，我们将考察一个用
+PyTorch 编写的实现——使用 LLM
+进行预训练和推理（使用下一token预测）。这个实现源自 Andrei Karpathy 的
+<a target="_blank" rel="noopener" href="https://github.com/karpathy/nanoGPT">NanoGPT</a>，与
+GPT-2的规格相匹配。除了 GitHub 上提供的 NanoGPT
+实现（见上文链接）之外，还有一个非常棒的配套<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=kCc8FmEb1nY&amp;list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ&amp;index=8">教程视频</a>。</p>
+<p>虽然与大多数现代 LLMs
+相比这个模型较小，但它是一个很好的例子，展示了语言模型在代码中的样子。在这里，我们将研究
+NanoGPT 的实现，并将其与我们之前讨论的下一个token预测联系起来。</p>
+<h3 id="decoder-only-transformer">3.1 Decoder-Only Transformer</h3>
+<p>首先，我们将详细说明我们语言模型架构的实现，该架构基于仅解码器
+Transformer。首先，我们将概述该架构的组件，从模型的单个模块到完整的多层架构。然后，我们将研究该模型架构如何在预训练和推理过程中使用下一个token预测。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-meta">@dataclass</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">GPTConfig</span>:<br>    block_size: <span class="hljs-built_in">int</span> = <span class="hljs-number">1024</span>     <span class="hljs-comment"># context window size</span><br>    vocab_size: <span class="hljs-built_in">int</span> = <span class="hljs-number">50304</span>    <span class="hljs-comment"># total number of tokens in the vocabulary</span><br>    n_layer: <span class="hljs-built_in">int</span> = <span class="hljs-number">12</span>          <span class="hljs-comment"># total number of layers</span><br>    n_head: <span class="hljs-built_in">int</span> = <span class="hljs-number">12</span>           <span class="hljs-comment"># number of heads for each attention operation</span><br>    n_embd: <span class="hljs-built_in">int</span> = <span class="hljs-number">768</span>          <span class="hljs-comment"># size of the token embeddings</span><br>    dropout: <span class="hljs-built_in">float</span> = <span class="hljs-number">0.0</span>       <span class="hljs-comment"># whether to use dropout</span><br>    bias: <span class="hljs-built_in">bool</span> = <span class="hljs-literal">True</span>          <span class="hljs-comment"># whether to use bias in Linear layers and LayerNorm</span><br></code></pre></td></tr></table></figure>
+<p><strong>模型配置</strong>。我们首先需要关注的是模型架构的配置；见上文。正如我们所见，配置只是一个
+Python 中的数据类，用于指定我们架构的各种超参数。上文中显示的设置对应于
+GPT-2 论文中探索的最小模型架构，如下表所示。</p>
+<p><img src="/images/CTC8.webp" srcset="/img/loading.gif" lazyload></p>
+<p>该模型仅包含 11.7 亿个参数，实际上与原始 GPT 出版物中使用的基座
+Transformer 架构完全相同。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Block</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, config</span>):<br>        <span class="hljs-built_in">super</span>().__init__()<br><br>        <span class="hljs-comment"># layer norm layers</span><br>        <span class="hljs-variable language_">self</span>.ln_1 = LayerNorm(config.n_embd, bias=config.bias)<br>        <span class="hljs-variable language_">self</span>.ln_2 = LayerNorm(config.n_embd, bias=config.bias)<br><br>        <span class="hljs-comment"># multi-headed, causal self-attention layer</span><br>        <span class="hljs-variable language_">self</span>.attn = CausalSelfAttention(config)<br><br>        <span class="hljs-comment"># two-layer feed-forward neural network</span><br>        <span class="hljs-variable language_">self</span>.mlp = MLP(config)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x</span>):<br>        x = x + <span class="hljs-variable language_">self</span>.attn(<span class="hljs-variable language_">self</span>.ln_1(x))<br>        x = x + <span class="hljs-variable language_">self</span>.mlp(<span class="hljs-variable language_">self</span>.ln_2(x))<br>        <span class="hljs-keyword">return</span> x<br></code></pre></td></tr></table></figure>
+<p><strong>一个单一模块</strong>。接下来，我们可以查看在仅解码器
+Transformer 架构中单个模块的实现；见上文。在这里，我们看到一个仅解码器
+Transformer 模块有两个组成部分：</p>
+<ol type="1">
+<li>多头因果自注意力</li>
+<li><a target="_blank" rel="noopener" href="https://cameronrwolfe.substack.com/p/3d-generative-modeling-with-deepsdf?open=false#%C2%A7feed-forward-neural-networks">前馈神经网络</a></li>
+</ol>
+<p>对于大多数语言模型（包括
+NanoGPT），前馈网络是一个两层模型，其中隐藏层比输入层稍宽。在每个层之前，块的输入都会进行归一化处理，并且在层之间添加了残差连接。下方是示意图。</p>
+<figure>
+<img src="/images/CTC9.webp" srcset="/img/loading.gif" lazyload alt="decoder-only transformer模块的示意图">
+<figcaption aria-hidden="true">decoder-only
+transformer模块的示意图</figcaption>
+</figure>
+<p><strong>模型定义</strong>。现在我们已经了解了decoder-only Transformer
+模块的结构，可以查看 NanoGPT
+的完整模型定义。此定义如下提供，我们看到模型类的<a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/python/constructors-in-python/">构造函数</a>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">GPT</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, config</span>):<br>        <span class="hljs-built_in">super</span>().__init__()<br>        <span class="hljs-variable language_">self</span>.config = config<br><br>        <span class="hljs-comment"># full model definition</span><br>        <span class="hljs-variable language_">self</span>.transformer = nn.ModuleDict(<span class="hljs-built_in">dict</span>(<br>            wte = nn.Embedding(config.vocab_size, config.n_embd),<br>            wpe = nn.Embedding(config.block_size, config.n_embd),<br>            drop = nn.Dropout(config.dropout),<br>            h = nn.ModuleList([Block(config) <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(config.n_layer)]),<br>            ln_f = LayerNorm(config.n_embd, bias=config.bias),<br>        ))<br><br>        <span class="hljs-comment"># final linear layer to perform next token prediction</span><br>        <span class="hljs-variable language_">self</span>.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=<span class="hljs-literal">False</span>)<br><br>        <span class="hljs-comment"># Weight Tying improves the performance of language models by tying (sharing)</span><br>        <span class="hljs-comment"># the weights of the embedding and softmax layers. This also massively reduces</span><br>        <span class="hljs-comment"># the total number of parameters in the language model</span><br>        <span class="hljs-variable language_">self</span>.transformer.wte.weight = <span class="hljs-variable language_">self</span>.lm_head.weight<br><br>        <span class="hljs-comment"># initialize all weights</span><br>        <span class="hljs-variable language_">self</span>.apply(<span class="hljs-variable language_">self</span>._init_weights)<br><br>        <span class="hljs-comment"># apply special scaled init to the residual projections (see GPT-2 paper)</span><br>        <span class="hljs-keyword">for</span> pn, p <span class="hljs-keyword">in</span> <span class="hljs-variable language_">self</span>.named_parameters():<br>            <span class="hljs-keyword">if</span> pn.endswith(<span class="hljs-string">'c_proj.weight'</span>):<br>                torch.nn.init.normal_(p, mean=<span class="hljs-number">0.0</span>, std=<span class="hljs-number">0.02</span>/math.sqrt(<span class="hljs-number">2</span> * config.n_layer))<br></code></pre></td></tr></table></figure>
+<p>如上所示，LLM 包含两个不同的嵌入层——一个用于存储 token
+嵌入，另一个用于存储位置嵌入。有 1024 个位置嵌入，对应于用于训练 NanoGPT
+的上下文长度（即配置中的 block_size 设置）。该语言模型总共有 12 个
+Transformer 模块。除了采用 GPT-2 的一些特殊技术外，模型的权重是<a target="_blank" rel="noopener" href="https://github.com/karpathy/nanoGPT/blob/master/model.py#L162">正态初始化</a>的。</p>
+<p>在基本 Transformer 架构之外，LLM
+在第一层/最后一层的前向传递中使用了额外的 <a target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/generated/torch.nn.Dropout.html">dropout</a>
+和 <a target="_blank" rel="noopener" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.LayerNorm.html">LayerNorm</a>
+模块。此外，我们还有一个用于下一个 token 预测的线性分类头，它与 token
+嵌入层共享权重。这种权重共享方法称为<a target="_blank" rel="noopener" href="https://blog.csdn.net/xx_nm98/article/details/140505127">权重绑定(weight
+tying)</a>，可以在大幅减少模型参数总数的同时提高性能。</p>
+<h3 id="实现下一个token预测">3.2 实现下一个Token预测</h3>
+<figure>
+<img src="/images/CTC10.webp" srcset="/img/loading.gif" lazyload alt="使用下一个Token预测进行语言模型的预训练">
+<figcaption aria-hidden="true">使用下一个Token预测进行语言模型的预训练</figcaption>
+</figure>
+<p>现在我们已经了解了 LLM
+模型架构的实现，我们将查看一个具有相同架构的预训练和推理实现。预训练（如上所示）和推理都依赖于下一个token预测策略，在本节中，我们将概述这两个过程中下一个token预测的实现。</p>
+<p><strong>前向传播</strong>。为了理解如何训练
+NanoGPT，我们需要了解模型的正向传播。我们可以考虑两种不同类型的前向传播——一种用于训练，一种用于推理。NanoGPT
+的前向传播代码（即，此方法是之前提供的 GPT
+模型类的一部分）如下所示。首先，我们将考虑此前向传播在预训练过程中的使用方式，稍后我们再回到推理过程。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, idx, targets=<span class="hljs-literal">None</span></span>):<br>    <span class="hljs-comment"># check whether input is on the CPU or GPU</span><br>    device = idx.device<br><br>    <span class="hljs-comment"># get all positional embeddings</span><br>    pos = torch.arange(<span class="hljs-number">0</span>, t, dtype=torch.long, device=device)<br>    pos_emb = <span class="hljs-variable language_">self</span>.transformer.wpe(pos)<br><br>    <span class="hljs-comment"># get all token embeddings</span><br>    tok_emb = <span class="hljs-variable language_">self</span>.transformer.wte(idx)<br><br>    <span class="hljs-comment"># add token/positional embeddings and apply dropout</span><br>    x = <span class="hljs-variable language_">self</span>.transformer.drop(tok_emb + pos_emb)<br><br>    <span class="hljs-comment"># pass token vector sequence through all transformer blocks</span><br>    <span class="hljs-keyword">for</span> block <span class="hljs-keyword">in</span> <span class="hljs-variable language_">self</span>.transformer.h:<br>        x = block(x)<br><br>    <span class="hljs-comment"># apply final layer normalization operation</span><br>    x = <span class="hljs-variable language_">self</span>.transformer.ln_f(x)<br><br>    <span class="hljs-keyword">if</span> targets <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:<br>        <span class="hljs-comment"># if we are given target next tokens, then compute the loss over the entire input sequence</span><br>        logits = <span class="hljs-variable language_">self</span>.lm_head(x)<br>        loss = F.cross_entropy(logits.view(-<span class="hljs-number">1</span>, logits.size(-<span class="hljs-number">1</span>)), targets.view(-<span class="hljs-number">1</span>), ignore_index=-<span class="hljs-number">1</span>)<br>    <span class="hljs-keyword">else</span>:<br>        <span class="hljs-comment"># otherwise just compute the next token for the final token in the input sequence</span><br>        logits = <span class="hljs-variable language_">self</span>.lm_head(x[:, [-<span class="hljs-number">1</span>], :])<br>        loss = <span class="hljs-literal">None</span><br><br>    <span class="hljs-keyword">return</span> logits, loss<br></code></pre></td></tr></table></figure>
+<p>前向传播如我们所预期的那样运作。我们以两个张量作为输入：</p>
+<ul>
+<li>输入tensor (idx):一个矩阵，其中每一行包含一个 token id
+序列，表示用于预训练（或推理）的文本序列。</li>
+<li>目标tensor (targets): 与输入张量类似，但每个条目包含输入张量中每个
+token 的真实下一个 token id。</li>
+</ul>
+<p>这些张量中的每一个存储一个完整的 <a target="_blank" rel="noopener" href="https://machinelearningmastery.com/gentle-introduction-mini-batch-gradient-descent-configure-batch-size/">mini-batch</a>，其中包含多个文本序列，训练迭代在这些序列上并行化。在这里，我们将假设目标张量不是
+None
+。在预训练期间这总是成立的，而在推理期间我们没有目标，只是自由地生成下一个
+token。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># get all positional embeddings</span><br>pos = torch.arange(<span class="hljs-number">0</span>, t, dtype=torch.long, device=device)<br>pos_emb = <span class="hljs-variable language_">self</span>.transformer.wpe(pos)<br><br><span class="hljs-comment"># get all token embeddings</span><br>tok_emb = <span class="hljs-variable language_">self</span>.transformer.wte(idx)<br><br><span class="hljs-comment"># add token/positional embeddings and apply dropout</span><br>x = <span class="hljs-variable language_">self</span>.transformer.drop(tok_emb + pos_emb)<br></code></pre></td></tr></table></figure>
+<p>前向传播的第一步是构建一个与我们位置和词嵌入相对应的矩阵；见上文。
+idx 张量包含可以直接用于在词嵌入矩阵中查找的词
+id。我们必须手动构建索引值来查找位置嵌入。位置嵌入和词嵌入相加，通过一个
+dropout 层，然后通过所有 transformer
+块。然后，在用下一个词预测目标计算损失之前，执行一个最终的 LayerNorm
+操作。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">if</span> targets <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:<br>    <span class="hljs-comment"># if we are given target next tokens, then compute the loss over the entire input sequence</span><br>    logits = <span class="hljs-variable language_">self</span>.lm_head(x)<br>    loss = F.cross_entropy(logits.view(-<span class="hljs-number">1</span>, logits.size(-<span class="hljs-number">1</span>)), targets.view(-<span class="hljs-number">1</span>), ignore_index=-<span class="hljs-number">1</span>)<br></code></pre></td></tr></table></figure>
+<p>下一个 token 预测过程会输出一个潜在下一个 token 的分布——使用线性
+lm_head 模块，其中 transformer 的每个 token
+的输出向量被用作输入，针对输入序列中的每个
+token。然后，我们对这个结果应用<a target="_blank" rel="noopener" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.cross_entropy.html">交叉熵损失(CrossEntropy)</a>，从而训练模型正确预测整个输入序列中每个位置的下一个
+token。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-meta">@torch.no_grad()</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">generate</span>(<span class="hljs-params">self, idx, max_new_tokens, temperature=<span class="hljs-number">1.0</span>, top_k=<span class="hljs-literal">None</span></span>):<br>    <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(max_new_tokens):<br>        <span class="hljs-comment"># crop the sequence so that it doesn't exceed the context window</span><br>        idx_cond = idx <span class="hljs-keyword">if</span> idx.size(<span class="hljs-number">1</span>) &lt;= <span class="hljs-variable language_">self</span>.config.block_size <span class="hljs-keyword">else</span> idx[:, -<span class="hljs-variable language_">self</span>.config.block_size:]<br>        <span class="hljs-comment"># perform a forward pass with</span><br>        logits, _ = <span class="hljs-variable language_">self</span>(idx_cond)<br>        <span class="hljs-comment"># scale the outputted logits by the desired temperature</span><br>        logits = logits[:, -<span class="hljs-number">1</span>, :] / temperature<br>        <span class="hljs-comment"># optionally crop the logits to only the top k options</span><br>        <span class="hljs-keyword">if</span> top_k <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:<br>            v, _ = torch.topk(logits, <span class="hljs-built_in">min</span>(top_k, logits.size(-<span class="hljs-number">1</span>)))<br>            logits[logits &lt; v[:, [-<span class="hljs-number">1</span>]]] = -<span class="hljs-built_in">float</span>(<span class="hljs-string">'Inf'</span>)<br>        <span class="hljs-comment"># apply softmax to convert logits to a probability distribution over tokens</span><br>        probs = F.softmax(logits, dim=-<span class="hljs-number">1</span>)<br>        <span class="hljs-comment"># sample the next token from the outputted distribution</span><br>        idx_next = torch.multinomial(probs, num_samples=<span class="hljs-number">1</span>)<br>        <span class="hljs-comment"># append the sampled next token to the input and continue!</span><br>        idx = torch.cat((idx, idx_next), dim=<span class="hljs-number">1</span>)<br>    <span class="hljs-keyword">return</span> idx<br></code></pre></td></tr></table></figure>
+<p>进行推理。在预训练之后，我们可以通过下一个token预测来生成文本。如前所述，使用语言模型生成文本是一个自回归过程，该过程会迭代地预测每个下一个token。为了预测一个token，NanoGPT
+遵循以下步骤：</p>
+<ol type="1">
+<li>对当前输入序列进行前向传递</li>
+<li>根据指定的温度对输出的 <a target="_blank" rel="noopener" href="https://wandb.ai/amanarora/Written-Reports/reports/Understanding-Logits-Sigmoid-Softmax-and-Cross-Entropy-Loss-in-Deep-Learning--Vmlldzo0NDMzNTU3">logits</a>
+进行缩放</li>
+<li>[可选] 仅保留最可能的 k 个 token（即 Top-K 采样）</li>
+<li>应用 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Softmax_function">softmax</a>
+函数</li>
+<li>从结果分布中采样下一个token</li>
+</ol>
+<h3 id="nanogpt-训练">3.3 NanoGPT 训练</h3>
+<p>尽管分布式训练是一个复杂的话题，我们无法在本概述中全面涵盖，但为了完整性，我们将介绍
+NanoGPT 预训练过程的实际要点。我们通常将 LLM
+训练分布到多个计算设备上（例如 GPU 或
+TPU）。从高层次来看，分布式训练是可取的或必要的几个原因如下：</p>
+<ul>
+<li>预训练计算成本高昂，我们希望加快速度。</li>
+<li>模型的大小可能太大，无法存储在单个设备上。</li>
+</ul>
+<p>上述第二种情况特别适用于当前一代的语言模型，这些模型非常大，通常无法存储在单个设备上。存在多种分布式训练技术可以处理这些情况并加快训练过程；总结如下。</p>
+<p><img src="/images/CTC11.jpeg" srcset="/img/loading.gif" lazyload></p>
+<p><strong>分布式训练设置</strong>。完整的预训练实现提供在 NanoGPT
+仓库中的 <a target="_blank" rel="noopener" href="https://github.com/karpathy/nanoGPT/blob/master/train.py">train.py</a>
+文件内。模型使用单个 GPU 或分布式数据并行（<a target="_blank" rel="noopener" href="https://docs.pytorch.org/tutorials/intermediate/ddp_tutorial.html">DDP</a>）方法进行训练。此训练框架的设置如下所示。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># RANK = -1 means we train on a single GPU</span><br>ddp = <span class="hljs-built_in">int</span>(os.environ.get(<span class="hljs-string">'RANK'</span>, -<span class="hljs-number">1</span>)) != -<span class="hljs-number">1</span><br><br><span class="hljs-comment"># setup for DDP</span><br><span class="hljs-keyword">if</span> ddp:<br>    <span class="hljs-comment"># wait for all processes to start so they can communicate</span><br>    init_process_group(backend=backend)<br><br>    <span class="hljs-comment"># rank, local rank, and total number of processes</span><br>    ddp_rank = <span class="hljs-built_in">int</span>(os.environ[<span class="hljs-string">'RANK'</span>])<br>    ddp_local_rank = <span class="hljs-built_in">int</span>(os.environ[<span class="hljs-string">'LOCAL_RANK'</span>])<br>    ddp_world_size = <span class="hljs-built_in">int</span>(os.environ[<span class="hljs-string">'WORLD_SIZE'</span>])<br><br>    <span class="hljs-comment"># identify GPU to be used by this process and whether this process is master</span><br>    device = <span class="hljs-string">f'cuda:<span class="hljs-subst">{ddp_local_rank}</span>'</span><br>    torch.cuda.set_device(device)<br>    master_process = ddp_rank == <span class="hljs-number">0</span><br><br>    <span class="hljs-comment"># each process gets a different seed to ensure data is shuffled differently</span><br>    seed_offset = ddp_rank<br><br>    <span class="hljs-comment"># world_size number of processes will be training simultaneously, so we can scale</span><br>    <span class="hljs-comment"># down the desired gradient accumulation iterations per process proportionally</span><br>    <span class="hljs-keyword">assert</span> gradient_accumulation_steps % ddp_world_size == <span class="hljs-number">0</span><br>    gradient_accumulation_steps //= ddp_world_size<br><span class="hljs-keyword">else</span>:<br>    <span class="hljs-comment"># if not ddp, we are running on a single gpu, and one process</span><br>    master_process = <span class="hljs-literal">True</span><br>    seed_offset = <span class="hljs-number">0</span><br>    ddp_world_size = <span class="hljs-number">1</span><br><br><span class="hljs-comment"># total number of tokens that will be processed for every training iteration</span><br>tokens_per_iter = gradient_accumulation_steps * ddp_world_size * batch_size * block_size<br></code></pre></td></tr></table></figure>
+<p>如我们所见，使用 DDP
+进行训练需要我们同时运行多个训练进程，这些进程将相互通信。进程的数量等于我们用于训练的总
+GPU 数量（无论是在同一台机器上还是在多个节点上）。通过
+DDP，我们可以将这些 GPU
+上的训练过程并行化。为了协调运行的多个进程，我们必须为每个进程指定一个
+rank。例如，如果有四个进程在四个 GPU 上运行训练，这些进程将在[0,
+3]范围内各自拥有一个唯一的 rank。在上述代码中，所有 rank
+信息都存储在一个环境变量中，该变量可以被进程访问。</p>
+<p><strong>梯度累积</strong>。在 NanoGPT
+实现中，你可能会几次看到梯度累积这个术语。通常，我们通过以下方式训练神经网络：</p>
+<ul>
+<li>计算一小批数据的损失</li>
+<li>将这个损失反向传播以导出梯度</li>
+<li>根据这个梯度更新模型的权重</li>
+</ul>
+<p>梯度累积移除了上述的最后一步。相反，梯度会在多个模拟单个较大小批量的“微批量”数据中进行累积（即通过取平均值的方式）。一旦我们累积了足够多数据的梯度，就会更新权重。当所需的小批量大小对于所使用的硬件来说过大时，这种过程非常有用。我们可以简单地计算几个较小批量的梯度，并使用梯度累积来模拟较大的批量。更多详情请参见<a target="_blank" rel="noopener" href="https://kozodoi.me/blog/20210219/gradient-accumulation">此处</a>。</p>
+<p>如果我们有一个更大的模型呢？使用
+DDP，模型的副本会被发送到每个设备，我们通过 i)
+在每个设备上对随机采样的数据进行梯度计算，以及 ii)
+在每个设备上同步梯度后获取聚合模型更新，来并行训练这些模型的副本。对于许多现代
+LLMs，我们可能无法将整个模型存储在单个设备的内存中，因此我们需要不同的训练方法。与
+DDP 兼容且最流行的分布式训练算法之一是全分片数据并行（<a target="_blank" rel="noopener" href="https://docs.pytorch.org/tutorials/intermediate/FSDP_tutorial.html">FSDP</a>）训练。与
+DDP 相比，这种方法更常用于训练现代 LLMs。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python">data_dir = os.path.join(<span class="hljs-string">'data'</span>, dataset)<br>train_data = np.memmap(os.path.join(data_dir, <span class="hljs-string">'train.bin'</span>), dtype=np.uint16, mode=<span class="hljs-string">'r'</span>)<br>val_data = np.memmap(os.path.join(data_dir, <span class="hljs-string">'val.bin'</span>), dtype=np.uint16, mode=<span class="hljs-string">'r'</span>)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_batch</span>(<span class="hljs-params">split</span>):<br>    data = train_data <span class="hljs-keyword">if</span> split == <span class="hljs-string">'train'</span> <span class="hljs-keyword">else</span> val_data<br>    ix = torch.randint(<span class="hljs-built_in">len</span>(data) - block_size, (batch_size,))<br>    x = torch.stack([torch.from_numpy((data[i:i+block_size])).astype(np.int64) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> ix])<br>    y = torch.stack([torch.from_numpy((data[i+<span class="hljs-number">1</span>:i+<span class="hljs-number">1</span>+block_size])).astype(np.int64) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> ix])<br>    <span class="hljs-keyword">if</span> device_type == <span class="hljs-string">'cuda'</span>:<br>        <span class="hljs-comment"># pin arrays x,y, which allows us to move them to GPU asynchronously (non_blocking=True)</span><br>        x, y = x.pin_memory().to(device, non_blocking=<span class="hljs-literal">True</span>), y.pin_memory().to(device, non_blocking=<span class="hljs-literal">True</span>)<br>    <span class="hljs-keyword">else</span>:<br>        x, y = x.to(device), y.to(device)<br>    <span class="hljs-keyword">return</span> x, y<br></code></pre></td></tr></table></figure>
+<p><strong>加载数据</strong>。我们可以用多种方法创建一个用于训练语言模型的数<a target="_blank" rel="noopener" href="https://docs.pytorch.org/tutorials/beginner/basics/data_tutorial.html">据加载器</a>。上面代码中展示了一个（简化）的例子。在这里，数据存储在一个文件中，我们为训练和验证数据分别有单独的文件。在训练期间，我们通过简单地获取大小为上下文窗口的随机数据块来加载数据。我们可以选择将数据放到
+GPU 上，但整个过程足够简单！</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># learning rate decay scheduler (cosine with warmup)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_lr</span>(<span class="hljs-params">it</span>):<br>    <span class="hljs-comment"># 1) linear warmup for warmup_iters steps</span><br>    <span class="hljs-keyword">if</span> it &lt; warmup_iters:<br>        <span class="hljs-keyword">return</span> learning_rate * it / warmup_iters<br>    <span class="hljs-comment"># 2) if it &gt; lr_decay_iters, return min learning rate</span><br>    <span class="hljs-keyword">if</span> it &gt; lr_decay_iters:<br>        <span class="hljs-keyword">return</span> min_lr<br>    <span class="hljs-comment"># 3) in between, use cosine decay down to min learning rate</span><br>    decay_ratio = (it - warmup_iters) / (lr_decay_iters - warmup_iters)<br>    <span class="hljs-keyword">assert</span> <span class="hljs-number">0</span> &lt;= decay_ratio &lt;= <span class="hljs-number">1</span><br>    coeff = <span class="hljs-number">0.5</span> * (<span class="hljs-number">1.0</span> + math.cos(math.pi * decay_ratio))<br>    <span class="hljs-keyword">return</span> min_lr + coeff * (learning_rate - min_lr)<br></code></pre></td></tr></table></figure>
+<p><strong>学习率</strong>。在预训练语言模型时，我们需要考虑的一个主要超参数是学习率。通常，我们在预训练期间会采用一个学习率<a target="_blank" rel="noopener" href="https://cameronrwolfe.substack.com/p/the-best-learning-rate-schedules">计划</a>。上面展示了一个典型的语言模型预训练学习率计划的示例实现。在这里，该计划有一个较短的（线性）预热期，随后是一个（余弦）衰减期，该衰减期持续指定的迭代次数；见下文。</p>
+<figure>
+<img src="/images/CTC12.webp" srcset="/img/loading.gif" lazyload alt="余弦衰减学习率计划用于语言模型预训练">
+<figcaption aria-hidden="true">余弦衰减学习率计划用于语言模型预训练</figcaption>
+</figure>
+<p><strong>训练循环</strong>。现在我们已经完成了所有必要的设置，我们可以最终实现我们语言模型的实际（预）训练循环；见下文。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br><br>    <span class="hljs-comment"># determine and set the learning rate for this iteration</span><br>    lr = get_lr(iter_num) <span class="hljs-keyword">if</span> decay_lr <span class="hljs-keyword">else</span> learning_rate<br>    <span class="hljs-keyword">for</span> param_group <span class="hljs-keyword">in</span> optimizer.param_groups:<br>        param_group[<span class="hljs-string">'lr'</span>] = lr<br><br>    <span class="hljs-comment"># forward backward update, with optional gradient accumulation to simulate larger batch size</span><br>    <span class="hljs-comment"># and using the GradScaler if data type is float16</span><br>    <span class="hljs-keyword">for</span> micro_step <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(gradient_accumulation_steps):<br>        <span class="hljs-keyword">if</span> ddp:<br>            <span class="hljs-comment"># DDP only needs to sync gradients across devices at the last micro step</span><br>            model.require_backward_grad_sync = (micro_step == gradient_accumulation_steps - <span class="hljs-number">1</span>)<br>        <span class="hljs-keyword">with</span> ctx:<br>            <span class="hljs-comment"># perform forward pass and compute next token prediction loss</span><br>            logits, loss = model(X, Y)<br>            <span class="hljs-comment"># scale the loss to account for gradient accumulation</span><br>            loss = loss / gradient_accumulation_steps<br>        <span class="hljs-comment"># immediately async prefetch next batch while model is doing the forward pass on the GPU</span><br>        X, Y = get_batch(<span class="hljs-string">'train'</span>)<br>        <span class="hljs-comment"># perform backpropagation (with gradient scaling if training in fp16)</span><br>        scaler.scale(loss).backward()<br><br>    <span class="hljs-comment"># clip the gradient</span><br>    <span class="hljs-keyword">if</span> grad_clip != <span class="hljs-number">0.0</span>:<br>        scaler.unscale_(optimizer)<br>        torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)<br>    <span class="hljs-comment"># update the model weights using a PyTorch optimizer</span><br>    <span class="hljs-comment"># use scaler if training in fp16</span><br>    scaler.step(optimizer)<br>    scaler.update()<br><br>    <span class="hljs-comment"># flush the gradients as soon as we can, no need for this memory anymore</span><br>    optimizer.zero_grad(set_to_none=<span class="hljs-literal">True</span>)<br><br>    <span class="hljs-comment"># termination conditions</span><br>    <span class="hljs-keyword">if</span> iter_num &gt; max_iters:<br>        <span class="hljs-keyword">break</span><br></code></pre></td></tr></table></figure>
+<p>在上述实现中可能存在一些不熟悉的组件（例如梯度裁剪和损失缩放）。这些更改大多与自动混合精度（AMP）训练相关，而自动混合精度训练是
+NanoGPT
+支持（但非强制）的组件。除了这些新增的细节外，上述代码与我们对预训练过程的先前讨论相符，并使用了标准的
+PyTorch 语法。</p>
+<h3 id="结语">3.4 结语</h3>
+<p>阅读关于 LLMs
+的论文既有趣又有益，但我们仅靠阅读是有限的。如果我们想构建任何具体的东西，最终必须实现这些想法。在这篇概述中，我们首先学习了下一token预测的概念及其在因果语言模型中的应用。然后，我们探索了在
+PyTorch 中用 LLM
+进行预训练和推理的下一token预测的具体实现。虽然与当前研究中探索的一些庞大语言模型相比，这个实现很简单，但它为我们提供了一个实用的基础，让我们对
+LLMs 有了更具体的理解。</p>
+<h2 id="reference">Reference</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://cameronrwolfe.substack.com/p/language-model-training-and-inference">Language
+Model Training and Inference: From Concept to Code</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/rasbt/LLMs-from-scratch">LLMs-from-scratch</a></li>
+<li><a target="_blank" rel="noopener" href="https://cameronrwolfe.substack.com/p/language-models-gpt-and-gpt-2">Language
+Models: GPT and GPT-2</a></li>
+<li><a target="_blank" rel="noopener" href="https://cameronrwolfe.substack.com/p/graph-based-prompting-and-reasoning">Graph-Based
+Prompting and Reasoning with Language Models</a></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>语言模型训练与推理：从概念到代码</div>
+      <div>https://mztchaoqun.com.cn/posts/D105_LM_Concept_to_Code/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年1月16日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D106_Hyper-Connections/" title="Hyper-Connections">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Hyper-Connections</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D104_RL_SAPO/" title="SAPO：Soft Adaptive Policy Optimization">
+                        <span class="hidden-mobile">SAPO：Soft Adaptive Policy Optimization</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

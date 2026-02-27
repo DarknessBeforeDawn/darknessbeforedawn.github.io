@@ -1,0 +1,1072 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="LangChain模块架构图 [1]  一、Chains 1.1 LLM链 将大语言模型(LLM)和提示（Prompt）组合成链。这个大语言模型链非常简单，可以让我们以一种顺序的方式去通过运行提示并且结合到大语言模型中。 123456789101112from langchain_openai import ChatOpenAIfrom langchain.prompts import ChatP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LangChain(五)——Chanis">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D29_LangChain_Chains/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="LangChain模块架构图 [1]  一、Chains 1.1 LLM链 将大语言模型(LLM)和提示（Prompt）组合成链。这个大语言模型链非常简单，可以让我们以一种顺序的方式去通过运行提示并且结合到大语言模型中。 123456789101112from langchain_openai import ChatOpenAIfrom langchain.prompts import ChatP">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/Lanchain_Chains.jpeg">
+<meta property="article:published_time" content="2024-07-22T15:16:30.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.270Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="LLM学习笔记">
+<meta property="article:tag" content="LangChain">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/Lanchain_Chains.jpeg">
+  
+  
+  
+  <title>LangChain(五)——Chanis - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LangChain(五)——Chanis"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-07-22 23:16" pubdate>
+          2024年7月22日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          62 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LangChain(五)——Chanis</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><strong>LangChain模块架构图</strong>
+<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span
+class="hint--top hint--rounded" aria-label="">[1]</span></a></sup></p>
+<p><img src="/images/LangChainAll.jpeg" srcset="/img/loading.gif" lazyload /></p>
+<h2 id="一chains">一、Chains</h2>
+<h3 id="llm链">1.1 LLM链</h3>
+<p>将大语言模型(LLM)和提示（Prompt）组合成链。这个大语言模型链非常简单，可以让我们以一种顺序的方式去通过运行提示并且结合到大语言模型中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">from</span> langchain.prompts <span class="hljs-keyword">import</span> ChatPromptTemplate  <br><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> LLMChain  <br><br>llm = ChatOpenAI(temperature=<span class="hljs-number">0.0</span>)  <br><br>prompt = ChatPromptTemplate.from_template(   <br>    <span class="hljs-string">&quot;描述制造&#123;product&#125;的一个公司的最佳名称是什么?&quot;</span><br>)<br>chain = LLMChain(llm=llm, prompt=prompt)<br>product = <span class="hljs-string">&quot;大号床单套装&quot;</span><br>chain.invoke(product)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs 1c">&#123;&#x27;product&#x27;<span class="hljs-punctuation">:</span> &#x27;大号床单套装&#x27;<span class="hljs-punctuation">,</span> &#x27;text&#x27;<span class="hljs-punctuation">:</span> &#x27;“豪华床品集团”&#x27;&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="顺序链">1.2 顺序链</h3>
+<p>顺序链（SequentialChains）是按预定义顺序执行其链接的链。</p>
+<h4 id="简单顺序链">1.2.1 简单顺序链</h4>
+<p>使用简单顺序链（SimpleSequentialChain），这是顺序链的最简单类型，其中每个步骤都有一个输入/输出，一个步骤的输出是下一个步骤的输入。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> SimpleSequentialChain<br><br>first_prompt = ChatPromptTemplate.from_template(   <br>    <span class="hljs-string">&quot;描述制造&#123;product&#125;的一个公司的最好的名称是什么&quot;</span><br>)<br>chain_one = LLMChain(llm=llm, prompt=first_prompt)<br><br>second_prompt = ChatPromptTemplate.from_template(   <br>    <span class="hljs-string">&quot;写一个20字的描述对于下面这个\</span><br><span class="hljs-string">    公司：&#123;company_name&#125;的&quot;</span><br>)<br>chain_two = LLMChain(llm=llm, prompt=second_prompt)<br><br><br>overall_simple_chain = SimpleSequentialChain(chains=[chain_one, chain_two],verbose=<span class="hljs-literal">False</span>)<br>product = <span class="hljs-string">&quot;大号床单套装&quot;</span><br>overall_simple_chain.invoke(product)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs lasso">&gt; Entering <span class="hljs-literal">new</span> SimpleSequentialChain chain<span class="hljs-params">...</span><br>“豪华床品集团”<br>提供高品质、舒适的床上用品，打造豪华睡眠体验，让您每晚都能享受极致舒适。<br><br>&gt; Finished chain.<br>&#123;<span class="hljs-string">&#x27;input&#x27;</span>: <span class="hljs-string">&#x27;大号床单套装&#x27;</span>, <span class="hljs-string">&#x27;output&#x27;</span>: <span class="hljs-string">&#x27;提供高品质、舒适的床上用品，打造豪华睡眠体验，让您每晚都能享受极致舒适。&#x27;</span>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="顺序链-1">1.2.2 顺序链</h4>
+<p>当只有一个输入和一个输出时，简单顺序链（SimpleSequentialChain）即可实现。当有多个输入或多个输出时，我们则需要使用顺序链（SequentialChain）来实现。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> SequentialChain<br><br><br>llm = ChatOpenAI(temperature=<span class="hljs-number">0.9</span>)<br><br><span class="hljs-comment">#子链1</span><br><span class="hljs-comment"># prompt模板 1: 翻译成英语（把下面的review翻译成英语）</span><br>first_prompt = ChatPromptTemplate.from_template(<br>    <span class="hljs-string">&quot;把下面的评论review翻译成英文:&quot;</span><br>    <span class="hljs-string">&quot;\n\n&#123;Review&#125;&quot;</span><br>)<br><span class="hljs-comment"># chain 1: 输入：Review    输出：英文的 Review</span><br>chain_one = LLMChain(llm=llm, prompt=first_prompt, output_key=<span class="hljs-string">&quot;English_Review&quot;</span>)<br><br><span class="hljs-comment">#子链2</span><br><span class="hljs-comment"># prompt模板 2: 用一句话总结下面的 review</span><br>second_prompt = ChatPromptTemplate.from_template(<br>    <span class="hljs-string">&quot;请你用一句话来总结下面的评论review:&quot;</span><br>    <span class="hljs-string">&quot;\n\n&#123;English_Review&#125;&quot;</span><br>)<br><span class="hljs-comment"># chain 2: 输入：英文的Review   输出：总结</span><br>chain_two = LLMChain(llm=llm, prompt=second_prompt, output_key=<span class="hljs-string">&quot;summary&quot;</span>)<br><br><br><span class="hljs-comment">#子链3</span><br><span class="hljs-comment"># prompt模板 3: 下面review使用的什么语言</span><br>third_prompt = ChatPromptTemplate.from_template(<br>    <span class="hljs-string">&quot;下面的评论review使用的什么语言:\n\n&#123;Review&#125;&quot;</span><br>)<br><span class="hljs-comment"># chain 3: 输入：Review  输出：语言</span><br>chain_three = LLMChain(llm=llm, prompt=third_prompt, output_key=<span class="hljs-string">&quot;language&quot;</span>)<br><br><br><span class="hljs-comment">#子链4</span><br><span class="hljs-comment"># prompt模板 4: 使用特定的语言对下面的总结写一个后续回复</span><br>fourth_prompt = ChatPromptTemplate.from_template(<br>    <span class="hljs-string">&quot;使用特定的语言对下面的总结写一个后续回复:&quot;</span><br>    <span class="hljs-string">&quot;\n\n总结: &#123;summary&#125;\n\n语言: &#123;language&#125;&quot;</span><br>)<br><span class="hljs-comment"># chain 4: 输入： 总结, 语言    输出： 后续回复</span><br>chain_four = LLMChain(llm=llm, prompt=fourth_prompt,<br>                      output_key=<span class="hljs-string">&quot;followup_message&quot;</span><br>                     )<br><br><br><span class="hljs-comment"># 对四个子链进行组合</span><br><span class="hljs-comment">#输入：review    输出：英文review，总结，后续回复 </span><br><br>overall_chain = SequentialChain(<br>    chains=[chain_one, chain_two, chain_three, chain_four],<br>    input_variables=[<span class="hljs-string">&quot;Review&quot;</span>],<br>    output_variables=[<span class="hljs-string">&quot;English_Review&quot;</span>, <span class="hljs-string">&quot;summary&quot;</span>,<span class="hljs-string">&quot;language&quot;</span>,<span class="hljs-string">&quot;followup_message&quot;</span>],<br>    verbose=<span class="hljs-literal">False</span><br>)<br><br><br>review = <span class="hljs-string">&quot;Je trouve le goût médiocre. La mousse ne tient pas, c&#x27;est bizarre. J&#x27;achète les mêmes dans le commerce et le goût est bien meilleur...\nVieux lot ou contrefaçon !?&quot;</span><br>overall_chain.invoke(review)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-5b5bd572" role="button" aria-expanded="false" aria-controls="collapse-5b5bd572">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-5b5bd572">
+        <div class="fold-content">
+          <figure class="highlight smalltalk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs smalltalk">&#123;<span class="hljs-string">&#x27;Review&#x27;</span>: <span class="hljs-comment">&quot;Je trouve le goût médiocre. La mousse ne tient pas, c&#x27;est bizarre. J&#x27;achète les mêmes dans le commerce et le goût est bien meilleur...\nVieux lot ou contrefaçon !?&quot;</span>,<br> <span class="hljs-string">&#x27;English_Review&#x27;</span>: <span class="hljs-comment">&quot;I find the taste mediocre. The foam doesn&#x27;t last, it&#x27;s strange. I buy the same ones in stores and the taste is much better... Old batch or counterfeit!?&quot;</span>,<br> <span class="hljs-string">&#x27;summary&#x27;</span>: <span class="hljs-string">&#x27;The reviewer is disappointed with the taste and quality of the product, suspecting it may be an old batch or counterfeit.&#x27;</span>,<br> <span class="hljs-string">&#x27;language&#x27;</span>: <span class="hljs-comment">&quot;C&#x27;est en français.&quot;</span>,<br> <span class="hljs-string">&#x27;followup_message&#x27;</span>: <span class="hljs-comment">&quot;Merci pour vos commentaires. Nous sommes désolés d&#x27;apprendre que vous n&#x27;avez pas été satisfait de notre produit. Nous vous assurons que nous prenons la qualité de nos produits très au sérieux et nous allons enquêter sur cette question pour comprendre ce qui s&#x27;est passé. Nous vous remercions de nous en avoir informé et nous ferons tout notre possible pour rectifier la situation.&quot;</span>&#125;<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<h4 id="路由链">1.2.3 路由链</h4>
+<p>一个相当常见但基本的操作是根据输入将其路由到一条链，具体取决于该输入到底是什么。如果你有多个子链，每个子链都专门用于特定类型的输入，那么可以组成一个路由链，它首先决定将它传递给哪个子链，然后将它传递给那个链。</p>
+<p>路由器由两个组件组成：</p>
+<ul>
+<li>路由链（Router Chain）：路由器链本身，负责选择要调用的下一个链</li>
+<li>destination_chains：路由器链可以路由到的链</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.chains.router <span class="hljs-keyword">import</span> MultiPromptChain  <span class="hljs-comment">#导入多提示链</span><br><span class="hljs-keyword">from</span> langchain.chains.router.llm_router <span class="hljs-keyword">import</span> LLMRouterChain,RouterOutputParser<br><span class="hljs-keyword">from</span> langchain.prompts <span class="hljs-keyword">import</span> PromptTemplate<br><br>llm = ChatOpenAI(temperature=<span class="hljs-number">0</span>)<br><br><br><span class="hljs-comment">#第一个提示适合回答物理问题</span><br>physics_template = <span class="hljs-string">&quot;&quot;&quot;你是一个非常聪明的物理专家。 \</span><br><span class="hljs-string">你擅长用一种简洁并且易于理解的方式去回答问题。\</span><br><span class="hljs-string">当你不知道问题的答案时，你承认\</span><br><span class="hljs-string">你不知道.</span><br><span class="hljs-string"></span><br><span class="hljs-string">这是一个问题:</span><br><span class="hljs-string">&#123;input&#125;&quot;&quot;&quot;</span><br><br><br><span class="hljs-comment">#第二个提示适合回答数学问题</span><br>math_template = <span class="hljs-string">&quot;&quot;&quot;你是一个非常优秀的数学家。 \</span><br><span class="hljs-string">你擅长回答数学问题。 \</span><br><span class="hljs-string">你之所以如此优秀， \</span><br><span class="hljs-string">是因为你能够将棘手的问题分解为组成部分，\</span><br><span class="hljs-string">回答组成部分，然后将它们组合在一起，回答更广泛的问题。</span><br><span class="hljs-string"></span><br><span class="hljs-string">这是一个问题：</span><br><span class="hljs-string">&#123;input&#125;&quot;&quot;&quot;</span><br><br><br><span class="hljs-comment">#第三个适合回答历史问题</span><br>history_template = <span class="hljs-string">&quot;&quot;&quot;你是以为非常优秀的历史学家。 \</span><br><span class="hljs-string">你对一系列历史时期的人物、事件和背景有着极好的学识和理解\</span><br><span class="hljs-string">你有能力思考、反思、辩证、讨论和评估过去。\</span><br><span class="hljs-string">你尊重历史证据，并有能力利用它来支持你的解释和判断。</span><br><span class="hljs-string"></span><br><span class="hljs-string">这是一个问题:</span><br><span class="hljs-string">&#123;input&#125;&quot;&quot;&quot;</span><br><br><br><span class="hljs-comment">#第四个适合回答计算机问题</span><br>computerscience_template = <span class="hljs-string">&quot;&quot;&quot; 你是一个成功的计算机科学专家。\</span><br><span class="hljs-string">你有创造力、协作精神、\</span><br><span class="hljs-string">前瞻性思维、自信、解决问题的能力、\</span><br><span class="hljs-string">对理论和算法的理解以及出色的沟通技巧。\</span><br><span class="hljs-string">你非常擅长回答编程问题。\</span><br><span class="hljs-string">你之所以如此优秀，是因为你知道  \</span><br><span class="hljs-string">如何通过以机器可以轻松解释的命令式步骤描述解决方案来解决问题，\</span><br><span class="hljs-string">并且你知道如何选择在时间复杂性和空间复杂性之间取得良好平衡的解决方案。</span><br><span class="hljs-string"></span><br><span class="hljs-string">这还是一个输入：</span><br><span class="hljs-string">&#123;input&#125;&quot;&quot;&quot;</span><br><br><span class="hljs-comment">#对提示模版进行命名和描述</span><br>prompt_infos = [<br>    &#123;<br>        <span class="hljs-string">&quot;名字&quot;</span>: <span class="hljs-string">&quot;物理学&quot;</span>, <br>        <span class="hljs-string">&quot;描述&quot;</span>: <span class="hljs-string">&quot;擅长回答关于物理学的问题&quot;</span>, <br>        <span class="hljs-string">&quot;提示模板&quot;</span>: physics_template<br>    &#125;,<br>    &#123;<br>        <span class="hljs-string">&quot;名字&quot;</span>: <span class="hljs-string">&quot;数学&quot;</span>, <br>        <span class="hljs-string">&quot;描述&quot;</span>: <span class="hljs-string">&quot;擅长回答数学问题&quot;</span>, <br>        <span class="hljs-string">&quot;提示模板&quot;</span>: math_template<br>    &#125;,<br>    &#123;<br>        <span class="hljs-string">&quot;名字&quot;</span>: <span class="hljs-string">&quot;历史&quot;</span>, <br>        <span class="hljs-string">&quot;描述&quot;</span>: <span class="hljs-string">&quot;擅长回答历史问题&quot;</span>, <br>        <span class="hljs-string">&quot;提示模板&quot;</span>: history_template<br>    &#125;,<br>    &#123;<br>        <span class="hljs-string">&quot;名字&quot;</span>: <span class="hljs-string">&quot;计算机科学&quot;</span>, <br>        <span class="hljs-string">&quot;描述&quot;</span>: <span class="hljs-string">&quot;擅长回答计算机科学问题&quot;</span>, <br>        <span class="hljs-string">&quot;提示模板&quot;</span>: computerscience_template<br>    &#125;<br>]<br><br><span class="hljs-comment">#基于提示模版信息创建相应目标链</span><br>destination_chains = &#123;&#125;<br><span class="hljs-keyword">for</span> p_info <span class="hljs-keyword">in</span> prompt_infos:<br>    name = p_info[<span class="hljs-string">&quot;名字&quot;</span>]<br>    prompt_template = p_info[<span class="hljs-string">&quot;提示模板&quot;</span>]<br>    prompt = ChatPromptTemplate.from_template(template=prompt_template)<br>    chain = LLMChain(llm=llm, prompt=prompt)<br>    destination_chains[name] = chain  <br>    <br>destinations = [<span class="hljs-string">f&quot;<span class="hljs-subst">&#123;p[<span class="hljs-string">&#x27;名字&#x27;</span>]&#125;</span>: <span class="hljs-subst">&#123;p[<span class="hljs-string">&#x27;描述&#x27;</span>]&#125;</span>&quot;</span> <span class="hljs-keyword">for</span> p <span class="hljs-keyword">in</span> prompt_infos]<br>destinations_str = <span class="hljs-string">&quot;\n&quot;</span>.join(destinations)<br><br><br><span class="hljs-comment">#创建默认目标链，这是一个当路由器无法决定使用哪个子链时调用的链</span><br>default_prompt = ChatPromptTemplate.from_template(<span class="hljs-string">&quot;&#123;input&#125;&quot;</span>)<br>default_chain = LLMChain(llm=llm, prompt=default_prompt)<br><br><span class="hljs-comment"># 多提示路由模板</span><br>MULTI_PROMPT_ROUTER_TEMPLATE = <br><span class="hljs-string">&quot;&quot;&quot;给语言模型一个原始文本输入，\</span><br><span class="hljs-string">让其选择最适合输入的模型提示。\</span><br><span class="hljs-string">系统将为您提供可用提示的名称以及最适合改提示的描述。\</span><br><span class="hljs-string">如果你认为修改原始输入最终会导致语言模型做出更好的响应，\</span><br><span class="hljs-string">你也可以修改原始输入。</span><br><span class="hljs-string"></span><br><span class="hljs-string"></span><br><span class="hljs-string">&lt;&lt; 格式 &gt;&gt;</span><br><span class="hljs-string">返回一个带有JSON对象的markdown代码片段，该JSON对象的格式如下：</span><br><span class="hljs-string"></span><br><span class="hljs-string">&#123;% raw %&#125;</span><br><span class="hljs-string">```json</span><br><span class="hljs-string">&#123;&#123;&#123;&#123;</span><br><span class="hljs-string">    &quot;destination&quot;: 字符串 \ 使用的提示名字或者使用 &quot;DEFAULT&quot;</span><br><span class="hljs-string">    &quot;next_inputs&quot;: 字符串 \ 原始输入的改进版本</span><br><span class="hljs-string">&#125;&#125;&#125;&#125;</span><br><span class="hljs-string">```</span><br><span class="hljs-string">&#123;% endraw %&#125;</span><br><span class="hljs-string"></span><br><span class="hljs-string">记住：“destination”必须是下面指定的候选提示名称之一，\</span><br><span class="hljs-string">或者如果输入不太适合任何候选提示，\</span><br><span class="hljs-string">则可以是 “DEFAULT” 。</span><br><span class="hljs-string">记住：如果您认为不需要任何修改，\</span><br><span class="hljs-string">则 “next_inputs” 可以只是原始输入。</span><br><span class="hljs-string"></span><br><span class="hljs-string">&lt;&lt; 候选提示 &gt;&gt;</span><br><span class="hljs-string">&#123;destinations&#125;</span><br><span class="hljs-string"></span><br><span class="hljs-string">&lt;&lt; 输入 &gt;&gt;</span><br><span class="hljs-string">&#123;&#123;input&#125;&#125;</span><br><span class="hljs-string"></span><br><span class="hljs-string">&lt;&lt; 输出 (记得要包含 ```json)&gt;&gt;</span><br><span class="hljs-string"></span><br><span class="hljs-string">样例:</span><br><span class="hljs-string">&lt;&lt; 输入 &gt;&gt;</span><br><span class="hljs-string">&quot;什么是黑体辐射?&quot;</span><br><span class="hljs-string">&lt;&lt; 输出 &gt;&gt;</span><br><span class="hljs-string"></span><br><span class="hljs-string">&#123;% raw %&#125;</span><br><span class="hljs-string">```json</span><br><span class="hljs-string">&#123;&#123;&#123;&#123;</span><br><span class="hljs-string">    &quot;destination&quot;: 字符串 \ 使用的提示名字或者使用 &quot;DEFAULT&quot;</span><br><span class="hljs-string">    &quot;next_inputs&quot;: 字符串 \ 原始输入的改进版本</span><br><span class="hljs-string">&#125;&#125;&#125;&#125;</span><br><span class="hljs-string">```</span><br><span class="hljs-string">&#123;% endraw %&#125;</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br><br><span class="hljs-comment"># router_chain</span><br>router_template = MULTI_PROMPT_ROUTER_TEMPLATE.<span class="hljs-built_in">format</span>(<br>    destinations=destinations_str<br>)<br>router_prompt = PromptTemplate(<br>    template=router_template,<br>    input_variables=[<span class="hljs-string">&quot;input&quot;</span>],<br>    output_parser=RouterOutputParser(),<br>)<br><br>router_chain = LLMRouterChain.from_llm(llm, router_prompt)<br><br><br><span class="hljs-comment">#多提示链</span><br>chain = MultiPromptChain(router_chain=router_chain,    <span class="hljs-comment">#路由链路</span><br>                         destination_chains=destination_chains,   <span class="hljs-comment">#目标链路</span><br>                         default_chain=default_chain,      <span class="hljs-comment">#默认链路</span><br>                         verbose=<span class="hljs-literal">True</span>   <br>                        )<br><br><span class="hljs-built_in">print</span>(chain.invoke(<span class="hljs-string">&quot;什么是黑体辐射？&quot;</span>))<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====&quot;</span>)<br><br><span class="hljs-built_in">print</span>(chain.invoke(<span class="hljs-string">&quot;你知道李白是谁嘛?&quot;</span>))<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====&quot;</span>)<br><br><span class="hljs-built_in">print</span>(chain.invoke(<span class="hljs-string">&quot;2 + 2 等于多少&quot;</span>))<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====&quot;</span>)<br><br><span class="hljs-built_in">print</span>(chain.invoke(<span class="hljs-string">&quot;电影肖申克的救赎讲了什么&quot;</span>))<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-d7c7f3a4" role="button" aria-expanded="false" aria-controls="collapse-d7c7f3a4">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-d7c7f3a4">
+        <div class="fold-content">
+          <figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs lasso">&gt; Entering <span class="hljs-literal">new</span> MultiPromptChain chain<span class="hljs-params">...</span><br>物理学: &#123;<span class="hljs-string">&#x27;input&#x27;</span>: <span class="hljs-string">&#x27;请解释一下黑体辐射是什么？&#x27;</span>&#125;<br>&gt; Finished chain.<br>&#123;<span class="hljs-string">&#x27;input&#x27;</span>: <span class="hljs-string">&#x27;请解释一下黑体辐射是什么？&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>: <span class="hljs-string">&#x27;黑体辐射是指一个理想化的物体，它能够吸收所有入射到它表面的辐射能量，并且以最高效率地辐射出来。根据黑体辐射定律，黑体辐射的辐射强度与波长和温度有关，遵循普朗克辐射定律和维恩位移定律。黑体辐射在研究热辐射和量子力学等领域有着重要的应用。希望这个解释对你有所帮助。&#x27;</span>&#125;<br>====<br><br><br>&gt; Entering <span class="hljs-literal">new</span> MultiPromptChain chain<span class="hljs-params">...</span><br>历史: &#123;<span class="hljs-string">&#x27;input&#x27;</span>: <span class="hljs-string">&#x27;你知道李白是哪位诗人吗?&#x27;</span>&#125;<br>&gt; Finished chain.<br>&#123;<span class="hljs-string">&#x27;input&#x27;</span>: <span class="hljs-string">&#x27;你知道李白是哪位诗人吗?&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>: <span class="hljs-string">&#x27;是的，李白是中国唐代著名的诗人，被誉为“诗仙”。他的诗作以豪放、奔放、豪情和浪漫著称，对后世诗人产生了深远的影响。他的诗作多以描绘自然风光、抒发豪情壮志和饮酒作乐为主题，被后人称为“酒仙诗派”的代表。李白的诗歌在中国文学史上占有重要地位，被誉为中国古代文学的瑰宝之一。&#x27;</span>&#125;<br>====<br><br><br>&gt; Entering <span class="hljs-literal">new</span> MultiPromptChain chain<span class="hljs-params">...</span><br>数学: &#123;<span class="hljs-string">&#x27;input&#x27;</span>: <span class="hljs-string">&#x27;求解 2 + 2&#x27;</span>&#125;<br>&gt; Finished chain.<br>&#123;<span class="hljs-string">&#x27;input&#x27;</span>: <span class="hljs-string">&#x27;求解 2 + 2&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>: <span class="hljs-string">&#x27;2 + 2 = 4.&#x27;</span>&#125;<br>====<br><br><br>&gt; Entering <span class="hljs-literal">new</span> MultiPromptChain chain<span class="hljs-params">...</span><br><span class="hljs-literal">None</span>: &#123;<span class="hljs-string">&#x27;input&#x27;</span>: <span class="hljs-string">&#x27;电影肖申克的救赎讲了什么&#x27;</span>&#125;<br>&gt; Finished chain.<br>&#123;<span class="hljs-string">&#x27;input&#x27;</span>: <span class="hljs-string">&#x27;电影肖申克的救赎讲了什么&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>: <span class="hljs-string">&#x27;电影《肖申克的救赎》是一部由弗兰克·达拉邦特执导，蒂姆·罗宾斯和摩根·弗里曼主演的经典影片。影片讲述了银行家安迪·杜佛兰因被错误指控谋杀妻子和情人而被判无期徒刑，被送往肖申克监狱服刑的故事。\n\n在监狱里，安迪遭受各种虐待和不公正对待，但他始终保持着乐观和坚韧的态度。他结识了监狱里的一些狱友，包括摩根·弗里曼饰演的瑞德。通过他们的帮助和支持，安迪逐渐在监狱里建立了自己的地位，并展现出了非凡的智慧和毅力。\n\n最终，安迪通过自己的努力和智慧成功逃脱了监狱，并揭露了监狱长的腐败和罪行。影片通过安迪的故事展现了人性的善良和坚韧，以及对自由和正义的追求。它深刻地揭示了监狱制度中的黑暗面和人性的复杂性，同时也传达了希望和勇气的力量。&#x27;</span>&#125;<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<h3 id="构造检索式问答连">1.3 构造检索式问答连</h3>
+<p>基于 LangChain，我们可以构造一个使用 GPT3.5
+进行问答的检索式问答链，这是一种通过检索步骤进行问答的方法。我们可以通过传入一个语言模型和一个向量数据库来创建它作为检索器。然后，我们可以用问题作为查询调用它，得到一个答案。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> OpenAIEmbeddings<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> RetrievalQA<br><span class="hljs-keyword">from</span> langchain_text_splitters <span class="hljs-keyword">import</span> RecursiveCharacterTextSplitter<br><span class="hljs-keyword">from</span> langchain_community.vectorstores <span class="hljs-keyword">import</span> Chroma<br><span class="hljs-keyword">from</span> langchain_community.document_loaders <span class="hljs-keyword">import</span> PyPDFLoader<br><span class="hljs-keyword">from</span> langchain_community.embeddings.dashscope <span class="hljs-keyword">import</span> DashScopeEmbeddings<br><br><span class="hljs-comment"># 加载 PDF</span><br>loader = PyPDFLoader(<span class="hljs-string">&quot;MachineLearning-Lecture01.pdf&quot;</span>)<br>docs = []<br>docs.extend(loader.load())<br><br><span class="hljs-comment"># 分割文本</span><br><br>text_splitter = RecursiveCharacterTextSplitter(<br>    chunk_size = <span class="hljs-number">1500</span>,  <span class="hljs-comment"># 每个文本块的大小。这意味着每次切分文本时，会尽量使每个块包含 1500 个字符。</span><br>    chunk_overlap = <span class="hljs-number">150</span>  <span class="hljs-comment"># 每个文本块之间的重叠部分。</span><br>)<br><br>texts = text_splitter.split_documents(docs)<br><br>llm = ChatOpenAI(model=<span class="hljs-string">&quot;gpt-3.5-turbo&quot;</span>,temperature=<span class="hljs-number">0</span>)  <span class="hljs-comment"># 默认是gpt-3.5-turbo</span><br><br><span class="hljs-comment">#embeddings = OpenAIEmbeddings()</span><br><br><span class="hljs-comment"># 灌库 </span><br><span class="hljs-comment">#阿里的向量模型</span><br>embeddings = DashScopeEmbeddings(<br>    model=<span class="hljs-string">&quot;text-embedding-v2&quot;</span>,<br>)<br><br><br>vectordb =  Chroma.from_documents(texts, embeddings)<br><br><span class="hljs-comment"># 声明一个检索式问答链</span><br>qa_chain = RetrievalQA.from_chain_type(<br>    llm,<br>    retriever=vectordb.as_retriever()<br>)<br><br><br><span class="hljs-comment"># # 可以以该方式进行检索问答</span><br>question = <span class="hljs-string">&quot;What are major topics for this class?&quot;</span><br>result = qa_chain(&#123;<span class="hljs-string">&quot;query&quot;</span>: question&#125;)<br><span class="hljs-built_in">print</span>(result[<span class="hljs-string">&quot;result&quot;</span>])<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-a8163d0f" role="button" aria-expanded="false" aria-controls="collapse-a8163d0f">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-a8163d0f">
+        <div class="fold-content">
+          <figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">The major topics <span class="hljs-keyword">for</span> this class, <span class="hljs-keyword">as</span> outlined <span class="hljs-keyword">by</span> <span class="hljs-keyword">the</span> instructor, <span class="hljs-built_in">include</span>:<br><br><span class="hljs-number">1.</span> Machine learning fundamentals covered <span class="hljs-keyword">in</span> <span class="hljs-keyword">the</span> main lectures.<br><span class="hljs-number">2.</span> Optional discussion sections covering extensions <span class="hljs-built_in">to</span> <span class="hljs-keyword">the</span> main lecture materials, such <span class="hljs-keyword">as</span> convex optimization <span class="hljs-keyword">and</span> hidden Markov models.<br><span class="hljs-number">3.</span> The use <span class="hljs-keyword">of</span> MATLAB <span class="hljs-keyword">for</span> assignments, <span class="hljs-keyword">with</span> <span class="hljs-keyword">the</span> instructor strongly advising against <span class="hljs-keyword">using</span> R due <span class="hljs-built_in">to</span> potential compatibility issues.<br><span class="hljs-number">4.</span> Flexibility <span class="hljs-keyword">in</span> group sizes <span class="hljs-keyword">for</span> <span class="hljs-keyword">the</span> term project, <span class="hljs-keyword">with</span> options <span class="hljs-keyword">for</span> groups <span class="hljs-keyword">of</span> <span class="hljs-literal">three</span>, <span class="hljs-literal">two</span>, <span class="hljs-keyword">or</span> individual work, <span class="hljs-keyword">with</span> grading being <span class="hljs-keyword">the</span> same regardless <span class="hljs-keyword">of</span> group size.<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<h3 id="深入探究检索式问答链">1.4 深入探究检索式问答链</h3>
+<h4 id="基于模板的检索式问答链">1.4.1 基于模板的检索式问答链</h4>
+<p>流程如图:</p>
+<p><img src="/images/langChain_stuff.jpeg" srcset="/img/loading.gif" lazyload /></p>
+<p>首先定义了一个提示模板。它包含一些关于如何使用下面的上下文片段的说明，然后有一个上下文变量的占位符。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.prompts <span class="hljs-keyword">import</span> PromptTemplate<br><br><span class="hljs-comment"># Build prompt</span><br>template = <span class="hljs-string">&quot;&quot;&quot;使用以下上下文片段来回答最后的问题。如果你不知道答案，只需说不知道，不要试图编造答案。答案最多使用三个句子。尽量简明扼要地回答。在回答的最后一定要说&quot;感谢您的提问！&quot;</span><br><span class="hljs-string">&#123;context&#125;</span><br><span class="hljs-string">问题：&#123;question&#125;</span><br><span class="hljs-string">有用的回答：&quot;&quot;&quot;</span><br>QA_CHAIN_PROMPT = PromptTemplate.from_template(template)<br><br><span class="hljs-comment"># Run chain</span><br>qa_chain = RetrievalQA.from_chain_type(<br>    llm,<br>    retriever=vectordb.as_retriever(),<br>    return_source_documents=<span class="hljs-literal">True</span>,<br>    chain_type_kwargs=&#123;<span class="hljs-string">&quot;prompt&quot;</span>: QA_CHAIN_PROMPT&#125;<br>)<br><br>question = <span class="hljs-string">&quot;机器学习是其中一节的话题吗&quot;</span><br>result = qa_chain(&#123;<span class="hljs-string">&quot;query&quot;</span>: question&#125;)<br>result[<span class="hljs-string">&quot;result&quot;</span>]<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-string">&#x27;是的，机器学习是这门课的一个话题。<span class="hljs-char escape_">\n</span>感谢您的提问！&#x27;</span><br></code></pre></td></tr></table></figure>
+<p>LangSmith流程展现:</p>
+<p><img src="/images/LangSmith_Stuff.png" srcset="/img/loading.gif" lazyload /></p>
+<p>这种方法非常好，因为它只涉及对LLM的一次调用。然而，它也有局限性，即如果文档太多，可能无法将它们全部适配到上下文窗口中。我们可以使用另一种技术来对文档进行问答，即MapReduce技术。</p>
+<h4 id="基于-mapreduce-的检索式问答链">1.4.2 基于 MapReduce
+的检索式问答链</h4>
+<p>流程如图:</p>
+<p><img src="/images/langChain_MapReduce.jpeg" srcset="/img/loading.gif" lazyload /></p>
+<p>在 MapReduce
+技术中，首先将每个独立的文档单独发送到LLM以获取原始答案。然后，这些答案通过最终对LLM的一次调用组合成最终的答案。虽然这样涉及了更多对语言模型的调用，但它的优势在于可以处理任意数量的文档。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python">qa_chain_mr = RetrievalQA.from_chain_type(<br>    llm,<br>    retriever=vectordb.as_retriever(),<br>    chain_type=<span class="hljs-string">&quot;map_reduce&quot;</span><br>)<br><span class="hljs-comment"># 中文版</span><br>question = <span class="hljs-string">&quot;概率论是其中一节的话题吗&quot;</span><br>result = qa_chain_mr(&#123;<span class="hljs-string">&quot;query&quot;</span>: question&#125;)<br>result[<span class="hljs-string">&quot;result&quot;</span>]<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-string">&#x27;根据提供的文本片段，似乎没有提及与概率论直接相关的内容。文档主要讨论了参数的可能性以及数据的概率，特别是在参数化高斯密度的背景下。因此，文档似乎并未专注于概率论作为一个整体的主题。<span class="hljs-char escape_">\n</span><span class="hljs-char escape_">\n</span>所以，根据提供的信息，似乎这个文档并没有涉及概率论作为一个独立的话题。&#x27;</span><br></code></pre></td></tr></table></figure>
+<p>LangSmith流程展现:</p>
+<p><img src="/images/LangSmith_MapReduce.png" srcset="/img/loading.gif" lazyload /></p>
+<p>这种方法的两个问题。第一，速度要慢得多。第二，结果实际上更差。根据给定文档的这一部分，对这个问题并没有明确的答案。这可能是因为它是基于每个文档单独回答的。因此，如果信息分布在两个文档之间，它并没有在同一上下文中获取到所有的信息。</p>
+<h4 id="基于-refine-的检索式问答链">1.4.3 基于 Refine
+的检索式问答链</h4>
+<p>流程如图:</p>
+<p><img src="/images/langChain_Refine.jpeg" srcset="/img/loading.gif" lazyload /></p>
+<p>Refine是一种新的链式类型。Refine 文档链类似于 MapReduce
+链，对于每一个文档，会调用一次 LLM，但有所改进的是，每次发送给 LLM
+的最终提示是一个序列，这个序列会将先前的响应与新数据结合在一起，并请求得到改进后的响应。因此，这是一种类似于
+RNN 的概念，增强了上下文，从而解决信息分布在不同文档的问题。</p>
+<ul>
+<li>对于每个文档，它将所有非文档输入、当前文档以及最新的中间答案传递给
+LLM 链以获得新的答案</li>
+<li>由于 Refine 链一次仅将单个文档传递给
+LLM，因此很适合需要分析的文档数量多于模型上下文的任务</li>
+<li>明显的缺点是：将比 Stuff 文档链进行更多的 LLM
+调用；当文档频繁地互相交叉引用时很可能表现不佳</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python">qa_chain_mr = RetrievalQA.from_chain_type(<br>    llm,<br>    retriever=vectordb.as_retriever(),<br>    chain_type=<span class="hljs-string">&quot;refine&quot;</span><br>)<br>question = <span class="hljs-string">&quot;概率论是其中一节的话题吗&quot;</span><br>result = qa_chain_mr(&#123;<span class="hljs-string">&quot;query&quot;</span>: question&#125;)<br>result[<span class="hljs-string">&quot;result&quot;</span>]<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs scheme"><span class="hljs-symbol">&#x27;根据新的上下文信息，我们可以得出结论，概率论是其中一节的话题。在这段对话中，讲师提到了关于概率的假设和观点，以及在统计学中的频率学派观点。他还提到了关于条件概率的符号表示，以及在theta不被视为随机变量时的表示方法。因此，概率论是这节课的一个话题。</span>&#x27;<br></code></pre></td></tr></table></figure>
+<p>LangSmith流程展现:</p>
+<p><img src="/images/LangSmith_Refine.png" srcset="/img/loading.gif" lazyload /></p>
+<p>这个结果比MapReduce链的结果要好。这是因为使用Refined
+Chain允许你逐个地组合信息，实际上比MapReduce链鼓励更多的信息传递。</p>
+<h4 id="更多链">1.4.5 更多链</h4>
+<ul>
+<li>ConversationalRetrievalChain：建立在 Retrieval QA Chain
+的基础上，并接入 Memory 组件</li>
+<li>APIChain:使用 LLM 与 API 交互以检索相关信息，通过提供与提供的 API
+文档相关的问题来构建链</li>
+<li>MultiRetrievalQAChain：该链选择与给定问题最相关的 Retrieval QA
+Chain，然后使用它回答问题</li>
+<li>MultiPromptChain：使用多提示链创建一个问答链，选择与给定问题最相关的提示并进行回答</li>
+<li>ConstitutionalChain：自我批判链是一条确保语言模型的输出遵守一组预定义准则的链</li>
+<li>更多请参考 https://python.langchain.com/docs/modules/chains/</li>
+</ul>
+<h2 id="二langchain-expression-language-lcel">二、LangChain Expression
+Language (LCEL)</h2>
+<p>LangChain Expression
+Language（LCEL）是一种声明式语言，可轻松组合不同的调用顺序构成
+Chain。LCEL
+自创立之初就被设计为能够支持将原型投入生产环境，<strong>无需代码更改</strong>，从最简单的“提示+LLM”链到最复杂的链（已有用户成功在生产环境中运行包含数百个步骤的
+LCEL Chain）。</p>
+<p>LCEL 的一些亮点包括：</p>
+<ol type="1">
+<li><p><strong>流支持</strong>：使用 LCEL 构建 Chain
+时，你可以获得最佳的首个令牌时间（即从输出开始到首批输出生成的时间）。对于某些
+Chain，这意味着可以直接从 LLM 流式传输令牌到流输出解析器，从而以与 LLM
+提供商输出原始令牌相同的速率获得解析后的、增量的输出。</p></li>
+<li><p><strong>异步支持</strong>：任何使用 LCEL 构建的链条都可以通过同步
+API（例如，在 Jupyter 笔记本中进行原型设计时）和异步 API（例如，在
+LangServe
+服务器中）调用。这使得相同的代码可用于原型设计和生产环境，具有出色的性能，并能够在同一服务器中处理多个并发请求。</p></li>
+<li><p><strong>优化的并行执行</strong>：当你的 LCEL
+链条有可以并行执行的步骤时（例如，从多个检索器中获取文档），我们会自动执行，无论是在同步还是异步接口中，以实现最小的延迟。</p></li>
+<li><p><strong>重试和回退</strong>：为 LCEL
+链的任何部分配置重试和回退。这是使链在规模上更可靠的绝佳方式。目前我们正在添加重试/回退的流媒体支持，因此你可以在不增加任何延迟成本的情况下获得增加的可靠性。</p></li>
+<li><p><strong>访问中间结果</strong>：对于更复杂的链条，访问在最终输出产生之前的中间步骤的结果通常非常有用。这可以用于让最终用户知道正在发生一些事情，甚至仅用于调试链条。你可以流式传输中间结果，并且在每个
+LangServe 服务器上都可用。</p></li>
+<li><p><strong>输入和输出模式</strong>：输入和输出模式为每个 LCEL
+链提供了从链的结构推断出的 Pydantic 和 JSONSchema
+模式。这可以用于输入和输出的验证，是 LangServe 的一个组成部分。</p></li>
+<li><p><strong>无缝 LangSmith
+跟踪集成</strong>：随着链条变得越来越复杂，理解每一步发生了什么变得越来越重要。通过
+LCEL，所有步骤都自动记录到
+LangSmith，以实现最大的可观察性和可调试性。</p></li>
+<li><p><strong>无缝 LangServe 部署集成</strong>：任何使用 LCEL
+创建的链都可以轻松地使用 LangServe 进行部署。</p></li>
+</ol>
+<p>原文：<a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/expression_language/">https://python.langchain.com/docs/expression_language/</a></p>
+<p>官方给出使用LCEL前后对比：<a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/expression_language/why/">https://python.langchain.com/docs/expression_language/why/</a></p>
+<p><strong>LangChain Runnable Chain</strong>
+<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span
+class="hint--top hint--rounded" aria-label="">[2]</span></a></sup></p>
+<p><img src="/images/LangChain_Chain.jpeg" srcset="/img/loading.gif" lazyload /></p>
+<p>LCEL旨在简化组合链的过程，使从原型设计到生产的轻松过程成为可能。LCEL
+通过标准的 Runnable
+协议使创建自定义链路并以标准方式调用它们变得非常容易。</p>
+<h3 id="lcel-例子">2.1 LCEL 例子</h3>
+<div class="line-block">符号类似于 unix
+管道操作符，它将不同的组件链接在一起，将一个组件的输出作为下一个组件的输入。</div>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">from</span> langchain.prompts <span class="hljs-keyword">import</span> ChatPromptTemplate<br><span class="hljs-keyword">from</span> langchain.output_parsers.openai_functions <span class="hljs-keyword">import</span> JsonOutputFunctionsParser<br><br>prompt = ChatPromptTemplate.from_template(<span class="hljs-string">&quot;tell me a joke about &#123;foo&#125;&quot;</span>)<br>model = ChatOpenAI()<br><br>functions = [<br>    &#123;<br>        <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;joke&quot;</span>,<br>        <span class="hljs-string">&quot;description&quot;</span>: <span class="hljs-string">&quot;A joke&quot;</span>,<br>        <span class="hljs-string">&quot;parameters&quot;</span>: &#123;<br>            <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>,<br>            <span class="hljs-string">&quot;properties&quot;</span>: &#123;<br>                <span class="hljs-string">&quot;setup&quot;</span>: &#123;<span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>, <span class="hljs-string">&quot;description&quot;</span>: <span class="hljs-string">&quot;The setup for the joke&quot;</span>&#125;,<br>                <span class="hljs-string">&quot;punchline&quot;</span>: &#123;<br>                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,<br>                    <span class="hljs-string">&quot;description&quot;</span>: <span class="hljs-string">&quot;The punchline for the joke&quot;</span>,<br>                &#125;,<br>            &#125;,<br>            <span class="hljs-string">&quot;required&quot;</span>: [<span class="hljs-string">&quot;setup&quot;</span>, <span class="hljs-string">&quot;punchline&quot;</span>],<br>        &#125;,<br>    &#125;<br>]<br><br><span class="hljs-comment">#LCEL</span><br>chain = (<br>    prompt<br>    | model.bind(function_call=&#123;<span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;joke&quot;</span>&#125;, functions=functions) <span class="hljs-comment">#LCEL 支持将函数调用信息附加到链上</span><br>    | JsonOutputFunctionsParser() <span class="hljs-comment">#指定要返回的函数时，可以使用 LCEL 直接解析它</span><br>)<br>result = chain.invoke(&#123;<span class="hljs-string">&quot;foo&quot;</span>: <span class="hljs-string">&quot;bears&quot;</span>&#125;)<br><span class="hljs-built_in">print</span>(result)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight smalltalk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs smalltalk">&#123;<span class="hljs-string">&#x27;setup&#x27;</span>: <span class="hljs-comment">&quot;Why don&#x27;t bears wear shoes?&quot;</span>, <span class="hljs-string">&#x27;punchline&#x27;</span>: <span class="hljs-string">&#x27;Because they have bear feet!&#x27;</span>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="三runnable-sequence">三、Runnable Sequence</h2>
+<p>LangChain Expression Language (LCEL) 的核心</p>
+<h3 id="runnable-对象简介">3.1 Runnable 对象简介</h3>
+<p>把一个个 Runnable 对象串联起来，就构成了 Runnable Sequence</p>
+<p><strong>Runnable对象的定义</strong>：标准接口包含:</p>
+<ul>
+<li><code>invoke</code>：对输入直接进行链式调用</li>
+<li><code>batch</code>：对输入列表进行批量的链式调用</li>
+<li><code>stream</code>：（流式）分块返回响应（需要 Model、Parser
+等支持）</li>
+</ul>
+<p>异步的方法，需要使用 await 语法实现异步等待：</p>
+<ul>
+<li><code>astream</code>：异步的流式输出模式</li>
+<li><code>ainvoke</code>：异步的使用单个输入去调用链</li>
+<li><code>abatch</code>：异步的使用一个数组的输入去调用链</li>
+<li><code>astream_log</code>:中间步骤发生时进行回调</li>
+<li><code>astream_events</code>：<strong>beta</strong>
+异步流式返回链中发生的事件（在 <code>langchain-core 0.1.14</code>
+中引入）</li>
+</ul>
+<p><strong>输入类型</strong>和<strong>输出类型</strong>因组件而异:</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>输入类型</th>
+<th>输出类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prompt</td>
+<td>字典</td>
+<td>PromptValue</td>
+</tr>
+<tr>
+<td>ChatModel</td>
+<td>单个字符串、聊天消息列表或 PromptValue</td>
+<td>ChatMessage</td>
+</tr>
+<tr>
+<td>LLM</td>
+<td>单个字符串、聊天消息列表或 PromptValue</td>
+<td>字符串</td>
+</tr>
+<tr>
+<td>OutputParser</td>
+<td>LLM 或 ChatModel 的输出</td>
+<td>取决于解析器</td>
+</tr>
+<tr>
+<td>Retriever</td>
+<td>单个字符串</td>
+<td>文档列表</td>
+</tr>
+<tr>
+<td>Tool</td>
+<td>单个字符串或字典，取决于工具</td>
+<td>取决于工具</td>
+</tr>
+</tbody>
+</table>
+<h3 id="runnableparallel">3.2 RunnableParallel</h3>
+<p><code>RunnableParallel</code>可以并行运行多个<code>Runnable</code>对象</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_core.prompts <span class="hljs-keyword">import</span> ChatPromptTemplate<br><span class="hljs-keyword">from</span> langchain_core.runnables <span class="hljs-keyword">import</span> RunnableParallel<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><br>model = ChatOpenAI()<br>joke_chain = ChatPromptTemplate.from_template(<span class="hljs-string">&quot;tell me a joke about &#123;topic&#125;&quot;</span>) | model<br>poem_chain = (<br>    ChatPromptTemplate.from_template(<span class="hljs-string">&quot;write a 2-line poem about &#123;topic&#125;&quot;</span>) | model<br>)<br><br>map_chain = RunnableParallel(joke=joke_chain, poem=poem_chain)<br><br>map_chain.invoke(&#123;<span class="hljs-string">&quot;topic&quot;</span>: <span class="hljs-string">&quot;bear&quot;</span>&#125;)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-687cd73f" role="button" aria-expanded="false" aria-controls="collapse-687cd73f">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-687cd73f">
+        <div class="fold-content">
+          <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs routeros">&#123;<span class="hljs-string">&#x27;joke&#x27;</span>: AIMessage(<span class="hljs-attribute">content</span>=<span class="hljs-string">&quot;Why did the bear break up with his girlfriend? \nBecause he couldn&#x27;t bear the relationship anymore!&quot;</span>, response_metadata=&#123;<span class="hljs-string">&#x27;token_usage&#x27;</span>: &#123;<span class="hljs-string">&#x27;completion_tokens&#x27;</span>: 20, <span class="hljs-string">&#x27;prompt_tokens&#x27;</span>: 13, <span class="hljs-string">&#x27;total_tokens&#x27;</span>: 33&#125;, <span class="hljs-string">&#x27;model_name&#x27;</span>: <span class="hljs-string">&#x27;gpt-3.5-turbo&#x27;</span>, <span class="hljs-string">&#x27;system_fingerprint&#x27;</span>: <span class="hljs-string">&#x27;fp_3b956da36b&#x27;</span>, <span class="hljs-string">&#x27;finish_reason&#x27;</span>: <span class="hljs-string">&#x27;stop&#x27;</span>, <span class="hljs-string">&#x27;logprobs&#x27;</span>: None&#125;, <span class="hljs-attribute">id</span>=<span class="hljs-string">&#x27;run-b56a3628-fc44-49d6-ae3a-97254f8dcd84-0&#x27;</span>),<br> <span class="hljs-string">&#x27;poem&#x27;</span>: AIMessage(<span class="hljs-attribute">content</span>=<span class="hljs-string">&#x27;In the forest deep and wide,\nThe bear roams, majestic stride.&#x27;</span>, response_metadata=&#123;<span class="hljs-string">&#x27;token_usage&#x27;</span>: &#123;<span class="hljs-string">&#x27;completion_tokens&#x27;</span>: 15, <span class="hljs-string">&#x27;prompt_tokens&#x27;</span>: 15, <span class="hljs-string">&#x27;total_tokens&#x27;</span>: 30&#125;, <span class="hljs-string">&#x27;model_name&#x27;</span>: <span class="hljs-string">&#x27;gpt-3.5-turbo&#x27;</span>, <span class="hljs-string">&#x27;system_fingerprint&#x27;</span>: <span class="hljs-string">&#x27;fp_3b956da36b&#x27;</span>, <span class="hljs-string">&#x27;finish_reason&#x27;</span>: <span class="hljs-string">&#x27;stop&#x27;</span>, <span class="hljs-string">&#x27;logprobs&#x27;</span>: None&#125;, <span class="hljs-attribute">id</span>=<span class="hljs-string">&#x27;run-b42e1898-a757-4495-a468-813ba998b19c-0&#x27;</span>)&#125;<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<p>LangSmith流程展现:</p>
+<p><img src="/images/RunnableP.png" srcset="/img/loading.gif" lazyload /></p>
+<p>当一个<code>Runnable</code>对象接收的输入需要被预处理时，也可用<code>RunnableParallel</code>进行处理</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.schema.output_parser <span class="hljs-keyword">import</span> StrOutputParser<br><span class="hljs-keyword">from</span> langchain_core.runnables <span class="hljs-keyword">import</span> RunnableParallel<br><span class="hljs-keyword">from</span> langchain_core.runnables <span class="hljs-keyword">import</span> RunnablePassthrough<br><span class="hljs-keyword">from</span> operator <span class="hljs-keyword">import</span> itemgetter<br><br>llm = ChatOpenAI()<br>prompt1 = ChatPromptTemplate.from_template(<span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">What is the city &#123;person&#125; is from? Only respond with city name.</span><br><span class="hljs-string">&quot;&quot;&quot;</span>)<br>  <br>prompt2 = ChatPromptTemplate.from_template(<span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">What country is the city &#123;city&#125; in? Respond in &#123;language&#125;.</span><br><span class="hljs-string">&quot;&quot;&quot;</span>)<br><br>chain1 = prompt1|llm|StrOutputParser()<br><br>rp =RunnableParallel(<br>    city=chain1,<br>    language=itemgetter(<span class="hljs-string">&quot;language&quot;</span>)<br>)<br><br>chain = (<br>    rp<br>    | prompt2<br>    | llm<br>    | StrOutputParser()<br>)<br><br><span class="hljs-built_in">print</span>(chain.invoke(&#123;<span class="hljs-string">&quot;person&quot;</span>: <span class="hljs-string">&quot;李白&quot;</span>, <span class="hljs-string">&quot;language&quot;</span>: <span class="hljs-string">&quot;Chinese&quot;</span> &#125;))<br><br><br>chain = (<br>    &#123;<span class="hljs-string">&quot;city&quot;</span>:chain1,<span class="hljs-string">&quot;language&quot;</span>:itemgetter(<span class="hljs-string">&quot;language&quot;</span>)&#125; <span class="hljs-comment">#RunnableParallel可以写成这样</span><br>    | prompt2<br>    | llm<br>    | StrOutputParser()<br>)<br><br><span class="hljs-built_in">print</span>(chain.invoke(&#123;<span class="hljs-string">&quot;person&quot;</span>: <span class="hljs-string">&quot;李白&quot;</span>, <span class="hljs-string">&quot;language&quot;</span>: <span class="hljs-string">&quot;Chinese&quot;</span> &#125;))<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs">长安市位于中国。<br>长安市位于中国。<br></code></pre></td></tr></table></figure>
+<h3 id="runnablepassthrough">3.2 RunnablePassthrough</h3>
+<p><code>RunnablePassthrough</code>允许传递输入数据，可以保持不变或添加额外的键。通常与<code>RunnableParallel</code>一起使用，将数据分配给映射中的新键。使用<code>assign</code>参数调用<code>RunnablePassthrough</code>，将接收输入，并添加传递给<code>assign</code>函数的额外参数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_core.runnables <span class="hljs-keyword">import</span> RunnableParallel, RunnablePassthrough<br><br>runnable = RunnableParallel(<br>    passed=RunnablePassthrough(),<br>    extra=RunnablePassthrough.assign(mult=<span class="hljs-keyword">lambda</span> x: x[<span class="hljs-string">&quot;num&quot;</span>] * <span class="hljs-number">3</span>),<br>    modified=<span class="hljs-keyword">lambda</span> x: x[<span class="hljs-string">&quot;num&quot;</span>] + <span class="hljs-number">1</span>,<br>)<br><br>runnable.invoke(&#123;<span class="hljs-string">&quot;num&quot;</span>: <span class="hljs-number">1</span>&#125;)<br></code></pre></td></tr></table></figure>
+<p>LangSmith流程展现:</p>
+<p><img src="/images/RunnablePass.png" srcset="/img/loading.gif" lazyload /></p>
+<p>用 <code>LCEL</code> 实现 <code>RAG</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_community.vectorstores <span class="hljs-keyword">import</span> Chroma<br><span class="hljs-keyword">from</span> langchain_core.output_parsers <span class="hljs-keyword">import</span> StrOutputParser<br><span class="hljs-keyword">from</span> langchain_core.prompts <span class="hljs-keyword">import</span> ChatPromptTemplate<br><span class="hljs-keyword">from</span> langchain_core.runnables <span class="hljs-keyword">import</span> RunnablePassthrough<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">from</span> langchain_community.embeddings.dashscope <span class="hljs-keyword">import</span> DashScopeEmbeddings<br><br>embeddings = DashScopeEmbeddings(<br>    model=<span class="hljs-string">&quot;text-embedding-v2&quot;</span>,<br>)<br><br><br>vectorstore = Chroma.from_texts(<br>    [<span class="hljs-string">&quot;harrison worked at kensho&quot;</span>], embedding=embeddings<br>)<br>retriever = vectorstore.as_retriever()<br>template = <span class="hljs-string">&quot;&quot;&quot;Answer the question based only on the following context:</span><br><span class="hljs-string">&#123;context&#125;</span><br><span class="hljs-string"></span><br><span class="hljs-string">Question: &#123;question&#125;</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br>prompt = ChatPromptTemplate.from_template(template)<br>model = ChatOpenAI()<br><br>retrieval_chain = (<br>    &#123;<span class="hljs-string">&quot;context&quot;</span>: retriever, <span class="hljs-string">&quot;question&quot;</span>: RunnablePassthrough()&#125;<br>    | prompt<br>    | model<br>    | StrOutputParser()<br>)<br><br>retrieval_chain.invoke(<span class="hljs-string">&quot;where did harrison work?&quot;</span>)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ada"><span class="hljs-symbol">&#x27;Harrison</span> worked <span class="hljs-keyword">at</span> Kensho.&#x27;<br></code></pre></td></tr></table></figure>
+<h3 id="runnablelambda">3.3 RunnableLambda</h3>
+<p><code>RunnableLambda</code>可以让我们运行自定义函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> operator <span class="hljs-keyword">import</span> itemgetter<br><br><span class="hljs-keyword">from</span> langchain_core.prompts <span class="hljs-keyword">import</span> ChatPromptTemplate<br><span class="hljs-keyword">from</span> langchain_core.runnables <span class="hljs-keyword">import</span> RunnableLambda<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">length_function</span>(<span class="hljs-params">text</span>):<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(text)<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">_multiple_length_function</span>(<span class="hljs-params">text1, text2</span>):<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(text1) * <span class="hljs-built_in">len</span>(text2)<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">multiple_length_function</span>(<span class="hljs-params">_<span class="hljs-built_in">dict</span></span>):<br>    <span class="hljs-keyword">return</span> _multiple_length_function(_<span class="hljs-built_in">dict</span>[<span class="hljs-string">&quot;text1&quot;</span>], _<span class="hljs-built_in">dict</span>[<span class="hljs-string">&quot;text2&quot;</span>])<br><br><br>prompt = ChatPromptTemplate.from_template(<span class="hljs-string">&quot;what is &#123;a&#125; + &#123;b&#125;&quot;</span>)<br>model = ChatOpenAI()<br><br>chain1 = prompt | model<br><br>chain = (<br>    &#123;<br>        <span class="hljs-string">&quot;a&quot;</span>: itemgetter(<span class="hljs-string">&quot;foo&quot;</span>) | RunnableLambda(length_function),<br>        <span class="hljs-string">&quot;b&quot;</span>: &#123;<span class="hljs-string">&quot;text1&quot;</span>: itemgetter(<span class="hljs-string">&quot;foo&quot;</span>), <span class="hljs-string">&quot;text2&quot;</span>: itemgetter(<span class="hljs-string">&quot;bar&quot;</span>)&#125;<br>        | RunnableLambda(multiple_length_function),<br>    &#125;<br>    | prompt<br>    | model<br>)<br>chain.invoke(&#123;<span class="hljs-string">&quot;foo&quot;</span>: <span class="hljs-string">&quot;bar&quot;</span>, <span class="hljs-string">&quot;bar&quot;</span>: <span class="hljs-string">&quot;gah&quot;</span>&#125;)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">AIMessage(<span class="hljs-attribute">content</span>=<span class="hljs-string">&#x27;3 + 9 is equal to 12.&#x27;</span>, response_metadata=&#123;<span class="hljs-string">&#x27;token_usage&#x27;</span>: &#123;<span class="hljs-string">&#x27;completion_tokens&#x27;</span>: 10, <span class="hljs-string">&#x27;prompt_tokens&#x27;</span>: 14, <span class="hljs-string">&#x27;total_tokens&#x27;</span>: 24&#125;, <span class="hljs-string">&#x27;model_name&#x27;</span>: <span class="hljs-string">&#x27;gpt-3.5-turbo&#x27;</span>, <span class="hljs-string">&#x27;system_fingerprint&#x27;</span>: <span class="hljs-string">&#x27;fp_3b956da36b&#x27;</span>, <span class="hljs-string">&#x27;finish_reason&#x27;</span>: <span class="hljs-string">&#x27;stop&#x27;</span>, <span class="hljs-string">&#x27;logprobs&#x27;</span>: None&#125;, <span class="hljs-attribute">id</span>=<span class="hljs-string">&#x27;run-08d1e13f-1fe1-486a-8d76-2c24b08ff1e9-0&#x27;</span>)<br></code></pre></td></tr></table></figure>
+<p>LangSmith流程展现:</p>
+<p><img src="/images/RunnableLambda.png" srcset="/img/loading.gif" lazyload /></p>
+<h3 id="runnablebranch">3.4 RunnableBranch</h3>
+<p>为 <code>Runnable Sequence</code>
+提供条件路由，路由允许您创建非确定性的
+Chain，其中上一步的输出定义了下一步的路由方向，路由会依次匹配条件直至选择默认
+Runnable 返回</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_core.output_parsers <span class="hljs-keyword">import</span> StrOutputParser<br><span class="hljs-keyword">from</span> langchain_core.prompts <span class="hljs-keyword">import</span> PromptTemplate<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">from</span> langchain_core.runnables <span class="hljs-keyword">import</span> RunnableBranch<br><br><br>chain = (<br>    PromptTemplate.from_template(<br>        <span class="hljs-string">&quot;&quot;&quot;Given the user question below, classify it as either being about `LangChain`, `Anthropic`, or `Other`.</span><br><span class="hljs-string"></span><br><span class="hljs-string">Do not respond with more than one word.</span><br><span class="hljs-string"></span><br><span class="hljs-string">&lt;question&gt;</span><br><span class="hljs-string">&#123;question&#125;</span><br><span class="hljs-string">&lt;/question&gt;</span><br><span class="hljs-string"></span><br><span class="hljs-string">Classification:&quot;&quot;&quot;</span><br>    )<br>    | ChatOpenAI(model_name=<span class="hljs-string">&quot;gpt-4-turbo&quot;</span>)<br>    | StrOutputParser()<br>)<br><br>langchain_chain = PromptTemplate.from_template(<br>    <span class="hljs-string">&quot;&quot;&quot;You are an expert in langchain. \</span><br><span class="hljs-string">Always answer questions starting with &quot;As Harrison Chase told me&quot;. \</span><br><span class="hljs-string">Respond to the following question:</span><br><span class="hljs-string"></span><br><span class="hljs-string">Question: &#123;question&#125;</span><br><span class="hljs-string">Answer:&quot;&quot;&quot;</span><br>) | ChatOpenAI(model_name=<span class="hljs-string">&quot;gpt-4-turbo&quot;</span>)<br><br>anthropic_chain = PromptTemplate.from_template(<br>    <span class="hljs-string">&quot;&quot;&quot;You are an expert in anthropic. \</span><br><span class="hljs-string">Always answer questions starting with &quot;As Dario Amodei told me&quot;. \</span><br><span class="hljs-string">Respond to the following question:</span><br><span class="hljs-string"></span><br><span class="hljs-string">Question: &#123;question&#125;</span><br><span class="hljs-string">Answer:&quot;&quot;&quot;</span><br>) | ChatOpenAI(model_name=<span class="hljs-string">&quot;gpt-4-turbo&quot;</span>)<br><br>general_chain = PromptTemplate.from_template(<br>    <span class="hljs-string">&quot;&quot;&quot;Respond to the following question:</span><br><span class="hljs-string"></span><br><span class="hljs-string">Question: &#123;question&#125;</span><br><span class="hljs-string">Answer:&quot;&quot;&quot;</span><br>) | ChatOpenAI(model_name=<span class="hljs-string">&quot;gpt-4-turbo&quot;</span>)<br><br><br><br>branch = RunnableBranch(<br>    (<span class="hljs-keyword">lambda</span> x: <span class="hljs-string">&quot;anthropic&quot;</span> <span class="hljs-keyword">in</span> x[<span class="hljs-string">&quot;topic&quot;</span>].lower(), anthropic_chain),<br>    (<span class="hljs-keyword">lambda</span> x: <span class="hljs-string">&quot;langchain&quot;</span> <span class="hljs-keyword">in</span> x[<span class="hljs-string">&quot;topic&quot;</span>].lower(), langchain_chain),<br>    general_chain,<br>)<br><br>full_chain = &#123;<span class="hljs-string">&quot;topic&quot;</span>: chain, <span class="hljs-string">&quot;question&quot;</span>: <span class="hljs-keyword">lambda</span> x: x[<span class="hljs-string">&quot;question&quot;</span>]&#125; | branch<br>full_chain.invoke(&#123;<span class="hljs-string">&quot;question&quot;</span>: <span class="hljs-string">&quot;how do I use LangChain?&quot;</span>&#125;)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-5f731bcd" role="button" aria-expanded="false" aria-controls="collapse-5f731bcd">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-5f731bcd">
+        <div class="fold-content">
+          <figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs markdown">As Harrison Chase told me, using LangChain effectively involves understanding its capabilities as a language model interaction tool. Here’s a step-by-step guide on how to get started:<br><br><span class="hljs-bullet">1.</span> <span class="hljs-strong">**Installation**</span>: First, you need to install the LangChain library. This can typically be done via pip:<br>   <span class="hljs-code">```bash</span><br><span class="hljs-code">   pip install langchain</span><br><span class="hljs-code">   ```</span><br><br><span class="hljs-bullet">2.</span> <span class="hljs-strong">**Setup**</span>: After installation, you should familiarize yourself with the key components of LangChain, such as the LLM (Large Language Models), Chains (which are sequences of operations involving language models), and Adapters (which allow LangChain to interact with external systems).<br><br><span class="hljs-bullet">3.</span> <span class="hljs-strong">**Creating a Chain**</span>: Begin by creating a simple chain. This involves defining what you want the language model to do. For example, you can create a chain that takes a user&#x27;s input, processes it through a language model, and then outputs a response.<br><br><span class="hljs-bullet">4.</span> <span class="hljs-strong">**Testing and Iteration**</span>: Test your chain to see how it performs. Based on the output, you may need to tweak your setup or the sequence of operations in your chain to improve the interaction or the quality of the responses.<br><br><span class="hljs-bullet">5.</span> <span class="hljs-strong">**Integration**</span>: Finally, integrate LangChain with your application. This might involve setting up interfaces for users to interact with or automating certain tasks using LangChain in the backend.<br><br>By following these steps, you can effectively utilize LangChain to enhance language model interactions in your projects or applications.<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<p>LangSmith流程展现:</p>
+<p><img src="/images/RunableBranch.png" srcset="/img/loading.gif" lazyload /></p>
+<h3 id="tool-也是一种-runnable-对象">3.5 Tool 也是一种 Runnable
+对象</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_core.tools <span class="hljs-keyword">import</span> tool<br><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">Union</span><br><span class="hljs-keyword">from</span> operator <span class="hljs-keyword">import</span> itemgetter<br><span class="hljs-keyword">from</span> langchain_core.runnables <span class="hljs-keyword">import</span> (<br>    Runnable,<br>    RunnableLambda,<br>    RunnableMap,<br>    RunnablePassthrough,<br>)<br><span class="hljs-keyword">import</span> json<br><br><br><span class="hljs-meta">@tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">multiply</span>(<span class="hljs-params">first_int: <span class="hljs-built_in">int</span>, second_int: <span class="hljs-built_in">int</span></span>) -&gt; <span class="hljs-built_in">int</span>:<br>    <span class="hljs-string">&quot;&quot;&quot;两个整数相乘&quot;&quot;&quot;</span><br>    <span class="hljs-keyword">return</span> first_int * second_int<br><br><br><span class="hljs-meta">@tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">add</span>(<span class="hljs-params">first_int: <span class="hljs-built_in">int</span>, second_int: <span class="hljs-built_in">int</span></span>) -&gt; <span class="hljs-built_in">int</span>:<br>    <span class="hljs-string">&quot;Add two integers.&quot;</span><br>    <span class="hljs-keyword">return</span> first_int + second_int<br><br><span class="hljs-meta">@tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">exponentiate</span>(<span class="hljs-params">base: <span class="hljs-built_in">int</span>, exponent: <span class="hljs-built_in">int</span></span>) -&gt; <span class="hljs-built_in">int</span>:<br>    <span class="hljs-string">&quot;Exponentiate the base to the exponent power.&quot;</span><br>    <span class="hljs-keyword">return</span> base**exponent<br><br>tools = [multiply, add, exponentiate]<br><br><span class="hljs-comment"># 名称到函数的映射</span><br>tool_map = &#123;tool.name: tool <span class="hljs-keyword">for</span> tool <span class="hljs-keyword">in</span> tools&#125;<br><br>llm = ChatOpenAI()<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">call_tool</span>(<span class="hljs-params">tool_invocation: <span class="hljs-built_in">dict</span></span>) -&gt; <span class="hljs-type">Union</span>[<span class="hljs-built_in">str</span>, Runnable]:<br>    <span class="hljs-string">&quot;&quot;&quot;Function for dynamically constructing the end of the chain based on the model-selected tool.&quot;&quot;&quot;</span><br>    tool = tool_map[tool_invocation[<span class="hljs-string">&quot;type&quot;</span>]]<br>    <span class="hljs-keyword">return</span> RunnablePassthrough.assign(<br>        output=itemgetter(<span class="hljs-string">&quot;args&quot;</span>) | tool<br>    )<br><br><br><span class="hljs-comment"># .map() allows us to apply a function to a list of inputs.</span><br>call_tool_list = RunnableLambda(call_tool).<span class="hljs-built_in">map</span>()<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">route</span>(<span class="hljs-params">response</span>):<br>    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(response[<span class="hljs-string">&quot;functions&quot;</span>]) &gt; <span class="hljs-number">0</span>:<br>        <span class="hljs-keyword">return</span> response[<span class="hljs-string">&quot;functions&quot;</span>]<br>    <span class="hljs-keyword">else</span>:<br>        <span class="hljs-keyword">return</span> response[<span class="hljs-string">&quot;text&quot;</span>]<br><br><br>chain = llm.bind_tools(tools) | &#123;<br>    <span class="hljs-string">&quot;functions&quot;</span>: JsonOutputToolsParser() | call_tool_list,<br>    <span class="hljs-string">&quot;text&quot;</span>: StrOutputParser()<br>&#125; | RunnableLambda(route)<br><br>result = chain.invoke(<span class="hljs-string">&quot;1024的平方是多少&quot;</span>)<br><span class="hljs-built_in">print</span>(result)<br><br>result = chain.invoke(<span class="hljs-string">&quot;你好&quot;</span>)<br><span class="hljs-built_in">print</span>(result)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-attr">[&#123;<span class="hljs-string">&#x27;args&#x27;</span>: &#123;<span class="hljs-string">&#x27;base&#x27;</span>: 1024, <span class="hljs-string">&#x27;exponent&#x27;</span>: 2&#125;, <span class="hljs-string">&#x27;type&#x27;</span>: <span class="hljs-string">&#x27;exponentiate&#x27;</span>, <span class="hljs-string">&#x27;output&#x27;</span>: 1048576&#125;]</span><br>你好！有什么我可以帮助你的吗？<br></code></pre></td></tr></table></figure>
+<p>LangSmith流程展现:</p>
+<p><img src="/images/RunnableTool.png" srcset="/img/loading.gif" lazyload /></p>
+<h3 id="在-runnable-sequence-中引入-memory">3.6 在 Runnable Sequence
+中引入 Memory</h3>
+<p>Memory 可以被添加到任何 Runnable Sequence
+中，本质和就是生成上下文文本填充到提示词中</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_core.prompts <span class="hljs-keyword">import</span> ChatPromptTemplate, MessagesPlaceholder<br><span class="hljs-keyword">from</span> langchain_openai.chat_models <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">from</span> langchain_community.chat_message_histories <span class="hljs-keyword">import</span> ChatMessageHistory<br><span class="hljs-keyword">from</span> langchain_core.chat_history <span class="hljs-keyword">import</span> BaseChatMessageHistory<br><span class="hljs-keyword">from</span> langchain_core.runnables.history <span class="hljs-keyword">import</span> RunnableWithMessageHistory<br><br><br>model = ChatOpenAI()<br>prompt = ChatPromptTemplate.from_messages(<br>    [<br>        (<br>            <span class="hljs-string">&quot;system&quot;</span>,<br>            <span class="hljs-string">&quot;You&#x27;re an assistant who&#x27;s good at &#123;ability&#125;. Respond in 20 words or fewer&quot;</span>,<br>        ),<br>        MessagesPlaceholder(variable_name=<span class="hljs-string">&quot;history&quot;</span>),<br>        (<span class="hljs-string">&quot;human&quot;</span>, <span class="hljs-string">&quot;&#123;input&#125;&quot;</span>),<br>    ]<br>)<br>runnable = prompt | model<br><br><br>store = &#123;&#125;<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_session_history</span>(<span class="hljs-params">session_id: <span class="hljs-built_in">str</span></span>) -&gt; BaseChatMessageHistory:<br>    <span class="hljs-keyword">if</span> session_id <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> store:<br>        store[session_id] = ChatMessageHistory()<br>    <span class="hljs-keyword">return</span> store[session_id]<br><br><br>with_message_history = RunnableWithMessageHistory(<br>    runnable,<br>    get_session_history,<br>    input_messages_key=<span class="hljs-string">&quot;input&quot;</span>,<br>    history_messages_key=<span class="hljs-string">&quot;history&quot;</span>,<br>)<br><br>result = with_message_history.invoke(<br>    &#123;<span class="hljs-string">&quot;ability&quot;</span>: <span class="hljs-string">&quot;math&quot;</span>, <span class="hljs-string">&quot;input&quot;</span>: <span class="hljs-string">&quot;What does cosine mean?&quot;</span>&#125;,<br>    config=&#123;<span class="hljs-string">&quot;configurable&quot;</span>: &#123;<span class="hljs-string">&quot;session_id&quot;</span>: <span class="hljs-string">&quot;abc123&quot;</span>&#125;&#125;,<br>)<br><br>with_message_history.invoke(<br>    &#123;<span class="hljs-string">&quot;ability&quot;</span>: <span class="hljs-string">&quot;math&quot;</span>, <span class="hljs-string">&quot;input&quot;</span>: <span class="hljs-string">&quot;What?&quot;</span>&#125;,<br>    config=&#123;<span class="hljs-string">&quot;configurable&quot;</span>: &#123;<span class="hljs-string">&quot;session_id&quot;</span>: <span class="hljs-string">&quot;abc123&quot;</span>&#125;&#125;,<br>)<br><br><span class="hljs-built_in">print</span>(get_session_history(<span class="hljs-string">&quot;abc123&quot;</span>))<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs vbnet"><span class="hljs-symbol">Human:</span> What does cosine mean?<br><span class="hljs-symbol">AI:</span> Cosine <span class="hljs-built_in">is</span> a trigonometric <span class="hljs-keyword">function</span> that gives the ratio <span class="hljs-keyword">of</span> the adjacent side <span class="hljs-keyword">to</span> the hypotenuse <span class="hljs-keyword">in</span> a right triangle.<br><span class="hljs-symbol">Human:</span> What?<br><span class="hljs-symbol">AI:</span> Cosine <span class="hljs-built_in">is</span> a way <span class="hljs-keyword">to</span> relate the angles <span class="hljs-built_in">and</span> sides <span class="hljs-keyword">of</span> a right triangle <span class="hljs-keyword">using</span> ratios.<br></code></pre></td></tr></table></figure>
+<p>LangSmith流程展现:</p>
+<p><img src="/images/RunnableWithMemory.png" srcset="/img/loading.gif" lazyload /></p>
+<h3 id="runnable-的-fallback-机制">3.7 <code>Runnable</code> 的
+<code>Fallback</code> 机制</h3>
+<p><code>Fallback</code>
+机制可以提供优雅的异常处理，通过“以次充优”的方式尽可能保障链路执行继续执行，<code>Fallback</code>不仅可以支撑
+<code>Runnable</code> 对象，还可以直接 <code>Fallback</code> 整个
+<code>Runnable Sequence</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">from</span> langchain_core.output_parsers <span class="hljs-keyword">import</span> StrOutputParser<br><br><span class="hljs-keyword">from</span> langchain_community.chat_models <span class="hljs-keyword">import</span> ChatTongyi<br><br>Tongyi_chat = ChatTongyi()<br><br>model = ChatOpenAI(model=<span class="hljs-string">&quot;fake-model&quot;</span>,max_retries=<span class="hljs-number">0</span>)<br><br>badChain = model | StrOutputParser()<br>goodChain = Tongyi_chat | StrOutputParser()<br><br>chain = badChain.with_fallbacks([goodChain])<br><br><span class="hljs-built_in">print</span>(chain.invoke(<span class="hljs-string">&quot;你是谁&quot;</span>))<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">我是通义千问，由阿里云开发的AI助手。我被设计用来回答各种问题、提供信息和与用户进行对话。有什么我可以帮助你的吗？<br></code></pre></td></tr></table></figure>
+<p>LangSmith流程展现:</p>
+<p><img src="/images/RunnableFallback.png" srcset="/img/loading.gif" lazyload /></p>
+<p>更多例子：<a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/expression_language/why/">https://python.langchain.com/docs/expression_language/why/</a></p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/datawhalechina/prompt-engineering-for-developers">datawhalechina/prompt-engineering-for-developers:
+吴恩达大模型系列课程中文版</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/get_started/introduction">LangChain官方python文档</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://nanonets.com/blog/langchain/#langchain-expression-language">A
+Complete LangChain Guide</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://space.bilibili.com/28357052/channel/collectiondetail?sid=1611560">LangChain
+架构解析和应用开发实践分享</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/webup/agi-talks/tree/master">webup/agi-talks
+AGI 内外部分享材料合集</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com.cn/docs/">LangChain 中文文档
+v0.1.7</a></li>
+</ul>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1"
+class="footnote-text"><span><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1214y1X7Aq"
+class="uri">https://www.bilibili.com/video/BV1214y1X7Aq</a>
+<a href="#fnref:1" rev="footnote" class="footnote-backref">
+↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2"
+class="footnote-text"><span><a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv25953108/"
+class="uri">https://www.bilibili.com/read/cv25953108/</a>
+<a href="#fnref:2" rev="footnote" class="footnote-backref">
+↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LangChain/" class="category-chain-item">LangChain</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#LLM学习笔记</a>
+      
+        <a href="/tags/LangChain/" class="print-no-link">#LangChain</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LangChain(五)——Chanis</div>
+      <div>https://mztchaoqun.com.cn/posts/D29_LangChain_Chains/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年7月22日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D30_LangChain_Agents/" title="LangChain(六)——Agents">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LangChain(六)——Agents</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D28_LangChain_Memory/" title="LangChain(四)——Memory">
+                        <span class="hidden-mobile">LangChain(四)——Memory</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

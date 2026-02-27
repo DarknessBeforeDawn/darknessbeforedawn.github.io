@@ -1,0 +1,1183 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、简介 英伟达发布了一个全新的混合架构语言模型系列，Jet-Nemotron。Jet-Nemotron系列有Jet-Nemotron-2B和Jet-Nemotron-4B大小。英伟达表示Jet-Nemotron系列「小模型」性能超越了Qwen3、Qwen2.5、Gemma3和 Llama3.2等当前最先进的开源全注意力语言模型。  同时实现了显著的效率提升，在H100 GPU上生成吞吐量最高可提">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jet-Nemotron：高效语言模型与后神经网络架构搜索">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D87_Jet-Nemotron/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、简介 英伟达发布了一个全新的混合架构语言模型系列，Jet-Nemotron。Jet-Nemotron系列有Jet-Nemotron-2B和Jet-Nemotron-4B大小。英伟达表示Jet-Nemotron系列「小模型」性能超越了Qwen3、Qwen2.5、Gemma3和 Llama3.2等当前最先进的开源全注意力语言模型。  同时实现了显著的效率提升，在H100 GPU上生成吞吐量最高可提">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/postnas-roadmap.png">
+<meta property="article:published_time" content="2025-09-30T08:48:13.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.281Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="JetBlock">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="PostNAS">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/postnas-roadmap.png">
+  
+  
+  
+  <title>Jet-Nemotron：高效语言模型与后神经网络架构搜索 - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Jet-Nemotron：高效语言模型与后神经网络架构搜索"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-09-30 16:48" pubdate>
+          2025年9月30日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          47 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Jet-Nemotron：高效语言模型与后神经网络架构搜索</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一简介">一、简介</h2>
+<p>英伟达发布了一个全新的混合架构语言模型系列，Jet-Nemotron。Jet-Nemotron系列有Jet-Nemotron-2B和Jet-Nemotron-4B大小。英伟达表示Jet-Nemotron系列「小模型」性能超越了Qwen3、Qwen2.5、Gemma3和
+Llama3.2等当前最先进的开源全注意力语言模型。</p>
+<p><img src="/images/Nemotron.jpeg" srcset="/img/loading.gif" lazyload></p>
+<p>同时实现了显著的效率提升，在H100
+GPU上生成吞吐量最高可提升53.6倍。在右上角的雷达图中，可以看到Jet-Nemotron简直就是六边形战士。Jet-Nemotron-4B模型在六个维度MMLU-pro、Math、Retrieval、Commonsense、Code、Long几乎都拉满。</p>
+<p><img src="/images/Nemotron1.jpeg" srcset="/img/loading.gif" lazyload></p>
+<p>在预填充和解码阶段，Jet-Nemotron-2B在上下文越增加的情况下，相对Qwen
+3-1.7B优势越夸张。</p>
+<ul>
+<li>同等硬件与评测设置下，Jet-Nemotron在长上下文的场景里，把吞吐做到了数量级提升（解码可达50倍提升）。</li>
+<li>同时在常识/数学/代码/检索/长上下文等维度的准确率不降反升。</li>
+</ul>
+<p>相较传统全注意力小模型又快又准。9B大小的NVIDIA Nemotron Nano
+2模型。在复杂推理基准测试中实现了和Qwen3-8B相当或更优的准确率，并且吞吐量最高可达其6倍。</p>
+<p><img src="/images/Nemotron2.jpeg" srcset="/img/loading.gif" lazyload></p>
+<p>Jet-Nemotron有两项核心创新。</p>
+<ul>
+<li><strong>后神经网络架构搜索（Post Neural Architecture
+Search，PostNAS）</strong>，这是一个高效的训练后架构探索与适应流程，适用于任意预训练的Transformer模型；</li>
+<li><strong>JetBlock</strong>，一种新型线性注意力模块，其性能显著优于先前的设计，如Mamba2。</li>
+</ul>
+<h2 id="二neural-architecture-searchnas">二、Neural Architecture
+Search(NAS)</h2>
+<p>NAS是自动化设计神经网络拓扑结构的过程，旨在实现特定任务的最佳性能。其目标是利用有限的资源和最少的人工干预来设计架构。</p>
+<p>NAS 的核心是一种搜索算法。简单来说，NAS
+的目的就是希望可以有一套演算法或是一个框架能够自动的根据我们的需求找到最好的
+neural architecture ，而我们的搜索目标有可能会是根据
+performance，或是根据硬体资源限制(hardware constraints) 来进行搜索。</p>
+<p><img src="/images/NAS.webp" srcset="/img/loading.gif" lazyload></p>
+<p>而 NAS 可以分成三个大部分，也就是 search space, search strategy 和
+performance estimation strategy。</p>
+<ul>
+<li><strong>搜索空间(search space)</strong>：也就是我们在选择 neural
+architecture 时，我们所可以调整的所有选择。举例来说，kerne size, channel
+size, convolution type 以及 layer number 等等。</li>
+<li><strong>搜索策略(Search Strategy)</strong>：在给定的 search space
+当中，我们要透过什么方式来搜索出最好的 neural
+architecture。举例来说，在搜索 hyperparameter 时最为大家熟悉的 grid
+search 以及 random search，或是 evolution algorithm (进化算法)
+等等。</li>
+<li><strong>评估策略(Performance Estimation Strategy)</strong>：我们从
+search space 当中挑选出了一个 neural architecture，我们如何评估这个
+neural architecture 是好还是坏的方式。举例来说，我们可以实际的训练每个
+neural architecture 来获得实际的 top-1 accuracy，我们也可以训练少量的
+neural architecture，并且将实际训练好的数据，用来训练一个额外的 accuracy
+predictor。</li>
+</ul>
+<h3 id="random-search">2.1 Random search</h3>
+<p>最简单的方法显然是随机搜索，它通常被用作基准。在这里，一个有效的架构是随机选择的，不涉及任何学习。</p>
+<h3 id="reinforcement-learning-nas">2.2 Reinforcement Learning NAS</h3>
+<p>对于 NAS 这个 task 来说，其实最直觉的方法就是我不断的从 search space
+当中取出不同的 neural architecture ，并且实际的训练之后来获得真正的
+performance，借着不断的重复这个动作，当我穷尽整个 search space
+时，我理所当然的就可以得到这个 search space 当中最好的那个 neural
+architecture。</p>
+<p><img src="/images/NAS1.webp" srcset="/img/loading.gif" lazyload></p>
+<p>所以最早的 NAS 是基于 reinforcement learning
+的方式来进行搜索，也就是透过一个 controller (agent) 不断的挑出 neural
+architecture，并且透过 trainer (environment) 实际的进行训练，而所得到的
+performance (eg, top-1 accuracy, FLOPs or latency) 会作为 reward
+进而更新 controller，使得 controller 可以学习要如何才可以 sample
+出可以让 reward 最好的 neural architecture。</p>
+<p>NAS早期(<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1611.01578">NAS-RL</a>,<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1707.07012">NASNet</a>)使用循环神经网络 (
+RNN ) 作为策略网络（控制器）。RNN
+负责生成候选架构。然后在验证集上训练和评估该架构。为了最大化预期的验证准确率，RNN
+控制器的参数进行了优化。如何实现？使用策略梯度技术，例如强化学习
+(REINFORCE) 和近端策略优化 (PPO) 。</p>
+<p><img src="/images/rnn-controller.png" srcset="/img/loading.gif" lazyload></p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1802.03268">ENAS</a>使用了一个通过策略梯度训练的
+RNN
+控制器。值得注意的是，它是首批在架构之间有效共享参数的研究之一。其直观感受是，架构可以被视为一个大型图的一部分，这种方法已被广泛使用。ENAS
+训练分为两个交替步骤：</p>
+<ul>
+<li>使用 REINFORCE 训练 RNN 控制器</li>
+<li>使用典型的梯度下降形式训练共享参数</li>
+</ul>
+<p>另一项成功的尝试是<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1611.02167">MetaQNN</a>。</p>
+<h3 id="global-search-space">2.3 Global search space</h3>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1611.01578">NAS-RL</a>会寻找所有可能的操作组合，从而产生巨大且非常昂贵的搜索空间。它尝试将各种操作组合起来，以形成链式结构
+（又称顺序结构）的网络。搜索空间的参数化方式包括：</p>
+<ul>
+<li>层数</li>
+<li>每个操作的类型</li>
+<li>每个操作的超参数(例如，kernel size，filters数量)</li>
+</ul>
+<p>后来， 跳跃连接(<a target="_blank" rel="noopener" href="https://theaisummer.com/skip-connections/">skip
+connections</a>)也被添加到组合中，从而允许多分支架构，例如 ResNet 或
+DenseNet 等拓扑。</p>
+<h3 id="modular-search-space">2.4 Modular search space</h3>
+<p>为了解决全局空间问题，提出了基于单元的方法，以“模块化”搜索空间。也就是说，混合不同的层块（称为模块）。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1707.07012">NASNet</a>
+是该类别中最流行的算法。NASNet
+仅学习两种模块或“单元”：执行特征提取的常规单元和对输入进行下采样的缩减单元。
+最终架构是通过以预定义的方式堆叠这些单元来构建的。</p>
+<figure>
+<img src="/images/modular-search-space.png" srcset="/img/loading.gif" lazyload alt="左图：包含两个单元的搜索空间示例。右图：NAS找到的普通单元最佳架构示例">
+<figcaption aria-hidden="true">左图：包含两个单元的搜索空间示例。右图：NAS找到的普通单元最佳架构示例</figcaption>
+</figure>
+<p>基于单元的方法在其他文献（例如<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1802.03268">ENAS</a>）
+中得到了广泛的应用。但通过单元进行模块化并非唯一的选择。<a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content_ICCV_2019/papers/Cui_Fast_and_Practical_Neural_Architecture_Search_ICCV_2019_paper.pdf">FPNAS</a>通过交替优化某些块并保持其他块不变来强调块的多样性。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1812.03443">FBNet</a>采用逐层搜索空间。网络中每个可搜索层都可以从逐层搜索空间中选择不同的块。</p>
+<h3 id="evolutionary-algorithms">2.5 Evolutionary algorithms</h3>
+<p>遗传算法 (GA)
+是优化网络架构的另一种方法。进化算法从模型种群开始。在每个步骤中，一些模型会被采样并通过应用突变进行“复制”，从而生成后代。突变可以是局部操作，例如添加网络层、修改超参数等。训练完成后，这些模型会进行评估并重新加入种群。该过程不断重复，直到满足特定条件。</p>
+<figure>
+<img src="/images/nas-ea.png" srcset="/img/loading.gif" lazyload alt="NAS with evolutionary algorithms">
+<figcaption aria-hidden="true">NAS with evolutionary
+algorithms</figcaption>
+</figure>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1703.01513">GeNet</a>提出了一种编码方法，将每个架构表示为固定长度的二进制字符串，该方法将从标准遗传算法中使用。</p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1802.01548">AmoebaNet</a>使用<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Tournament_selection">锦标赛选择进化算法</a>
+，或者更确切地说是其一种修改版本，称为正则化进化。不同之处在于，它还会考虑每个模型的“年龄”（即
+GA 的步长），并优先考虑较新的模型。请注意，这里也使用了 NASNet
+的搜索空间。</p>
+<h3 id="sequential-model-based-optimization">2.6 Sequential model-based
+optimization</h3>
+<p>在基于模型的顺序优化中，我们可以将 NAS
+视为一个顺序过程，该过程会迭代构建越来越复杂的网络。代理模型会评估所有候选模块（或单元），并选择一些有潜力的候选模块。然后，它会在验证集上评估生成的网络的性能，并根据该性能进行自我更新。通过迭代，模型逐渐扩展并达到所需的性能。</p>
+<p><img src="/images/nas-sequential.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="progressive-nas">2.6.1 <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1712.00559">Progressive NAS</a></h4>
+<p>Progressive NAS
+最主要的概念便是一层一层渐进式的方式决定在每一层要用什么样的选择。</p>
+<p><img src="/images/NAS2.webp" srcset="/img/loading.gif" lazyload></p>
+<p>而由于要决定每一层要用什么样的架构，我们首先需要知道所有选择的好坏，而实际的将所有种可能的架构
+training，并根据结果来决定好坏会花费许多时间，因此会额外的训练一个
+controller，而 <strong>controller
+的目的就是预测当前这样的组合的准确率会是多少</strong>。</p>
+<p>因此 Progressive NAS 主要可以分成几个大步骤：</p>
+<ul>
+<li>从 l-layers 的 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0;" xmlns="http://www.w3.org/2000/svg" width="2.009ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 888 683"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D441" d="M234 637Q231 637 226 637Q201 637 196 638T191 649Q191 676 202 682Q204 683 299 683Q376 683 387 683T401 677Q612 181 616 168L670 381Q723 592 723 606Q723 633 659 637Q635 637 635 648Q635 650 637 660Q641 676 643 679T653 683Q656 683 684 682T767 680Q817 680 843 681T873 682Q888 682 888 672Q888 650 880 642Q878 637 858 637Q787 633 769 597L620 7Q618 0 599 0Q585 0 582 2Q579 5 453 305L326 604L261 344Q196 88 196 79Q201 46 268 46H278Q284 41 284 38T282 19Q278 6 272 0H259Q228 2 151 2Q123 2 100 2T63 2T46 1Q31 1 31 10Q31 14 34 26T39 40Q41 46 62 46Q130 49 150 85Q154 91 221 362L289 634Q287 635 234 637Z"></path></g></g></g></svg></mjx-container></span>
+个可能的网路架构中，透过 controller 预测结果，并挑选出最好的 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0;" xmlns="http://www.w3.org/2000/svg" width="2.011ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 889 683"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D43E" d="M285 628Q285 635 228 637Q205 637 198 638T191 647Q191 649 193 661Q199 681 203 682Q205 683 214 683H219Q260 681 355 681Q389 681 418 681T463 682T483 682Q500 682 500 674Q500 669 497 660Q496 658 496 654T495 648T493 644T490 641T486 639T479 638T470 637T456 637Q416 636 405 634T387 623L306 305Q307 305 490 449T678 597Q692 611 692 620Q692 635 667 637Q651 637 651 648Q651 650 654 662T659 677Q662 682 676 682Q680 682 711 681T791 680Q814 680 839 681T869 682Q889 682 889 672Q889 650 881 642Q878 637 862 637Q787 632 726 586Q710 576 656 534T556 455L509 418L518 396Q527 374 546 329T581 244Q656 67 661 61Q663 59 666 57Q680 47 717 46H738Q744 38 744 37T741 19Q737 6 731 0H720Q680 3 625 3Q503 3 488 0H478Q472 6 472 9T474 27Q478 40 480 43T491 46H494Q544 46 544 71Q544 75 517 141T485 216L427 354L359 301L291 248L268 155Q245 63 245 58Q245 51 253 49T303 46H334Q340 37 340 35Q340 19 333 5Q328 0 317 0Q314 0 280 1T180 2Q118 2 85 2T49 1Q31 1 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q147 65 216 339T285 628Z"></path></g></g></g></svg></mjx-container></span> 个网路架构。</li>
+<li>将 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0;" xmlns="http://www.w3.org/2000/svg" width="2.011ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 889 683"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D43E" d="M285 628Q285 635 228 637Q205 637 198 638T191 647Q191 649 193 661Q199 681 203 682Q205 683 214 683H219Q260 681 355 681Q389 681 418 681T463 682T483 682Q500 682 500 674Q500 669 497 660Q496 658 496 654T495 648T493 644T490 641T486 639T479 638T470 637T456 637Q416 636 405 634T387 623L306 305Q307 305 490 449T678 597Q692 611 692 620Q692 635 667 637Q651 637 651 648Q651 650 654 662T659 677Q662 682 676 682Q680 682 711 681T791 680Q814 680 839 681T869 682Q889 682 889 672Q889 650 881 642Q878 637 862 637Q787 632 726 586Q710 576 656 534T556 455L509 418L518 396Q527 374 546 329T581 244Q656 67 661 61Q663 59 666 57Q680 47 717 46H738Q744 38 744 37T741 19Q737 6 731 0H720Q680 3 625 3Q503 3 488 0H478Q472 6 472 9T474 27Q478 40 480 43T491 46H494Q544 46 544 71Q544 75 517 141T485 216L427 354L359 301L291 248L268 155Q245 63 245 58Q245 51 253 49T303 46H334Q340 37 340 35Q340 19 333 5Q328 0 317 0Q314 0 280 1T180 2Q118 2 85 2T49 1Q31 1 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q147 65 216 339T285 628Z"></path></g></g></g></svg></mjx-container></span>
+个网路架构实际的训练并得到他们间的好坏，并利用这 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0;" xmlns="http://www.w3.org/2000/svg" width="2.011ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 889 683"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D43E" d="M285 628Q285 635 228 637Q205 637 198 638T191 647Q191 649 193 661Q199 681 203 682Q205 683 214 683H219Q260 681 355 681Q389 681 418 681T463 682T483 682Q500 682 500 674Q500 669 497 660Q496 658 496 654T495 648T493 644T490 641T486 639T479 638T470 637T456 637Q416 636 405 634T387 623L306 305Q307 305 490 449T678 597Q692 611 692 620Q692 635 667 637Q651 637 651 648Q651 650 654 662T659 677Q662 682 676 682Q680 682 711 681T791 680Q814 680 839 681T869 682Q889 682 889 672Q889 650 881 642Q878 637 862 637Q787 632 726 586Q710 576 656 534T556 455L509 418L518 396Q527 374 546 329T581 244Q656 67 661 61Q663 59 666 57Q680 47 717 46H738Q744 38 744 37T741 19Q737 6 731 0H720Q680 3 625 3Q503 3 488 0H478Q472 6 472 9T474 27Q478 40 480 43T491 46H494Q544 46 544 71Q544 75 517 141T485 216L427 354L359 301L291 248L268 155Q245 63 245 58Q245 51 253 49T303 46H334Q340 37 340 35Q340 19 333 5Q328 0 317 0Q314 0 280 1T180 2Q118 2 85 2T49 1Q31 1 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q147 65 216 339T285 628Z"></path></g></g></g></svg></mjx-container></span> 个结果更新 controller
+，使其可以预测的更加准确，将最好的网路架构接上下一层的所有可能选择，建构出
+l+1 layers 的 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0;" xmlns="http://www.w3.org/2000/svg" width="2.009ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 888 683"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D441" d="M234 637Q231 637 226 637Q201 637 196 638T191 649Q191 676 202 682Q204 683 299 683Q376 683 387 683T401 677Q612 181 616 168L670 381Q723 592 723 606Q723 633 659 637Q635 637 635 648Q635 650 637 660Q641 676 643 679T653 683Q656 683 684 682T767 680Q817 680 843 681T873 682Q888 682 888 672Q888 650 880 642Q878 637 858 637Q787 633 769 597L620 7Q618 0 599 0Q585 0 582 2Q579 5 453 305L326 604L261 344Q196 88 196 79Q201 46 268 46H278Q284 41 284 38T282 19Q278 6 272 0H259Q228 2 151 2Q123 2 100 2T63 2T46 1Q31 1 31 10Q31 14 34 26T39 40Q41 46 62 46Q130 49 150 85Q154 91 221 362L289 634Q287 635 234 637Z"></path></g></g></g></svg></mjx-container></span>个架构，并回到步骤
+1。</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1806.08198.pdf">DPP-Net</a>采用与 PNAS
+非常类似的方法，但它也考虑了执行搜索的设备。给定执行搜索的设备，并根据其内存大小和类似的硬件特性设置约束。不满足约束的模型要么从候选列表中移除，要么使用<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Pareto_efficiency">Paretto
+optimality</a>。</p>
+<p><img src="/images/dpp-net.png" srcset="/img/loading.gif" lazyload></p>
+<p>DPP-Net
+搜索策略说明：（1）训练和变异，（2）更新和推理，以及（3）模型选择</p>
+<h3 id="one-shot-nas">2.7 <a target="_blank" rel="noopener" href="https://medium.com/@e0928021388/build-the-baseline-one-shot-neural-architecture-search-by-osnaslib-ad789e65c822">One-shot
+NAS</a></h3>
+<p>为了减少过去 NAS 所耗费的大量时间(eg, 实际训练每个 neural
+architecture 的时间)，One-shot NAS 透过将 search space 当中的所有 neural
+architectures 结合成为一个 over-parameterized 的 neural
+network，而这个巨大且错综复杂的网路又被称作为 supernet。下图为建构
+Supernet 的范例，假如在每层当中，我们总共有三种 candidate blocks
+可以选择，则在 supernet 当中每层里面便会同时有三个不同 candidate
+blocks。</p>
+<p>而这样建构的好处在于当 supernet 训练完毕之后，透过 activate supernet
+当中不同的 candidate blocks，我们可以进而 approximate 在 search space
+当中的任何一个 neural architecture (如下图最右边的部分)。因此 one-shot
+NAS 之所以称为“one-shot” 的原因在于，我们只需要训练一个 neural network
+(supernet) ，便可以借此评估整个 search space 当中的任一个 neural
+architecture。</p>
+<p><img src="/images/OneShot.webp" srcset="/img/loading.gif" lazyload></p>
+<p>而在 One-shot NAS 当中，根据训练 supernet
+以及搜索的不同，又可以分为两种，分别为 <strong>Differentiable
+NAS</strong> 以及 <strong>Single-path NAS</strong> 。</p>
+<p>one-shot NAS</p>
+<h4 id="differentiable-nas">2.7.1 <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1806.09055">Differentiable NAS</a></h4>
+<p>Differentiable NAS (DNAS) 希望可以透过 gradient descent
+的方式来进行搜索。然而，由于 neural architectures
+本身是离散的，因此我们没有办法直接对 neural architectures
+微分并且计算梯度。因此 DNAS 使用了一个额外的可微分参数，我们称作为
+architecture parameters，目的是希望透过这个可以微分的参数来学习在 search
+space 当中好的 neural architecture 的分布。</p>
+<p>下图为 supernet 当中的某一层 layer，而 DNAS 首先对于每个 candidate
+block 皆会给予一个 architecture
+parameter，而这个值通常会是随机初始的(如图中的 0.2, 0.7, 和
+0.1)，因此对于这层 layer output 的计算方式，便会是<strong>每个 candidate
+block 本身的 output 和 architecture parameters 进行 weighted
+sum</strong> (如左图中的数学式)，透过这样的方式，我们便计算出
+architecture parameters 的梯度，并且更新，而当 architecture parameters
+更新完毕之后，便可以将之作为 “<strong>candidate blocks
+之间重要程度的依据</strong>” ，进而直接对其做 argmax 并 sample
+出搜索到的 architecture (如下图的右边)。</p>
+<p><img src="/images/DNAS.webp" srcset="/img/loading.gif" lazyload></p>
+<p>然而，以上的方式对于 DNAS
+来说有一个缺点，便是搜索时间不弹性，透过上面的图，我们可以发现，当今天我们更新完整个
+architecture parameters 之后，我们仅仅只能从 architecture parameters 中
+<strong>sample 出一组在特定硬体资源限制之下的 neural
+architecture</strong>，因此当今天我们需要搜索在 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0;" xmlns="http://www.w3.org/2000/svg" width="2.009ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 888 683"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D441" d="M234 637Q231 637 226 637Q201 637 196 638T191 649Q191 676 202 682Q204 683 299 683Q376 683 387 683T401 677Q612 181 616 168L670 381Q723 592 723 606Q723 633 659 637Q635 637 635 648Q635 650 637 660Q641 676 643 679T653 683Q656 683 684 682T767 680Q817 680 843 681T873 682Q888 682 888 672Q888 650 880 642Q878 637 858 637Q787 633 769 597L620 7Q618 0 599 0Q585 0 582 2Q579 5 453 305L326 604L261 344Q196 88 196 79Q201 46 268 46H278Q284 41 284 38T282 19Q278 6 272 0H259Q228 2 151 2Q123 2 100 2T63 2T46 1Q31 1 31 10Q31 14 34 26T39 40Q41 46 62 46Q130 49 150 85Q154 91 221 362L289 634Q287 635 234 637Z"></path></g></g></g></svg></mjx-container></span> 个不同硬体资源限制之下的 neural
+architectures 时，便需要重新训练 N 次的 architecture parameters
+同时重新训练 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0;" xmlns="http://www.w3.org/2000/svg" width="2.009ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 888 683"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D441" d="M234 637Q231 637 226 637Q201 637 196 638T191 649Q191 676 202 682Q204 683 299 683Q376 683 387 683T401 677Q612 181 616 168L670 381Q723 592 723 606Q723 633 659 637Q635 637 635 648Q635 650 637 660Q641 676 643 679T653 683Q656 683 684 682T767 680Q817 680 843 681T873 682Q888 682 888 672Q888 650 880 642Q878 637 858 637Q787 633 769 597L620 7Q618 0 599 0Q585 0 582 2Q579 5 453 305L326 604L261 344Q196 88 196 79Q201 46 268 46H278Q284 41 284 38T282 19Q278 6 272 0H259Q228 2 151 2Q123 2 100 2T63 2T46 1Q31 1 31 10Q31 14 34 26T39 40Q41 46 62 46Q130 49 150 85Q154 91 221 362L289 634Q287 635 234 637Z"></path></g></g></g></svg></mjx-container></span> 次的 supernet。</p>
+<h4 id="single-path-nas">2.7.2 Single-path NAS</h4>
+<p>而相对于 DNAS 的另外一个种类 single-path NAS，便是直接将整个 NAS
+的程序拆成两个独立的步骤，分别为: Supernet training 以及 Architecture
+searching。</p>
+<ul>
+<li><p><strong>Supernet training</strong>： 在这个阶段，每次只会从
+supernet 当中 sample 出 single path
+并且更新其对应到的参数，透过这样的方式，除了可以模拟实际在 search space
+当中离散的 neural architecture，同时也可以大幅度的减少 GPU memory
+需求。而如何训练 supernet 在现今的 NAS
+研究当中也是一个很重要的研究方向，原因在于我们会希望 Supernet
+是一个可以正确评估 neural architectures 好坏的 performance
+estimator，因此假如 supernet 并没有被稳定且公平的训练，会使得 supernet
+本身产生一定的 bias 进而使得我们没有办法良好的评估 neural architectures
+之间的好坏。</p></li>
+<li><p><strong>Architecture searching</strong>： 当 supernet
+训练完毕之后，supernet 本身便可以作为一个 performance
+estimator，并且结合不同的 search strategy(eg, random search 以及
+evolution algorithm) 来进行搜索。</p></li>
+</ul>
+<h3 id="neural-architecture-transfer">2.8 <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2005.05859v2.pdf">Neural Architecture
+Transfer</a></h3>
+<p>NAT（神经架构迁移）的作者提出了在 NAS
+环境中使用迁移学习的想法，即将现有的超网络迁移到特定任务的超网络。同时，他们还可以搜索能够更好地解决多个目标的架构。因此，迁移学习与搜索过程相结合。多目标是指存在多个相互冲突的目标。在多目标问题中，算法应考虑所有目标，并在它们之间提供最佳权衡。在
+NAS
+的背景下，目标的示例包括推理时间限制、内存容量、最终模型的大小等。多目标
+NAS 是一个快速发展的研究领域。</p>
+<p>NAT 分为三个部分：a）准确率预测器 b）进化搜索过程
+c）supernet。整个过程如下：</p>
+<ul>
+<li>从经过训练的supernet列表开始，他们均匀地对其中的一组进行采样。</li>
+<li>对supernet的性能进行了评估。</li>
+<li>然后构建准确度预测器，目的是在考虑多个目标的情况下推动搜索。</li>
+<li>进化搜索提出了一组有前景的架构。</li>
+<li>架构回到supernet的原始列表，并且该过程不断迭代，直到满足终端条件。</li>
+</ul>
+<figure>
+<img src="/images/nat.png" srcset="/img/loading.gif" lazyload alt="神经架构迁移过程图解">
+<figcaption aria-hidden="true">神经架构迁移过程图解</figcaption>
+</figure>
+<h2 id="三jet-nemotron实现方法">三、Jet-Nemotron实现方法</h2>
+<h3 id="postnas的动机和路线图">3.1 PostNAS的动机和路线图</h3>
+<p>与之前从头开始训练以探索新模型架构的方法不同，PostNAS在预训练的Transformer模型基础上进行构建。同时支持对注意力块设计的灵活探索，从而大大降低了开发新语言模型架构的成本和风险。PostNAS首先确定全注意力层的最佳放置位置，然后<strong>再搜索改进的注意力块设计</strong>。</p>
+<figure>
+<img src="/images/Jet.png" srcset="/img/loading.gif" lazyload alt="PostNAS 路线图">
+<figcaption aria-hidden="true">PostNAS 路线图</figcaption>
+</figure>
+<p>上图展示了 PostNAS 的发展路线图。它从预先训练的全注意力模型入手，冻结
+MLP 权重，并通过四个关键步骤以由粗到细的方式探索注意力模块的设计：</p>
+<ul>
+<li><strong>全注意力模块的放置与消除</strong></li>
+<li><strong>线性注意力模块的选择</strong></li>
+<li><strong>新的注意力模块设计</strong></li>
+<li><strong>硬件感知架构搜索</strong></li>
+</ul>
+<figure>
+<img src="/images/Jet1.png" srcset="/img/loading.gif" lazyload alt="PostNAS 准确度提升细分">
+<figcaption aria-hidden="true">PostNAS 准确度提升细分</figcaption>
+</figure>
+<p>上图展示了这些步骤带来的准确率提升。</p>
+<h3 id="full-attention-placement-and-elimination">3.2 Full Attention
+Placement and Elimination</h3>
+<p>引入少量全注意力层已成为提升准确率的常用策略
+。标准方法是将全注意力均匀地应用于固定的层子集，其余层则使用线性注意力。然而，这种统一策略并非最优，尤其是在基于预先训练好的全注意力模型的环境中。</p>
+<figure>
+<img src="/images/Jet2.png" srcset="/img/loading.gif" lazyload alt="学习使用 PostNAS 放置全注意力机制">
+<figcaption aria-hidden="true">学习使用 PostNAS
+放置全注意力机制</figcaption>
+</figure>
+<p>论文提出了一种自动高效地确定全注意力层位置的方法。整体方法如上图所示。通过用替代的线性注意力路径扩充预先训练的全注意力模型，构建了一个一次性超级网络。在训练过程中，在每个步骤随机采样一条活动路径，形成一个子网络，并使用特征蒸馏损失进行训练。</p>
+<figure>
+<img src="/images/Jet3.png" srcset="/img/loading.gif" lazyload alt="Qwen2.5-1.5B 上的层布局搜索结果">
+<figcaption aria-hidden="true">Qwen2.5-1.5B
+上的层布局搜索结果</figcaption>
+</figure>
+<p>训练结束后，执行集束搜索，
+以确定给定约束（例如，两个全注意力层）下全注意力层的最佳布局。搜索目标与任务相关：对于
+MMLU，选择正确答案损失最小的配置（即最大化<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.186ex;" xmlns="http://www.w3.org/2000/svg" width="5.654ex" height="1.756ex" role="img" focusable="false" viewBox="0 -694 2499 776"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mo"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mi" transform="translate(778,0)"><path data-c="1D459" d="M117 59Q117 26 142 26Q179 26 205 131Q211 151 215 152Q217 153 225 153H229Q238 153 241 153T246 151T248 144Q247 138 245 128T234 90T214 43T183 6T137 -11Q101 -11 70 11T38 85Q38 97 39 102L104 360Q167 615 167 623Q167 626 166 628T162 632T157 634T149 635T141 636T132 637T122 637Q112 637 109 637T101 638T95 641T94 647Q94 649 96 661Q101 680 107 682T179 688Q194 689 213 690T243 693T254 694Q266 694 266 686Q266 675 193 386T118 83Q118 81 118 75T117 65V59Z"></path></g><g data-mml-node="mi" transform="translate(1076,0)"><path data-c="1D45C" d="M201 -11Q126 -11 80 38T34 156Q34 221 64 279T146 380Q222 441 301 441Q333 441 341 440Q354 437 367 433T402 417T438 387T464 338T476 268Q476 161 390 75T201 -11ZM121 120Q121 70 147 48T206 26Q250 26 289 58T351 142Q360 163 374 216T388 308Q388 352 370 375Q346 405 306 405Q243 405 195 347Q158 303 140 230T121 120Z"></path></g><g data-mml-node="mi" transform="translate(1561,0)"><path data-c="1D460" d="M131 289Q131 321 147 354T203 415T300 442Q362 442 390 415T419 355Q419 323 402 308T364 292Q351 292 340 300T328 326Q328 342 337 354T354 372T367 378Q368 378 368 379Q368 382 361 388T336 399T297 405Q249 405 227 379T204 326Q204 301 223 291T278 274T330 259Q396 230 396 163Q396 135 385 107T352 51T289 7T195 -10Q118 -10 86 19T53 87Q53 126 74 143T118 160Q133 160 146 151T160 120Q160 94 142 76T111 58Q109 57 108 57T107 55Q108 52 115 47T146 34T201 27Q237 27 263 38T301 66T318 97T323 122Q323 150 302 164T254 181T195 196T148 231Q131 256 131 289Z"></path></g><g data-mml-node="mi" transform="translate(2030,0)"><path data-c="1D460" d="M131 289Q131 321 147 354T203 415T300 442Q362 442 390 415T419 355Q419 323 402 308T364 292Q351 292 340 300T328 326Q328 342 337 354T354 372T367 378Q368 378 368 379Q368 382 361 388T336 399T297 405Q249 405 227 379T204 326Q204 301 223 291T278 274T330 259Q396 230 396 163Q396 135 385 107T352 51T289 7T195 -10Q118 -10 86 19T53 87Q53 126 74 143T118 160Q133 160 146 151T160 120Q160 94 142 76T111 58Q109 57 108 57T107 55Q108 52 115 47T146 34T201 27Q237 27 263 38T301 66T318 97T323 122Q323 150 302 164T254 181T195 196T148 231Q131 256 131 289Z"></path></g></g></g></svg></mjx-container></span>）；而对于数学和检索任务，选择准确率最高的配置。如上图(b)
+所示，PostNAS 在准确率方面显著优于均匀布局。</p>
+<p>上图(a) 展示了 Qwen2.5-1.5B
+的搜索结果。对于每一层，从超级网络中提取相应的子网络，方法是将该层配置为完全注意力机制，同时将其余所有层设置为线性注意力机制。我们评估每个子网络在给定任务上的准确率或损失，并使用热图将结果可视化。我们的分析揭示了三个关键发现：</p>
+<ul>
+<li>在预训练的全注意力模型中，并非所有注意力层都同等重要。对于MMLU，只有两层具有关键重要性，而对于检索任务，只有两到三层特别关键。</li>
+<li>不同的注意力层贡献不同的能力。对MMLU准确性至关重要的层不一定是检索任务中的重要层。</li>
+<li>对于数学推理等复杂任务，注意力重要性模式变得更加复杂。幸运的是，为MMLU和检索识别出的关键层集合已经涵盖了数学所需的大部分关键层。</li>
+</ul>
+<p>除了这些关键发现之外，我们还观察到，使用不同的线性注意力操作时，搜索结果保持一致。在最终实验中，我们在
+Once-for-all 超级网络训练中使用了
+GLA，以简化训练过程并略微提高吞吐量。</p>
+<h3 id="linear-attention-block-selection">3.3 Linear Attention Block
+Selection</h3>
+<p>基于已发现的全注意力层布局，我们进行了注意力块搜索，以确定最适合我们设置的线性注意力块。在实验中，我们评估了六个
+SOTA 线性注意力块，包括 RWKV7、RetNet、Mamba2、GLA、Deltanet 和 Gated
+DeltaNet。</p>
+<p>在初始效率分析之后，我们观察到 RWKV7
+与其他线性注意块相比表现出明显较低的训练吞吐量，这可能是由于内核实现不够理想所致。因此，我们将其排除在训练实验之外。下表中总结的结果表明，门控
+DeltaNet
+在所评估的线性注意块中实现了最佳的整体准确率。这归因于两个因素的结合：</p>
+<ul>
+<li>数据依赖型门控机制，它动态控制模型应该更多地关注当前 token
+还是历史状态；</li>
+<li>Delta 规则，它使用来自当前 token
+的信息增量更新历史状态，以节省有限的状态内存。</li>
+</ul>
+<p>因此，我们在实验中继续使用 Gated DeltaNet。</p>
+<p><img src="/images/Jet4.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="new-attention-block-design">3.4 New Attention Block Design</h3>
+<p>我们提出了一个新的线性注意力模块
+JetBlock，旨在通过将动态卷积融入线性注意力模块来增强模型的表达能力。事实证明，卷积对于在许多线性注意力模块中实现较高的准确率至关重要然而，先前的研究通常使用静态卷积核，这些核无法根据输入调整其特征提取模式。</p>
+<p><img src="/images/Jet.png" srcset="/img/loading.gif" lazyload></p>
+<p>为了解决这一限制，我们引入了一个内核生成器模块，该模块可以根据输入特征动态生成卷积核。整体结构如上图所示。该模块与
+Q/K/V 投影层共享相同的输入，并以线性缩减层开始以提高效率，缩减率为
+8。应用 SiLU 激活函数，然后是输出卷积核权重的最终线性层。我们采用 Gated
+DeltaNet 进行时间混合，因为它与其他设计相比性能最佳，如第 3.3
+节所述。</p>
+<p>我们将动态卷积核应用于值 (V) 标记，因为将其应用于查询 (Q) 或键 (K)
+标记几乎没有任何好处。此外，我们发现，一旦将动态卷积应用于 V，Q 和 K
+上的静态卷积就可以被移除，而对最终模型准确率的影响几乎可以忽略不计。我们在最终实验中采用了这种设计，因为它的效率略有提升。表
+1 将 JetBlock
+与之前的线性注意力模块进行了比较。它在数学推理和检索任务上提供了比门控
+DeltaNet 更高的准确率，同时保持了相似的效率。</p>
+<h3 id="hardware-aware-architecture-search">3.5 Hardware-Aware
+Architecture Search</h3>
+<p>在确定宏观架构（特别是全注意力层的放置）并选择线性注意力块之后，我们执行硬件感知架构搜索以优化核心架构超参数，包括键/值维度和注意力头的数量。</p>
+<p>传统上，参数大小是指导模型架构设计的主要效率指标。然而，这种方法并非最优，因为参数数量与硬件效率并不直接相关。我们通过将生成吞吐量作为选择架构超参数的直接目标来解决这一限制。我们发现：</p>
+<ul>
+<li>KV缓存大小是影响长上下文和长生成吞吐量的最关键因素。当KV缓存大小保持不变时，具有不同参数数量的模型表现出相似的生成吞吐量（表2）。</li>
+</ul>
+<p>这是因为解码阶段通常受内存带宽而非计算能力限制。在长上下文场景中，键值缓存通常比模型权重消耗更多的内存。减小其大小可以减少每个解码步骤的内存传输时间，并支持更大的批处理大小，从而提高生成吞吐量。</p>
+<p>根据发现，修复KV
+缓存大小以匹配原始设计，并对键维度、值维度和注意力头数量进行小规模网格搜索。表
+2 总结了结果，其中所有变体都使用相同的线性注意力块（即 Gated
+DeltaNet），但具有不同的配置。蓝色行代表最终设计，而灰色行代表原始设计。最终配置实现了与原始配置相当的生成吞吐量，同时合并了更多参数并提高了准确性。从表
+1 中我们可以看到，PostNAS 中的硬件感知搜索提高了 JetBlock
+的准确性，同时保持了训练和推理吞吐量。</p>
+<h2 id="reference">Reference</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2508.15884">Jet-Nemotron: Efficient
+Language Model with Post Neural Architecture Search</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/NVlabs/Jet-Nemotron">Jet-Nemotron(GitHub)</a></li>
+<li><a target="_blank" rel="noopener" href="https://36kr.com/p/3440425121944962">英伟达新模型上线，4B推理狂飙53倍，全新注意力架构超越Mamba
+2</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/bylander/article/details/151117786">【论文阅读】Jet-Nemotron:
+高效语言模型与后神经网络架构搜索</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/data-science-in-your-pocket/nvidia-jet-nemotron-end-of-transformers-50x-faster-llms-b35b1366f923">NVIDIA
+Jet-Nemotron : End of Transformers? 50x Faster LLMs</a></li>
+<li><a target="_blank" rel="noopener" href="https://theaisummer.com/neural-architecture-search/#fn-8">Neural
+Architecture Search (NAS): basic principles and different
+approaches</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/@e0928021388/build-the-baseline-one-shot-neural-architecture-search-by-osnaslib-ad789e65c822">Build
+the Baseline One-shot Neural Architecture Search by OSNASLib</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/ai-academy-taiwan/%E6%8F%90%E7%85%89%E5%86%8D%E6%8F%90%E7%85%89%E6%BF%83%E7%B8%AE%E5%86%8D%E6%BF%83%E7%B8%AE-neural-architecture-search-%E4%BB%8B%E7%B4%B9-ef366ffdc818">提煉再提煉濃縮再濃縮：Neural
+Architecture Search 介紹</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/panghuzhenbang/article/details/124877074">NAS（神经结构搜索）学习记录</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/127194745">神经架构搜索（NAS）简要介绍</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/60414004">NAS（神经结构搜索）综述</a></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/LLM/PostNAS/" class="category-chain-item">PostNAS</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/LLM/PostNAS/JetBlock/" class="category-chain-item">JetBlock</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/PostNAS/" class="print-no-link">#PostNAS</a>
+      
+        <a href="/tags/JetBlock/" class="print-no-link">#JetBlock</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Jet-Nemotron：高效语言模型与后神经网络架构搜索</div>
+      <div>https://mztchaoqun.com.cn/posts/D87_Jet-Nemotron/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年9月30日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D88_ClaudeCode/" title="Claude Code（一）:A Highly Agentic Coding Assistant">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Claude Code（一）:A Highly Agentic Coding Assistant</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D86_AlphaEvolve/" title="AlphaEvolve：超级编码智能体">
+                        <span class="hidden-mobile">AlphaEvolve：超级编码智能体</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

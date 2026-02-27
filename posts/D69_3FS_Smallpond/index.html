@@ -1,0 +1,1627 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、3FS &amp; Smallpond 概述 Fire-Flyer File System（3FS） 是一个高性能分布式文件系统，旨在解决人工智能训练和推理工作负载的挑战。它利用现代固态硬盘（SSD）和远程直接内存访问（RDMA）网络，提供一个共享存储层，从而简化分布式应用程序的开发。 Smallpond 基于 3FS 和 DuckDB 构建，专注于 PB 级数据的快速处理。Smallpond">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DeepSeek 3FS &amp; Smallpond">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D69_3FS_Smallpond/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、3FS &amp; Smallpond 概述 Fire-Flyer File System（3FS） 是一个高性能分布式文件系统，旨在解决人工智能训练和推理工作负载的挑战。它利用现代固态硬盘（SSD）和远程直接内存访问（RDMA）网络，提供一个共享存储层，从而简化分布式应用程序的开发。 Smallpond 基于 3FS 和 DuckDB 构建，专注于 PB 级数据的快速处理。Smallpond">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/3FS.png">
+<meta property="article:published_time" content="2025-05-06T03:31:19.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.279Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="DeepSeek">
+<meta property="article:tag" content="LLM">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/3FS.png">
+  
+  
+  
+  <title>DeepSeek 3FS &amp; Smallpond - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="DeepSeek 3FS &amp; Smallpond"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-05-06 11:31" pubdate>
+          2025年5月6日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          81 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">DeepSeek 3FS &amp; Smallpond</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一3fs-smallpond-概述">一、3FS &amp; Smallpond 概述</h2>
+<p><strong><a target="_blank" rel="noopener" href="https://github.com/deepseek-ai/3FS">Fire-Flyer File
+System（3FS）</a></strong>
+是一个高性能分布式文件系统，旨在解决人工智能训练和推理工作负载的挑战。它利用现代固态硬盘（SSD）和远程直接内存访问（RDMA）网络，提供一个共享存储层，从而简化分布式应用程序的开发。</p>
+<p><strong><a target="_blank" rel="noopener" href="https://github.com/deepseek-ai/smallpond">Smallpond</a> 基于 3FS
+和 DuckDB 构建，专注于 PB 级数据的快速处理</strong>。Smallpond 定位为**
+AI 数据的辅助工具**，能够无缝集成到 3FS
+的存储生态中，支持数据清洗、转换和分析等任务。</p>
+<h3 id="fs-核心亮点">1.1 3FS 核心亮点</h3>
+<ul>
+<li><strong>高性能解耦架构</strong>：通过解耦架构，结合数千个 SSD
+的吞吐量和数百个存储节点的网络带宽，实现高吞吐量和低延迟。</li>
+<li><strong>数据强一致性</strong>：采用 Chain Replication with
+Apportioned Queries (CRAQ)
+技术，确保分布式环境中的数据强一致性，<strong>适合多节点并发读写。</strong></li>
+<li><strong>多样化工作负载支持</strong>：支持数据准备、数据加载器、检查点和
+KVCache 等多样化工作负载，提升 AI 应用效率。</li>
+</ul>
+<h3 id="smallpond-核心亮点">1.2 Smallpond 核心亮点</h3>
+<ul>
+<li><strong>高性能查询</strong>：基于 DuckDB
+的列式存储和向量化执行引擎，查询速度远超传统工具。</li>
+<li><strong>低开销</strong>：无需分布式集群支持，单机即可处理大规模数据，部署简单。</li>
+<li><strong>与 3FS 协同</strong>：直接利用 3FS
+的存储能力，避免数据迁移成本，实现高效数据流水线。</li>
+</ul>
+<h3 id="性能表现">1.3 性能表现</h3>
+<h4 id="fs-峰值吞吐量">1.3.1 3FS 峰值吞吐量</h4>
+<p>在180节点集群中实现 6.6TiB/s 读取吞吐量</p>
+<p><img src="/images/peak_throughput.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>上图展示了在大型 3FS 集群上进行读取压力测试的吞吐量。该集群由 180
+个存储节点组成，每个存储节点配备 2×200Gbps 的 InfiniBand NICs 和 16 个
+14TiB 的 NVMe SSD。大约有 500
+多个客户端节点用于读取压力测试，每个客户端节点配置了 1×200Gbps 的
+InfiniBand 网卡。最终的总读取吞吐量达到了约
+6.6TiB/s，其中包含来自训练作业的后台流量。</p>
+<h4 id="graysort-基准测试下的-smallpond">1.3.2 GraySort 基准测试下的
+smallpond</h4>
+<p>GraySort
+是一种用于评估大规模数据排序性能的基准测试，目标是评估系统在处理大规模数据集（至少
+100TB）时的排序性能。</p>
+<p>DeepSeek 团队使用 GraySort 基准测试评估 smallpond
+的性能，在实现中采用了两阶段方法，这两个阶段都从 3FS
+读取和写入数据：</p>
+<ul>
+<li>使用键的前缀位进行洗牌, 对数据进行分区；</li>
+<li>在分区内的排序。</li>
+</ul>
+<p><img src="/images/gray_sort_server.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/images/gray_sort_client.png" srcset="/img/loading.gif" lazyload></p>
+<p>测试集群包括 25 个存储节点（每个节点 2 个 NUMA 域，每个 NUMA 1
+个存储服务，每个节点 2×400Gbps 网卡）和 50 个计算节点（每个节点 2 个
+NUMA 域，192 个物理核心，2.2TiB 内存，每个节点 1×200Gbps 网卡）。在
+8,192 个分区中对 110.5TiB 的数据进行排序，耗时 30 分钟 14
+秒，平均吞吐量达到 3.66TiB/min。</p>
+<h4 id="section">1.3.3</h4>
+<p>KVCache
+是一种用于优化大型语言模型（LLM）推理过程的技术。它通过在解码层中缓存前一个标记的键和值向量，避免了重复计算。</p>
+<p><strong>单节点 KVCache 查找峰值速率超 40 GiB/s</strong></p>
+<p><img src="/images/kvcache_read_throughput.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/images/kvcache_gc_iops.png" srcset="/img/loading.gif" lazyload></p>
+<p>上图展示了所有 KVCache 客户端（每个节点 1×400Gbps
+网卡）的读取吞吐量，突出了峰值和平均值，峰值吞吐量可达
+40GiB/s。下图展示了在同一时间段内，垃圾回收（GC）期间移除操作的
+IOPS。</p>
+<h2 id="二3fs-解耦架构详解">二、3FS 解耦架构详解</h2>
+<h3 id="解耦架构">2.1 解耦架构</h3>
+<p><strong>解耦架构</strong>：是一种将系统中的<strong>不同功能模块分离</strong>的设计思想，使得每个模块可以独立开发、测试和维护，同时通过高效的通信机制协同工作。</p>
+<p>通俗来讲，就像是把一个复杂的系统拆成几个独立的小模块，每个模块只负责做一件事，但它们之间可以通过一种高效的方式协同工作。好比一个工厂，把生产流程分成多个独立的车间，每个车间只负责一个环节，但通过传送带把它们连接起来，让整个生产过程更加高效。</p>
+<p>解耦架构的目标主要有两点：</p>
+<ul>
+<li><strong>位置无关性</strong>：应用程序可以以一种“位置无关”的方式访问存储资源，即不需要关心数据存储的具体位置。这种设计简化了分布式应用程序的开发，使得应用程序可以更灵活地部署和扩展。就像在超市买东西，你只需要告诉收银员你想要什么，而不用管商品放在哪个货架上。这样用户使用起来更方便，系统也更灵活。</li>
+<li><strong>高可扩展性</strong>：每个模块都可以独立扩展。比如，如果数据量增加了，可以单独增加存储服务的节点；如果需要处理更多的用户请求，可以增加客户端的数量。就像工厂可以根据需求增加更多的车间或工人。
+在 3FS
+中，解耦架构的核心目标是通过分离存储资源（SSD）和网络带宽（存储节点），实现高性能、高可扩展性和高可用性的分布式文件系统。</li>
+</ul>
+<h3 id="fs-系统布局">2.2 3FS 系统布局</h3>
+<p><img src="/images/3FS.png" srcset="/img/loading.gif" lazyload></p>
+<p>3FS系统由四大核心组件构成：<strong>集群管理器（Cluster
+Manager）、元数据服务（Metadata Service）、存储服务（Storage
+Service）和客户端（Client）</strong>。这些组件通过高速的RDMA（Remote
+Direct Memory
+Access）网络连接在一起，RDMA网络可以是InfiniBand或RoCE（RDMA over
+Converged Ethernet），它们提供了低延迟和高吞吐量的通信能力。</p>
+<ul>
+<li><strong>集群管理器</strong>：它是3FS的“大脑”，负责监控整个集群的状态，包括各个节点的健康状况和配置信息。集群管理器通过接收来自其他组件的心跳信号来检测故障，并在必要时进行故障切换。例如，如果某个元数据服务节点失败，集群管理器可以迅速将请求重定向到其他可用节点，确保系统的高可用性。</li>
+<li><strong>元数据服务</strong>：这个组件负责管理文件系统的元数据，例如文件和目录的属性、权限、位置等信息。元数据服务是无状态的，这意味着它不存储任何本地状态信息，所有的元数据都存储在一个可靠的分布式键值存储系统中，如FoundationDB。这种设计使得元数据服务可以轻松地扩展和升级，而不会影响系统的整体运行。</li>
+<li><strong>存储服务</strong>：存储服务负责实际存储文件的数据块。每个存储服务管理一组本地SSD（固态硬盘），并提供高性能的块存储接口。存储服务通过链式复制（Chain
+Replication）和分配查询（Apportioned
+Queries，CRAQ）协议来确保数据的强一致性和高可用性。这种设计不仅提高了数据的可靠性，还充分利用了SSD和RDMA网络的高性能特性。</li>
+<li><strong>客户端</strong>：客户端是用户与3FS交互的接口。3FS提供了两种类型的客户端：FUSE客户端和本地客户端。FUSE客户端允许用户像使用本地文件系统一样访问3FS，而本地客户端则提供了更高效的I/O操作接口，适用于对性能要求较高的应用。</li>
+</ul>
+<p>通过将这四大组件解耦，3FS实现了高度的灵活性和可扩展性。每个组件都可以独立优化和扩展，而不会影响其他组件的运行。例如，如果需要增加存储容量，只需添加更多的存储服务节点即可；如果需要提高元数据处理能力，可以增加更多的元数据服务节点。这种模块化的设计使得3FS能够轻松适应不同规模和性能需求的场景。</p>
+<h3 id="文件系统多接口支持">2.3 文件系统多接口支持</h3>
+<p>在现代计算环境中，不同的应用程序对文件系统的接口有不同的需求。有些应用可能需要高性能的I/O操作，而另一些应用则更关注易用性和兼容性。为了满足这些多样化的需求，3FS提供了两种类型的客户端接口：<strong>FUSE客户端和本地客户端</strong>。</p>
+<h4 id="fuse-客户端">2.3.1 FUSE 客户端</h4>
+<p>FUSE（Filesystem in
+Userspace）是一种允许用户在用户空间中实现文件系统的技术。3FS的FUSE客户端使得用户可以像使用本地文件系统一样访问3FS。</p>
+<p>FUSE客户端的优点：</p>
+<ul>
+<li><strong>易于使用和部署</strong>，不需要对应用程序进行任何修改。用户可以使用标准的文件系统API（如open、read、write等）来操作3FS中的文件和目录。</li>
+<li><strong>具有较低的采用门槛</strong>，大多数现有的应用程序都可以无缝地与它集成。</li>
+</ul>
+<p>局限性：在处理高并发I/O操作时可能会遇到性能瓶颈，原因在于：</p>
+<ul>
+<li><strong>内存复制开销</strong>：用户空间文件系统守护进程无法访问应用程序内存。内核与用户空间之间的数据传输消耗内存带宽并增加端到端延迟。</li>
+<li><strong>原始多线程支持</strong>：当应用程序发起 I/O 请求时，FUSE
+将这些请求放入一个由自旋锁保护的多线程共享队列中。用户空间文件系统守护进程随后从该队列中检索并处理请求。由于锁争用，FUSE
+的 I/O 处理能力无法随着线程数量的增加而扩展。</li>
+</ul>
+<h4 id="本地客户端">2.3.2 本地客户端</h4>
+<p>为了满足对性能要求较高的应用，3FS还提供了一个本地客户端。本地客户端通过<strong>直接与存储服务和元数据服务通信</strong>，绕过了FUSE的某些限制，从而<strong>实现了更高的性能</strong>。本地客户端提供了更高效的I/O操作接口，例如<strong>异步零拷贝I/O操作</strong>，这使得它能够充分利用SSD和RDMA网络的高性能特性。虽然本地客户端的使用需要对应用程序进行一定的修改，但它为性能敏感型应用提供了显著的性能优势。</p>
+<h4 id="文件接口灵活性与兼容性">2.3.3 文件接口灵活性与兼容性</h4>
+<p>3FS的多接口支持不仅提供了选择的灵活性，还确保了与现有应用程序的兼容性。体现在以下几个方面：</p>
+<ul>
+<li><strong>原子目录操作</strong>：3FS支持原子性的目录操作，例如原子移动文件/目录和递归删除整个目录。这种操作在对象存储中是难以实现的，但在文件系统中却非常重要。例如，一个常见的应用场景是创建一个临时目录，将文件写入其中，然后将整个目录移动到最终位置。如果没有原子移动操作，应用程序需要逐个文件地移动，这不仅效率低下，还可能导致数据不一致。</li>
+<li><strong>符号链接和硬链接</strong>：3FS支持符号链接和硬链接，这使得用户可以创建轻量级的文件和目录引用。符号链接和硬链接在数据备份、快照和动态更新数据集等场景中非常有用。例如，用户可以通过符号链接将一个文件或目录链接到多个位置，而无需复制实际的数据，从而节省存储空间。</li>
+<li><strong>熟悉的接口</strong>：3FS的文件系统接口是基于POSIX标准的，这意味着用户无需学习新的API。大多数现有的应用程序都是基于POSIX文件系统接口开发的，因此它们可以很容易地迁移到3FS。</li>
+</ul>
+<h3 id="io操作与元数据操作分离异步零拷贝api">2.4
+I/O操作与元数据操作分离——异步零拷贝API</h3>
+<h4 id="linux的io_uring-介绍">2.4.1 Linux的io_uring 介绍</h4>
+<p><code>io_uring</code> 是 Linux 内核 5.1 版本引入的一种高性能异步 I/O
+框架，由资深内核开发者 Jens Axboe 开发。它旨在提供一种更高效、更灵活的
+I/O 模型，以满足现代应用程序对高吞吐量和低延迟 I/O 操作的需求。</p>
+<p><img src="/images/io_uring.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>核心原理</strong></p>
+<p>io_uring 通过两个核心队列实现高效的异步 I/O 操作：</p>
+<ul>
+<li><strong>提交队列（Submission Queue, SQ）</strong>：用户态应用程序将
+I/O 请求提交到该队列中，内核从该队列中读取请求并处理。</li>
+<li><strong>完成队列（Completion Queue, CQ）</strong>：内核在完成 I/O
+请求后，将结果写入该队列，用户态应用程序从该队列中读取完成事件。</li>
+</ul>
+<p>这两个队列通过共享内存的方式在用户态和内核态之间通信，减少了数据拷贝和上下文切换的开销。</p>
+<p><strong>操作步骤</strong></p>
+<ul>
+<li>第一步：应用程序通过向 io_uring 的 提交队列 提交 I/O 操作。</li>
+<li>第二步：SQ内核线程从 提交队列 中读取 I/O 操作。</li>
+<li>第三步：SQ内核线程发起 I/O 请求。</li>
+<li>第四步：I/O 请求完成后，SQ内核线程会将 I/O 请求的结果写入到 io_uring
+的 完成队列 中。</li>
+<li>第五步：应用程序可以通过从 完成队列 中读取到 I/O 操作的结果。</li>
+</ul>
+<h4 id="fs中的异步零拷贝api">2.4.2 3FS中的异步零拷贝API</h4>
+<p><img src="/images/3FS1.png" srcset="/img/loading.gif" lazyload></p>
+<p>异步零拷贝 <code>API</code> 的灵感来自 Linux 的
+<code>io_uring</code>。以下是 <code>API</code> 中的关键数据结构：</p>
+<ul>
+<li><strong>Iov</strong>：一个用于零拷贝读/写操作的大内存区域，在用户进程和本地客户端之间共享。<code>InfiniBand</code>
+内存注册由客户端管理。在本地 <code>API</code> 中，所有读取的数据将被读入
+<code>Iov</code>，所有写入的数据应在调用 <code>API</code> 之前写入
+<code>Iov</code>。</li>
+<li><strong>Ior</strong>：一个用于用户进程与本地客户端之间通信的小型共享环形缓冲区。<code>Ior</code>
+的使用类似于 Linux 的
+<code>io_uring</code>，用户进程将读/写请求入队，而本地客户端则将这些请求出队以完成。请求以批处理的方式执行，其大小由
+<code>io_depth</code>
+参数控制。无论来自不同的环还是同一个环，多个批次都是并行处理的。然而，对于多线程应用程序，仍然建议使用多个环，因为共享一个环需要同步，这可能会影响性能。</li>
+</ul>
+<p>在本地客户端中，多个线程被创建以从 <code>Iors</code> 中获取 I/O
+请求。这些请求被批处理并分发到存储服务，从而减少因小型读请求而产生的
+<code>RPC</code> 开销。</p>
+<h3 id="数据存储与元数据存储的分离一-文件元数据存储">2.5
+数据存储与元数据存储的分离（一）—— 文件元数据存储</h3>
+<h4 id="文件块的位置">2.5.1 文件块的位置</h4>
+<ul>
+<li><strong>3FS</strong> 将文件数据划分为相等大小的
+<strong>块</strong>，并将这些块 <strong>条带化</strong> 到多个
+<strong>复制链</strong> 中。用户可以为每个目录指定 <strong>链表、块大小
+和 条带大小。</strong></li>
+<li>每个块独立存储在多个存储服务上，其块 <strong>ID</strong>
+通过连接文件的 <strong>inode id</strong>和块索引生成。</li>
+<li>在创建新文件时，元数据服务根据 <strong>条带大小采用轮询策略</strong>
+从指定的链表中选择连续的复制链，并生成一个随机种子以打乱所选链。这种分配策略确保了数据在链和
+SSD 之间的均衡分布。</li>
+<li>当应用程序打开文件时，客户端联系元服务以获取文件的数据布局信息，然后独立计算块
+<strong>ID</strong>
+和数据操作的链，最小化元服务在关键路径中的参与。(将部分决策（计算）的权力下放给客户端)</li>
+</ul>
+<h4 id="事务性键值存储上的文件元数据">2.5.2
+事务性键值存储上的文件元数据</h4>
+<p><img src="/images/3FS2.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>FoundationDB</strong>
+是一个开源的、分布式的、<strong>事务性的键值存储数据库</strong>，最初由
+FoundationDB
+公司开发，后被苹果公司收购并重新开源。它设计<strong>用于处理大规模的结构化数据</strong>，能够在多个普通服务器集群上运行，并且支持
+ACID 事务，确保数据的一致性和可靠性。</p>
+<p><strong>3FS</strong> 选择使用 FoundationDB 作为底层的 KV
+存储系统。该架构简化了元数据整体设计，将可靠性、扩展性等分布式系统通用能力下沉到分布式
+KV 存储，元服务节点只是充当文件存储元数据的代理，负责语义解析。</p>
+<p><strong>元服务遵循无状态架构</strong>，增强了可维护性，支持无缝升级或重启服务。</p>
+<p>文件系统元数据主要由 <strong>inode 和 目录条目</strong> 组成：</p>
+<ul>
+<li><strong>inode</strong> 存储文件、目录和符号链接的属性信息，每个
+<strong>inode</strong> 由一个全球唯一的 <strong>64位标识符</strong>
+标识。</li>
+<li><strong>inode</strong> 键通过将 “<strong>INOD</strong>” 前缀与
+<strong>inode id</strong> 连接构成，值根据其类型而异：
+<ul>
+<li><strong>基本属性</strong>：所有权、权限、访问/修改/变更时间。</li>
+<li><strong>文件 inode 的
+附加属性</strong>：文件长度、块大小、链表中选择的范围、shuffle
+种子。</li>
+<li><strong>目录 inode 的 附加属性</strong>：父目录的 inode
+ID、子目录/文件的默认布局配置。</li>
+<li><strong>符号链接 inode 的 附加属性</strong>：目标路径字符串。</li>
+</ul></li>
+<li><strong>目录条目</strong> 键由 “<strong>DENT</strong>”
+前缀、<strong>父 inode ID 和 条目名称</strong> 组成，值存储目标 inode ID
+和 inode 类型。</li>
+</ul>
+<p>元操作利用 FoundationDB 的事务：</p>
+<ul>
+<li><strong>只读事务</strong>：用于元数据查询（如
+<code>fstat</code>、<code>lookup</code>、<code>listdir</code>）。</li>
+<li><strong>读写事务</strong>：用于元数据更新（如创建、链接、取消链接、重命名）。</li>
+</ul>
+<p>对于写事务，FoundationDB
+跟踪读/写键集以形成冲突检测集，当检测到并发事务冲突时，元服务会自动重试该事务。</p>
+<h4 id="动态文件属性">2.5.3 动态文件属性</h4>
+<p>在大多数本地文件系统中，删除已打开的文件会延迟，直到所有相关的文件描述符关闭。因此，有必要跟踪该文件的所有文件描述符。<strong>训练作业在启动期间会打开大量文件</strong>。存储所有文件描述符会对元服务和
+FoundationDB 施加很大负担。由于训练作业不依赖于此功能，3FS
+<strong>不跟踪以只读模式打开的文件描述符。</strong></p>
+<p>3FS 为每个以 <strong>写模式</strong>
+打开的文件描述符（fd）维护一个文件会话，因为删除以写模式打开的文件可能导致来自并发写入的不可回收垃圾块。当删除具有活动写会话的文件时，元服务<strong>会延迟删除，直到所有其文件描述符关闭</strong>。为了防止离线客户端的会话持续存在，3FS
+元服务<strong>定期检查客户端的存活状态</strong>，并清理离线客户端的会话。</p>
+<p>文件长度存储在 inode 中。客户端<strong>定期（默认
+每5秒）向元服务报告以写模式打开的每个文件的最大写入位置</strong>。由于多个客户端可能进行并发写入，上述方法仅确保文件长度的最终一致性。在处理
+关闭/fsync 操作时，元服务通过查询存储服务中最后一个块的 ID
+和长度来获取精确的文件长度。为避免多个元服务对同一文件长度的并发更新导致事务冲突，元服务使用
+inode ID 和汇合哈希算法将文件长度更新任务分配到多个元服务。</p>
+<p>对于小文件，<strong>3FS 使用潜在使用的链的数量</strong>（初始值为
+16，每次向更多链写入额外的文件块时翻倍）作为提示，以避免在更新小文件长度时查询所有
+200 条链。</p>
+<h3 id="数据存储与元数据存储的分离二-块存储系统">2.6
+数据存储与元数据存储的分离（二）—— 块存储系统</h3>
+<p><strong>块存储系统</strong>是3FS的核心组件之一，它<strong>负责实际存储文件的数据块</strong>。其设计目标是即使在存储介质发生故障时也能实现尽可能高的带宽。3FS
+的读/写吞吐量应与 SSD
+的数量和客户端与存储服务之间的双向网络带宽线性扩展。应用程序以<strong>无关位置</strong>的方式访问存储服务。</p>
+<h2 id="三数据强一致性详解">三、数据强一致性详解</h2>
+<p>每个存储服务管理几个本地 SSD，并提供一个块存储接口。存储服务实现了
+<strong>带有分配查询（Chain Replication with Apportioned Queries,
+CRAQ）的链式复制</strong>，以确保强一致性。CRAQ 的
+<strong>全写-任读（write-all-read-any）</strong> 方法有助于释放 SSD 和
+RDMA 网络的吞吐量。一个 3FS 文件被分割成大小相等的块，这些块在多个 SSD
+上进行复制。</p>
+<h3 id="craq-介绍">3.1 CRAQ 介绍</h3>
+<p>为了实现高性能和高可用性，3FS的块存储系统采用了<strong>链式复制（Chain
+Replication）和分配查询（Apportioned Queries）CRAQ 协议</strong>。</p>
+<p>CRAQ是一种针对读取密集型工作负载优化的数据复制协议。它的目标是确保数据在多个副本之间保持一致，同时最大化读取性能。</p>
+<h4 id="链式复制chain-replication-cr">3.1.1 链式复制（Chain Replication,
+CR）</h4>
+<p>链式复制（Chain Replication,
+CR）是一种用于分布式系统的数据复制方法，能够提供强一致性的存储接口。其核心思想是将多个节点按照顺序组织成一条链，写操作从链头开始，逐步传播至链尾，而读操作则全部由链尾处理，以确保数据的一致性。</p>
+<p>在写操作中，客户端的写请求首先被链头节点接收，然后写数据依次向链中的下一个节点传播。当写操作到达链尾并被应用到所有副本后，该写操作才被视为提交完成。此时，链尾会向链头发送确认消息，链头再将确认结果返回给客户端。通过这种方式，CR
+确保了所有写操作按顺序传播并最终一致。如下图，是一个拥有四个节点的链：</p>
+<p><img src="/images/CRAQ.png" srcset="/img/loading.gif" lazyload></p>
+<p>在读操作中，所有客户端的读请求都由链尾节点处理。由于写操作只有在到达链尾并提交后才算完成，因此链尾节点返回的数据始终是最新的、已提交的值。</p>
+<h4 id="craq-优化读吞吐量">3.1.2 CRAQ 优化读吞吐量</h4>
+<p>上述设计保证了强一致性，但也造成了一定的<strong>局限性</strong>：由于所有读请求都集中在链尾节点，其读吞吐量受限于单一节点的处理能力，无法通过增加节点数来扩展读性能。此外，随着链长度增加，写操作需要经过更多节点传播到尾部，这可能导致写延迟上升。</p>
+<p>CRAQ（Chain Replication with Apportioned
+Queries）针对<strong>以读为主的工作负载场景，通过允许链中任意节点处理读请求</strong>来提高读取吞吐量，同时仍然保证强一致性。为了保证这一点，CRAQ
+规定：</p>
+<ol type="1">
+<li><strong>多版本存储与状态标记</strong>：每个节点可以存储对象的多个版本，每个版本包含一个单调递增的版本号，并标记为“干净（clean）”或“脏（dirty）”状态。新版本初始标记为clean，只有当写操作在链尾提交后，版本才会被标记为clean。</li>
+<li><strong>写操作传播流程</strong>：
+<ul>
+<li>当节点接收到写操作时，会将该对象的新版本添加到本地存储中。</li>
+<li>如果该节点不是链尾，则将新版本标记为脏，并将写操作传递给下一个节点。</li>
+<li>如果该节点是链尾，则将新版本标记为干净，并反向通知其他节点数据已经提交。</li>
+<li>当节点收到链尾的提交确认消息时，会将对应版本标记为干净，并删除所有旧版本。</li>
+</ul></li>
+<li><strong>读操作传播流程</strong>：
+<ul>
+<li>如果节点存储的最新版本是干净的，则直接返回该值。如下图所示： <img src="/images/CRAQ2.png" srcset="/img/loading.gif" lazyload></li>
+<li>如果最新版本是脏的，节点会向链尾发送“版本查询请求”，获取链尾已提交的最新版本号，并返回对应的对象值。如下图所示：
+<img src="/images/CRAQ3.png" srcset="/img/loading.gif" lazyload></li>
+</ul></li>
+</ol>
+<p>CRAQ 相较于 CR 的性能提升体现表现在：</p>
+<ul>
+<li><strong>以读为主的工作负载</strong>：大部分读请求由非链尾节点（C-1
+个）处理，读吞吐量随链长度线性扩展。</li>
+<li><strong>以写为主的工作负载</strong>：大部分读请求需通过非链尾节点查询版本，但这些查询比完整读取轻量，因此链尾能以更高速率处理查询，从而提高整体吞吐量。</li>
+</ul>
+<h3 id="craq-下的数据放置">3.2 CRAQ 下的数据放置</h3>
+<p>每个 <strong>文件块</strong>
+使用分配查询（<code>CRAQ</code>）的链式复制在一系列存储目标上进行复制。在
+<code>CRAQ</code>
+中，写请求被发送到头目标并沿着链传播。读取请求可以发送到任何存储目标。通常，<strong>读取流量在链中的所有目标之间均匀分配，以实现更好的负载平衡</strong>。在每个
+SSD 上创建多个存储目标，这些目标加入不同的链。</p>
+<p><img src="/images/CRAQ4.png" srcset="/img/loading.gif" lazyload></p>
+<p>假设有 6
+个节点：<code>A</code>、<code>B</code>、<code>C</code>、<code>D</code>、<code>E</code>、<code>F</code>。每个节点有
+<strong>1</strong>个 <code>SSD</code>。在每个 <code>SSD</code> 上创建
+<strong>5</strong> 个存储目标：<code>1</code>、<code>2</code>、…
+<code>5</code>。那么总共有30个目标：<code>A1</code>、<code>A2</code>、<code>A3</code>、…、<code>F5</code>。如果每个块有
+<strong>3</strong> 个副本，则构建链表如下。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">链</th>
+<th style="text-align: center;">版本</th>
+<th style="text-align: center;">目标1（头）</th>
+<th style="text-align: center;">目标2</th>
+<th style="text-align: center;">目标3（尾）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>A1</code></td>
+<td style="text-align: center;"><code>B1</code></td>
+<td style="text-align: center;"><code>C1</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>D1</code></td>
+<td style="text-align: center;"><code>E1</code></td>
+<td style="text-align: center;"><code>F1</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>A2</code></td>
+<td style="text-align: center;"><code>B2</code></td>
+<td style="text-align: center;"><code>C2</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>D2</code></td>
+<td style="text-align: center;"><code>E2</code></td>
+<td style="text-align: center;"><code>F2</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>A3</code></td>
+<td style="text-align: center;"><code>B3</code></td>
+<td style="text-align: center;"><code>C3</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>D3</code></td>
+<td style="text-align: center;"><code>E3</code></td>
+<td style="text-align: center;"><code>F3</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>A4</code></td>
+<td style="text-align: center;"><code>B4</code></td>
+<td style="text-align: center;"><code>C4</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>D4</code></td>
+<td style="text-align: center;"><code>E4</code></td>
+<td style="text-align: center;"><code>F4</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>A5</code></td>
+<td style="text-align: center;"><code>B5</code></td>
+<td style="text-align: center;"><code>C5</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>D5</code></td>
+<td style="text-align: center;"><code>E5</code></td>
+<td style="text-align: center;"><code>F5</code></td>
+</tr>
+</tbody>
+</table>
+<p>每个链都有一个版本号。如果链发生变化（例如，存储目标离线），则版本号会递增。只有主集群管理器才能对链表进行更改。</p>
+<p><strong>可以构建几个链表以支持不同的数据放置需求</strong>。例如，可以创建两个链表，一个用于批处理/离线作业，另一个用于在线服务。这两个表由位于互斥节点和
+SSD 上的存储目标组成。</p>
+<p>从逻辑上讲，每个链的状态独立变化。每个链可以包含在多个链表中。<strong>链表的概念是为了让元数据服务为每个文件选择一个表，并在表中的链上划分文件块。</strong></p>
+<h3 id="恢复期间的流量平衡">3.3 恢复期间的流量平衡</h3>
+<p><img src="/images/CRAQ5.png" srcset="/img/loading.gif" lazyload></p>
+<p>假设读取流量在上述链表中的所有存储目标之间均匀分布。当 <code>A</code>
+失败时，其读取请求将被重定向到 <code>B</code> 和
+<code>C</code>。在重负载下，<code>B</code> 和 <code>C</code>
+的读取带宽会立即饱和，<code>B</code> 和 <code>C</code>
+成为整个系统的瓶颈。更换故障的 <code>SSD</code> 并将数据同步到新的
+<code>SSD</code> 可能需要几个小时。在此期间，读取吞吐量受到影响。</p>
+<p>为了减少性能影响，我们可以让更多的 <code>SSD</code>
+共享重定向的流量。例如，在以下链表中，<code>A</code> 与其他每个
+<code>SSD</code> 配对。当 <code>A</code> 失败时，其他每个
+<code>SSD</code> 接收 <code>A</code> 的读取流量的
+<strong>1/5</strong>。这种负载平衡的<strong>最优解是通过使用整数规划求解器获得的</strong>。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">链</th>
+<th style="text-align: center;">版本</th>
+<th style="text-align: center;">目标1（头）</th>
+<th style="text-align: center;">目标2</th>
+<th style="text-align: center;">目标3（尾）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>B1</code></td>
+<td style="text-align: center;"><code>E1</code></td>
+<td style="text-align: center;"><code>F1</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>A1</code></td>
+<td style="text-align: center;"><code>B2</code></td>
+<td style="text-align: center;"><code>D1</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>A2</code></td>
+<td style="text-align: center;"><code>D2</code></td>
+<td style="text-align: center;"><code>F2</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>C1</code></td>
+<td style="text-align: center;"><code>D3</code></td>
+<td style="text-align: center;"><code>E2</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>A3</code></td>
+<td style="text-align: center;"><code>C2</code></td>
+<td style="text-align: center;"><code>F3</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>A4</code></td>
+<td style="text-align: center;"><code>B3</code></td>
+<td style="text-align: center;"><code>E3</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>B4</code></td>
+<td style="text-align: center;"><code>C3</code></td>
+<td style="text-align: center;"><code>F4</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>B5</code></td>
+<td style="text-align: center;"><code>C4</code></td>
+<td style="text-align: center;"><code>E4</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>A5</code></td>
+<td style="text-align: center;"><code>C5</code></td>
+<td style="text-align: center;"><code>D4</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><code>D5</code></td>
+<td style="text-align: center;"><code>E5</code></td>
+<td style="text-align: center;"><code>F5</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="craq-下的数据复制">3.4 CRAQ 下的数据复制</h3>
+<p>CRAQ
+是一种针对读取密集型工作负载优化的<strong>写全读任意复制协议</strong>。利用所有副本的读取带宽对于在全闪存存储系统中实现最高读取吞吐量至关重要。</p>
+<h4 id="写操作的处理">3.4.1 写操作的处理</h4>
+<p>当存储服务接收到写请求时，它会经过以下步骤：</p>
+<ol type="1">
+<li><strong>版本检查：</strong>
+服务检查写请求中的链版本是否与最新已知版本匹配；如果不匹配，则拒绝请求。写请求可以由客户端或链中的前驱发送。</li>
+<li><strong>数据提取：</strong> 服务发出 <code>RDMA</code>
+读取操作以提取写入数据。如果客户端/前驱失败，<code>RDMA</code>
+读取操作可能会超时，写入将被中止。</li>
+<li><strong>获取锁：</strong>
+一旦写入数据被提取到本地内存缓冲区，将从锁管理器获取要更新的块的锁。对同一块的并发写入被阻塞。所有写入在头目标处被序列化。</li>
+<li><strong>更新数据：</strong>
+服务将块的已提交版本读取到内存中，应用更新，并将更新后的块存储为待处理版本。存储目标可以存储块的两个版本：<strong>已提交版本和待处理版本</strong>。每个版本都有一个单调递增的版本号。</li>
+<li><strong>版本替换：</strong>
+如果服务是尾部，则已提交版本被原子地替换为待处理版本，并向前驱发送确认消息。否则，写请求将被转发到后继者。当已提交版本被更新时，当前链版本作为一个字段存储在块元数据中。</li>
+<li><strong>消息传播：</strong>
+当确认消息到达存储服务时，该服务用待处理版本替换已提交版本，并继续将消息传播给其前驱。然后释放本地块锁。</li>
+</ol>
+<p><strong>故障处理示例：</strong> 假设链中有 <strong>3</strong>
+个目标：<code>A, B, C</code>。写请求刚刚在 <code>A</code> 的第
+<strong>5</strong> 步进入。<code>A</code> 将请求转发给后继者
+<code>B</code>。然后 <code>B</code>
+瞬间失败，转发的写请求丢失。当集群管理器检测到 <code>B</code>
+的失败时，它将 <code>B</code>
+标记为离线，并将其移动到链的末尾，并广播更新后的链表。一旦
+<code>A</code> 接收到最新的链表，它将写请求转发给新的后继者
+<code>C</code>。<code>C</code>
+可能尚未接收到最新的链表，并拒绝该请求。但是 <code>A</code>
+可以继续将请求转发给 <code>C</code>。最终，<code>C</code>
+获取最新的链表并接受请求。</p>
+<h4 id="读请求的处理">3.4.2 读请求的处理</h4>
+<p>当读取请求到达存储服务时：</p>
+<ol type="1">
+<li><strong>返回已提交版本：</strong>
+当服务仅拥有已提交版本的块时，该版本将返回给客户端。</li>
+<li><strong>处理待处理版本：</strong> 与 <strong>CRAQ</strong>
+不同，我们的实现不会向尾部目标发出版本查询。当同时存在
+<strong>已提交版本</strong> 和 <strong>待处理版本</strong>
+时，服务会回复一个特殊状态码以通知客户端。客户端可以等待短暂的时间并重试。或者客户端可以发出一个放宽的读取请求以获取待处理版本。</li>
+</ol>
+<h3 id="故障检测">3.5 故障检测</h3>
+<h4 id="心跳机制">3.5.1 心跳机制</h4>
+<p>集群管理器依赖心跳来检测故障停止故障。如果集群管理器在可配置的时间间隔内（例如
+<code>T</code>
+秒）未收到来自服务的心跳，则声明该服务失败。如果服务无法与集群管理器通信超过
+<code>T/2</code> 秒，则停止处理请求并退出。心跳可以视为向管理器
+<strong>续租</strong> 的请求。</p>
+<h4 id="状态管理">3.5.2 状态管理</h4>
+<p>集群管理器在存储服务的成员变更中扮演着更为关键的角色。它维护着链表和存储目标状态的全局视图。每个存储目标都有一个公共状态和一个本地状态。</p>
+<p><strong>公共状态</strong>指示它是否准备好处理读取请求，以及写请求是否会被传播到它。公共状态与链表一起存储，并分发给服务和客户端。</p>
+<table>
+<thead>
+<tr>
+<th><strong>公共状态</strong></th>
+<th><strong>读取</strong></th>
+<th><strong>写入</strong></th>
+<th><strong>备注</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>服务中</strong></td>
+<td>Y</td>
+<td>Y</td>
+<td>服务正常并处理客户端请求</td>
+</tr>
+<tr>
+<td><strong>同步中</strong></td>
+<td>N</td>
+<td>Y</td>
+<td>服务正常，数据恢复正在进行中</td>
+</tr>
+<tr>
+<td><strong>等待中</strong></td>
+<td>N</td>
+<td>N</td>
+<td>服务正常，数据恢复尚未开始</td>
+</tr>
+<tr>
+<td><strong>lastsrv</strong></td>
+<td>N</td>
+<td>N</td>
+<td>服务宕机，并且这是最后一个服务目标</td>
+</tr>
+<tr>
+<td><strong>离线</strong></td>
+<td>N</td>
+<td>N</td>
+<td>服务宕机或存储介质故障</td>
+</tr>
+</tbody>
+</table>
+<p><strong>本地状态</strong>仅由存储服务和集群管理器知道，并存储在集群管理器的内存中。如果存储目标发生介质故障，相关服务将在心跳中将目标的本地状态设置为离线。如果存储服务宕机，由该服务管理的存储目标将被标记为离线。</p>
+<table>
+<thead>
+<tr>
+<th><strong>本地状态</strong></th>
+<th><strong>备注</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>最新</strong></td>
+<td>服务正常并处理客户端请求</td>
+</tr>
+<tr>
+<td><strong>在线</strong></td>
+<td>服务正常，目标处于同步或等待状态</td>
+</tr>
+<tr>
+<td><strong>离线</strong></td>
+<td>服务宕机或存储介质故障</td>
+</tr>
+</tbody>
+</table>
+<h4 id="状态转换">3.5.3 状态转换</h4>
+<p>存储目标可以根据最新的本地状态在不同的公共状态之间变化。本地状态充当触发事件的角色。集群管理器定期扫描每个链，并根据状态转换表更新链上目标的公共状态。</p>
+<table>
+
+<thead>
+<tr>
+<th><strong>本地状态</strong></th>
+<th><strong>当前公共状态</strong></th>
+<th><strong>上一个公共状态</strong></th>
+<th><strong>下一个公共状态</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>最新</td>
+<td>服务中</td>
+<td>(任何)</td>
+<td>服务中</td>
+</tr>
+<tr>
+<td></td>
+<td>同步中</td>
+<td>(任何)</td>
+<td>服务中</td>
+</tr>
+<tr>
+<td></td>
+<td>等待中</td>
+<td>(任何)</td>
+<td>等待中</td>
+</tr>
+<tr>
+<td></td>
+<td>lastsrv</td>
+<td>(任何)</td>
+<td>服务中</td>
+</tr>
+<tr>
+<td></td>
+<td>离线</td>
+<td>(任何)</td>
+<td>等待中</td>
+</tr>
+<tr>
+<td>在线</td>
+<td>服务中</td>
+<td>(任何)</td>
+<td>服务中</td>
+</tr>
+<tr>
+<td></td>
+<td>同步中</td>
+<td>服务中</td>
+<td>同步中</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>未提供服务</td>
+<td>等待中</td>
+</tr>
+<tr>
+<td></td>
+<td>等待中</td>
+<td>服务中</td>
+<td>同步中</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>未提供服务</td>
+<td>等待中</td>
+</tr>
+<tr>
+<td></td>
+<td>lastsrv</td>
+<td>(任何)</td>
+<td>服务中</td>
+</tr>
+<tr>
+<td></td>
+<td>离线</td>
+<td>(任何)</td>
+<td>等待中</td>
+</tr>
+<tr>
+<td>离线</td>
+<td>服务中</td>
+<td>没有前驱</td>
+<td>lastsrv</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>有前驱</td>
+<td>离线</td>
+</tr>
+<tr>
+<td></td>
+<td>同步中</td>
+<td>(任何)</td>
+<td>离线</td>
+</tr>
+<tr>
+<td></td>
+<td>等待中</td>
+<td>(任何)</td>
+<td>离线</td>
+</tr>
+<tr>
+<td></td>
+<td>lastsrv</td>
+<td>(任何)</td>
+<td>lastsrv</td>
+</tr>
+<tr>
+<td></td>
+<td>离线</td>
+<td>(任何)</td>
+<td>离线</td>
+</tr>
+</tbody>
+</table>
+<h3 id="数据恢复">3.6 数据恢复</h3>
+<p>当存储服务退出（例如，进程崩溃或在升级期间重启）或发生存储介质故障时，所有相关的存储目标将被标记为离线，并由集群管理器移动到链的末尾。一旦服务重启，服务上的每个目标将独立进入恢复过程。整个恢复过程与正常活动重叠，并最小化任何中断。</p>
+<h4 id="离线的存储服务启动">3.6.1 离线的存储服务启动</h4>
+<ol type="1">
+<li><strong>离线服务启动</strong>：服务定期从集群管理器拉取最新的链表。但在所有存储目标在最新链表中被标记为离线之前，它不会发送心跳。这确保了所有目标都会经过数据恢复过程。</li>
+<li><strong>写请求处理</strong>：当写请求在恢复期间到达时，请求始终是全块替换写入。本地已提交版本被更新，任何现有的待处理版本被放弃。由于当前服务是尾部，确认消息被发送给前驱。前驱的完整状态通过连续的全块替换写入流复制到返回服务。</li>
+<li><strong>元数据同步</strong>：在存储目标的数据恢复开始之前，前驱向返回服务发送一个转储块元数据请求。然后服务迭代本地块元数据存储，以收集目标上所有块的
+<code>ID</code>、链版本和已提交/待处理版本号，并将收集到的元数据回复给前驱。</li>
+<li><strong>同步完成</strong>：当同步完成消息到达时，服务知道存储目标是最新的。它在发送给集群管理器的心跳消息中将目标的本地状态设置为最新。</li>
+</ol>
+<h4 id="存储服务发现之前离线的后继者上线">3.6.2
+存储服务发现之前离线的后继者上线</h4>
+<ol type="1">
+<li><strong>写请求转发</strong>：服务开始将正常的写请求转发给后继者。客户端可能只更新块的一部分，但转发的写请求应包含整个块，即全块替换写入。</li>
+<li><strong>元数据比较</strong>：服务向后继者发送一个转储块元数据请求。一旦接收到后继目标上所有块的元数据，它会在本地目标上收集块元数据。然后，它比较两份块元数据，以决定哪些块应该被转移。</li>
+<li><strong>块转移</strong>：选定的块通过发出全块替换写请求转移到后继者。
+<ul>
+<li>首先为每个块获取块锁。</li>
+<li>链版本、已提交版本号和块内容被读取并通过发送全块替换请求转移到后继者。</li>
+<li>块锁被释放。</li>
+</ul></li>
+<li><strong>同步完成</strong>：当所有所需的块都已转移后，向后继者发送同步完成消息。</li>
+</ol>
+<p><strong>块转移规则：</strong></p>
+<ul>
+<li>如果一个块仅存在于本地目标上，则应该被转移。</li>
+<li>如果一个块仅存在于远程目标上，则应将其删除。</li>
+<li>如果本地块副本的链版本大于远程块副本的链版本，则应进行传输。</li>
+<li>如果本地/远程块副本的链版本相同，但本地已提交版本号不等于远程待处理版本号，则应进行传输。</li>
+<li>否则，两个块副本要么是相同的，要么正在被进行中的写请求更新。</li>
+</ul>
+<h2 id="四smallpond-介绍">四、Smallpond 介绍</h2>
+<h3 id="smallpond-是什么">4.1 Smallpond 是什么？</h3>
+<p>Smallpond 是由 DeepSeek
+推出的一个轻量级数据处理框架，专为高性能和大规模数据处理设计。它基于
+DuckDB 和 3FS 构建，能够高效处理 PB 级数据。</p>
+<blockquote>
+<p>DuckDB 是一个开源的
+OLAP（在线分析处理）数据库，专为数据分析而设计。它类似于
+SQLite，是一个可以嵌入到应用程序中的进程内数据库。这种设计使得 DuckDB
+能够在同一内存地址空间内传输数据，从而消除了通过套接字复制大量数据的需要，大大提高了性能。</p>
+</blockquote>
+<p>Smallpond 的核心目标是将 DuckDB 的高性能 SQL
+分析能力扩展到分布式环境中，同时结合 3FS
+的分布式存储优势，提供一个简单易用且高效的解决方案。</p>
+<h3 id="核心功能">4.2 核心功能</h3>
+<ul>
+<li><strong>高效数据处理</strong>：Smallpond 借助 DuckDB
+的高性能分析能力，支持高效的数据加载、查询和转换。</li>
+<li><strong>支持多种数据格式</strong>：Smallpond 支持多种数据格式，包括
+Parquet、CSV、JSON 等。</li>
+<li><strong>并行处理</strong>：Smallpond
+支持数据分区和并行处理，能够充分利用集群资源，提高处理效率。</li>
+<li><strong>灵活的 API</strong>：Smallpond 提供了高层和低层两种
+API。高层 API 以 <code>DataFrame</code> 为核心，使用上类似 Pandas 和
+PySpark；低层 API 提供更灵活的配置选项。</li>
+<li><strong>惰性执行</strong>：Smallpond
+使用惰性求值机制，避免不必要的计算，并优化工作流程。</li>
+</ul>
+<h3 id="应用场景">4.3 应用场景</h3>
+<ul>
+<li><strong>大规模数据预处理</strong>：Smallpond
+能高效处理和转换大规模数据集，支持数据清洗、格式转换和特征提取。</li>
+<li><strong>数据分析与实时查询</strong>：Smallpond
+能快速执行复杂的数据分析和实时查询任务，适用于数据仪表盘和实时监控系统。</li>
+<li><strong>分布式机器学习训练</strong>：Smallpond
+为分布式机器学习训练任务提供强大的数据支持，提升训练效率。</li>
+<li><strong>嵌入式数据分析应用</strong>：Smallpond
+轻量级的设计使其能够轻松嵌入到各种应用中，为嵌入式设备或资源受限的环境提供高效的数据分析能力。</li>
+</ul>
+<h3 id="代码示例">4.4 代码示例</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> smallpond<br><br><span class="hljs-comment"># 初始化会话</span><br>sp = smallpond.init()<br><br><span class="hljs-comment"># 加载数据</span><br>df = sp.read_parquet(<span class="hljs-string">"prices.parquet"</span>)<br><br><span class="hljs-comment"># 处理数据</span><br>df = df.repartition(<span class="hljs-number">3</span>, hash_by=<span class="hljs-string">"ticker"</span>)<br>df = sp.partial_sql(<span class="hljs-string">"SELECT ticker, min(price), max(price) FROM {0} GROUP BY ticker"</span>, df)<br><br><span class="hljs-comment"># 保存结果</span><br>df.write_parquet(<span class="hljs-string">"output/"</span>)<br><span class="hljs-comment"># 显示结果</span><br><span class="hljs-built_in">print</span>(df.to_pandas())<br></code></pre></td></tr></table></figure>
+<h2 id="reference">Reference</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://github.com/deepseek-ai/3FS">Github 3FS</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/deepseek-ai/smallpond">Github
+smallpond</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/Eternity__Aurora/article/details/146372412?spm=1001.2014.3001.5502">【DeepSeek开源周】Day
+5：3FS &amp; Smallpond 学习笔记</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/18093028258">CRAQ:
+分布式对象存储系统</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/1wZpFhwJR-LNkQm-QzFxRQ">图解原理｜Linux
+I/O 神器之 io_uring</a></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/DeepSeek/" class="print-no-link">#DeepSeek</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>DeepSeek 3FS &amp; Smallpond</div>
+      <div>https://mztchaoqun.com.cn/posts/D69_3FS_Smallpond/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年5月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D70_DeepSeek_V3/" title="DeepSeek V3">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">DeepSeek V3</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D68_DualPipe_EPLB/" title="DeepSeek DualPipe &amp; EPLB">
+                        <span class="hidden-mobile">DeepSeek DualPipe &amp; EPLB</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,935 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、LLMs LLM是LlamaIndex的核心组件。它们可以作为独立的模块使用，也可以插入到LlamaIndex的其他核心模块中（例如索引、检索器、查询引擎）。在响应合成步骤中始终使用LLM（例如检索之后）。根据所使用的索引类型，LLM也可能在索引构建、插入和查询遍历过程中使用。 LlamaIndex提供了一个统一的接口来定义LLM模块，无论是来自OpenAI、Hugging Face还是Lan">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LlamaIndex(二)——LlamaIndex Models">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D15_LlamaIndex_Models/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、LLMs LLM是LlamaIndex的核心组件。它们可以作为独立的模块使用，也可以插入到LlamaIndex的其他核心模块中（例如索引、检索器、查询引擎）。在响应合成步骤中始终使用LLM（例如检索之后）。根据所使用的索引类型，LLM也可能在索引构建、插入和查询遍历过程中使用。 LlamaIndex提供了一个统一的接口来定义LLM模块，无论是来自OpenAI、Hugging Face还是Lan">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/LlamaIndex-Blog-Feature-Image2.jpg">
+<meta property="article:published_time" content="2024-03-25T13:52:49.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.269Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="LLM学习笔记">
+<meta property="article:tag" content="LlamaIndex">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/LlamaIndex-Blog-Feature-Image2.jpg">
+  
+  
+  
+  <title>LlamaIndex(二)——LlamaIndex Models - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LlamaIndex(二)——LlamaIndex Models"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-03-25 21:52" pubdate>
+          2024年3月25日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          17 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LlamaIndex(二)——LlamaIndex Models</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一llms">一、LLMs</h2>
+<p>LLM是LlamaIndex的核心组件。它们可以作为独立的模块使用，也可以插入到LlamaIndex的其他核心模块中（例如索引、检索器、查询引擎）。在响应合成步骤中始终使用LLM（例如检索之后）。根据所使用的索引类型，LLM也可能在索引构建、插入和查询遍历过程中使用。</p>
+<p>LlamaIndex提供了一个统一的接口来定义LLM模块，无论是来自OpenAI、Hugging
+Face还是LangChain。这个接口包括以下几个方面：</p>
+<ul>
+<li>支持 <code>text completion</code>和<code>chat</code></li>
+<li>支持 <code>streaming</code>和<code>non-streaming</code></li>
+<li>支持同步<code>synchronous</code>和异步<code>synchronous</code></li>
+</ul>
+<h3 id="llm的使用">1.1 LLM的使用</h3>
+<p>安装依赖</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install llama-index-llms-openai<br></code></pre></td></tr></table></figure>
+<h4 id="text-completion例子">1.1.1 Text Completion例子</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.llms.openai <span class="hljs-keyword">import</span> OpenAI<br><br><span class="hljs-comment"># non-streaming</span><br>resp = OpenAI().complete(<span class="hljs-string">"Paul Graham is "</span>)<br><span class="hljs-built_in">print</span>(resp)<br><br><span class="hljs-comment"># using streaming endpoint</span><br><span class="hljs-keyword">from</span> llama_index.llms.openai <span class="hljs-keyword">import</span> OpenAI<br><br>llm = OpenAI()<br>resp = llm.stream_complete(<span class="hljs-string">"Paul Graham is "</span>)<br><span class="hljs-keyword">for</span> delta <span class="hljs-keyword">in</span> resp:<br>    <span class="hljs-built_in">print</span>(delta, end=<span class="hljs-string">""</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="chat例子">1.1.2 Chat例子</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.llms <span class="hljs-keyword">import</span> ChatMessage<br><span class="hljs-keyword">from</span> llama_index.llms.openai <span class="hljs-keyword">import</span> OpenAI<br><br>messages = [<br>    ChatMessage(<br>        role=<span class="hljs-string">"system"</span>, content=<span class="hljs-string">"You are a pirate with a colorful personality"</span><br>    ),<br>    ChatMessage(role=<span class="hljs-string">"user"</span>, content=<span class="hljs-string">"What is your name"</span>),<br>]<br>resp = OpenAI().chat(messages)<br><span class="hljs-built_in">print</span>(resp)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">assistant: Ahoy matey! The name's Captain Rainbowbeard! Aye, I be a pirate with a love for all things colorful and bright, from me beard to me ship's sails. What can I do for ye today, me hearty?<br></code></pre></td></tr></table></figure>
+<h4 id="tokenization">1.1.3 Tokenization</h4>
+<p>默认情况下，LlamaIndex使用一个全局的标记器来计算所有的<code>token</code>。这个默认设置是来自<code>tiktoken</code>的<code>cl100k</code>，这是与默认的大型语言模型（LLM）<code>gpt-3.5-turbo</code>相匹配的标记器。</p>
+<p>如果您更改了LLM，您可能需要更新这个标记器，以确保准确的<code>token</code>计数、<code>chunking</code>和<code>prompting</code>。</p>
+<p>对标记器的唯一要求是它是一个可调用的函数，它接受一个字符串，并返回一个列表。</p>
+<p>可以像这样设置一个全局标记器： <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Settings<br><br><span class="hljs-comment"># tiktoken</span><br><span class="hljs-keyword">import</span> tiktoken<br><br>Settings.tokenizer = tiktoken.encoding_for_model(<span class="hljs-string">"gpt-3.5-turbo"</span>).encode<br><br><span class="hljs-comment"># huggingface</span><br><span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> AutoTokenizer<br><br>Settings.tokenizer = AutoTokenizer.from_pretrained(<br>    <span class="hljs-string">"HuggingFaceH4/zephyr-7b-beta"</span><br>)<br></code></pre></td></tr></table></figure></p>
+<h3 id="自定义-llm">1.2 自定义 LLM</h3>
+<p>可以定义模型名，模型最大输出token。以及模型更精细的控制，从上下文窗口（context
+window）到块重叠（chunk overlap）。</p>
+<h4 id="自定义llm输出token上下文窗口">1.2.1
+自定义LLM，输出token，上下文窗口</h4>
+<p>如果使用 langchain 中的其他 LLM
+类，可以通过<code>Settings</code>显式配置 <code>context_window</code> 和
+<code>num_output</code>。 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.llms.openai <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Settings<br><br><span class="hljs-comment"># define global LLM</span><br>Settings.llm = OpenAI(temperature=<span class="hljs-number">0</span>, model=<span class="hljs-string">"gpt-4-turbo"</span>, max_tokens=<span class="hljs-number">512</span>)<br><br><span class="hljs-comment"># set context window</span><br>Settings.context_window = <span class="hljs-number">4096</span><br><span class="hljs-comment"># set number of output tokens</span><br>Settings.num_output = <span class="hljs-number">256</span><br></code></pre></td></tr></table></figure></p>
+<h4 id="使用huggingface-llm">1.2.1 使用HuggingFace LLM</h4>
+<p>LlamaIndex 支持直接使用 HuggingFace 的
+LLM。如果想要保证数据安全，最好Embedding模型也在本地搭建。HuggingFace
+的许多开源模型在每个prompt之前都需要<code>system_prompt</code>。
+此外，查询时可能需要对 <code>query_str</code> 进行额外的包装。
+所有这些信息可以在使用的模型的 HuggingFace Model Card页面中获得。</p>
+<p>下边的例子使用了<code>system_prompt</code> 和
+<code>query_wrapper_prompt</code>，具体信息在<a target="_blank" rel="noopener" href="https://huggingface.co/HuggingFaceH4/zephyr-7b-beta">HuggingFace</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.llms.huggingface <span class="hljs-keyword">import</span> HuggingFaceLLM<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">messages_to_prompt</span>(<span class="hljs-params">messages</span>):<br>    prompt = <span class="hljs-string">""</span><br>    <span class="hljs-keyword">for</span> message <span class="hljs-keyword">in</span> messages:<br>        <span class="hljs-keyword">if</span> message.role == <span class="hljs-string">'system'</span>:<br>        prompt += <span class="hljs-string">f"&lt;|system|&gt;\n<span class="hljs-subst">{message.content}</span>&lt;/s&gt;\n"</span><br>        <span class="hljs-keyword">elif</span> message.role == <span class="hljs-string">'user'</span>:<br>        prompt += <span class="hljs-string">f"&lt;|user|&gt;\n<span class="hljs-subst">{message.content}</span>&lt;/s&gt;\n"</span><br>        <span class="hljs-keyword">elif</span> message.role == <span class="hljs-string">'assistant'</span>:<br>        prompt += <span class="hljs-string">f"&lt;|assistant|&gt;\n<span class="hljs-subst">{message.content}</span>&lt;/s&gt;\n"</span><br><br>    <span class="hljs-comment"># ensure we start with a system prompt, insert blank if needed</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> prompt.startswith(<span class="hljs-string">"&lt;|system|&gt;\n"</span>):<br>        prompt = <span class="hljs-string">"&lt;|system|&gt;\n&lt;/s&gt;\n"</span> + prompt<br><br>    <span class="hljs-comment"># add final assistant prompt</span><br>    prompt = prompt + <span class="hljs-string">"&lt;|assistant|&gt;\n"</span><br><br>    <span class="hljs-keyword">return</span> prompt<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">completion_to_prompt</span>(<span class="hljs-params">completion</span>):<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">f"&lt;|system|&gt;\n&lt;/s&gt;\n&lt;|user|&gt;\n<span class="hljs-subst">{completion}</span>&lt;/s&gt;\n&lt;|assistant|&gt;\n"</span><br><br><span class="hljs-keyword">import</span> torch<br><span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> BitsAndBytesConfig<br><span class="hljs-keyword">from</span> llama_index.core.prompts <span class="hljs-keyword">import</span> PromptTemplate<br><span class="hljs-keyword">from</span> llama_index.llms.huggingface <span class="hljs-keyword">import</span> HuggingFaceLLM<br><br><span class="hljs-comment"># quantize to save memory</span><br>quantization_config = BitsAndBytesConfig(<br>    load_in_4bit=<span class="hljs-literal">True</span>,<br>    bnb_4bit_compute_dtype=torch.float16,<br>    bnb_4bit_quant_type=<span class="hljs-string">"nf4"</span>,<br>    bnb_4bit_use_double_quant=<span class="hljs-literal">True</span>,<br>)<br><br>llm = HuggingFaceLLM(<br>    model_name=<span class="hljs-string">"HuggingFaceH4/zephyr-7b-beta"</span>,<br>    tokenizer_name=<span class="hljs-string">"HuggingFaceH4/zephyr-7b-beta"</span>,<br>    context_window=<span class="hljs-number">3900</span>,<br>    max_new_tokens=<span class="hljs-number">256</span>,<br>    model_kwargs={<span class="hljs-string">"quantization_config"</span>: quantization_config},<br>    generate_kwargs={<span class="hljs-string">"temperature"</span>: <span class="hljs-number">0.7</span>, <span class="hljs-string">"top_k"</span>: <span class="hljs-number">50</span>, <span class="hljs-string">"top_p"</span>: <span class="hljs-number">0.95</span>},<br>    messages_to_prompt=messages_to_prompt,<br>    completion_to_prompt=completion_to_prompt,<br>    device_map=<span class="hljs-string">"auto"</span>,<br>)<br><br>response = llm.complete(<span class="hljs-string">"What is the meaning of life?"</span>)<br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">str</span>(response))<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs text">This is a question that has been asked for centuries, and there is no one definitive answer. However, there are many different perspectives and philosophies that offer insights into this question.<br><br>One perspective is that the meaning of life is to find happiness and fulfillment. This can be achieved through various means, such as pursuing one's passions, cultivating meaningful relationships, and contributing to society in a positive way.<br><br>Another perspective is that the meaning of life is to serve a higher purpose or to fulfill a divine plan. This can involve following a particular religious or spiritual path, or simply living a life that is in alignment with one's values and beliefs.<br><br>A third perspective is that the meaning of life is to learn and grow, both as individuals and as a society. This can involve seeking out knowledge and understanding, as well as working to improve the world around us.<br><br>Ultimately, the meaning of life is a deeply personal and subjective question. Each individual must find their own answers and live their lives in accordance with their own values and beliefs.<br></code></pre></td></tr></table></figure>
+<p><code>token_type_ids</code>
+tokenizer经常会导致模型错误，可以通过以下方法解决：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python">HuggingFaceLLM(<br>    <span class="hljs-comment"># ...</span><br>    tokenizer_outputs_to_remove=[<span class="hljs-string">"token_type_ids"</span>]<br>)<br></code></pre></td></tr></table></figure>
+<h4 id="使用自定义的llm">1.2.2 使用自定义的LLM</h4>
+<p>要使用自定义的大型语言模型（LLM），只需要实现LLM类（或者使用<code>CustomLLM</code>）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">Optional</span>, <span class="hljs-type">List</span>, Mapping, <span class="hljs-type">Any</span><br><br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> SimpleDirectoryReader, SummaryIndex<br><span class="hljs-keyword">from</span> llama_index.core.callbacks <span class="hljs-keyword">import</span> CallbackManager<br><span class="hljs-keyword">from</span> llama_index.core.llms <span class="hljs-keyword">import</span> (<br>    CustomLLM,<br>    CompletionResponse,<br>    CompletionResponseGen,<br>    LLMMetadata,<br>)<br><span class="hljs-keyword">from</span> llama_index.core.llms.callbacks <span class="hljs-keyword">import</span> llm_completion_callback<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Settings<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">OurLLM</span>(<span class="hljs-title class_ inherited__">CustomLLM</span>):<br>    context_window: <span class="hljs-built_in">int</span> = <span class="hljs-number">3900</span><br>    num_output: <span class="hljs-built_in">int</span> = <span class="hljs-number">256</span><br>    model_name: <span class="hljs-built_in">str</span> = <span class="hljs-string">"custom"</span><br>    dummy_response: <span class="hljs-built_in">str</span> = <span class="hljs-string">"My response"</span><br><br><span class="hljs-meta">    @property</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">metadata</span>(<span class="hljs-params">self</span>) -&gt; LLMMetadata:<br>        <span class="hljs-string">"""Get LLM metadata."""</span><br>        <span class="hljs-keyword">return</span> LLMMetadata(<br>            context_window=<span class="hljs-variable language_">self</span>.context_window,<br>            num_output=<span class="hljs-variable language_">self</span>.num_output,<br>            model_name=<span class="hljs-variable language_">self</span>.model_name,<br>        )<br><br><span class="hljs-meta">    @llm_completion_callback()</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">complete</span>(<span class="hljs-params">self, prompt: <span class="hljs-built_in">str</span>, **kwargs: <span class="hljs-type">Any</span></span>) -&gt; CompletionResponse:<br>        <span class="hljs-keyword">return</span> CompletionResponse(text=<span class="hljs-variable language_">self</span>.dummy_response)<br><br><span class="hljs-meta">    @llm_completion_callback()</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">stream_complete</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self, prompt: <span class="hljs-built_in">str</span>, **kwargs: <span class="hljs-type">Any</span></span><br><span class="hljs-params">    </span>) -&gt; CompletionResponseGen:<br>        response = <span class="hljs-string">""</span><br>        <span class="hljs-keyword">for</span> token <span class="hljs-keyword">in</span> <span class="hljs-variable language_">self</span>.dummy_response:<br>            response += token<br>            <span class="hljs-keyword">yield</span> CompletionResponse(text=response, delta=token)<br><br><br><span class="hljs-comment"># define our LLM</span><br>Settings.llm = OurLLM()<br><br><span class="hljs-comment"># define embed model</span><br>Settings.embed_model = HuggingFaceEmbedding(<br>    model_name=<span class="hljs-string">"BAAI/bge-small-en-v1.5"</span><br>)<br><br><br><span class="hljs-comment"># Load the your data</span><br>documents = SimpleDirectoryReader(<span class="hljs-string">"./data"</span>).load_data()<br>index = SummaryIndex.from_documents(documents)<br><br><span class="hljs-comment"># Query and print response</span><br>query_engine = index.as_query_engine()<br>response = query_engine.query(<span class="hljs-string">"&lt;query_text&gt;"</span>)<br><span class="hljs-built_in">print</span>(response)<br></code></pre></td></tr></table></figure>
+<p>支持的模型列表：<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/models/llms/modules/">https://docs.llamaindex.ai/en/stable/module_guides/models/llms/modules/</a></p>
+<p>使用这种方法，可以使用任何大型语言模型（LLM）。在本地运行的模型，或者在您自己的服务器上运行的模型。只要实现了类并且返回了生成的tokens，它就应该可以工作。需要使用提示助手来定制prompt的大小，因为每个模型的上下文长度都略有不同。</p>
+<p>可能需要调整内部prompt以获得良好的性能。即便如此，也应该使用一个足够大的LLM，以确保它能够处理LlamaIndex内部使用的复杂查询。</p>
+<p>LlamaIndex提供了一些默认的<a target="_blank" rel="noopener" href="https://github.com/run-llama/llama_index/blob/main/llama-index-core/llama_index/core/prompts/default_prompts.py">prompts</a>，还有<a target="_blank" rel="noopener" href="https://github.com/run-llama/llama_index/blob/main/llama-index-core/llama_index/core/prompts/chat_prompts.py">chat-specific
+prompts</a>。也可以自定义Prompt。</p>
+<h2 id="二embeddings">二、Embeddings</h2>
+<p>在LlamaIndex中，Embeddings用于将文档转换成向量表示的模型。LlamaIndex中计算向量相似度使用余弦。LlamaIndex默认使用OpenAI的<code>text-embedding-ada-002</code>模型对文本进行向量化。LlamaIndex还支持Langchain提供的任何Embedding模型，并提供了一个易于扩展的基础类，以便实现自己的嵌入模型。</p>
+<h3 id="使用示例">2.1 使用示例</h3>
+<p>在LlamaIndex中，Embedding模型通常在Settings对象中指定，然后用于向量索引。Embedding模型将用于向量化构建索引时使用的文档，以及稍后使用查询引擎进行的任何查询的向量化。还可以为每个索引指定Embedding模型。</p>
+<p>安装依赖 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install llama-index-embeddings-openai<br></code></pre></td></tr></table></figure></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.embeddings.openai <span class="hljs-keyword">import</span> OpenAIEmbedding<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Settings<br><span class="hljs-keyword">from</span> llama_index.embeddings.huggingface <span class="hljs-keyword">import</span> HuggingFaceEmbedding<br><br><span class="hljs-comment"># global</span><br>Settings.embed_model = OpenAIEmbedding()<br><br><span class="hljs-comment"># per-index</span><br>index = VectorStoreIndex.from_documents(documents, embed_model=embed_model)<br><br><span class="hljs-comment">#节省成本，可以使用HuggingFace的模型</span><br>Settings.embed_model = HuggingFaceEmbedding(<br>    model_name=<span class="hljs-string">"BAAI/bge-small-en-v1.5"</span><br>)<br></code></pre></td></tr></table></figure>
+<h3 id="定制化">2.2 定制化</h3>
+<h4 id="batch-size">2.2.1 Batch Size</h4>
+<p>默认情况下，Embedding请求以每批10个的量发送给OpenAI。对于需要Embedding许多文档的其他用户来说，这个批量大小可能太小了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># set the batch size to 42</span><br>embed_model = OpenAIEmbedding(embed_batch_size=<span class="hljs-number">42</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="本地embedding模型">2.2.2 本地Embedding模型</h4>
+<p>最简单的方式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.embeddings.huggingface <span class="hljs-keyword">import</span> HuggingFaceEmbedding<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Settings<br><br>Settings.embed_model = HuggingFaceEmbedding(<br>    model_name=<span class="hljs-string">"BAAI/bge-small-en-v1.5"</span><br>)<br></code></pre></td></tr></table></figure>
+<h4 id="huggingface-optimum-onnx-embeddings">2.2.3 HuggingFace Optimum
+ONNX Embeddings</h4>
+<p>LlamaIndex 还支持使用 HuggingFace 的 Optimum 库创建和使用 ONNX
+Embeddings 简单创建并保存 ONNX Embeddings并使用它们。</p>
+<p>安装依赖</p>
+<p>指定模型和输出路径： <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install transformers optimum[exporters]<br>pip install llama-index-embeddings-huggingface-optimum<br></code></pre></td></tr></table></figure></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.embeddings.huggingface_optimum <span class="hljs-keyword">import</span> OptimumEmbedding<br><br>OptimumEmbedding.create_and_save_optimum_model(<br>    <span class="hljs-string">"BAAI/bge-small-en-v1.5"</span>, <span class="hljs-string">"./bge_onnx"</span><br>)<br><br>Settings.embed_model = OptimumEmbedding(folder_name=<span class="hljs-string">"./bge_onnx"</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="langchain集成">2.2.4 LangChain集成</h4>
+<p>安装依赖</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install llama-index-embeddings-langchain<br></code></pre></td></tr></table></figure>
+<p>使用LangChain的 embedding class从 Hugging Face 加载模型</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.embeddings.huggingface <span class="hljs-keyword">import</span> HuggingFaceBgeEmbeddings<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Settings<br><br>Settings.embed_model = HuggingFaceBgeEmbeddings(model_name=<span class="hljs-string">"BAAI/bge-base-en"</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="自定义embedding模型">2.2.5 自定义Embedding模型</h4>
+<p>下面的示例使用 <a target="_blank" rel="noopener" href="https://huggingface.co/hkunlp/instructor-large">Instructor
+Embeddings</a>，并实现自定义Embedding类。 Instructor
+Embedding通过提供文本以及要Embedding的文本领域的“说明”来工作。
+当Embedding来自非常具体和专业的主题的文本时，这非常有用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">Any</span>, <span class="hljs-type">List</span><br><span class="hljs-keyword">from</span> InstructorEmbedding <span class="hljs-keyword">import</span> INSTRUCTOR<br><span class="hljs-keyword">from</span> llama_index.core.embeddings <span class="hljs-keyword">import</span> BaseEmbedding<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">InstructorEmbeddings</span>(<span class="hljs-title class_ inherited__">BaseEmbedding</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self,</span><br><span class="hljs-params">        instructor_model_name: <span class="hljs-built_in">str</span> = <span class="hljs-string">"hkunlp/instructor-large"</span>,</span><br><span class="hljs-params">        instruction: <span class="hljs-built_in">str</span> = <span class="hljs-string">"Represent the Computer Science documentation or question:"</span>,</span><br><span class="hljs-params">        **kwargs: <span class="hljs-type">Any</span>,</span><br><span class="hljs-params">    </span>) -&gt; <span class="hljs-literal">None</span>:<br>        <span class="hljs-variable language_">self</span>._model = INSTRUCTOR(instructor_model_name)<br>        <span class="hljs-variable language_">self</span>._instruction = instruction<br>        <span class="hljs-built_in">super</span>().__init__(**kwargs)<br><br>        <span class="hljs-keyword">def</span> <span class="hljs-title function_">_get_query_embedding</span>(<span class="hljs-params">self, query: <span class="hljs-built_in">str</span></span>) -&gt; <span class="hljs-type">List</span>[<span class="hljs-built_in">float</span>]:<br>            embeddings = <span class="hljs-variable language_">self</span>._model.encode([[<span class="hljs-variable language_">self</span>._instruction, query]])<br>            <span class="hljs-keyword">return</span> embeddings[<span class="hljs-number">0</span>]<br><br>        <span class="hljs-keyword">def</span> <span class="hljs-title function_">_get_text_embedding</span>(<span class="hljs-params">self, text: <span class="hljs-built_in">str</span></span>) -&gt; <span class="hljs-type">List</span>[<span class="hljs-built_in">float</span>]:<br>            embeddings = <span class="hljs-variable language_">self</span>._model.encode([[<span class="hljs-variable language_">self</span>._instruction, text]])<br>            <span class="hljs-keyword">return</span> embeddings[<span class="hljs-number">0</span>]<br><br>        <span class="hljs-keyword">def</span> <span class="hljs-title function_">_get_text_embeddings</span>(<span class="hljs-params">self, texts: <span class="hljs-type">List</span>[<span class="hljs-built_in">str</span>]</span>) -&gt; <span class="hljs-type">List</span>[<span class="hljs-type">List</span>[<span class="hljs-built_in">float</span>]]:<br>            embeddings = <span class="hljs-variable language_">self</span>._model.encode(<br>                [[<span class="hljs-variable language_">self</span>._instruction, text] <span class="hljs-keyword">for</span> text <span class="hljs-keyword">in</span> texts]<br>            )<br>            <span class="hljs-keyword">return</span> embeddings<br><br>        <span class="hljs-keyword">async</span> <span class="hljs-keyword">def</span> <span class="hljs-title function_">_get_query_embedding</span>(<span class="hljs-params">self, query: <span class="hljs-built_in">str</span></span>) -&gt; <span class="hljs-type">List</span>[<span class="hljs-built_in">float</span>]:<br>            <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>._get_query_embedding(query)<br><br>        <span class="hljs-keyword">async</span> <span class="hljs-keyword">def</span> <span class="hljs-title function_">_get_text_embedding</span>(<span class="hljs-params">self, text: <span class="hljs-built_in">str</span></span>) -&gt; <span class="hljs-type">List</span>[<span class="hljs-built_in">float</span>]:<br>            <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>._get_text_embedding(text)<br></code></pre></td></tr></table></figure>
+<h3 id="单独使用">2.3 单独使用</h3>
+<p>还可以将Embedding作为一个独立的模块，用于项目、现有应用程序或一般的测试和探索。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">embeddings = embed_model.get_text_embedding(<br>    <span class="hljs-string">"It is raining cats and dogs here!"</span><br>)<br></code></pre></td></tr></table></figure>
+<p>支持的Embedding模型:<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/models/embeddings/#list-of-supported-embeddings">https://docs.llamaindex.ai/en/stable/module_guides/models/embeddings/#list-of-supported-embeddings</a></p>
+<h2 id="三multi-modal-models">三、Multi-modal models</h2>
+<p>多模态LMMs(Large Multi-modal Models
+(LMMs))的输入不再仅仅局限于文本，可以是图片和文本。LlamaINdex包含一个<code>MultiModalLLM</code>抽象类，可以支持文本+图像的多模态模型。</p>
+<h3 id="使用示例-1">3.1 使用示例</h3>
+<p>以下代码片段展示了如何使用多模态LMM</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.multi_modal_llms.openai <span class="hljs-keyword">import</span> OpenAIMultiModal<br><span class="hljs-keyword">from</span> llama_index.core.multi_modal_llms.generic_utils <span class="hljs-keyword">import</span> load_image_urls<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> SimpleDirectoryReader<br><br><span class="hljs-comment"># load image documents from urls</span><br>image_documents = load_image_urls(image_urls)<br><br><span class="hljs-comment"># load image documents from local directory</span><br>image_documents = SimpleDirectoryReader(local_directory).load_data()<br><br><span class="hljs-comment"># non-streaming</span><br>openai_mm_llm = OpenAIMultiModal(<br>    model=<span class="hljs-string">"gpt-4-vision-preview"</span>, api_key=OPENAI_API_TOKEN, max_new_tokens=<span class="hljs-number">300</span><br>)<br>response = openai_mm_llm.complete(<br>    prompt=<span class="hljs-string">"what is in the image?"</span>, image_documents=image_documents<br>)<br></code></pre></td></tr></table></figure>
+<p>以下代码展示了如何构建多模态向量存储/索引。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.indices <span class="hljs-keyword">import</span> MultiModalVectorStoreIndex<br><span class="hljs-keyword">from</span> llama_index.vector_stores.qdrant <span class="hljs-keyword">import</span> QdrantVectorStore<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> SimpleDirectoryReader, StorageContext<br><br><span class="hljs-keyword">import</span> qdrant_client<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> SimpleDirectoryReader<br><br><span class="hljs-comment"># Create a local Qdrant vector store</span><br>client = qdrant_client.QdrantClient(path=<span class="hljs-string">"qdrant_mm_db"</span>)<br><br><span class="hljs-comment"># if you only need image_store for image retrieval,</span><br><span class="hljs-comment"># you can remove text_sotre</span><br>text_store = QdrantVectorStore(<br>    client=client, collection_name=<span class="hljs-string">"text_collection"</span><br>)<br>image_store = QdrantVectorStore(<br>    client=client, collection_name=<span class="hljs-string">"image_collection"</span><br>)<br><br>storage_context = StorageContext.from_defaults(<br>    vector_store=text_store, image_store=image_store<br>)<br><br><span class="hljs-comment"># Load text and image documents from local folder</span><br>documents = SimpleDirectoryReader(<span class="hljs-string">"./data_folder/"</span>).load_data()<br><span class="hljs-comment"># Create the MultiModal index</span><br>index = MultiModalVectorStoreIndex.from_documents(<br>    documents,<br>    storage_context=storage_context,<br>)<br></code></pre></td></tr></table></figure>
+<p>以下代码展示了如何使用多模态检索器和查询引擎。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.multi_modal_llms.openai <span class="hljs-keyword">import</span> OpenAIMultiModal<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> PromptTemplate<br><span class="hljs-keyword">from</span> llama_index.core.query_engine <span class="hljs-keyword">import</span> SimpleMultiModalQueryEngine<br><br>retriever_engine = index.as_retriever(<br>    similarity_top_k=<span class="hljs-number">3</span>, image_similarity_top_k=<span class="hljs-number">3</span><br>)<br><br><span class="hljs-comment"># retrieve more information from the GPT4V response</span><br>retrieval_results = retriever_engine.retrieve(response)<br><br><span class="hljs-comment"># if you only need image retrieval without text retrieval</span><br><span class="hljs-comment"># you can use `text_to_image_retrieve`</span><br><span class="hljs-comment"># retrieval_results = retriever_engine.text_to_image_retrieve(response)</span><br><br>qa_tmpl_str = (<br>    <span class="hljs-string">"Context information is below.\n"</span><br>    <span class="hljs-string">"---------------------\n"</span><br>    <span class="hljs-string">"{context_str}\n"</span><br>    <span class="hljs-string">"---------------------\n"</span><br>    <span class="hljs-string">"Given the context information and not prior knowledge, "</span><br>    <span class="hljs-string">"answer the query.\n"</span><br>    <span class="hljs-string">"Query: {query_str}\n"</span><br>    <span class="hljs-string">"Answer: "</span><br>)<br>qa_tmpl = PromptTemplate(qa_tmpl_str)<br><br>query_engine = index.as_query_engine(<br>    multi_modal_llm=openai_mm_llm, text_qa_template=qa_tmpl<br>)<br><br>query_str = <span class="hljs-string">"Tell me more about the Porsche"</span><br>response = query_engine.query(query_str)<br></code></pre></td></tr></table></figure>
+<p>LlamaIndex 多模态LMM使用的例子：<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/models/multi_modal/#multi-modal-llm-models">https://docs.llamaindex.ai/en/stable/module_guides/models/multi_modal/#multi-modal-llm-models</a></p>
+<h2 id="官方资源">官方资源</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/models/">官方文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.llamaindex.ai/blog">官方博客</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples">官方全部例子</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.llamaindex.ai/blog/multi-modal-rag-621de7525fea">Multi-Modal
+RAG</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LlamaIndex/" class="category-chain-item">LlamaIndex</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#LLM学习笔记</a>
+      
+        <a href="/tags/LlamaIndex/" class="print-no-link">#LlamaIndex</a>
+      
+        <a href="/tags/Agent/" class="print-no-link">#Agent</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LlamaIndex(二)——LlamaIndex Models</div>
+      <div>https://mztchaoqun.com.cn/posts/D15_LlamaIndex_Models/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年3月25日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D16_LlamaIndex_Prompt/" title="LlamaIndex(三)——LlamaIndex Prompt">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LlamaIndex(三)——LlamaIndex Prompt</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D14_LlamaIndex/" title="LlamaIndex(一)——LlamaIndex简介">
+                        <span class="hidden-mobile">LlamaIndex(一)——LlamaIndex简介</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

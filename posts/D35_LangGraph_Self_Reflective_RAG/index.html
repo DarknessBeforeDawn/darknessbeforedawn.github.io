@@ -1,0 +1,939 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、Self-Reflective RAG 1.1 动机 由于大多数大型语言模型（LLMs）只是定期在大量公共数据语料库上进行训练，它们缺乏最新的信息和&#x2F;或无法用于训练的私有数据。检索增强生成（Retrieval augmented generation，RAG）是大型语言模型应用开发中的一个核心范式，它通过将大型语言模型连接到外部数据源来解决这个问题（请参阅我们的视频系列和博客文章）。RAG的基">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LangGraph(四)——Self-Reflective RAG">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D35_LangGraph_Self_Reflective_RAG/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、Self-Reflective RAG 1.1 动机 由于大多数大型语言模型（LLMs）只是定期在大量公共数据语料库上进行训练，它们缺乏最新的信息和&#x2F;或无法用于训练的私有数据。检索增强生成（Retrieval augmented generation，RAG）是大型语言模型应用开发中的一个核心范式，它通过将大型语言模型连接到外部数据源来解决这个问题（请参阅我们的视频系列和博客文章）。RAG的基">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/SelfRAG.jpg">
+<meta property="article:published_time" content="2024-09-01T15:10:23.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.271Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="LLM学习笔记">
+<meta property="article:tag" content="LangGraph">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/SelfRAG.jpg">
+  
+  
+  
+  <title>LangGraph(四)——Self-Reflective RAG - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LangGraph(四)——Self-Reflective RAG"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-09-01 23:10" pubdate>
+          2024年9月1日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          24 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LangGraph(四)——Self-Reflective RAG</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一self-reflective-rag">一、Self-Reflective RAG</h2>
+<h3 id="动机">1.1 动机</h3>
+<p>由于大多数大型语言模型（LLMs）只是定期在大量公共数据语料库上进行训练，它们缺乏最新的信息和/或无法用于训练的私有数据。检索增强生成（Retrieval
+augmented
+generation，RAG）是大型语言模型应用开发中的一个核心范式，它通过将大型语言模型连接到外部数据源来解决这个问题（请参阅我们的视频系列和博客文章）。RAG的基本流程包括嵌入用户查询，检索与查询相关的文档，并将文档传递给大型语言模型，以便在检索到的上下文中生成答案。</p>
+<figure>
+<img src="/images/Basic_RAG_Flow.png" srcset="/img/loading.gif" lazyload alt="基本的RAG流程">
+<figcaption aria-hidden="true">基本的RAG流程</figcaption>
+</figure>
+<h3 id="self-reflective-rag">1.2 Self-Reflective RAG</h3>
+<p>实现RAG通常需要围绕以下步骤进行逻辑推理：询问何时检索（基于问题和索引的构成），何时重写问题以改善检索，或者何时丢弃不相关的检索文档并重试检索？<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2310.11511">Self-Reflective
+RAG</a>的想法是使用大型语言模型（LLM）自我纠正质量差的检索和生成。</p>
+<p>基本的RAG流程：大型语言模型（LLM）基于检索到的文档来确定要生成什么。一些RAG流程使用路由让LLM根据问题决定使用不同的检索器。但是，Self-Reflective
+RAG通常需要某种反馈来重新生成问题或重新检索文档。<code>State machines</code>是第三种支持循环的认知架构：状态机简单地让我们定义一组步骤（例如，检索、评估文档、重写查询）并设置它们之间的转换选项；例如，如果我们检索到的文档不相关，那么可以重写查询并重新检索新文档。</p>
+<p><img src="/images/Cognitive_Architectures_RAG.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="self-reflective-rag-with-langgraph">1.3 Self-Reflective RAG with
+LangGraph</h3>
+<p>LangGraph一种实现大型语言模型（LLM）状态机的简便方法。这为我们在不同RAG流程的布局上提供了很多灵活性，并支持具有特定决策点（例如文档分级）和循环（例如重试检索）的
+RAG 的更通用的<a target="_blank" rel="noopener" href="https://x.com/hwchase17/status/1748089843698290840?s=20">RAG
+flows</a>过程。</p>
+<p><img src="/images/State_machines_RAG.png" srcset="/img/loading.gif" lazyload></p>
+<p>下面利用CRAG 和 Self-RAG 两种RAG来说明LangGraph的灵活。</p>
+<h2 id="二corrective-rag-crag">二、Corrective RAG (CRAG)</h2>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2401.15884">Corrective RAG (CRAG)</a>
+引入了一些有趣的想法：</p>
+<ul>
+<li>使用一个轻量级的<strong>检索评估器(retrieval
+evaluator)</strong>来评估针对查询检索到的文档的整体质量，为每个文档返回一个置信度分数。</li>
+<li>如果向量存储检索被认为是模糊的或与用户查询不相关，则执行<strong>基于网络的文档检索以补充上下文(web-based
+document retrieval to supplement context)</strong>。</li>
+<li>通过将检索到的文档划分为“知识条(knowledge
+strips)”，对每个条进行评分，并过滤掉不相关的知识，对检索到的文档进行<strong>知识细化(knowledge
+refinement)</strong>。</li>
+</ul>
+<p><img src="/images/CRAG.png" srcset="/img/loading.gif" lazyload></p>
+<p>下面通过使用LangGraph来简单说明CRAG工作流程</p>
+<ul>
+<li>在LangGraph中，可以选择跳过知识精炼阶段，因为它对于理解工作流程布局不是必需的。</li>
+<li>如果检索到的文档不相关，可以通过使用Tavily Search
+API进行网页搜索来补充检索。</li>
+<li>利用查询重写技术来优化网页搜索的查询。</li>
+<li>对于需要做出二元决策的情况，使用Pydantic来模拟输出，确保每次运行LLM时都能调用一致的二元逻辑。</li>
+</ul>
+<p><img src="/images/LangGraph_CRAG.png" srcset="/img/loading.gif" lazyload></p>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-13884116" role="button" aria-expanded="false" aria-controls="collapse-13884116">
+        <div class="fold-arrow">▶</div>LangGraph代码示例
+      </div>
+      <div class="fold-collapse collapse" id="collapse-13884116">
+        <div class="fold-content">
+          <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.text_splitter <span class="hljs-keyword">import</span> RecursiveCharacterTextSplitter<br><span class="hljs-keyword">from</span> langchain_community.document_loaders <span class="hljs-keyword">import</span> WebBaseLoader<br><span class="hljs-keyword">from</span> langchain_community.vectorstores <span class="hljs-keyword">import</span> Chroma<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> OpenAIEmbeddings<br><br>urls = [<br>    <span class="hljs-string">"https://lilianweng.github.io/posts/2023-06-23-agent/"</span>,<br>    <span class="hljs-string">"https://lilianweng.github.io/posts/2023-03-15-prompt-engineering/"</span>,<br>    <span class="hljs-string">"https://lilianweng.github.io/posts/2023-10-25-adv-attack-llm/"</span>,<br>]<br><br>docs = [WebBaseLoader(url).load() <span class="hljs-keyword">for</span> url <span class="hljs-keyword">in</span> urls]<br>docs_list = [item <span class="hljs-keyword">for</span> sublist <span class="hljs-keyword">in</span> docs <span class="hljs-keyword">for</span> item <span class="hljs-keyword">in</span> sublist]<br><br>text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(<br>    chunk_size=<span class="hljs-number">250</span>, chunk_overlap=<span class="hljs-number">0</span><br>)<br>doc_splits = text_splitter.split_documents(docs_list)<br><br><span class="hljs-comment"># Add to vectorDB</span><br>vectorstore = Chroma.from_documents(<br>    documents=doc_splits,<br>    collection_name=<span class="hljs-string">"rag-chroma"</span>,<br>    embedding=OpenAIEmbeddings(),<br>)<br>retriever = vectorstore.as_retriever()<br></code></pre></td></tr></table></figure><p><strong>LLMs</strong></p><p>Retrieval Grader</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs python"><br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">from</span> langchain_core.prompts <span class="hljs-keyword">import</span> ChatPromptTemplate<br><span class="hljs-keyword">from</span> langchain_core.pydantic_v1 <span class="hljs-keyword">import</span> BaseModel, Field<br><br><span class="hljs-comment"># Data model</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">GradeDocuments</span>(<span class="hljs-title class_ inherited__">BaseModel</span>):<br>    <span class="hljs-string">"""Binary score for relevance check on retrieved documents."""</span><br><br>    binary_score: <span class="hljs-built_in">str</span> = Field(description=<span class="hljs-string">"Documents are relevant to the question, 'yes' or 'no'"</span>)<br><br><span class="hljs-comment"># LLM with function call </span><br>llm = ChatOpenAI(model=<span class="hljs-string">"gpt-3.5-turbo-0125"</span>, temperature=<span class="hljs-number">0</span>)<br>structured_llm_grader = llm.with_structured_output(GradeDocuments)<br><br><span class="hljs-comment"># Prompt </span><br>system = <span class="hljs-string">"""You are a grader assessing relevance of a retrieved document to a user question. \n </span><br><span class="hljs-string">    If the document contains keyword(s) or semantic meaning related to the question, grade it as relevant. \n</span><br><span class="hljs-string">    Give a binary score 'yes' or 'no' score to indicate whether the document is relevant to the question."""</span><br>grade_prompt = ChatPromptTemplate.from_messages(<br>    [<br>        (<span class="hljs-string">"system"</span>, system),<br>        (<span class="hljs-string">"human"</span>, <span class="hljs-string">"Retrieved document: \n\n {document} \n\n User question: {question}"</span>),<br>    ]<br>)<br><br>retrieval_grader = grade_prompt | structured_llm_grader<br>question = <span class="hljs-string">"agent memory"</span><br>docs = retriever.get_relevant_documents(question)<br>doc_txt = docs[<span class="hljs-number">1</span>].page_content<br></code></pre></td></tr></table></figure><p>Generate</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">### Generate</span><br><br><span class="hljs-keyword">from</span> langchain <span class="hljs-keyword">import</span> hub<br><span class="hljs-keyword">from</span> langchain_core.output_parsers <span class="hljs-keyword">import</span> StrOutputParser<br><br><span class="hljs-comment"># Prompt</span><br>prompt = hub.pull(<span class="hljs-string">"rlm/rag-prompt"</span>)<br><br><span class="hljs-comment"># LLM</span><br>llm = ChatOpenAI(model_name=<span class="hljs-string">"gpt-3.5-turbo"</span>, temperature=<span class="hljs-number">0</span>)<br><br><span class="hljs-comment"># Post-processing</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">format_docs</span>(<span class="hljs-params">docs</span>):<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">"\n\n"</span>.join(doc.page_content <span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> docs)<br><br><span class="hljs-comment"># Chain</span><br>rag_chain = prompt | llm | StrOutputParser()<br></code></pre></td></tr></table></figure><p>Question Re-writer</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">### Question Re-writer</span><br><br><span class="hljs-comment"># LLM </span><br>llm = ChatOpenAI(model=<span class="hljs-string">"gpt-3.5-turbo-0125"</span>, temperature=<span class="hljs-number">0</span>)<br><br><span class="hljs-comment"># Prompt </span><br>system = <span class="hljs-string">"""You a question re-writer that converts an input question to a better version that is optimized \n </span><br><span class="hljs-string">     for web search. Look at the input and try to reason about the underlying sematic intent / meaning."""</span><br>re_write_prompt = ChatPromptTemplate.from_messages(<br>    [<br>        (<span class="hljs-string">"system"</span>, system),<br>        (<span class="hljs-string">"human"</span>, <span class="hljs-string">"Here is the initial question: \n\n {question} \n Formulate an improved question."</span>),<br>    ]<br>)<br><br>question_rewriter = re_write_prompt | llm | StrOutputParser()<br><br><span class="hljs-comment">### Search</span><br><br><span class="hljs-keyword">from</span> langchain_community.tools.tavily_search <span class="hljs-keyword">import</span> TavilySearchResults<br>web_search_tool = TavilySearchResults(k=<span class="hljs-number">3</span>)<br></code></pre></td></tr></table></figure><p><strong>Graph State</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> typing_extensions <span class="hljs-keyword">import</span> TypedDict<br><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">List</span><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">GraphState</span>(<span class="hljs-title class_ inherited__">TypedDict</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Represents the state of our graph.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Attributes:</span><br><span class="hljs-string">        question: question</span><br><span class="hljs-string">        generation: LLM generation</span><br><span class="hljs-string">        web_search: whether to add search</span><br><span class="hljs-string">        documents: list of documents </span><br><span class="hljs-string">    """</span><br>    question : <span class="hljs-built_in">str</span><br>    generation : <span class="hljs-built_in">str</span><br>    web_search : <span class="hljs-built_in">str</span><br>    documents : <span class="hljs-type">List</span>[<span class="hljs-built_in">str</span>]<br></code></pre></td></tr></table></figure><p><strong>Nodes</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.schema <span class="hljs-keyword">import</span> Document<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">retrieve</span>(<span class="hljs-params">state</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Retrieve documents</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        state (dict): The current graph state</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        state (dict): New key added to state, documents, that contains retrieved documents</span><br><span class="hljs-string">    """</span><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"---RETRIEVE---"</span>)<br>    question = state[<span class="hljs-string">"question"</span>]<br><br>    <span class="hljs-comment"># Retrieval</span><br>    documents = retriever.get_relevant_documents(question)<br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"documents"</span>: documents, <span class="hljs-string">"question"</span>: question}<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">generate</span>(<span class="hljs-params">state</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Generate answer</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        state (dict): The current graph state</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        state (dict): New key added to state, generation, that contains LLM generation</span><br><span class="hljs-string">    """</span><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"---GENERATE---"</span>)<br>    question = state[<span class="hljs-string">"question"</span>]<br>    documents = state[<span class="hljs-string">"documents"</span>]<br>    <br>    <span class="hljs-comment"># RAG generation</span><br>    generation = rag_chain.invoke({<span class="hljs-string">"context"</span>: documents, <span class="hljs-string">"question"</span>: question})<br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"documents"</span>: documents, <span class="hljs-string">"question"</span>: question, <span class="hljs-string">"generation"</span>: generation}<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">grade_documents</span>(<span class="hljs-params">state</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Determines whether the retrieved documents are relevant to the question.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        state (dict): The current graph state</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        state (dict): Updates documents key with only filtered relevant documents</span><br><span class="hljs-string">    """</span><br><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"---CHECK DOCUMENT RELEVANCE TO QUESTION---"</span>)<br>    question = state[<span class="hljs-string">"question"</span>]<br>    documents = state[<span class="hljs-string">"documents"</span>]<br>    <br>    <span class="hljs-comment"># Score each doc</span><br>    filtered_docs = []<br>    web_search = <span class="hljs-string">"No"</span><br>    <span class="hljs-keyword">for</span> d <span class="hljs-keyword">in</span> documents:<br>        score = retrieval_grader.invoke({<span class="hljs-string">"question"</span>: question, <span class="hljs-string">"document"</span>: d.page_content})<br>        grade = score.binary_score<br>        <span class="hljs-keyword">if</span> grade == <span class="hljs-string">"yes"</span>:<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">"---GRADE: DOCUMENT RELEVANT---"</span>)<br>            filtered_docs.append(d)<br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">"---GRADE: DOCUMENT NOT RELEVANT---"</span>)<br>            web_search = <span class="hljs-string">"Yes"</span><br>            <span class="hljs-keyword">continue</span><br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"documents"</span>: filtered_docs, <span class="hljs-string">"question"</span>: question, <span class="hljs-string">"web_search"</span>: web_search}<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">transform_query</span>(<span class="hljs-params">state</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Transform the query to produce a better question.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        state (dict): The current graph state</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        state (dict): Updates question key with a re-phrased question</span><br><span class="hljs-string">    """</span><br><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"---TRANSFORM QUERY---"</span>)<br>    question = state[<span class="hljs-string">"question"</span>]<br>    documents = state[<span class="hljs-string">"documents"</span>]<br><br>    <span class="hljs-comment"># Re-write question</span><br>    better_question = question_rewriter.invoke({<span class="hljs-string">"question"</span>: question})<br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"documents"</span>: documents, <span class="hljs-string">"question"</span>: better_question}<br>    <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">web_search</span>(<span class="hljs-params">state</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Web search based on the re-phrased question.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        state (dict): The current graph state</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        state (dict): Updates documents key with appended web results</span><br><span class="hljs-string">    """</span><br><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"---WEB SEARCH---"</span>)<br>    question = state[<span class="hljs-string">"question"</span>]<br>    documents = state[<span class="hljs-string">"documents"</span>]<br><br>    <span class="hljs-comment"># Web search</span><br>    docs = web_search_tool.invoke({<span class="hljs-string">"query"</span>: question})<br>    web_results = <span class="hljs-string">"\n"</span>.join([d[<span class="hljs-string">"content"</span>] <span class="hljs-keyword">for</span> d <span class="hljs-keyword">in</span> docs])<br>    web_results = Document(page_content=web_results)<br>    documents.append(web_results)<br><br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"documents"</span>: documents, <span class="hljs-string">"question"</span>: question}<br><br><span class="hljs-comment">### Edges</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">decide_to_generate</span>(<span class="hljs-params">state</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Determines whether to generate an answer, or re-generate a question.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        state (dict): The current graph state</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        str: Binary decision for next node to call</span><br><span class="hljs-string">    """</span><br><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"---ASSESS GRADED DOCUMENTS---"</span>)<br>    question = state[<span class="hljs-string">"question"</span>]<br>    web_search = state[<span class="hljs-string">"web_search"</span>]<br>    filtered_documents = state[<span class="hljs-string">"documents"</span>]<br><br>    <span class="hljs-keyword">if</span> web_search == <span class="hljs-string">"Yes"</span>:<br>        <span class="hljs-comment"># All documents have been filtered check_relevance</span><br>        <span class="hljs-comment"># We will re-generate a new query</span><br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"---DECISION: ALL DOCUMENTS ARE NOT RELEVANT TO QUESTION, TRANSFORM QUERY---"</span>)<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">"transform_query"</span><br>    <span class="hljs-keyword">else</span>:<br>        <span class="hljs-comment"># We have relevant documents, so generate answer</span><br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"---DECISION: GENERATE---"</span>)<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">"generate"</span><br></code></pre></td></tr></table></figure><p><strong>Build Graph</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langgraph.graph <span class="hljs-keyword">import</span> END, StateGraph<br><br>workflow = StateGraph(GraphState)<br><br><span class="hljs-comment"># Define the nodes</span><br>workflow.add_node(<span class="hljs-string">"retrieve"</span>, retrieve)  <span class="hljs-comment"># retrieve</span><br>workflow.add_node(<span class="hljs-string">"grade_documents"</span>, grade_documents)  <span class="hljs-comment"># grade documents</span><br>workflow.add_node(<span class="hljs-string">"generate"</span>, generate)  <span class="hljs-comment"># generatae</span><br>workflow.add_node(<span class="hljs-string">"transform_query"</span>, transform_query)  <span class="hljs-comment"># transform_query</span><br>workflow.add_node(<span class="hljs-string">"web_search_node"</span>, web_search)  <span class="hljs-comment"># web search</span><br><br><span class="hljs-comment"># Build graph</span><br>workflow.set_entry_point(<span class="hljs-string">"retrieve"</span>)<br>workflow.add_edge(<span class="hljs-string">"retrieve"</span>, <span class="hljs-string">"grade_documents"</span>)<br>workflow.add_conditional_edges(<br>    <span class="hljs-string">"grade_documents"</span>,<br>    decide_to_generate,<br>    {<br>        <span class="hljs-string">"transform_query"</span>: <span class="hljs-string">"transform_query"</span>,<br>        <span class="hljs-string">"generate"</span>: <span class="hljs-string">"generate"</span>,<br>    },<br>)<br>workflow.add_edge(<span class="hljs-string">"transform_query"</span>, <span class="hljs-string">"web_search_node"</span>)<br>workflow.add_edge(<span class="hljs-string">"web_search_node"</span>, <span class="hljs-string">"generate"</span>)<br>workflow.add_edge(<span class="hljs-string">"generate"</span>, END)<br><br><span class="hljs-comment"># Compile</span><br>app = workflow.<span class="hljs-built_in">compile</span>()<br></code></pre></td></tr></table></figure><p><strong>提问相关问题</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pprint <span class="hljs-keyword">import</span> pprint<br><br><span class="hljs-comment"># Run</span><br>inputs = {<span class="hljs-string">"question"</span>: <span class="hljs-string">"What are the types of agent memory?"</span>}<br><span class="hljs-keyword">for</span> output <span class="hljs-keyword">in</span> app.stream(inputs):<br>    <span class="hljs-keyword">for</span> key, value <span class="hljs-keyword">in</span> output.items():<br>        <span class="hljs-comment"># Node</span><br>        pprint(<span class="hljs-string">f"Node '<span class="hljs-subst">{key}</span>':"</span>)<br>        <span class="hljs-comment"># Optional: print full state at each node</span><br>        <span class="hljs-comment"># pprint.pprint(value["keys"], indent=2, width=80, depth=None)</span><br>    pprint(<span class="hljs-string">"\n---\n"</span>)<br><br><span class="hljs-comment"># Final generation</span><br>pprint(value[<span class="hljs-string">"generation"</span>])<br></code></pre></td></tr></table></figure><p>输出</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs text">---RETRIEVE---<br>"Node 'retrieve':"<br>'\n---\n'<br>---CHECK DOCUMENT RELEVANCE TO QUESTION---<br>---GRADE: DOCUMENT NOT RELEVANT---<br>---GRADE: DOCUMENT NOT RELEVANT---<br>---GRADE: DOCUMENT RELEVANT---<br>---GRADE: DOCUMENT RELEVANT---<br>---ASSESS GRADED DOCUMENTS---<br>---DECISION: ALL DOCUMENTS ARE NOT RELEVANT TO QUESTION, TRANSFORM QUERY---<br>"Node 'grade_documents':"<br>'\n---\n'<br>---TRANSFORM QUERY---<br>"Node 'transform_query':"<br>'\n---\n'<br>---WEB SEARCH---<br>"Node 'web_search_node':"<br>'\n---\n'<br>---GENERATE---<br>"Node 'generate':"<br>'\n---\n'<br>('The different categories of memory in agents are short-term memory and '<br> 'long-term memory. Short-term memory is used for in-context learning, while '<br> 'long-term memory allows agents to retain and recall information over '<br> 'extended periods by leveraging external storage. Agents can also utilize '<br> 'tool use, such as calling external APIs for additional information.')<br></code></pre></td></tr></table></figure><p>LangSmith流程展示：</p><p><img src="/images/LangSmith_CRAG1.png" srcset="/img/loading.gif" lazyload></p><p><strong>提问无关问题</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pprint <span class="hljs-keyword">import</span> pprint<br><br><span class="hljs-comment"># Run</span><br>inputs = {<span class="hljs-string">"question"</span>: <span class="hljs-string">"How does the AlphaCodium paper work?"</span>}<br><span class="hljs-keyword">for</span> output <span class="hljs-keyword">in</span> app.stream(inputs):<br>    <span class="hljs-keyword">for</span> key, value <span class="hljs-keyword">in</span> output.items():<br>        <span class="hljs-comment"># Node</span><br>        pprint(<span class="hljs-string">f"Node '<span class="hljs-subst">{key}</span>':"</span>)<br>        <span class="hljs-comment"># Optional: print full state at each node</span><br>        <span class="hljs-comment"># pprint.pprint(value["keys"], indent=2, width=80, depth=None)</span><br>    pprint(<span class="hljs-string">"\n---\n"</span>)<br><br><span class="hljs-comment"># Final generation</span><br>pprint(value[<span class="hljs-string">"generation"</span>])<br></code></pre></td></tr></table></figure><p>输出</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs text">---RETRIEVE---<br>"Node 'retrieve':"<br>'\n---\n'<br>---CHECK DOCUMENT RELEVANCE TO QUESTION---<br>---GRADE: DOCUMENT NOT RELEVANT---<br>---GRADE: DOCUMENT NOT RELEVANT---<br>---GRADE: DOCUMENT NOT RELEVANT---<br>---GRADE: DOCUMENT RELEVANT---<br>---ASSESS GRADED DOCUMENTS---<br>---DECISION: ALL DOCUMENTS ARE NOT RELEVANT TO QUESTION, TRANSFORM QUERY---<br>"Node 'grade_documents':"<br>'\n---\n'<br>---TRANSFORM QUERY---<br>"Node 'transform_query':"<br>'\n---\n'<br>---WEB SEARCH---<br>"Node 'web_search_node':"<br>'\n---\n'<br>---GENERATE---<br>"Node 'generate':"<br>'\n---\n'<br>('The AlphaCodium paper functions by reasoning about problems in natural '<br> 'language during a pre-processing phase and generating, running, and fixing '<br> 'code solutions in an iterative phase. It improves the performance of Large '<br> 'Language Models on code generation tasks by using a test-based, multi-stage, '<br> 'code-oriented iterative flow. The key mechanisms involve reasoning about '<br> 'problems in natural language, generating code solutions, and running and '<br> 'fixing the solutions against public and AI-generated tests.')<br></code></pre></td></tr></table></figure><p>LangSmith流程展示：</p><p><img src="/images/LangSmith_CRAG2.png" srcset="/img/loading.gif" lazyload></p>
+        </div>
+      </div>
+    </div>
+<h2 id="三self-rag">三、Self-RAG</h2>
+<p>Self-RAG 是一种与其他几个有趣的 RAG 想法相关的方法（<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2310.11511">论文</a>）。 该框架训练 LLM
+生成<code>self-reflection tokens</code>，以管理 RAG
+过程中的各个阶段。基本过程如下：</p>
+<ul>
+<li>由<code>Retrieve</code>
+token来决定使用<code>x (question)</code>或者<code>x (question)</code>,<code>y (generation)</code>来检索
+<code>D</code> chunks，输出是<code>yes</code>, <code>no</code>,
+<code>continue</code>。</li>
+<li><code>ISRAEL</code> token 通过循环 input (<code>x (question)</code>,
+<code>d (chunk)</code>) for <code>d</code> in <code>D</code> 来判断
+<code>D</code> 是否与 <code>x</code> 相关，
+。输出是<code>relevant</code>, <code>irrelevant</code>。</li>
+<li><code>ISSUP</code> token 决定 <code>D</code> 中每个 chunk
+的LLM生成是否与该 chunk 相关。输入是
+<code>x</code>,<code>d</code>,<code>y</code> for <code>d</code> in
+<code>D</code>。并确认<code>y (generation)</code>中所有值得验证的陈述都得到了<code>d (chunk)</code>的支持。输出是<code>fully supported</code>,
+<code>partially supported</code>, <code>no support</code>。</li>
+<li><code>ISUSE</code> token 决定<code>D</code>
+中每个chunk的生成内容对<code>x</code>是否是有用的响应。输入是
+<code>x</code>,<code>y</code> for <code>d</code> in
+<code>D</code>。输出是<code>{5, 4, 3, 2, 1}</code>。</li>
+</ul>
+<figure>
+<img src="/images/Self_RAG_Four_Types.png" srcset="/img/loading.gif" lazyload alt="Self-RAG使用的四种token">
+<figcaption aria-hidden="true">Self-RAG使用的四种token</figcaption>
+</figure>
+<p>可以通过下图来理解信息流：</p>
+<figure>
+<img src="/images/Self-RAG_Flow.png" srcset="/img/loading.gif" lazyload alt="Self-RAG中使用的流程示意图">
+<figcaption aria-hidden="true">Self-RAG中使用的流程示意图</figcaption>
+</figure>
+<p>在LangGraph实现时进行一些简化和调整（根据需要进行定制和扩展），首先对每个检索到的文档进行评级。如果有相关文档，继续进行生成。如果所有文档都是不相关的，那么将转换查询，以形成一个改进的问题并重新检索。（也可以在这个路径中使用上面提到的CRAG（网络搜索）的想法作为一个补充节点）。</p>
+<p>论文中将对每个块进行一次生成并对每个生成两次评级。而在LangGraph实现中则从所有相关文档中进行一次生成。然后，这次生成将相对于文档（例如，为了防止出现幻觉）和相对于答案进行评级。这样做减少了对大型语言模型（LLM）的调用次数，提高了响应速度，并允许将更多上下文整合到生成中。当然，如果需要更多控制，可以轻松地改为对每个块单独生成并单独评级。</p>
+<p>使用LangGraph实现的Self-RAG：</p>
+<p><img src="/images/LangGraph_Self_RAG.png" srcset="/img/loading.gif" lazyload></p>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-810a91a0" role="button" aria-expanded="false" aria-controls="collapse-810a91a0">
+        <div class="fold-arrow">▶</div>LangGraph代码示例
+      </div>
+      <div class="fold-collapse collapse" id="collapse-810a91a0">
+        <div class="fold-content">
+          <p><strong>Retriever</strong> <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.text_splitter <span class="hljs-keyword">import</span> RecursiveCharacterTextSplitter<br><span class="hljs-keyword">from</span> langchain_community.document_loaders <span class="hljs-keyword">import</span> WebBaseLoader<br><span class="hljs-keyword">from</span> langchain_community.vectorstores <span class="hljs-keyword">import</span> Chroma<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> OpenAIEmbeddings<br><br>urls = [<br>    <span class="hljs-string">"https://lilianweng.github.io/posts/2023-06-23-agent/"</span>,<br>    <span class="hljs-string">"https://lilianweng.github.io/posts/2023-03-15-prompt-engineering/"</span>,<br>    <span class="hljs-string">"https://lilianweng.github.io/posts/2023-10-25-adv-attack-llm/"</span>,<br>]<br><br>docs = [WebBaseLoader(url).load() <span class="hljs-keyword">for</span> url <span class="hljs-keyword">in</span> urls]<br>docs_list = [item <span class="hljs-keyword">for</span> sublist <span class="hljs-keyword">in</span> docs <span class="hljs-keyword">for</span> item <span class="hljs-keyword">in</span> sublist]<br><br>text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(<br>    chunk_size=<span class="hljs-number">250</span>, chunk_overlap=<span class="hljs-number">0</span><br>)<br>doc_splits = text_splitter.split_documents(docs_list)<br><br><span class="hljs-comment"># Add to vectorDB</span><br>vectorstore = Chroma.from_documents(<br>    documents=doc_splits,<br>    collection_name=<span class="hljs-string">"rag-chroma"</span>,<br>    embedding=OpenAIEmbeddings(),<br>)<br>retriever = vectorstore.as_retriever()<br></code></pre></td></tr></table></figure></p><p><strong>LLMs</strong></p><p><code>Retrieval</code> Grader</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">### Retrieval Grader </span><br><br><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">Literal</span><br><br><span class="hljs-keyword">from</span> langchain_core.prompts <span class="hljs-keyword">import</span> ChatPromptTemplate<br><span class="hljs-keyword">from</span> langchain_core.pydantic_v1 <span class="hljs-keyword">import</span> BaseModel, Field<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><br><br><span class="hljs-comment"># Data model</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">GradeDocuments</span>(<span class="hljs-title class_ inherited__">BaseModel</span>):<br>    <span class="hljs-string">"""Binary score for relevance check on retrieved documents."""</span><br><br>    binary_score: <span class="hljs-built_in">str</span> = Field(description=<span class="hljs-string">"Documents are relevant to the question, 'yes' or 'no'"</span>)<br><br><span class="hljs-comment"># LLM with function call </span><br>llm = ChatOpenAI(model=<span class="hljs-string">"gpt-3.5-turbo-0125"</span>, temperature=<span class="hljs-number">0</span>)<br>structured_llm_grader = llm.with_structured_output(GradeDocuments)<br><br><span class="hljs-comment"># Prompt </span><br>system = <span class="hljs-string">"""You are a grader assessing relevance of a retrieved document to a user question. \n </span><br><span class="hljs-string">    It does not need to be a stringent test. The goal is to filter out erroneous retrievals. \n</span><br><span class="hljs-string">    If the document contains keyword(s) or semantic meaning related to the user question, grade it as relevant. \n</span><br><span class="hljs-string">    Give a binary score 'yes' or 'no' score to indicate whether the document is relevant to the question."""</span><br>grade_prompt = ChatPromptTemplate.from_messages(<br>    [<br>        (<span class="hljs-string">"system"</span>, system),<br>        (<span class="hljs-string">"human"</span>, <span class="hljs-string">"Retrieved document: \n\n {document} \n\n User question: {question}"</span>),<br>    ]<br>)<br><br>retrieval_grader = grade_prompt | structured_llm_grader<br></code></pre></td></tr></table></figure><p><code>Generate</code></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain <span class="hljs-keyword">import</span> hub<br><span class="hljs-keyword">from</span> langchain_core.output_parsers <span class="hljs-keyword">import</span> StrOutputParser<br><br><span class="hljs-comment"># Prompt</span><br>prompt = hub.pull(<span class="hljs-string">"rlm/rag-prompt"</span>)<br><br><span class="hljs-comment"># LLM</span><br>llm = ChatOpenAI(model_name=<span class="hljs-string">"gpt-3.5-turbo"</span>, temperature=<span class="hljs-number">0</span>)<br><br><span class="hljs-comment"># Post-processing</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">format_docs</span>(<span class="hljs-params">docs</span>):<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">"\n\n"</span>.join(doc.page_content <span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> docs)<br><br><span class="hljs-comment"># Chain</span><br>rag_chain = prompt | llm | StrOutputParser()<br><br></code></pre></td></tr></table></figure><p><code>documents generation</code> Grader</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># Data model</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">GradeHallucinations</span>(<span class="hljs-title class_ inherited__">BaseModel</span>):<br>    <span class="hljs-string">"""Binary score for hallucination present in generation answer."""</span><br><br>    binary_score: <span class="hljs-built_in">str</span> = Field(description=<span class="hljs-string">"Answer is grounded in the facts, 'yes' or 'no'"</span>)<br><br><span class="hljs-comment"># LLM with function call </span><br>llm = ChatOpenAI(model=<span class="hljs-string">"gpt-3.5-turbo-0125"</span>, temperature=<span class="hljs-number">0</span>)<br>structured_llm_grader = llm.with_structured_output(GradeHallucinations)<br><br><span class="hljs-comment"># Prompt </span><br>system = <span class="hljs-string">"""You are a grader assessing whether an LLM generation is grounded in / supported by a set of retrieved facts. \n </span><br><span class="hljs-string">     Give a binary score 'yes' or 'no'. 'Yes' means that the answer is grounded in / supported by the set of facts."""</span><br>hallucination_prompt = ChatPromptTemplate.from_messages(<br>    [<br>        (<span class="hljs-string">"system"</span>, system),<br>        (<span class="hljs-string">"human"</span>, <span class="hljs-string">"Set of facts: \n\n {documents} \n\n LLM generation: {generation}"</span>),<br>    ]<br>)<br><br>hallucination_grader = hallucination_prompt | structured_llm_grader<br></code></pre></td></tr></table></figure><p><code>question generation</code> Grader</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">### Answer Grader </span><br><br><span class="hljs-comment"># Data model</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">GradeAnswer</span>(<span class="hljs-title class_ inherited__">BaseModel</span>):<br>    <span class="hljs-string">"""Binary score to assess answer addresses question."""</span><br><br>    binary_score: <span class="hljs-built_in">str</span> = Field(description=<span class="hljs-string">"Answer addresses the question, 'yes' or 'no'"</span>)<br><br><span class="hljs-comment"># LLM with function call </span><br>llm = ChatOpenAI(model=<span class="hljs-string">"gpt-3.5-turbo-0125"</span>, temperature=<span class="hljs-number">0</span>)<br>structured_llm_grader = llm.with_structured_output(GradeAnswer)<br><br><span class="hljs-comment"># Prompt </span><br>system = <span class="hljs-string">"""You are a grader assessing whether an answer addresses / resolves a question \n </span><br><span class="hljs-string">     Give a binary score 'yes' or 'no'. Yes' means that the answer resolves the question."""</span><br>answer_prompt = ChatPromptTemplate.from_messages(<br>    [<br>        (<span class="hljs-string">"system"</span>, system),<br>        (<span class="hljs-string">"human"</span>, <span class="hljs-string">"User question: \n\n {question} \n\n LLM generation: {generation}"</span>),<br>    ]<br>)<br><br>answer_grader = answer_prompt | structured_llm_grader<br></code></pre></td></tr></table></figure><p>Question <code>Re-writer</code></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">### Question Re-writer</span><br><br><span class="hljs-comment"># LLM </span><br>llm = ChatOpenAI(model=<span class="hljs-string">"gpt-3.5-turbo-0125"</span>, temperature=<span class="hljs-number">0</span>)<br><br><span class="hljs-comment"># Prompt </span><br>system = <span class="hljs-string">"""You a question re-writer that converts an input question to a better version that is optimized \n </span><br><span class="hljs-string">     for vectorstore retrieval. Look at the input and try to reason about the underlying sematic intent / meaning."""</span><br>re_write_prompt = ChatPromptTemplate.from_messages(<br>    [<br>        (<span class="hljs-string">"system"</span>, system),<br>        (<span class="hljs-string">"human"</span>, <span class="hljs-string">"Here is the initial question: \n\n {question} \n Formulate an improved question."</span>),<br>    ]<br>)<br><br>question_rewriter = re_write_prompt | llm | StrOutputParser()<br></code></pre></td></tr></table></figure><p><strong>Graph State</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> typing_extensions <span class="hljs-keyword">import</span> TypedDict<br><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">List</span><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">GraphState</span>(<span class="hljs-title class_ inherited__">TypedDict</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Represents the state of our graph.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Attributes:</span><br><span class="hljs-string">        question: question</span><br><span class="hljs-string">        generation: LLM generation</span><br><span class="hljs-string">        documents: list of documents </span><br><span class="hljs-string">    """</span><br>    question : <span class="hljs-built_in">str</span><br>    generation : <span class="hljs-built_in">str</span><br>    documents : <span class="hljs-type">List</span>[<span class="hljs-built_in">str</span>]<br></code></pre></td></tr></table></figure><p><strong>Nodes</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">### Nodes</span><br><br><span class="hljs-keyword">from</span> langchain.schema <span class="hljs-keyword">import</span> Document<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">retrieve</span>(<span class="hljs-params">state</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Retrieve documents</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        state (dict): The current graph state</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        state (dict): New key added to state, documents, that contains retrieved documents</span><br><span class="hljs-string">    """</span><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"---RETRIEVE---"</span>)<br>    question = state[<span class="hljs-string">"question"</span>]<br><br>    <span class="hljs-comment"># Retrieval</span><br>    documents = retriever.get_relevant_documents(question)<br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"documents"</span>: documents, <span class="hljs-string">"question"</span>: question}<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">generate</span>(<span class="hljs-params">state</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Generate answer</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        state (dict): The current graph state</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        state (dict): New key added to state, generation, that contains LLM generation</span><br><span class="hljs-string">    """</span><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"---GENERATE---"</span>)<br>    question = state[<span class="hljs-string">"question"</span>]<br>    documents = state[<span class="hljs-string">"documents"</span>]<br>    <br>    <span class="hljs-comment"># RAG generation</span><br>    generation = rag_chain.invoke({<span class="hljs-string">"context"</span>: documents, <span class="hljs-string">"question"</span>: question})<br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"documents"</span>: documents, <span class="hljs-string">"question"</span>: question, <span class="hljs-string">"generation"</span>: generation}<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">grade_documents</span>(<span class="hljs-params">state</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Determines whether the retrieved documents are relevant to the question.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        state (dict): The current graph state</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        state (dict): Updates documents key with only filtered relevant documents</span><br><span class="hljs-string">    """</span><br><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"---CHECK DOCUMENT RELEVANCE TO QUESTION---"</span>)<br>    question = state[<span class="hljs-string">"question"</span>]<br>    documents = state[<span class="hljs-string">"documents"</span>]<br>    <br>    <span class="hljs-comment"># Score each doc</span><br>    filtered_docs = []<br>    <span class="hljs-keyword">for</span> d <span class="hljs-keyword">in</span> documents:<br>        score = retrieval_grader.invoke({<span class="hljs-string">"question"</span>: question, <span class="hljs-string">"document"</span>: d.page_content})<br>        grade = score.binary_score<br>        <span class="hljs-keyword">if</span> grade == <span class="hljs-string">"yes"</span>:<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">"---GRADE: DOCUMENT RELEVANT---"</span>)<br>            filtered_docs.append(d)<br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">"---GRADE: DOCUMENT NOT RELEVANT---"</span>)<br>            <span class="hljs-keyword">continue</span><br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"documents"</span>: filtered_docs, <span class="hljs-string">"question"</span>: question}<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">transform_query</span>(<span class="hljs-params">state</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Transform the query to produce a better question.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        state (dict): The current graph state</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        state (dict): Updates question key with a re-phrased question</span><br><span class="hljs-string">    """</span><br><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"---TRANSFORM QUERY---"</span>)<br>    question = state[<span class="hljs-string">"question"</span>]<br>    documents = state[<span class="hljs-string">"documents"</span>]<br><br>    <span class="hljs-comment"># Re-write question</span><br>    better_question = question_rewriter.invoke({<span class="hljs-string">"question"</span>: question})<br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"documents"</span>: documents, <span class="hljs-string">"question"</span>: better_question}<br><br><span class="hljs-comment">### Edges</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">decide_to_generate</span>(<span class="hljs-params">state</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Determines whether to generate an answer, or re-generate a question.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        state (dict): The current graph state</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        str: Binary decision for next node to call</span><br><span class="hljs-string">    """</span><br><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"---ASSESS GRADED DOCUMENTS---"</span>)<br>    question = state[<span class="hljs-string">"question"</span>]<br>    filtered_documents = state[<span class="hljs-string">"documents"</span>]<br><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filtered_documents:<br>        <span class="hljs-comment"># All documents have been filtered check_relevance</span><br>        <span class="hljs-comment"># We will re-generate a new query</span><br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"---DECISION: ALL DOCUMENTS ARE NOT RELEVANT TO QUESTION, TRANSFORM QUERY---"</span>)<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">"transform_query"</span><br>    <span class="hljs-keyword">else</span>:<br>        <span class="hljs-comment"># We have relevant documents, so generate answer</span><br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"---DECISION: GENERATE---"</span>)<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">"generate"</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">grade_generation_v_documents_and_question</span>(<span class="hljs-params">state</span>):<br>    <span class="hljs-string">"""</span><br><span class="hljs-string">    Determines whether the generation is grounded in the document and answers question.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        state (dict): The current graph state</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        str: Decision for next node to call</span><br><span class="hljs-string">    """</span><br><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"---CHECK HALLUCINATIONS---"</span>)<br>    question = state[<span class="hljs-string">"question"</span>]<br>    documents = state[<span class="hljs-string">"documents"</span>]<br>    generation = state[<span class="hljs-string">"generation"</span>]<br><br>    score = hallucination_grader.invoke({<span class="hljs-string">"documents"</span>: documents, <span class="hljs-string">"generation"</span>: generation})<br>    grade = score.binary_score<br><br>    <span class="hljs-comment"># Check hallucination</span><br>    <span class="hljs-keyword">if</span> grade == <span class="hljs-string">"yes"</span>:<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"---DECISION: GENERATION IS GROUNDED IN DOCUMENTS---"</span>)<br>        <span class="hljs-comment"># Check question-answering</span><br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"---GRADE GENERATION vs QUESTION---"</span>)<br>        score = answer_grader.invoke({<span class="hljs-string">"question"</span>: question,<span class="hljs-string">"generation"</span>: generation})<br>        grade = score.binary_score<br>        <span class="hljs-keyword">if</span> grade == <span class="hljs-string">"yes"</span>:<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">"---DECISION: GENERATION ADDRESSES QUESTION---"</span>)<br>            <span class="hljs-keyword">return</span> <span class="hljs-string">"useful"</span><br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">"---DECISION: GENERATION DOES NOT ADDRESS QUESTION---"</span>)<br>            <span class="hljs-keyword">return</span> <span class="hljs-string">"not useful"</span><br>    <span class="hljs-keyword">else</span>:<br>        pprint(<span class="hljs-string">"---DECISION: GENERATION IS NOT GROUNDED IN DOCUMENTS, RE-TRY---"</span>)<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">"not supported"</span><br></code></pre></td></tr></table></figure><p><strong>Build Graph</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langgraph.graph <span class="hljs-keyword">import</span> END, StateGraph<br><br>workflow = StateGraph(GraphState)<br><br><span class="hljs-comment"># Define the nodes</span><br>workflow.add_node(<span class="hljs-string">"retrieve"</span>, retrieve) <span class="hljs-comment"># retrieve</span><br>workflow.add_node(<span class="hljs-string">"grade_documents"</span>, grade_documents) <span class="hljs-comment"># grade documents</span><br>workflow.add_node(<span class="hljs-string">"generate"</span>, generate) <span class="hljs-comment"># generatae</span><br>workflow.add_node(<span class="hljs-string">"transform_query"</span>, transform_query) <span class="hljs-comment"># transform_query</span><br><br><span class="hljs-comment"># Build graph</span><br>workflow.set_entry_point(<span class="hljs-string">"retrieve"</span>)<br>workflow.add_edge(<span class="hljs-string">"retrieve"</span>, <span class="hljs-string">"grade_documents"</span>)<br>workflow.add_conditional_edges(<br>    <span class="hljs-string">"grade_documents"</span>,<br>    decide_to_generate,<br>    {<br>        <span class="hljs-string">"transform_query"</span>: <span class="hljs-string">"transform_query"</span>,<br>        <span class="hljs-string">"generate"</span>: <span class="hljs-string">"generate"</span>,<br>    },<br>)<br>workflow.add_edge(<span class="hljs-string">"transform_query"</span>, <span class="hljs-string">"retrieve"</span>)<br>workflow.add_conditional_edges(<br>    <span class="hljs-string">"generate"</span>,<br>    grade_generation_v_documents_and_question,<br>    {<br>        <span class="hljs-string">"not supported"</span>: <span class="hljs-string">"generate"</span>,<br>        <span class="hljs-string">"useful"</span>: END,<br>        <span class="hljs-string">"not useful"</span>: <span class="hljs-string">"transform_query"</span>,<br>    },<br>)<br><br><span class="hljs-comment"># Compile</span><br>app = workflow.<span class="hljs-built_in">compile</span>()<br></code></pre></td></tr></table></figure><p><strong>Graph Preview</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> IPython.display <span class="hljs-keyword">import</span> Image<br><br>Image(app.get_graph().draw_png())<br></code></pre></td></tr></table></figure><figure><img src="/images/Self-Rag.png" srcset="/img/loading.gif" lazyload alt="Graph"><figcaption aria-hidden="true">Graph</figcaption></figure><p><strong>执行</strong></p><p>例子1:</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pprint <span class="hljs-keyword">import</span> pprint<br><br><span class="hljs-comment"># Run</span><br>inputs = {<span class="hljs-string">"question"</span>: <span class="hljs-string">"Explain how the different types of agent memory work?"</span>}<br><span class="hljs-keyword">for</span> output <span class="hljs-keyword">in</span> app.stream(inputs):<br>    <span class="hljs-keyword">for</span> key, value <span class="hljs-keyword">in</span> output.items():<br>        <span class="hljs-comment"># Node</span><br>        pprint(<span class="hljs-string">f"Node '<span class="hljs-subst">{key}</span>':"</span>)<br>        <span class="hljs-comment"># Optional: print full state at each node</span><br>        <span class="hljs-comment"># pprint.pprint(value["keys"], indent=2, width=80, depth=None)</span><br>    pprint(<span class="hljs-string">"\n---\n"</span>)<br><br><span class="hljs-comment"># Final generation</span><br>pprint(value[<span class="hljs-string">"generation"</span>])<br></code></pre></td></tr></table></figure><p>输出</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs text">---RETRIEVE---<br>"Node 'retrieve':"<br>'\n---\n'<br>---CHECK DOCUMENT RELEVANCE TO QUESTION---<br>---GRADE: DOCUMENT NOT RELEVANT---<br>---GRADE: DOCUMENT RELEVANT---<br>---GRADE: DOCUMENT NOT RELEVANT---<br>---GRADE: DOCUMENT RELEVANT---<br>---ASSESS GRADED DOCUMENTS---<br>---DECISION: GENERATE---<br>"Node 'grade_documents':"<br>'\n---\n'<br>---GENERATE---<br>---CHECK HALLUCINATIONS---<br>---DECISION: GENERATION IS GROUNDED IN DOCUMENTS---<br>---GRADE GENERATION vs QUESTION---<br>---DECISION: GENERATION ADDRESSES QUESTION---<br>"Node 'generate':"<br>'\n---\n'<br>('Short-term memory is used for in-context learning and allows the model to '<br> 'learn new information. It has a limited capacity and lasts for a short '<br> 'duration. Long-term memory, on the other hand, can store information for a '<br> 'long time and has unlimited storage capacity. It includes '<br> 'explicit/declarative memory for facts and events, and implicit/procedural '<br> 'memory for skills and routines.')<br></code></pre></td></tr></table></figure><p>LangSmith流程展示：</p><p><img src="/images/LangSmith_Self-RAG.png" srcset="/img/loading.gif" lazyload></p><p>上图中有文档过滤</p><p>例子2:</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python">inputs = {<span class="hljs-string">"question"</span>: <span class="hljs-string">"Explain how chain of thought prompting works?"</span>}<br><span class="hljs-keyword">for</span> output <span class="hljs-keyword">in</span> app.stream(inputs):<br>    <span class="hljs-keyword">for</span> key, value <span class="hljs-keyword">in</span> output.items():<br>        <span class="hljs-comment"># Node</span><br>        pprint(<span class="hljs-string">f"Node '<span class="hljs-subst">{key}</span>':"</span>)<br>        <span class="hljs-comment"># Optional: print full state at each node</span><br>        <span class="hljs-comment"># pprint.pprint(value["keys"], indent=2, width=80, depth=None)</span><br>    pprint(<span class="hljs-string">"\n---\n"</span>)<br><br><span class="hljs-comment"># Final generation</span><br>pprint(value[<span class="hljs-string">"generation"</span>])<br></code></pre></td></tr></table></figure><p>输出</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs text">---RETRIEVE---<br>"Node 'retrieve':"<br>'\n---\n'<br>---CHECK DOCUMENT RELEVANCE TO QUESTION---<br>---GRADE: DOCUMENT RELEVANT---<br>---GRADE: DOCUMENT RELEVANT---<br>---GRADE: DOCUMENT RELEVANT---<br>---GRADE: DOCUMENT RELEVANT---<br>---ASSESS GRADED DOCUMENTS---<br>---DECISION: GENERATE---<br>"Node 'grade_documents':"<br>'\n---\n'<br>---GENERATE---<br>---CHECK HALLUCINATIONS---<br>'---DECISION: GENERATION IS NOT GROUNDED IN DOCUMENTS, RE-TRY---'<br>"Node 'generate':"<br>'\n---\n'<br>---GENERATE---<br>---CHECK HALLUCINATIONS---<br>---DECISION: GENERATION IS GROUNDED IN DOCUMENTS---<br>---GRADE GENERATION vs QUESTION---<br>---DECISION: GENERATION ADDRESSES QUESTION---<br>"Node 'generate':"<br>'\n---\n'<br>('Chain of thought prompting involves guiding the behavior of autoregressive '<br> 'language models by providing prompts or demonstrations that contain '<br> 'high-quality reasoning chains. This can be done through methods such as '<br> 'self-asking, interleaving retrieval with chain-of-thought reasoning, and '<br> 'complexity-based prompting for multi-step reasoning. These techniques aim to '<br> "improve the model's ability to generate coherent and logical responses "<br> 'without updating its weights.')<br></code></pre></td></tr></table></figure><p>LangSmith流程展示：</p><p><img src="/images/LangSmith_Self-RAG1.png" srcset="/img/loading.gif" lazyload></p><p>上图中有评判生成未通过重新生成</p>
+        </div>
+      </div>
+    </div>
+<h2 id="官方资源">官方资源</h2>
+<p>代码示例更详细说明：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langgraph/blob/main/examples/rag/langgraph_self_rag.ipynb">Self-RAG</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langgraph/blob/main/examples/rag/langgraph_crag.ipynb">CRAG</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=pbAd8O1Lvm4&amp;list=PLfaIDFEXuae16n2TWUkKq5PgJ0w6Pkwtg&amp;index=12">官方YouTube</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.langchain.dev/agentic-rag-with-langgraph/">官方Blog</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1y4421F7Hm">B站视频</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LangGraph/" class="category-chain-item">LangGraph</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#LLM学习笔记</a>
+      
+        <a href="/tags/Agent/" class="print-no-link">#Agent</a>
+      
+        <a href="/tags/LangGraph/" class="print-no-link">#LangGraph</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LangGraph(四)——Self-Reflective RAG</div>
+      <div>https://mztchaoqun.com.cn/posts/D35_LangGraph_Self_Reflective_RAG/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年9月1日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D36_LangGraph_Plan_And_Execute/" title="LangGraph(五)——Plan-and-Execute Agents">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LangGraph(五)——Plan-and-Execute Agents</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D34_LangGraph_Multi-Agent/" title="LangGraph(三)—— Multi-Agent Workflows">
+                        <span class="hidden-mobile">LangGraph(三)—— Multi-Agent Workflows</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

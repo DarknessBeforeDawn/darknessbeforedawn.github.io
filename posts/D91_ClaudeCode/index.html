@@ -1,0 +1,1036 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="要点  思维范式转变：从“让 AI 修复 Bug”到“让 AI 编写测试来定位并修复 Bug”，我们将实践真正的 测试驱动调试 (Test-Driven Debugging)。 高级指令工程：学习如何通过 think a lot 和 plan mode 等指令，引导 AI 进行更深层次的、结构化的思考与规划。 并行智能体：见证 Claude Code 最强大的功能之一——通过一条指令 派生出两个并">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Claude Code（四）:测试驱动开发（TDD）与并行Agent">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D91_ClaudeCode/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="要点  思维范式转变：从“让 AI 修复 Bug”到“让 AI 编写测试来定位并修复 Bug”，我们将实践真正的 测试驱动调试 (Test-Driven Debugging)。 高级指令工程：学习如何通过 think a lot 和 plan mode 等指令，引导 AI 进行更深层次的、结构化的思考与规划。 并行智能体：见证 Claude Code 最强大的功能之一——通过一条指令 派生出两个并">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/ClaudeCode.jpg">
+<meta property="article:published_time" content="2025-10-24T09:21:33.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.282Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/ClaudeCode.jpg">
+  
+  
+  
+  <title>Claude Code（四）:测试驱动开发（TDD）与并行Agent - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Claude Code（四）:测试驱动开发（TDD）与并行Agent"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-10-24 17:21" pubdate>
+          2025年10月24日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          29 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Claude Code（四）:测试驱动开发（TDD）与并行Agent</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><strong>要点</strong></p>
+<ul>
+<li><strong>思维范式转变</strong>：从“让 AI 修复 Bug”到“让 AI
+编写测试来定位并修复 Bug”，我们将实践真正的 <strong>测试驱动调试
+(Test-Driven Debugging)</strong>。</li>
+<li><strong>高级指令工程</strong>：学习如何通过 think a lot 和 plan mode
+等指令，引导 AI 进行更深层次的、结构化的思考与规划。</li>
+<li><strong>并行智能体</strong>：见证 Claude Code
+最强大的功能之一——通过一条指令 <strong>派生出两个并行的子智能体
+(Subagents)</strong>，对同一个重构任务进行“头脑风暴”，并提出不同方案供我们选择。</li>
+<li><strong>构建健壮性</strong>：理解为什么先写测试、再做重构是保证系统稳定性的基石，以及如何让
+AI 在整个过程中贯彻这一思想。</li>
+</ul>
+<h2 id="一bug场景复现">一、Bug场景复现</h2>
+<p>我们的 RAG
+聊天机器人项目已经迭代了一段时间。现在，我们回到应用中，尝试提出一个之前能够正常工作的问题：“课程
+5 涵盖了哪些内容？”</p>
+<p>然而，前端返回了一个错误。</p>
+<figure>
+<img src="/images/CC22.webp" srcset="/img/loading.gif" lazyload alt="前端报错">
+<figcaption aria-hidden="true">前端报错</figcaption>
+</figure>
+<p>面对这个报错，大多数人的第一反应可能是复制错误信息，或者截张图，直接扔给
+Claude让它帮忙修复。</p>
+<p>这当然是一种方法，但它治标不治本，并且充满了不确定性。我们不知道 AI
+会如何修改代码，也无法保证这次修复不会引入新的问题。这是一种“黑盒式”的修复，对于追求卓越工程质量的开发者来说，是不可接受的。</p>
+<p>所以，我决定采取一种更 methodical（系统化）的方法。</p>
+<h2 id="二测试驱动调试">二、测试驱动调试</h2>
+<p>我的核心思路是：<strong>我们不仅要修复眼前的
+Bug，更要为整个系统建立一个“免疫系统”——一套完善的自动化测试。</strong>
+这样，未来任何的修改导致了问题，我们都能在第一时间发现。</p>
+<p>这个 Bug 可能源于多个文件：</p>
+<ul>
+<li>AIGenerator：处理与 Anthropic API 交互的地方，可能是 Prompt
+出了问题。</li>
+<li>rag_system.py：作为 RAG 系统的“指挥官”，负责整个流程的编排。</li>
+<li>search_tools：定义了具体的搜索工具，这里也可能存在缺陷。</li>
+</ul>
+<p>因此，我给 Claude Code 下达的指令，不是去“修复 Bug”，而是
+<strong>首先为这几个核心文件编写测试用例。</strong>然后，通过运行这些测试，来定位并最终修复问题。</p>
+<h3 id="prompt-的艺术引导-ai-深度思考">2.1 Prompt 的艺术：引导 AI
+深度思考</h3>
+<p>为了完成这个复杂的任务，我的 Prompt 经过了精心的设计。</p>
+<figure>
+<img src="/images/CC23.webp" srcset="/img/loading.gif" lazyload alt="think a lot + plan mode">
+<figcaption aria-hidden="true">think a lot + plan mode</figcaption>
+</figure>
+<p>我在这里使用了两个关键的“元指令”：</p>
+<ul>
+<li><strong>think a lot</strong>：这个指令会告诉 Claude
+Code，接下来的任务比较复杂，需要它分配更多的资源（token）来进行内部的“思考”过程。这使得它在制定计划时会更加周全和深入。</li>
+<li><strong>plan mode</strong>：开启计划模式。这意味着 Claude Code
+在真正开始修改文件之前，会先给出一个详细的行动计划。只有在我审查并批准这个计划之后，它才会开始执行。这给了我绝对的控制权，避免
+AI “自由发挥”导致意外情况。</li>
+</ul>
+<p>这个“先思考，再出计划，后执行”的流程，完美复刻了人类专家的工作模式，也是我们与
+Agentic AI 高效协作的关键。</p>
+<h3 id="ai-的执行过程从诊断到修复">2.2 AI 的执行过程：从诊断到修复</h3>
+<p>Claude Code
+启动后，它的“思考”过程是完全透明的。我能看到它正在阅读哪些文件，以及它对问题的初步诊断：</p>
+<ul>
+<li><strong>初步诊断</strong>：它推测可能是配置问题、复杂的工具调用链中存在故障点，或是组件间的错误传递受限。</li>
+<li><strong>计划制定</strong>：
+<ul>
+<li>创建一个 tests/ 目录。</li>
+<li>使用 pytest 框架编写针对 ai_generator.py, rag_system.py 和
+search_tools.py 的单元测试和集成测试。</li>
+<li>为了隔离测试环境，它计划使用 mock 来模拟 ChromaDB 等外部依赖。</li>
+<li>安装必要的测试依赖（如 pytest）。</li>
+<li>运行测试。</li>
+<li>根据测试结果分析并修复 Bug。</li>
+</ul></li>
+</ul>
+<p>批准这个计划后。接下来，Claude Code 开始了它的工作。</p>
+<figure>
+<img src="/images/CC24.webp" srcset="/img/loading.gif" lazyload alt="think a lot + plan mode">
+<figcaption aria-hidden="true">think a lot + plan mode</figcaption>
+</figure>
+<p>它首先创建了测试目录和文件，然后提示我安装 pytest。</p>
+<ul>
+<li><strong>Pytest</strong>：一个成熟且功能强大的 Python
+测试框架。它使得编写小型、可读的测试变得简单，并且可以扩展以支持复杂的函数式测试。</li>
+<li><strong>Mocking</strong>：测试中的一个核心概念。当我们的测试对象依赖于其他复杂的组件（如数据库、网络API）时，我们不希望在测试中真实地去调用它们，因为这会让测试变慢、不稳定且难以设置。Mocking
+允许我们用一个“假的”对象（Mock
+Object）来替代这些真实依赖。这个假对象完全在我们的控制之下，我们可以指定它在被调用时返回什么值，从而精确地测试我们的代码逻辑，而不用关心其依赖项的内部工作。</li>
+</ul>
+<p>测试代码很快生成完毕。当我看到生成的测试文件时，我确信这套流程是正确的。代码结构清晰，使用了
+pytest 的 fixtures（测试固件）来准备测试数据和 Mock
+对象，这完全是专业级的测试代码。</p>
+<p>接下来，Claude Code
+运行了它自己编写的测试。果不其然，测试失败了。</p>
+<p>根据失败的测试日志，它迅速定位到了问题的根源：在执行向量搜索时，返回结果的最大数量
+MAX_RESULTS 被错误地设置为了
+0。这是一个非常隐蔽的配置错误，如果靠人工去排查，可能需要花费不少时间。</p>
+<p>它立即修改了配置，然后再次运行了所有测试。这一次，全部通过。</p>
+<p>最后，它给出了一个全面的总结，报告了它发现的问题、进行的修复，以及它为项目新增的测试基础设施。</p>
+<p>我回到浏览器，刷新页面，重新提出了那个问题。</p>
+<figure>
+<img src="/images/CC25.png" srcset="/img/loading.gif" lazyload alt="前端表明bug已修复">
+<figcaption aria-hidden="true">前端表明bug已修复</figcaption>
+</figure>
+<p>这一次，我们得到了正确、详细的回答。Bug
+被修复了。但更重要的是，我们的代码库现在拥有了一套自动化测试，成为了一个更健壮、更可靠的系统。</p>
+<h2 id="三终极挑战当-ai-成为并行思考的架构师">三、终极挑战：当 AI
+成为并行思考的架构师</h2>
+<p>解决了 Bug，我准备迎接一个更大的挑战：<strong>代码重构</strong>。</p>
+<h3 id="问题背景单次工具调用的局限">3.1
+问题背景：单次工具调用的局限</h3>
+<p>我发现 ai_generator.py 中的一个设计缺陷：系统被硬编码为
+<strong>每次用户查询最多只能进行一次工具调用（Tool Call）</strong>。</p>
+<p>这意味着，对于简单问题，比如“课程 X
+的大纲是什么？”，系统可以正常工作。但对于复杂问题，比如“<strong>对比课程
+X 的第 4 课和课程 Y 的第 2
+课，找出它们共同讨论的主题”</strong>，系统就无能为力了。因为要回答这个问题，至少需要两次工具调用：</p>
+<ul>
+<li>获取课程 X 的大纲</li>
+<li>获取课程 Y 的大纲</li>
+</ul>
+<p>当前的架构无法支持这种多轮、连续的工具调用。我需要重构它。</p>
+<h3 id="方案设计让-ai头脑风暴">3.2 方案设计：让 AI“头脑风暴”</h3>
+<p>这次的重构比修复 Bug
+要复杂得多。它涉及到修改核心的业务逻辑，可能会有多种实现方案，每种方案都有其优缺点。我该选择哪一种？</p>
+<p>此时，我决定使用 Claude Code
+的一个堪称“杀手级”的功能。我没有直接告诉它“用方案 A”或“用方案
+B”，因为连我自己也不是 100% 确定哪个方案最好。</p>
+<p>于是，我编写了一个非常详细的 Prompt，保存在一个
+backend-tool-refactor.md 文件中。这个 Prompt
+的核心思想是：<strong>我不给你最终方案，我只给你目标和约束，然后你派生出两个并行的子智能体，去分别探索不同的实现路径，然后把方案拿给我来决策。</strong></p>
+<p>让我们来仔细剖析这个 Prompt 的精华部分：</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs txt">&gt; The RAG chatbot returns 'query failed' for any content-related questions.  <br>    I need you to:  <br>    1. Write tests to evaluate the outputs of the execute method of the CourseSearchTool in @backend/search_tools.py  <br>    2. Write tests to evaluate if @backend/ai_generator.py correctly calls for the CourseSearchTool  <br>    3. Write tests to evaluate how the RAG system is handling the content-query related questions.  <br><br>    Save the tests in a tests folder within @backend. Run those tests against the current system to identify which components are failing. Propose fixes based on what the tests reveal is broken.  <br><br>Think a lot<br></code></pre></td></tr></table></figure>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs md"><br>Refactor @backend/ai<span class="hljs-emphasis">_generator-py to support sequential tool calling where Claude can make up to 2 tool calls in separate API rounds.</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis"># 1. 清晰定义现状</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">Current behavior:</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">- Claude makes 1 tool call → tools are removed from API params → final response</span><br><span class="hljs-emphasis">- If Claude wants another tool call after seeing results, it can't (gets empty response)</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis"># 2. 清晰定义目标</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">Desired behavior:</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">- Each tool call should be a separate API request where Claude can reason about previous results</span><br><span class="hljs-emphasis">- Support for complex queries requiring multiple searches...</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis"># 3. 提供具体示例</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">Example flow:</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">1. User: "Search for a course that discusses the same topic as lesson 4 of course X"</span><br><span class="hljs-emphasis">2. Claude: get course outline for course X - gets title of lesson 4</span><br><span class="hljs-emphasis">3. Claude: uses the title to search for a course that discusses the same topic → returns course information</span><br><span class="hljs-emphasis">4. Claude: provides complete answer</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis"># 4. 给出明确的技术约束</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">Requirements:</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">- Maximum 2 sequential rounds per user query</span><br><span class="hljs-emphasis">- Terminate when: (a) 2 rounds completed, (b) Claude's response has no tool_</span>use blocks, or (c) tool call fails<br><span class="hljs-bullet">-</span> ...<br><br><span class="hljs-section"># 5. 提出元指令：派出子智能体</span><br><br>Use two parallel subagents to brainstorm possible plans. Do not implement any code.<br><br></code></pre></td></tr></table></figure>
+<p>最后一句 <strong>“Use two parallel subagents to brainstorm possible
+plans. Do not implement any code.”</strong>
+是整个任务的灵魂。我命令它扮演一个“技术经理”的角色，分派任务给两个“下属”（子智能体），让它们去进行方案调研。</p>
+<h3 id="见证奇迹两个-ai-的并行思考">3.3 见证奇迹：两个 AI
+的并行思考</h3>
+<p>当我执行这个 Prompt 后:</p>
+<figure>
+<img src="/images/CC25.webp" srcset="/img/loading.gif" lazyload alt="两个agent在并行地执行任务">
+<figcaption aria-hidden="true">两个agent在并行地执行任务</figcaption>
+</figure>
+<p>Claude Code 调用了一个名为 task
+的内置工具，瞬间派生出两个并行的子进程。这两个子智能体开始同时工作，它们各自阅读代码库，分析需求，并独立地构思解决方案。</p>
+<ul>
+<li><strong>Agentic AI</strong>：智能体
+AI系统，不仅仅是一个被动的问答或代码生成工具。它是一个具备自主性、能够设定目标、制定计划、使用工具并执行任务的系统。</li>
+<li><strong>Subagents</strong>：子智能体的概念则将这一能力推向了新的高度。主智能体可以根据任务的需要，动态地创建和分派一个或多个专门的子智能体来处理子任务。这就像一个项目经理将一个大项目分解成多个小任务，然后分配给不同的团队成员去并行完成。这种“分而治之”的策略，极大地提升了
+AI 解决复杂问题的能力和效率。</li>
+</ul>
+<p>几分钟后，两个子智能体完成了它们的“头脑风暴”，并向我提交了各自的方案。</p>
+<figure>
+<img src="/images/CC26.webp" srcset="/img/loading.gif" lazyload alt="两个Agent输出了各自的方案，供用户选择">
+<figcaption aria-hidden="true">两个Agent输出了各自的方案，供用户选择</figcaption>
+</figure>
+<ul>
+<li><strong>方案 A (Iterative
+Approach)</strong>：一个迭代式的方法。它建议在现有 generate_response
+方法中加入一个循环，来处理多轮工具调用。这个方案改动较小，实现起来更安全，风险更低。</li>
+<li><strong>方案 B (Comprehensive
+Redesign)</strong>：一个更全面的重构方案。它建议引入新的辅助方法来专门管理工具调用循环和状态，将多轮逻辑与核心生成逻辑解耦。这个方案从长远来看，代码结构更清晰，可维护性更好，但改动也更大。</li>
+</ul>
+<p>现在，选择权回到了我的手上。Claude Code
+完美地扮演了技术顾问的角色，它分析了两种路径，列出了利弊，等待我的决策。这种人机协作的模式，我认为是未来软件开发的终极形态。</p>
+<h3 id="执行与验证">3.4 执行与验证</h3>
+<p>我评估后，认为方案 A
+作为当前阶段的实现更为稳妥。于是我回复：“Implement approach A”。</p>
+<p>同时，我再次开启了 plan
+mode，确保在它动手之前，我能审查它的具体实施计划。</p>
+<p>Claude Code 迅速给出了基于方案 A 的详细计划：</p>
+<ol type="1">
+<li>修改 generate_response 方法签名，增加一个 max_rounds 参数。</li>
+<li>更新系统 Prompt，告知模型它可以进行多轮工具调用。</li>
+<li>在 handle_tool_execution 中实现核心的循环逻辑。</li>
+<li><strong>最关键的一步</strong>：更新 test_ai_generator.py
+中的现有测试，并** 增加一个新的测试用例**，专门验证 sequential tool
+calling（顺序工具调用）的行为是否符合预期。</li>
+</ol>
+<p>看到它主动提出要更新和增加测试，我感到非常欣慰。这表明它完全理解了软件工程的健壮性原则：任何重构都必须有测试来保驾护航。</p>
+<p>我批准了计划。Claude Code
+开始修改代码，并运行了新的测试。所有测试都顺利通过。</p>
+<p><img src="/images/CC27.webp" srcset="/img/loading.gif" lazyload></p>
+<p>最后，我在前端进行了实际验证。我提出了一个真正需要多轮工具调用的问题：“有没有其他课程涵盖与
+MCP 课程第 5 课相同的主题？”</p>
+<p>为了回答这个问题，系统需要：</p>
+<ul>
+<li><strong>第一次工具调用</strong>：获取 MCP 课程的大纲，找到第 5
+课的主题（例如，“构建 MCP 客户端”）。</li>
+<li><strong>第二次工具调用</strong>：用“构建 MCP
+客户端”作为关键词，去搜索其他所有课程。</li>
+</ul>
+<p>系统成功地执行了这个流程，并给出了答案：“看起来没有其他课程涵盖构建
+MCP 客户端的主题。”
+这个答案是准确的，更重要的是，它证明了我们的重构是成功的。</p>
+<p>我们实践了两种软件工程领域至关重要的思想范式：</p>
+<ul>
+<li><strong>测试驱动的开发与调试</strong>：我们不再把测试看作是事后的负担，而是将其作为驱动开发、保证质量的“指挥棒”。通过让
+AI 先写测试，我们确保了每一次修复和重构都是建立在坚实的基础之上的。</li>
+<li><strong>架构方案的探索与决策</strong>：通过开创性的“并行子智能体”功能，我们让
+AI 参与到了软件设计中最具创造性的“头脑风暴”环节。AI
+不再只是一个执行者，它成为了一个能够提供多种架构选项、分析利弊的“技术顾问”。</li>
+</ul>
+<h2 id="reference">Reference</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://www.deeplearning.ai/short-courses/claude-code-a-highly-agentic-coding-assistant/?utm_campaign=anthropicC3-launch&amp;utm_medium=headband&amp;utm_source=dlai-homepage#course-outline">Claude
+Code: A Highly Agentic Coding Assistant</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/anthropics/claude-code">Claude
+Code(GitHub)</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg2OTg5NDg3Mg==&amp;mid=2247491772&amp;idx=1&amp;sn=1a854fb0563ece0893223e850b37b5d5&amp;chksm=ce94bf0bf9e3361d5bcf22743ff063a2cf33072aa4192fabe2a049d6ff1226aabe6a5feb1858&amp;cur_album_id=4121229896725266445&amp;scene=190#rd">吴恩达
+Claude Code 笔记精华版</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/https-deeplearning-ai/FRED-dashboard">课程项目源码</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/https-deeplearning-ai/sc-claude-code-files">课程官方文件与
+Prompt</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.claude.com/en/docs/claude-code/overview">Claude Code
+Docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.claude.com/product/claude-code">Claude Code
+Offcial</a></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Claude-Code/" class="category-chain-item">Claude Code</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Claude-Code/" class="print-no-link">#Claude Code</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Claude Code（四）:测试驱动开发（TDD）与并行Agent</div>
+      <div>https://mztchaoqun.com.cn/posts/D91_ClaudeCode/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年10月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D92_ClaudeCode/" title="Claude Code（五）:CC + Git Worktree">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Claude Code（五）:CC + Git Worktree</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D90_ClaudeCode/" title="Claude Code（三）:Prompt范式、深度思考、上下文工程与MCP">
+                        <span class="hidden-mobile">Claude Code（三）:Prompt范式、深度思考、上下文工程与MCP</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,959 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="LangChain模块架构图 [1]  一、智能体架构：Agent 1.1 什么是智能体（Agent） 将大语言模型作为一个推理引擎。给定一个任务，智能体自动生成完成任务所需的步骤，执行相应动作（例如选择并调用工具），直到任务完成。  Agent 继承了 Chain 的所有能力  Chain 的能力构成了 Agent 的 “推理链” 能力基础  Agent 的执行器（Executor）就是基于 L">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LangChain(六)——Agents">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D30_LangChain_Agents/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="LangChain模块架构图 [1]  一、智能体架构：Agent 1.1 什么是智能体（Agent） 将大语言模型作为一个推理引擎。给定一个任务，智能体自动生成完成任务所需的步骤，执行相应动作（例如选择并调用工具），直到任务完成。  Agent 继承了 Chain 的所有能力  Chain 的能力构成了 Agent 的 “推理链” 能力基础  Agent 的执行器（Executor）就是基于 L">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/LangChain_Agents.jpeg">
+<meta property="article:published_time" content="2024-07-29T09:18:35.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.271Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="LLM学习笔记">
+<meta property="article:tag" content="LangChain">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/LangChain_Agents.jpeg">
+  
+  
+  
+  <title>LangChain(六)——Agents - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LangChain(六)——Agents"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-07-29 17:18" pubdate>
+          2024年7月29日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          35 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LangChain(六)——Agents</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><strong>LangChain模块架构图</strong>
+<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span
+class="hint--top hint--rounded" aria-label="">[1]</span></a></sup></p>
+<p><img src="/images/LangChainAll.jpeg" srcset="/img/loading.gif" lazyload /></p>
+<h2 id="一智能体架构agent">一、智能体架构：Agent</h2>
+<h3 id="什么是智能体agent">1.1 什么是智能体（Agent）</h3>
+<p>将大语言模型作为一个推理引擎。给定一个任务，智能体自动生成完成任务所需的步骤，执行相应动作（例如选择并调用工具），直到任务完成。</p>
+<p><img src="/images/agent-overview.png" srcset="/img/loading.gif" lazyload /></p>
+<p><code>Agent</code> 继承了 Chain 的所有能力</p>
+<ul>
+<li>Chain 的能力构成了 Agent 的 “推理链” 能力基础
+<ul>
+<li>Agent 的执行器（Executor）就是基于 LLM Chain 实现的</li>
+</ul></li>
+<li>Agent 自身具备和 Chain 类似的 “调用 / 执行” 接口的能力</li>
+</ul>
+<p><code>Agent</code> 在 <code>Chain</code> 的能力基础上
+<strong>进化出了两个核心能力</strong></p>
+<ul>
+<li>一条<strong>思考链</strong>（<a
+target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Prompt_engineering#Chain-of-thought">Chain
+of Thought</a>）：Agent
+可以规划和调度推理链，会思考分步骤的、每一步的行动</li>
+<li>一个<strong>工具箱</strong>（Toolbox）：Agent
+自带工具体系，可以接入并调用外部工具（工具可以按既定接口规范定制）
+<ul>
+<li>Agent
+只关注每个工具的输入输出（格式及内容），工具内部可以自行进行本地和 Web
+接口调用</li>
+</ul></li>
+</ul>
+<h3 id="智能体类型react">1.2 智能体类型：ReAct</h3>
+<p><a target="_blank" rel="noopener" href="https://react-lm.github.io/">ReAct</a>: Synergizing
+Reasoning and Acting in Language Models</p>
+<p>ReAct机制：</p>
+<p><img src="/images/ReAct.png" srcset="/img/loading.gif" lazyload /></p>
+<p><code>ReAct</code>
+使用大语言模型同时生成推理链和行动，两者交替出现，相互支持：</p>
+<ul>
+<li>推理链帮助 Agent 制定、跟踪和更新行动计划</li>
+<li>行动让 Agent 与环境上下文交互，获取更多信息支持推理</li>
+</ul>
+<p>流程概览：给出任务 ➡️ 推理下一步行动 ➡️ 行动并更新环境 ➡️
+观察并推理下一步行动 ➡️ 循环直至任务完成</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_community.utilities <span class="hljs-keyword">import</span> SerpAPIWrapper<br><span class="hljs-keyword">from</span> langchain.tools <span class="hljs-keyword">import</span> Tool, tool<br><span class="hljs-keyword">import</span> calendar<br><span class="hljs-keyword">import</span> dateutil.parser <span class="hljs-keyword">as</span> parser<br><span class="hljs-keyword">from</span> datetime <span class="hljs-keyword">import</span> date<br><span class="hljs-keyword">import</span> json<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> AgentExecutor, create_react_agent<br><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> load_tools, initialize_agent<br><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> AgentType<br><span class="hljs-keyword">from</span> langchain <span class="hljs-keyword">import</span> hub<br><br>search = SerpAPIWrapper(params=&#123;<span class="hljs-string">&#x27;location&#x27;</span>: <span class="hljs-string">&#x27;Austin,Texas,United States&#x27;</span>,<span class="hljs-string">&#x27;engine&#x27;</span>: <span class="hljs-string">&#x27;google&#x27;</span>, <span class="hljs-string">&#x27;gl&#x27;</span>: <span class="hljs-string">&#x27;us&#x27;</span>, <span class="hljs-string">&#x27;google_domain&#x27;</span>: <span class="hljs-string">&#x27;google.com&#x27;</span>, <span class="hljs-string">&#x27;hl&#x27;</span>: <span class="hljs-string">&#x27;en&#x27;</span>&#125;)<br>tools = [<br>    Tool.from_function(<br>        func=search.run,<br>        name=<span class="hljs-string">&quot;Search&quot;</span>,<br>        description=<span class="hljs-string">&quot;useful for when you need to answer questions about current events,if you do not know the questions,you can search&quot;</span><br>    ),<br>]<br><br><br><span class="hljs-comment"># 自定义工具</span><br><span class="hljs-meta">@tool(<span class="hljs-params"><span class="hljs-string">&quot;weekday&quot;</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">weekday</span>(<span class="hljs-params">date_str: <span class="hljs-built_in">str</span></span>) -&gt; <span class="hljs-built_in">str</span>:<br>    <span class="hljs-string">&quot;&quot;&quot;Input format is YYYY-MM-DD. Convert date to weekday name&quot;&quot;&quot;</span><br>    d = parser.parse(date_str)<br>    <span class="hljs-keyword">return</span> calendar.day_name[d.weekday()]<br><br><br>tools += [weekday]<br><br>llm = ChatOpenAI(model_name=<span class="hljs-string">&#x27;gpt-4-turbo&#x27;</span>, temperature=<span class="hljs-number">0</span>)<br><br>prompt = hub.pull(<span class="hljs-string">&quot;hwchase17/react&quot;</span>)<br><br><span class="hljs-built_in">print</span>(prompt.template)<br><br>agent = create_react_agent(llm, tools, prompt)<br>agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=<span class="hljs-literal">True</span>)<br><br>agent_executor.invoke(&#123;<span class="hljs-string">&quot;input&quot;</span>:<span class="hljs-string">&quot;周杰伦出生那天是星期几&quot;</span>&#125;)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-28ab9646" role="button" aria-expanded="false" aria-controls="collapse-28ab9646">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-28ab9646">
+        <div class="fold-content">
+          <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs text">Answer the following questions as best you can. You have access to the following tools:<br><br>&#123;tools&#125;<br><br>Use the following format:<br><br>Question: the input question you must answer<br>Thought: you should always think about what to do<br>Action: the action to take, should be one of [&#123;tool_names&#125;]<br>Action Input: the input to the action<br>Observation: the result of the action<br>... (this Thought/Action/Action Input/Observation can repeat N times)<br>Thought: I now know the final answer<br>Final Answer: the final answer to the original input question<br><br>Begin!<br><br>Question: &#123;input&#125;<br>Thought:&#123;agent_scratchpad&#125;<br><br><br>&gt; Entering new AgentExecutor chain...<br>The question asks for the day of the week on which Jay Chou (周杰伦) was born. First, I need to find out his birthdate.<br><br>Thought: I need to find Jay Chou&#x27;s birthdate.<br>Action: Search<br>Action Input: Jay Chou birthdate<br>January 18, 1979Now that I have Jay Chou&#x27;s birthdate, I can use the weekday tool to find out the day of the week he was born.<br><br>Action: weekday<br>Action Input: 1979-01-18<br><br>ThursdayI now know the final answer.<br><br>Final Answer: 周杰伦出生那天是星期四。 (Jay Chou was born on a Thursday.)<br><br>&gt; Finished chain.<br>&#123;&#x27;input&#x27;: &#x27;周杰伦出生那天是星期几&#x27;,<br> &#x27;output&#x27;: &#x27;周杰伦出生那天是星期四。 (Jay Chou was born on a Thursday.)&#x27;&#125;<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<p>LangSmith流程展现:</p>
+<p><img src="/images/Angent_ReAct.png" srcset="/img/loading.gif" lazyload /></p>
+<h3 id="智能体类型selfaskwithsearch">1.3
+智能体类型：SelfAskWithSearch</h3>
+<p><code>Self-Ask with Search</code> 利用一种叫做
+<code>Follow-up Question</code>（追问）加<code>Intermediate Answer</code>（中间答案）的技巧，来辅助大模型寻找事实性问题的过渡性答
+案，从而引出最终答案。</p>
+<p><code>SelfAskWithSearch</code>流程： <img
+src="/images/SelfAskWithSearch.png" srcset="/img/loading.gif" lazyload /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain <span class="hljs-keyword">import</span> hub<br><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> AgentExecutor, create_self_ask_with_search_agent<br><span class="hljs-keyword">from</span> langchain_community.llms <span class="hljs-keyword">import</span> Fireworks<br><span class="hljs-keyword">from</span> langchain_community.utilities <span class="hljs-keyword">import</span> SerpAPIWrapper<br><span class="hljs-keyword">from</span> langchain_community.tools.tavily_search <span class="hljs-keyword">import</span> TavilyAnswer<br><span class="hljs-keyword">from</span> langchain.tools <span class="hljs-keyword">import</span> Tool, tool<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> OpenAI<br><br><span class="hljs-comment">#llm = OpenAI()</span><br><br>search = SerpAPIWrapper(params=&#123;<span class="hljs-string">&#x27;location&#x27;</span>: <span class="hljs-string">&#x27;Austin,Texas,United States&#x27;</span>,<span class="hljs-string">&#x27;engine&#x27;</span>: <span class="hljs-string">&#x27;google&#x27;</span>, <span class="hljs-string">&#x27;gl&#x27;</span>: <span class="hljs-string">&#x27;us&#x27;</span>, <span class="hljs-string">&#x27;google_domain&#x27;</span>: <span class="hljs-string">&#x27;google.com&#x27;</span>, <span class="hljs-string">&#x27;hl&#x27;</span>: <span class="hljs-string">&#x27;en&#x27;</span>&#125;)<br><br><br>tools = [<br>    Tool(<br>        name=<span class="hljs-string">&quot;Intermediate Answer&quot;</span>,<br>        func=search.run,<br>        description=<span class="hljs-string">&quot;A search engine optimized for comprehensive, accurate, and trusted results. Useful for when you need to answer questions about current events. Input should be a search query. This returns only the answer - not the original source data.&quot;</span>,<br>    )<br>]<br><br><span class="hljs-comment">#下载prompt</span><br>prompt = hub.pull(<span class="hljs-string">&quot;hwchase17/self-ask-with-search&quot;</span>)<br><br><span class="hljs-comment">#OpenAI的模型老是输出格式有问题，这里参考官方文档</span><br>llm = Fireworks()<br><br><span class="hljs-comment"># Construct the Self Ask With Search Agent</span><br>agent = create_self_ask_with_search_agent(llm, tools, prompt)<br><br><span class="hljs-comment"># Create an agent executor by passing in the agent and tools</span><br>agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=<span class="hljs-literal">True</span>)<br><br>agent_executor.invoke(<br>    &#123;<span class="hljs-string">&quot;input&quot;</span>: <span class="hljs-string">&quot;What is the hometown of the reigning men&#x27;s U.S. Open champion?&quot;</span>&#125;<br>)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-5b75660a" role="button" aria-expanded="false" aria-controls="collapse-5b75660a">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-5b75660a">
+        <div class="fold-content">
+          <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs text">Question: Who lived longer, Muhammad Ali or Alan Turing?<br>Are follow up questions needed here: Yes.<br>Follow up: How old was Muhammad Ali when he died?<br>Intermediate answer: Muhammad Ali was 74 years old when he died.<br>Follow up: How old was Alan Turing when he died?<br>Intermediate answer: Alan Turing was 41 years old when he died.<br>So the final answer is: Muhammad Ali<br><br>Question: When was the founder of craigslist born?<br>Are follow up questions needed here: Yes.<br>Follow up: Who was the founder of craigslist?<br>Intermediate answer: Craigslist was founded by Craig Newmark.<br>Follow up: When was Craig Newmark born?<br>Intermediate answer: Craig Newmark was born on December 6, 1952.<br>So the final answer is: December 6, 1952<br><br>Question: Who was the maternal grandfather of George Washington?<br>Are follow up questions needed here: Yes.<br>Follow up: Who was the mother of George Washington?<br>Intermediate answer: The mother of George Washington was Mary Ball Washington.<br>Follow up: Who was the father of Mary Ball Washington?<br>Intermediate answer: The father of Mary Ball Washington was Joseph Ball.<br>So the final answer is: Joseph Ball<br><br>Question: Are both the directors of Jaws and Casino Royale from the same country?<br>Are follow up questions needed here: Yes.<br>Follow up: Who is the director of Jaws?<br>Intermediate answer: The director of Jaws is Steven Spielberg.<br>Follow up: Where is Steven Spielberg from?<br>Intermediate answer: The United States.<br>Follow up: Who is the director of Casino Royale?<br>Intermediate answer: The director of Casino Royale is Martin Campbell.<br>Follow up: Where is Martin Campbell from?<br>Intermediate answer: New Zealand.<br>So the final answer is: No<br><br>Question: &#123;input&#125;<br>Are followup questions needed here:&#123;agent_scratchpad&#125;<br><br><br>&gt; Entering new AgentExecutor chain...<br> `Yes.`<br>`Follow up: Who is the reigning men&#x27;s U.S. Open champion?`Novak Djokovic`Follow up: Where is Novak Djokovic from?`[&quot;Belgrade is the capital of the southeast European country of Serbia. Its most significant landmark is the Beogradska Tvrđava, an imposing fortress at the confluence of the Danube and the Sava rivers. The fort is a testament to the city’s strategic importance to the Roman, Byzantine, Ottoman, Serbian and Austrian empires, and it&#x27;s now the site of several museums as well as Kalemegdan, a vast park. ― Google&quot;, &#x27;Belgrade type: Capital of Serbia.&#x27;, &#x27;Belgrade entity_type: cities, locations, travel, travel.&#x27;, &#x27;Belgrade kgmid: /m/0fhzf.&#x27;, &#x27;Belgrade place_id: ChIJvT-116N6WkcR5H4X8lxkuB0.&#x27;, &#x27;Belgrade area: 139 mi².&#x27;, &#x27;Belgrade elevation: 384′.&#x27;, &#x27;Belgrade population: 1.374 million (2016).&#x27;, &#x27;Belgrade metro_population: 1,681,405.&#x27;, &#x27;Belgrade colleges_and_universities: University of Belgrade.&#x27;, &quot;Novak Djokovic (born May 22, 1987, Belgrade, Serbia, Yugoslavia [now in Serbia]) is a Serbian tennis player who is one of the greatest men&#x27;s ...&quot;, &quot;Novak Djokovic is a professional tennis player from Serbia and is considered by many to be the greatest men&#x27;s tennis player of all time.&quot;, &#x27;Novak Djokovic, who was born on May 22, 1987, in Serbia, is a professional tennis player. He is married to Jelena Ristić and has two siblings -- Djordje and ...&#x27;, &#x27;Novak Djokovic (born 22 May 1987) is a Serbian professional tennis player. Last updated on: 11 September 2023.&#x27;, &#x27;Official tennis player profile of Novak Djokovic on the ATP Tour. Featuring news, bio, rankings, playing activity, coach, stats, win-loss, points breakdown, ...&#x27;, &#x27;Novak Djokovic is from Serbia.\u200b\u200b On May 22, 1987, in Belgrade, SR Serbia, SFR Yugoslavia, Novak Djokovic was born to Dijana and Srdjan Djokovic. His Serbian ...&#x27;, &#x27;I grew up on a mountain here in Serbia and spent a lot of my childhood climbing mountains, hills and just going up and down, spending time in ...&#x27;, &quot;Get all the latest Novak Djokovic news, stats, performance, facts, history, and biography. Also, Get Novak Djokovic&#x27;s latest career stats, wins, ...&quot;]`Follow up: What is the hometown of Novak Djokovic?`Novak Djokovic (born May 22, 1987, Belgrade, Serbia, Yugoslavia [now in Serbia]) is a Serbian tennis player who is one of the greatest men&#x27;s players in the history of the game.`So the final answer is: Belgrade`<br><br>&gt; Finished chain.<br>&#123;&#x27;input&#x27;: &quot;What is the hometown of the reigning men&#x27;s U.S. Open champion?&quot;,<br> &#x27;output&#x27;: &#x27;Belgrade&#x27;&#125;<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<p>LangSmith流程展现:</p>
+<p><img src="/images/SelfAsk.png" srcset="/img/loading.gif" lazyload /></p>
+<p><strong>工具集合</strong>：<code>Agent</code>包含解决问题所必须的搜索工具，可以用来查询和验证多个信息点
+<strong>逐步逼近</strong>：<code>Agent</code>可以根据第一个问题的答案，提出进一步的问题，直到得到最终答案。这种逐步逼近的方式可以确保答案的准确性。
+<strong>自我提问与搜索</strong>：<code>Agent</code>可以自己提问并搜索答案。
+<strong>决策链</strong>：<code>Agent</code>通过一个决策链来执行任务，使其可以跟踪和处理复杂的多跳问题，这对于解决需要多步推理的问题尤为重要。</p>
+<h3 id="智能体类型plan-and-execute">1.4 智能体类型：Plan and
+Execute</h3>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2305.04091.pdf">Plan-and-Solve
+Prompting</a>: Improving Zero-Shot Chain-of-Thought Reasoning by Large
+Language Models</p>
+<p><code>Zero-Shot</code>：代表0样例</p>
+<p>顾名思义，Agent 通过首先计划要做什么，然后执行子任务来实现目标</p>
+<ul>
+<li>这个想法很大程度上是受到 <a
+target="_blank" rel="noopener" href="https://github.com/yoheinakajima/babyagi">BabyAGI</a>
+和后来的《Plan-and-Solve Prompting》论文的启发</li>
+<li>计划几乎总是由 LLM 完成；执行通常由单独的（带有工具的）Agent
+完成</li>
+</ul>
+<p>该 Agent 有两个主要的关键步骤：</p>
+<ol type="1">
+<li>首先，Agent 使用 LLM 创建一个计划，以明确的步骤回答查询</li>
+<li>一旦制定了计划，它就会使用传统的 Agent（比如
+ReAct）来解决每个步骤</li>
+</ol>
+<p><code>Plan and Execute</code>流程： <img
+src="/images/plan-and-execute.png" srcset="/img/loading.gif" lazyload /></p>
+<p>其想法是，计划步骤通过将较大的任务分解为更简单的子任务，使 LLM
+更加“步入正轨”。但是，与传统 Agent 相比，此方法需要更多单独的 LLM
+查询，并且延迟更高。</p>
+<p>首先安装依赖</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install langchain_experimental<br></code></pre></td></tr></table></figure>
+<p>代码示例</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> LLMMathChain<br><span class="hljs-keyword">from</span> langchain_core.tools <span class="hljs-keyword">import</span> Tool<br><span class="hljs-keyword">from</span> langchain_community.llms <span class="hljs-keyword">import</span> Fireworks<br><span class="hljs-keyword">from</span> langchain_community.utilities <span class="hljs-keyword">import</span> SerpAPIWrapper<br><span class="hljs-keyword">from</span> langchain_experimental.plan_and_execute <span class="hljs-keyword">import</span> (<br>    PlanAndExecute,<br>    load_agent_executor,<br>    load_chat_planner,<br>)<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI, OpenAI<br><br><span class="hljs-comment">#openai的模型老是会进行联想，造成错误</span><br><span class="hljs-comment">#llm = OpenAI(temperature=0.0)</span><br>llm = Fireworks(temperature=<span class="hljs-number">0.0</span>)<br>llm_math_chain = LLMMathChain.from_llm(llm=llm, verbose=<span class="hljs-literal">True</span>)<br><br><br>search = SerpAPIWrapper(params=&#123;<span class="hljs-string">&#x27;location&#x27;</span>: <span class="hljs-string">&#x27;Austin,Texas,United States&#x27;</span>,<span class="hljs-string">&#x27;engine&#x27;</span>: <span class="hljs-string">&#x27;google&#x27;</span>, <span class="hljs-string">&#x27;gl&#x27;</span>: <span class="hljs-string">&#x27;us&#x27;</span>, <span class="hljs-string">&#x27;google_domain&#x27;</span>: <span class="hljs-string">&#x27;google.com&#x27;</span>, <span class="hljs-string">&#x27;hl&#x27;</span>: <span class="hljs-string">&#x27;en&#x27;</span>&#125;)<br><br><br>tools = [<br>    Tool(<br>        name=<span class="hljs-string">&quot;Search&quot;</span>,<br>        func=search.run,<br>        description=<span class="hljs-string">&quot;useful for when you need to answer questions about current events&quot;</span>,<br>    ),<br>    Tool(<br>        name=<span class="hljs-string">&quot;Calculator&quot;</span>,<br>        func=llm_math_chain.run,<br>        description=<span class="hljs-string">&quot;useful for when you need to answer questions about math&quot;</span>,<br>    ),<br>]<br><br>model = ChatOpenAI(model_name=<span class="hljs-string">&#x27;gpt-3.5-turbo&#x27;</span>,temperature=<span class="hljs-number">0</span>)<br>planner = load_chat_planner(model)<br>executor = load_agent_executor(model, tools, verbose=<span class="hljs-literal">True</span>)<br>agent = PlanAndExecute(planner=planner, executor=executor)<br><br>agent.run(<br>    <span class="hljs-string">&quot;Who is the current prime minister of the UK? What is their current age raised to the 0.43 power?&quot;</span><br>)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-dc73f5fd" role="button" aria-expanded="false" aria-controls="collapse-dc73f5fd">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-dc73f5fd">
+        <div class="fold-content">
+          <figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><code class="hljs markdown"><span class="hljs-quote">&gt; Entering new AgentExecutor chain...</span><br>Thought: I can use the Search tool to find the current prime minister of the UK.<br>Action:<br><span class="hljs-code">```</span><br><span class="hljs-code">&#123;</span><br><span class="hljs-code">  &quot;action&quot;: &quot;Search&quot;,</span><br><span class="hljs-code">  &quot;action_input&quot;: &quot;Current prime minister of the UK&quot;</span><br><span class="hljs-code">&#125;</span><br><span class="hljs-code">```</span><br>Observation: Rishi Sunak<br>Thought:It seems there was an error in the previous search result. Let me correct that for you.<br>Action:<br><span class="hljs-code">```</span><br><span class="hljs-code">&#123;</span><br><span class="hljs-code">  &quot;action&quot;: &quot;Search&quot;,</span><br><span class="hljs-code"> &quot;action_input&quot;: &quot;Current prime minister of the UK&quot;</span><br><span class="hljs-code">&#125;</span><br><span class="hljs-code">```</span><br>Observation: Rishi Sunak<br>Thought:It appears there might be an issue with the search results. Let me try a different approach to ensure accuracy.<br>Action:<br><span class="hljs-code">```</span><br><span class="hljs-code">&#123;</span><br><span class="hljs-code">  &quot;action&quot;: &quot;Search&quot;,</span><br><span class="hljs-code">  &quot;action_input&quot;: &quot;Who is the current prime minister of the UK 2022&quot;</span><br><span class="hljs-code">&#125;</span><br><span class="hljs-code">```</span><br>Observation: [&#x27;Rishi Sunak is a British politician who has served as Prime Minister of the United Kingdom and Leader of the Conservative Party since 2022. The first British Asian prime minister, he previously held two cabinet positions under Boris Johnson, latterly as Chancellor of the Exchequer from 2020 to 2022.&#x27;, &#x27;Rishi Sunak type: Prime Minister of the United Kingdom.&#x27;, &#x27;Rishi Sunak entity<span class="hljs-emphasis">_type: people, people.&#x27;, &#x27;Rishi Sunak main_</span>tab<span class="hljs-emphasis">_text: Overview.&#x27;, &#x27;Rishi Sunak kgmid: /g/11b6ctfpsy.&#x27;, &#x27;Rishi Sunak born: May 12, 1980 (age 43 years), Southampton General Hospital, Southampton, United Kingdom.&#x27;, &#x27;Rishi Sunak marriage_</span>location: Bengaluru, India.&#x27;, &#x27;Rishi Sunak books: A Portrait of Modern Britain, A New Era for Retail Bonds.&#x27;, &#x27;Rishi Sunak previous<span class="hljs-emphasis">_campaign: United Kingdom House of Commons election, 2019.&#x27;, &#x27;Rishi Sunak office: Prime Minister of the United Kingdom since 2022.&#x27;, &#x27;Rishi Sunak party: Conservative Party.&#x27;, &#x27;Rishi Sunak previous_</span>offices: Chancellor of the Exchequer (2020–2022).&#x27;, &#x27;The current prime minister is Rishi Sunak of the Conservative Party, who assumed the office on 25 October 2022. Prime Minister of the United Kingdom of ...&#x27;, &#x27;Rishi Sunak became Prime Minister on 25 October 2022. He was previously appointed Chancellor of the Exchequer from 13 February 2020 to 5 July 2022. He was Chief ...&#x27;, &#x27;Rishi Sunak is a British politician who has served as Prime Minister of the United Kingdom and Leader of the Conservative Party since 2022.&#x27;, &quot;British Prime Ministers ; Liz Truss (1975- ), Merton, Sep 2022-Oct 2022 ; Boris Johnson (1964- ), Balliol, Jul 2019-Sept 2022 ; Theresa May (1956- ), St Hugh&#x27;s ...&quot;, &#x27;Former U.K Prime Minister Boris Johnson, Queen ...&#x27;, &#x27;LONDON — Rishi Sunak becomes Britain\&#x27;s third prime in under two months at a time when the U.K. faces what he has termed a &quot;profound economic ...&#x27;, &quot;Rishi Sunak will be Britain&#x27;s next prime minister after dark-horse challenger Penny Mordaunt withdrew from the Conservative Party&#x27;s ...&quot;, &quot;Rishi Sunak will become the United Kingdom&#x27;s new prime minister after winning the ruling Conservative Party&#x27;s leadership contest, ...&quot;, &#x27;Rishi Sunak, who on Tuesday became prime minister, broke ranks with then-Prime Minister David Cameron, hailing Brexit as a “once-in-a-generation ...&#x27;, &#x27;Meet the Prime Minister. Rishi Sunak became Prime Minister in October 2022. · History. 10 Downing Street, the locale of British prime ministers since 1735, vies ...&#x27;]<br>Thought:It seems the current Prime Minister of the UK is Rishi Sunak. Would you like to know more about him or is there anything else you need assistance with?<br><br><span class="hljs-quote">&gt; Finished chain.</span><br><br><br><span class="hljs-quote">&gt; Entering new AgentExecutor chain...</span><br>Thought: I can use a search tool to find the current age of the Prime Minister of the UK, Rishi Sunak.<br><br>Action:<br><span class="hljs-code">```</span><br><span class="hljs-code">&#123;</span><br><span class="hljs-code">  &quot;action&quot;: &quot;Search&quot;,</span><br><span class="hljs-code">  &quot;action_input&quot;: &quot;Rishi Sunak current age&quot;</span><br><span class="hljs-code">&#125;</span><br><span class="hljs-code">```</span><br>Observation: 43 years<br>Thought:I have found that the current age of the Prime Minister of the UK, Rishi Sunak, is 43 years old.<br>Action:<br><span class="hljs-code">```</span><br><span class="hljs-code">&#123;</span><br><span class="hljs-code">  &quot;action&quot;: &quot;Final Answer&quot;,</span><br><span class="hljs-code">  &quot;action_input&quot;: &quot;The current age of the Prime Minister of the UK, Rishi Sunak, is 43 years old.&quot;</span><br><span class="hljs-code">&#125;</span><br><span class="hljs-code">```</span><br><br><span class="hljs-quote">&gt; Finished chain.</span><br><br><br><span class="hljs-quote">&gt; Entering new AgentExecutor chain...</span><br>Thought: I can use the Calculator tool to calculate the prime minister&#x27;s current age raised to the power of 0.43. This will involve raising 43 to the power of 0.43.<br><br>Action:<br><span class="hljs-code">```</span><br><span class="hljs-code">&#123;</span><br><span class="hljs-code">  &quot;action&quot;: &quot;Calculator&quot;,</span><br><span class="hljs-code">  &quot;action_input&quot;: &quot;43^0.43&quot;</span><br><span class="hljs-code">&#125;</span><br><span class="hljs-code">```</span><br><br><span class="hljs-quote">&gt; Entering new LLMMathChain chain...</span><br>43^0.43<span class="hljs-code">```text</span><br><span class="hljs-code">43**0.43</span><br><span class="hljs-code">```</span><br>...numexpr.evaluate(&quot;43<span class="hljs-strong">**0.43&quot;)...</span><br><span class="hljs-strong"></span><br><span class="hljs-strong">Answer: 5.0395462574574275</span><br><span class="hljs-strong">&gt; Finished chain.</span><br><span class="hljs-strong"></span><br><span class="hljs-strong">Observation: Answer: 5.0395462574574275</span><br><span class="hljs-strong">Thought:I have calculated the prime minister&#x27;s current age raised to the power of 0.43, and the result is approximately 5.0395.</span><br><span class="hljs-strong">Action:</span><br><span class="hljs-strong">```</span><br><span class="hljs-strong">&#123;</span><br><span class="hljs-strong">  &quot;action&quot;: &quot;Final Answer&quot;,</span><br><span class="hljs-strong">  &quot;action<span class="hljs-emphasis">_input&quot;: &quot;The prime minister&#x27;s current age raised to the power of 0.43 is approximately 5.0395.&quot;</span></span><br><span class="hljs-emphasis"><span class="hljs-strong">&#125;</span></span><br><span class="hljs-emphasis"><span class="hljs-strong">```</span></span><br><span class="hljs-emphasis"><span class="hljs-strong"></span></span><br><span class="hljs-emphasis"><span class="hljs-strong">&gt; Finished chain.</span></span><br><span class="hljs-emphasis"><span class="hljs-strong"></span></span><br><span class="hljs-emphasis"><span class="hljs-strong"></span></span><br><span class="hljs-emphasis"><span class="hljs-strong">&gt; Entering new AgentExecutor chain...</span></span><br><span class="hljs-emphasis"><span class="hljs-strong">Thought: The calculated value of the prime minister&#x27;s current age raised to the power of 0.43 is approximately 5.0395.</span></span><br><span class="hljs-emphasis"><span class="hljs-strong"></span></span><br><span class="hljs-emphasis"><span class="hljs-strong">Action:</span></span><br><span class="hljs-emphasis"><span class="hljs-strong">```</span></span><br><span class="hljs-emphasis"><span class="hljs-strong">&#123;</span></span><br><span class="hljs-emphasis"><span class="hljs-strong">  &quot;action&quot;: &quot;Final Answer&quot;,</span></span><br><span class="hljs-emphasis"><span class="hljs-strong">  &quot;action_</span>input&quot;: &quot;The prime minister&#x27;s current age raised to the power of 0.43 is approximately 5.0395.&quot;</span><br><span class="hljs-strong">&#125;</span><br><span class="hljs-strong">```</span><br><span class="hljs-strong"></span><br><span class="hljs-strong">&gt; Finished chain.</span><br><span class="hljs-strong"></span><br><span class="hljs-strong"></span><br><span class="hljs-strong">&gt; Entering new AgentExecutor chain...</span><br><span class="hljs-strong">Thought: The original question was to find the current age of the Prime Minister of the UK. The age was calculated and provided as approximately 5.0395 when raised to the power of 0.43.</span><br><span class="hljs-strong"></span><br><span class="hljs-strong">Action:</span><br><span class="hljs-strong">```</span><br><span class="hljs-strong">&#123;</span><br><span class="hljs-strong">  &quot;action&quot;: &quot;Final Answer&quot;,</span><br><span class="hljs-strong">  &quot;action<span class="hljs-emphasis">_input&quot;: &quot;The Prime Minister of the UK, Rishi Sunak, is approximately 5.0395 years old when raised to the power of 0.43.&quot;</span></span><br><span class="hljs-emphasis"><span class="hljs-strong">&#125;</span></span><br><span class="hljs-emphasis"><span class="hljs-strong">```</span></span><br><span class="hljs-emphasis"><span class="hljs-strong"></span></span><br><span class="hljs-emphasis"><span class="hljs-strong"></span></span><br><span class="hljs-emphasis"><span class="hljs-strong"></span></span><br><span class="hljs-emphasis"><span class="hljs-strong">&gt; Finished chain.</span></span><br><span class="hljs-emphasis"><span class="hljs-strong">&#x27;The Prime Minister of the UK, Rishi Sunak, is approximately 5.0395 years old when raised to the power of 0.43.&#x27;</span></span><br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<p><code>Plan and Execute</code> LangSmith流程展现：</p>
+<p><img src="/images/PlanAndExecute.png" srcset="/img/loading.gif" lazyload /></p>
+<h3 id="openai-tools-angent">1.5 OpenAI Tools Angent</h3>
+<p>OpenAI 模型（如
+<code>gpt-3.5-turbo-0613</code>）已经过微调，可以检测何时应调用函数并响应应传递给函数的输入</p>
+<ul>
+<li>OpenAI Functions 的目标是比通用文本完成或聊天 API
+更可靠地返回有效且有用的函数调用</li>
+<li>在 API
+调用中，您可以描述函数并让模型智能地选择输出包含调用这些函数的参数的
+JSON 对象</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain <span class="hljs-keyword">import</span> hub<br><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> AgentExecutor, create_openai_tools_agent<br><span class="hljs-keyword">from</span> langchain_community.tools.google_serper <span class="hljs-keyword">import</span> GoogleSerperResults<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">import</span> langchain<br>langchain.debug=<span class="hljs-literal">False</span><br>tools = [GoogleSerperResults(max_results=<span class="hljs-number">1</span>)]<br><br>prompt = hub.pull(<span class="hljs-string">&quot;hwchase17/openai-tools-agent&quot;</span>)<br><br>prompt.pretty_print()<br><br><span class="hljs-comment"># Only certain models support this</span><br>llm = ChatOpenAI(model=<span class="hljs-string">&quot;gpt-3.5-turbo-1106&quot;</span>, temperature=<span class="hljs-number">0</span>)<br><br><span class="hljs-comment"># Construct the OpenAI Tools agent</span><br>agent = create_openai_tools_agent(llm, tools, prompt)<br><br>agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=<span class="hljs-literal">True</span>)<br><br>agent_executor.invoke(&#123;<span class="hljs-string">&quot;input&quot;</span>: <span class="hljs-string">&quot;what is LangChain?&quot;</span>&#125;)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-098520c4" role="button" aria-expanded="false" aria-controls="collapse-098520c4">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-098520c4">
+        <div class="fold-content">
+          <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs vim">================================ System Message ================================<br><br>You are <span class="hljs-keyword">a</span> helpful assistant<br><br>============================= Messages Placeholder =============================<br><br>&#123;chat_history&#125;<br><br>================================ Human Message =================================<br><br>&#123;<span class="hljs-built_in">input</span>&#125;<br><br>============================= Messages Placeholder =============================<br><br>&#123;agent_scratchpad&#125;<br><br><br>&gt; Entering <span class="hljs-keyword">new</span> AgentExecutor chain...<br><br>Invoking: `google_serper_results_json` with `LangChain`<br><br><br>&#123;<span class="hljs-string">&#x27;searchParameters&#x27;</span>: &#123;<span class="hljs-string">&#x27;q&#x27;</span>: <span class="hljs-string">&#x27;LangChain&#x27;</span>, <span class="hljs-string">&#x27;gl&#x27;</span>: <span class="hljs-string">&#x27;us&#x27;</span>, <span class="hljs-string">&#x27;hl&#x27;</span>: <span class="hljs-string">&#x27;en&#x27;</span>, <span class="hljs-string">&#x27;type&#x27;</span>: <span class="hljs-string">&#x27;search&#x27;</span>, <span class="hljs-string">&#x27;num&#x27;</span>: <span class="hljs-number">1</span>, <span class="hljs-string">&#x27;engine&#x27;</span>: <span class="hljs-string">&#x27;google&#x27;</span>&#125;, <span class="hljs-string">&#x27;knowledgeGraph&#x27;</span>: &#123;<span class="hljs-string">&#x27;title&#x27;</span>: <span class="hljs-string">&#x27;LangChain&#x27;</span>, <span class="hljs-string">&#x27;description&#x27;</span>: <span class="hljs-string">&quot;LangChain is a framework designed to simplify the creation of applications using large language models. As a language model integration framework, LangChain&#x27;s use-cases largely overlap with those of language models in general, including document...&quot;</span>, <span class="hljs-string">&#x27;descriptionSource&#x27;</span>: <span class="hljs-string">&#x27;Wikipedia&#x27;</span>, <span class="hljs-string">&#x27;descriptionLink&#x27;</span>: <span class="hljs-string">&#x27;https://en.wikipedia.org/wiki/LangChain&#x27;</span>, <span class="hljs-string">&#x27;attributes&#x27;</span>: &#123;<span class="hljs-string">&#x27;Initial release date&#x27;</span>: <span class="hljs-string">&#x27;October 2022&#x27;</span>, <span class="hljs-string">&#x27;Developer(s)&#x27;</span>: <span class="hljs-string">&#x27;Harrison Chase&#x27;</span>, <span class="hljs-string">&#x27;License&#x27;</span>: <span class="hljs-string">&#x27;MIT License&#x27;</span>, <span class="hljs-string">&#x27;Repository&#x27;</span>: <span class="hljs-string">&#x27;github.com/langchain-ai/langchain&#x27;</span>, <span class="hljs-string">&#x27;Stable release&#x27;</span>: <span class="hljs-string">&#x27;0.1.16 / 11 April 2024; 14 days ago&#x27;</span>, <span class="hljs-string">&#x27;Written in&#x27;</span>: <span class="hljs-string">&#x27;Python and JavaScript&#x27;</span>&#125;&#125;, <span class="hljs-string">&#x27;organic&#x27;</span>: [&#123;<span class="hljs-string">&#x27;title&#x27;</span>: <span class="hljs-string">&#x27;LangChain&#x27;</span>, <span class="hljs-string">&#x27;link&#x27;</span>: <span class="hljs-string">&#x27;https://www.langchain.com/&#x27;</span>, <span class="hljs-string">&#x27;snippet&#x27;</span>: <span class="hljs-string">&quot;Build your app with LangChain. Build context-aware, reasoning applications with LangChain&#x27;s flexible framework that leverages your company&#x27;s data and APIs.&quot;</span>, <span class="hljs-string">&#x27;position&#x27;</span>: <span class="hljs-number">1</span>&#125;], <span class="hljs-string">&#x27;images&#x27;</span>: [&#123;<span class="hljs-string">&#x27;title&#x27;</span>: <span class="hljs-string">&#x27;miro.medium.com/v2/resize:fit:1400/1*7Lep2Jkqgt9Bt...&#x27;</span>, <span class="hljs-string">&#x27;imageUrl&#x27;</span>: <span class="hljs-string">&#x27;https://miro.medium.com/v2/resize:fit:1400/1*7Lep2Jkqgt9BtiMt8icbSA.png&#x27;</span>, <span class="hljs-string">&#x27;link&#x27;</span>: <span class="hljs-string">&#x27;https://medium.com/@Algi.T/langchain-building-powerful-language-model-applications-with-python-c2b77a107709&#x27;</span>&#125;, &#123;<span class="hljs-string">&#x27;title&#x27;</span>: <span class="hljs-string">&#x27;What Is LangChain and How to Use It: A Guide&#x27;</span>, <span class="hljs-string">&#x27;imageUrl&#x27;</span>: <span class="hljs-string">&#x27;https://cdn.ttgtmedia.com/rms/onlineimages/a_langchain_app_in_its_most_basic_form-f_mobile.png&#x27;</span>, <span class="hljs-string">&#x27;link&#x27;</span>: <span class="hljs-string">&#x27;https://www.techtarget.com/searchenterpriseai/definition/LangChain&#x27;</span>&#125;, &#123;<span class="hljs-string">&#x27;title&#x27;</span>: <span class="hljs-string">&#x27;Introduction | 🦜️🔗 LangChain&#x27;</span>, <span class="hljs-string">&#x27;imageUrl&#x27;</span>: <span class="hljs-string">&#x27;https://python.langchain.com/svg/langchain_stack.svg&#x27;</span>, <span class="hljs-string">&#x27;link&#x27;</span>: <span class="hljs-string">&#x27;https://python.langchain.com/&#x27;</span>&#125;, &#123;<span class="hljs-string">&#x27;title&#x27;</span>: <span class="hljs-string">&#x27;Introduction | 🦜️🔗 LangChain&#x27;</span>, <span class="hljs-string">&#x27;imageUrl&#x27;</span>: <span class="hljs-string">&#x27;https://python.langchain.com/img/brand/wordmark.png&#x27;</span>, <span class="hljs-string">&#x27;link&#x27;</span>: <span class="hljs-string">&#x27;https://python.langchain.com/&#x27;</span>&#125;], <span class="hljs-string">&#x27;relatedSearches&#x27;</span>: [&#123;<span class="hljs-string">&#x27;query&#x27;</span>: <span class="hljs-string">&#x27;LangChain Python&#x27;</span>&#125;, &#123;<span class="hljs-string">&#x27;query&#x27;</span>: <span class="hljs-string">&#x27;Langchain github&#x27;</span>&#125;, &#123;<span class="hljs-string">&#x27;query&#x27;</span>: <span class="hljs-string">&#x27;Langchain JS&#x27;</span>&#125;, &#123;<span class="hljs-string">&#x27;query&#x27;</span>: <span class="hljs-string">&#x27;Langchain ai&#x27;</span>&#125;, &#123;<span class="hljs-string">&#x27;query&#x27;</span>: <span class="hljs-string">&#x27;LangChain pip&#x27;</span>&#125;, &#123;<span class="hljs-string">&#x27;query&#x27;</span>: <span class="hljs-string">&#x27;Is LangChain free&#x27;</span>&#125;, &#123;<span class="hljs-string">&#x27;query&#x27;</span>: <span class="hljs-string">&#x27;LangChain examples&#x27;</span>&#125;, &#123;<span class="hljs-string">&#x27;query&#x27;</span>: <span class="hljs-string">&#x27;LangChain documentation&#x27;</span>&#125;]&#125;LangChain <span class="hljs-keyword">is</span> <span class="hljs-keyword">a</span> framework designed <span class="hljs-keyword">to</span> <span class="hljs-built_in">simplify</span> the creation of applications using large <span class="hljs-keyword">language</span> models. It <span class="hljs-keyword">is</span> <span class="hljs-keyword">a</span> <span class="hljs-keyword">language</span> model integration framework with use-cases that largely overlap with those of <span class="hljs-keyword">language</span> models in general, including document processing, chatbots, <span class="hljs-built_in">and</span> more. LangChain was developed by Harrison Chase <span class="hljs-built_in">and</span> <span class="hljs-keyword">is</span> written in Python <span class="hljs-built_in">and</span> JavaScript. It <span class="hljs-keyword">is</span> available under the MIT License <span class="hljs-built_in">and</span> <span class="hljs-built_in">has</span> <span class="hljs-keyword">a</span> stable release <span class="hljs-keyword">version</span> <span class="hljs-number">0.1</span>.<span class="hljs-number">16</span> <span class="hljs-keyword">as</span> of April <span class="hljs-number">11</span>, <span class="hljs-number">2024</span>. You can <span class="hljs-keyword">find</span> more information about LangChain <span class="hljs-keyword">on</span> their official website: [LangChain](https://www.langchain.<span class="hljs-keyword">com</span>/).<br><br>For further details, you can also refer <span class="hljs-keyword">to</span> the Wikipedia page <span class="hljs-keyword">on</span> LangChain: [Wikipedia - LangChain](https://<span class="hljs-keyword">en</span>.wikipedia.org/wiki/LangChain)<br><br>&gt; Finished chain.<br>&#123;<span class="hljs-string">&#x27;input&#x27;</span>: <span class="hljs-string">&#x27;what is LangChain?&#x27;</span>,<br> <span class="hljs-string">&#x27;output&#x27;</span>: <span class="hljs-string">&#x27;LangChain is a framework designed to simplify the creation of applications using large language models. It is a language model integration framework with use-cases that largely overlap with those of language models in general, including document processing, chatbots, and more. LangChain was developed by Harrison Chase and is written in Python and JavaScript. It is available under the MIT License and has a stable release version 0.1.16 as of April 11, 2024. You can find more information about LangChain on their official website: [LangChain](https://www.langchain.com/).\n\nFor further details, you can also refer to the Wikipedia page on LangChain: [Wikipedia - LangChain](https://en.wikipedia.org/wiki/LangChain)&#x27;</span>&#125;<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<p><code>OpenAI Tools Angent</code> LangSmith流程展现：</p>
+<p><img src="/images/OpenAIToolsAgent.png" srcset="/img/loading.gif" lazyload /></p>
+<p>更多<code>Agent Type</code>:<a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/modules/agents/agent_types/">https://python.langchain.com/docs/modules/agents/agent_types/</a></p>
+<h2 id="二agent-工具箱">二、Agent 工具箱</h2>
+<p>工具是<code>Agent</code>,<code>chain</code>以及<code>LLM</code>可以用来与世界交互的功能。工具由以下组成：</p>
+<ul>
+<li>工具名</li>
+<li>工具的说明</li>
+<li>工具输入的JSON Schema</li>
+<li>工具函数</li>
+<li>工具返回的结果是否应该直接返回给用户</li>
+</ul>
+<p>名称、说明和 JSON schema 可用于 LLM
+Prompt，用于向模型传达该工具的用途以及何时使用它。</p>
+<h3 id="内置工具">2.1 内置工具</h3>
+<h4 id="内置工具的使用">2.1.1 内置工具的使用</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_community.tools <span class="hljs-keyword">import</span> WikipediaQueryRun<br><span class="hljs-keyword">from</span> langchain_community.utilities <span class="hljs-keyword">import</span> WikipediaAPIWrapper<br><br>api_wrapper = WikipediaAPIWrapper(top_k_results=<span class="hljs-number">1</span>, doc_content_chars_max=<span class="hljs-number">100</span>)<br>tool = WikipediaQueryRun(api_wrapper=api_wrapper)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====工具名====&quot;</span>)<br><span class="hljs-built_in">print</span>(tool.name)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====工具说明====&quot;</span>)<br><span class="hljs-built_in">print</span>(tool.description)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====工具输入的JSON Schema====&quot;</span>)<br><span class="hljs-built_in">print</span>(tool.args)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====是否直接返回给用户====&quot;</span>)<br><span class="hljs-built_in">print</span>(tool.return_direct)<br><br><span class="hljs-comment">#用字典输入调用</span><br><span class="hljs-built_in">print</span>(tool.run(&#123;<span class="hljs-string">&quot;query&quot;</span>: <span class="hljs-string">&quot;langchain&quot;</span>&#125;))<br><br><span class="hljs-comment">#也可以用单字符串输入调用，但只限于只有单一输入的工具</span><br><span class="hljs-built_in">print</span>(tool.run(<span class="hljs-string">&quot;langchain&quot;</span>))<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">====工具名====<br>wikipedia<br>====工具说明====<br>A <span class="hljs-keyword">wrapper</span> around Wikipedia. Useful <span class="hljs-keyword">for</span> <span class="hljs-keyword">when</span> you need <span class="hljs-keyword">to</span> answer general questions about people, places, companies, facts, historical events, <span class="hljs-keyword">or</span> other subjects. <span class="hljs-keyword">Input</span> should be a <span class="hljs-keyword">search</span> query.<br>====工具输入的<span class="hljs-type">JSON</span> Schema====<br>&#123;<span class="hljs-string">&#x27;query&#x27;</span>: &#123;<span class="hljs-string">&#x27;title&#x27;</span>: <span class="hljs-string">&#x27;Query&#x27;</span>, <span class="hljs-string">&#x27;type&#x27;</span>: <span class="hljs-string">&#x27;string&#x27;</span>&#125;&#125;<br>====是否直接返回给用户====<br><span class="hljs-keyword">False</span><br>Page: LangChain<br><span class="hljs-keyword">Summary</span>: LangChain <span class="hljs-keyword">is</span> a framework designed <span class="hljs-keyword">to</span> simplify the creation <span class="hljs-keyword">of</span> applications <br>Page: LangChain<br><span class="hljs-keyword">Summary</span>: LangChain <span class="hljs-keyword">is</span> a framework designed <span class="hljs-keyword">to</span> simplify the creation <span class="hljs-keyword">of</span> applications <br></code></pre></td></tr></table></figure>
+<h4 id="定制化内置工具">2.1.2 定制化内置工具</h4>
+<p>我们可以修改工具的名字, 说明以及JSON Schema，在定义JSON
+Schema参数时，输入必须保证与函数相同，因此无法进行修改，但是可以修改每个参数的说明。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_core.pydantic_v1 <span class="hljs-keyword">import</span> BaseModel, Field<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">WikiInputs</span>(<span class="hljs-title class_ inherited__">BaseModel</span>):<br>    <span class="hljs-string">&quot;&quot;&quot;Inputs to the wikipedia tool.&quot;&quot;&quot;</span><br><br>    query: <span class="hljs-built_in">str</span> = Field(<br>        description=<span class="hljs-string">&quot;query to look up in Wikipedia, should be 3 or less words&quot;</span> <span class="hljs-comment">#自定义参数说明</span><br>    )<br>        <br>        <br>tool = WikipediaQueryRun(<br>    name=<span class="hljs-string">&quot;wiki-tool&quot;</span>, <span class="hljs-comment">#自定义工具名</span><br>    description=<span class="hljs-string">&quot;look up things in wikipedia&quot;</span>, <span class="hljs-comment">#自定义工具说明</span><br>    args_schema=WikiInputs,<br>    api_wrapper=api_wrapper,<br>    return_direct=<span class="hljs-literal">True</span>, <span class="hljs-comment">#自定义</span><br>)<br><br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====工具名====&quot;</span>)<br><span class="hljs-built_in">print</span>(tool.name)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====工具说明====&quot;</span>)<br><span class="hljs-built_in">print</span>(tool.description)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====工具输入的JSON Schema====&quot;</span>)<br><span class="hljs-built_in">print</span>(tool.args)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====是否直接返回给用户====&quot;</span>)<br><span class="hljs-built_in">print</span>(tool.return_direct)<br><br><span class="hljs-built_in">print</span>(tool.run(<span class="hljs-string">&quot;langchain&quot;</span>))<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">====工具名====<br>wiki-tool<br>====工具说明====<br>look up things <span class="hljs-keyword">in</span> wikipedia<br>====工具输入的<span class="hljs-type">JSON</span> Schema====<br>&#123;<span class="hljs-string">&#x27;query&#x27;</span>: &#123;<span class="hljs-string">&#x27;title&#x27;</span>: <span class="hljs-string">&#x27;Query&#x27;</span>, <span class="hljs-string">&#x27;description&#x27;</span>: <span class="hljs-string">&#x27;query to look up in Wikipedia, should be 3 or less words&#x27;</span>, <span class="hljs-string">&#x27;type&#x27;</span>: <span class="hljs-string">&#x27;string&#x27;</span>&#125;&#125;<br>====是否直接返回给用户====<br><span class="hljs-keyword">True</span><br>Page: LangChain<br><span class="hljs-keyword">Summary</span>: LangChain <span class="hljs-keyword">is</span> a framework designed <span class="hljs-keyword">to</span> simplify the creation <span class="hljs-keyword">of</span> applications <br></code></pre></td></tr></table></figure>
+<p>更多内置工具请参考:<a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/integrations/tools/">https://python.langchain.com/docs/integrations/tools/</a></p>
+<h3 id="自定义工具">2.2 自定义工具</h3>
+<p>自定义工具除了实际功能之外，工具还有其他几个组件:</p>
+<ul>
+<li><code>name</code>（str），是必需的，并且在一组工具中必须是唯一的提供给<code>Agent</code></li>
+<li><code>description</code>（str），是可选的，但建议使用，<code>Agent</code>会用它来决定工具的使用</li>
+<li><code>args_schema</code>（Pydantic
+BaseModel），是可选的，但推荐使用，可以用于提供更多信息（例如，few-shot）或验证参数</li>
+</ul>
+<h4 id="tool-装饰器">2.2.1 <span class="citation"
+data-cites="tool">@tool</span> 装饰器</h4>
+<p>定义工具的最简单方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.pydantic_v1 <span class="hljs-keyword">import</span> BaseModel, Field<br><span class="hljs-keyword">from</span> langchain.tools <span class="hljs-keyword">import</span> BaseTool, StructuredTool, tool<br><br><span class="hljs-meta">@tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">search</span>(<span class="hljs-params">query: <span class="hljs-built_in">str</span></span>) -&gt; <span class="hljs-built_in">str</span>:<br>    <span class="hljs-string">&quot;&quot;&quot;Look up things online.&quot;&quot;&quot;</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;LangChain&quot;</span><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====单一参数====&quot;</span>)<br><span class="hljs-built_in">print</span>(search.name)<br><span class="hljs-built_in">print</span>(search.description)<br><span class="hljs-built_in">print</span>(search.args)<br><br><span class="hljs-meta">@tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">multiply</span>(<span class="hljs-params">a: <span class="hljs-built_in">int</span>, b: <span class="hljs-built_in">int</span></span>) -&gt; <span class="hljs-built_in">int</span>:<br>    <span class="hljs-string">&quot;&quot;&quot;Multiply two numbers.&quot;&quot;&quot;</span><br>    <span class="hljs-keyword">return</span> a * b<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====多参数====&quot;</span>)<br><span class="hljs-built_in">print</span>(multiply.name)<br><span class="hljs-built_in">print</span>(multiply.description)<br><span class="hljs-built_in">print</span>(multiply.args)<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">SearchInput</span>(<span class="hljs-title class_ inherited__">BaseModel</span>):<br>    query: <span class="hljs-built_in">str</span> = Field(description=<span class="hljs-string">&quot;should be a search query&quot;</span>)<br><br><br><span class="hljs-meta">@tool(<span class="hljs-params"><span class="hljs-string">&quot;search-tool&quot;</span>, args_schema=SearchInput, return_direct=<span class="hljs-literal">True</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">search</span>(<span class="hljs-params">query: <span class="hljs-built_in">str</span></span>) -&gt; <span class="hljs-built_in">str</span>:<br>    <span class="hljs-string">&quot;&quot;&quot;Look up things online.&quot;&quot;&quot;</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;LangChain&quot;</span><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====将工具名称和 JSON Schema传递 工具装饰器====&quot;</span>)<br><span class="hljs-built_in">print</span>(search.name)<br><span class="hljs-built_in">print</span>(search.description)<br><span class="hljs-built_in">print</span>(search.args)<br><span class="hljs-built_in">print</span>(search.return_direct)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs livescript">====单一参数====<br>search<br>search<span class="hljs-function"><span class="hljs-params">(query: str)</span> -&gt;</span> str - Look up things online.<br>&#123;<span class="hljs-string">&#x27;query&#x27;</span>: &#123;<span class="hljs-string">&#x27;title&#x27;</span>: <span class="hljs-string">&#x27;Query&#x27;</span>, <span class="hljs-string">&#x27;type&#x27;</span>: <span class="hljs-string">&#x27;string&#x27;</span>&#125;&#125;<br>====多参数====<br>multiply<br>multiply<span class="hljs-function"><span class="hljs-params">(a: int, b: int)</span> -&gt;</span> int - Multiply two numbers.<br>&#123;<span class="hljs-string">&#x27;a&#x27;</span>: &#123;<span class="hljs-string">&#x27;title&#x27;</span>: <span class="hljs-string">&#x27;A&#x27;</span>, <span class="hljs-string">&#x27;type&#x27;</span>: <span class="hljs-string">&#x27;integer&#x27;</span>&#125;, <span class="hljs-string">&#x27;b&#x27;</span>: &#123;<span class="hljs-string">&#x27;title&#x27;</span>: <span class="hljs-string">&#x27;B&#x27;</span>, <span class="hljs-string">&#x27;type&#x27;</span>: <span class="hljs-string">&#x27;integer&#x27;</span>&#125;&#125;<br>====将工具名称和 <span class="hljs-built_in">JSON</span> Schema传递 工具装饰器====<br>search-tool<br>search-tool<span class="hljs-function"><span class="hljs-params">(query: str)</span> -&gt;</span> str - Look up things online.<br>&#123;<span class="hljs-string">&#x27;query&#x27;</span>: &#123;<span class="hljs-string">&#x27;title&#x27;</span>: <span class="hljs-string">&#x27;Query&#x27;</span>, <span class="hljs-string">&#x27;description&#x27;</span>: <span class="hljs-string">&#x27;should be a search query&#x27;</span>, <span class="hljs-string">&#x27;type&#x27;</span>: <span class="hljs-string">&#x27;string&#x27;</span>&#125;&#125;<br>True<br></code></pre></td></tr></table></figure>
+<h4 id="structuredtool-数据类">2.2.2 StructuredTool 数据类</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">CalculatorInput</span>(<span class="hljs-title class_ inherited__">BaseModel</span>): <span class="hljs-comment">#可以不要，用来定义参数说明</span><br>    a: <span class="hljs-built_in">int</span> = Field(description=<span class="hljs-string">&quot;first number&quot;</span>)<br>    b: <span class="hljs-built_in">int</span> = Field(description=<span class="hljs-string">&quot;second number&quot;</span>)<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">multiply</span>(<span class="hljs-params">a: <span class="hljs-built_in">int</span>, b: <span class="hljs-built_in">int</span></span>) -&gt; <span class="hljs-built_in">int</span>:<br>    <span class="hljs-string">&quot;&quot;&quot;Multiply two numbers.&quot;&quot;&quot;</span><br>    <span class="hljs-keyword">return</span> a * b<br><br><br>calculator = StructuredTool.from_function(<br>    func=multiply,<br>    name=<span class="hljs-string">&quot;Calculator&quot;</span>,<br>    description=<span class="hljs-string">&quot;multiply numbers&quot;</span>,<br>    args_schema=CalculatorInput,<br>    return_direct=<span class="hljs-literal">True</span>,<br>    <span class="hljs-comment"># coroutine= ... &lt;- you can specify an async method if desired as well</span><br>)<br><br><span class="hljs-built_in">print</span>(calculator.name)<br><span class="hljs-built_in">print</span>(calculator.description)<br><span class="hljs-built_in">print</span>(calculator.args)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs php">Calculator<br><span class="hljs-title function_ invoke__">Calculator</span>(<span class="hljs-attr">a</span>: <span class="hljs-keyword">int</span>, <span class="hljs-attr">b</span>: <span class="hljs-keyword">int</span>) -&gt; <span class="hljs-keyword">int</span> - multiply numbers<br>&#123;<span class="hljs-string">&#x27;a&#x27;</span>: &#123;<span class="hljs-string">&#x27;title&#x27;</span>: <span class="hljs-string">&#x27;A&#x27;</span>, <span class="hljs-string">&#x27;description&#x27;</span>: <span class="hljs-string">&#x27;first number&#x27;</span>, <span class="hljs-string">&#x27;type&#x27;</span>: <span class="hljs-string">&#x27;integer&#x27;</span>&#125;, <span class="hljs-string">&#x27;b&#x27;</span>: &#123;<span class="hljs-string">&#x27;title&#x27;</span>: <span class="hljs-string">&#x27;B&#x27;</span>, <span class="hljs-string">&#x27;description&#x27;</span>: <span class="hljs-string">&#x27;second number&#x27;</span>, <span class="hljs-string">&#x27;type&#x27;</span>: <span class="hljs-string">&#x27;integer&#x27;</span>&#125;&#125;<br></code></pre></td></tr></table></figure>
+<p>其他更多说明请参考: <a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/modules/tools/custom_tools/">https://python.langchain.com/docs/modules/tools/custom_tools/</a></p>
+<h3 id="agent-工具箱中的工具集">2.3 Agent 工具箱中的工具集</h3>
+<p>工具集（<code>Toolkit</code>）是旨在一起用于特定任务并具有方便的加载方法的工具的集合</p>
+<p>全部工具集：<a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/integrations/toolkits/">https://python.langchain.com/docs/integrations/toolkits/</a></p>
+<h4 id="使用pythonrepltool工具集">2.3.1 使用PythonREPLTool工具集</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain <span class="hljs-keyword">import</span> hub<br><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> AgentExecutor<br><span class="hljs-keyword">from</span> langchain_experimental.tools <span class="hljs-keyword">import</span> PythonREPLTool<br><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> create_react_agent<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><br>tools = [PythonREPLTool()] <span class="hljs-comment">#加载工具集</span><br><br>llm = ChatOpenAI(model_name=<span class="hljs-string">&#x27;gpt-4-turbo&#x27;</span>,temperature=<span class="hljs-number">0</span>)<br><br>instructions = <span class="hljs-string">&quot;&quot;&quot;You are an agent designed to write and execute python code to answer questions.</span><br><span class="hljs-string">You have access to a python REPL, which you can use to execute python code.</span><br><span class="hljs-string">If you get an error, debug your code and try again.</span><br><span class="hljs-string">Only use the output of your code to answer the question. </span><br><span class="hljs-string">You might know the answer without running any code, but you should still run the code to get the answer.</span><br><span class="hljs-string">If it does not seem like you can write code to answer the question, just return &quot;I don&#x27;t know&quot; as the answer.</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br>base_prompt = hub.pull(<span class="hljs-string">&quot;langchain-ai/react-agent-template&quot;</span>)<br>prompt = base_prompt.partial(instructions=instructions)<br><br>agent = create_react_agent(llm, tools, prompt)<br>agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=<span class="hljs-literal">True</span>)<br><br><span class="hljs-comment">#训练神经网络</span><br>agent_executor.invoke(<br>    &#123;<br>        <span class="hljs-string">&quot;input&quot;</span>: <span class="hljs-string">&quot;&quot;&quot;Understand, write a single neuron neural network in PyTorch.</span><br><span class="hljs-string">Take synthetic data for y=2x. Train for 1000 epochs and print every 100 epochs.</span><br><span class="hljs-string">Return prediction for x = 5&quot;&quot;&quot;</span><br>    &#125;<br>)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-fcf67c0f" role="button" aria-expanded="false" aria-controls="collapse-fcf67c0f">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-fcf67c0f">
+        <div class="fold-content">
+          <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><code class="hljs mardown">&gt; Entering new AgentExecutor chain...<br>Thought: Do I need to use a tool? Yes<br>Action: Python_REPL<br>Action Input: <br>import torch<br>import torch.nn as nn<br><br># Define the model<br>class SingleNeuron(nn.Module):<br>    def __init__(self):<br>        super(SingleNeuron, self).__init__()<br>        self.linear = nn.Linear(1, 1)<br><br>    def forward(self, x):<br>        return self.linear(x)<br><br># Generate synthetic data<br>x_train = torch.arange(0, 10, 0.1).view(-1, 1)<br>y_train = 2 * x_train<br><br># Initialize the model<br>model = SingleNeuron()<br><br># Loss and optimizer<br>criterion = nn.MSELoss()<br>optimizer = torch.optim.SGD(model.parameters(), lr=0.01)<br><br># Training loop<br>for epoch in range(1000):<br>    model.train()<br>    optimizer.zero_grad()<br>    outputs = model(x_train)<br>    loss = criterion(outputs, y_train)<br>    loss.backward()<br>    optimizer.step()<br><br>    if epoch % 100 == 0:<br>        print(f&#x27;Epoch &#123;epoch+1&#125;, Loss: &#123;loss.item()&#125;&#x27;)<br><br># Test the model<br>model.eval()<br>x_test = torch.tensor([[5.0]])<br>prediction = model(x_test)<br>print(f&#x27;Prediction for x = 5: &#123;prediction.item()&#125;&#x27;)<br>Epoch 1, Loss: 144.06373596191406<br>Epoch 101, Loss: 0.0336177758872509<br>Epoch 201, Loss: 0.012431501410901546<br>Epoch 301, Loss: 0.004597042221575975<br>Epoch 401, Loss: 0.0016999474028125405<br>Epoch 501, Loss: 0.00062862056074664<br>Epoch 601, Loss: 0.00023245699412655085<br>Epoch 701, Loss: 8.595705003244802e-05<br>Epoch 801, Loss: 3.178801489411853e-05<br>Epoch 901, Loss: 1.1754618753911927e-05<br>Prediction for x = 5: 10.000994682312012<br>Do I need to use a tool? No<br>Final Answer: After training the single neuron neural network for 1000 epochs on the synthetic data where y=2x, the prediction for x=5 is approximately 10.000994682312012.<br><br>&gt; Finished chain.<br>&#123;&#x27;input&#x27;: &#x27;Understand, write a single neuron neural network in PyTorch.\nTake synthetic data for y=2x. Train for 1000 epochs and print every 100 epochs.\nReturn prediction for x = 5&#x27;,<br> &#x27;output&#x27;: &#x27;After training the single neuron neural network for 1000 epochs on the synthetic data where y=2x, the prediction for x=5 is approximately 10.000994682312012.&#x27;&#125;<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<p>LangSmith流程展现:</p>
+<p><img src="/images/toolkit_pythonREPL.png" srcset="/img/loading.gif" lazyload /></p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/datawhalechina/prompt-engineering-for-developers">datawhalechina/prompt-engineering-for-developers:
+吴恩达大模型系列课程中文版</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/get_started/introduction">LangChain官方python文档</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://nanonets.com/blog/langchain/#langchain-expression-language">A
+Complete LangChain Guide</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://space.bilibili.com/28357052/channel/collectiondetail?sid=1611560">LangChain
+架构解析和应用开发实践分享</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/webup/agi-talks/tree/master">webup/agi-talks
+AGI 内外部分享材料合集</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com.cn/docs/">LangChain 中文文档
+v0.1.7</a>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1"
+class="footnote-text"><span><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1214y1X7Aq"
+class="uri">https://www.bilibili.com/video/BV1214y1X7Aq</a>
+<a href="#fnref:1" rev="footnote" class="footnote-backref">
+↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LangChain/" class="category-chain-item">LangChain</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#LLM学习笔记</a>
+      
+        <a href="/tags/LangChain/" class="print-no-link">#LangChain</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LangChain(六)——Agents</div>
+      <div>https://mztchaoqun.com.cn/posts/D30_LangChain_Agents/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年7月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D31_LangChain_Callback/" title="LangChain(七)——Callback">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LangChain(七)——Callback</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D29_LangChain_Chains/" title="LangChain(五)——Chanis">
+                        <span class="hidden-mobile">LangChain(五)——Chanis</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,941 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、什么是Multi-Agent Multi-Agent 指的是由语言模型驱动的多个独立参与者，这些参与者以特定的方式相互连接。其中每个Agent可以拥有自己的prompt, LLM, tools和其他自定义代码，以便能更好的与其他Agent协作。 因此在 Multi-Agent Workflows中有两个主要问题:  多个独立的Agent分别是什么 这些Agent如何连接  在LangGraph">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LangGraph(三)—— Multi-Agent Workflows">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D34_LangGraph_Multi-Agent/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、什么是Multi-Agent Multi-Agent 指的是由语言模型驱动的多个独立参与者，这些参与者以特定的方式相互连接。其中每个Agent可以拥有自己的prompt, LLM, tools和其他自定义代码，以便能更好的与其他Agent协作。 因此在 Multi-Agent Workflows中有两个主要问题:  多个独立的Agent分别是什么 这些Agent如何连接  在LangGraph">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/multi-agent-system.webp">
+<meta property="article:published_time" content="2024-08-25T05:32:11.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.271Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="LLM学习笔记">
+<meta property="article:tag" content="LangGraph">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/multi-agent-system.webp">
+  
+  
+  
+  <title>LangGraph(三)—— Multi-Agent Workflows - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LangGraph(三)—— Multi-Agent Workflows"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-08-25 13:32" pubdate>
+          2024年8月25日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          33 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LangGraph(三)—— Multi-Agent Workflows</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一什么是multi-agent">一、什么是Multi-Agent</h2>
+<p>Multi-Agent
+指的是由语言模型驱动的多个独立参与者，这些参与者以特定的方式相互连接。其中每个Agent可以拥有自己的prompt,
+LLM, tools和其他自定义代码，以便能更好的与其他Agent协作。</p>
+<p>因此在 Multi-Agent Workflows中有两个主要问题:</p>
+<ul>
+<li>多个独立的Agent分别是什么</li>
+<li>这些Agent如何连接</li>
+</ul>
+<p>在LangGraph中每个Agent都是一个Node，它们之间的连接被称为Edge，控制流程由条件Edge来管理，它们之间通过添加到图的状态来进行通信。LangGraph中有一个状态机的概念，每个独立的Agent节点都有状态，而Agent之间的连接则相当于转移矩阵。由于状态机本质上也是一个有向图，LangGraph的graph表示方法与状态机的概念相辅相成，使得开发者能够以graph的方式设计和实现复杂的多代理系统。</p>
+<h3 id="multi-agent-的好处">1.1 Multi-Agent 的好处</h3>
+<ol type="1">
+<li><p><strong>对工具/职责进行分组</strong>：可以提供更好的结果。与必须从数十种工具中进行选择，相比一个Agent在专注于一个任务时更有可能成功。</p></li>
+<li><p><strong>单独的Prompt</strong>：可以提供更好的结果。每个prompt可以有自己的指令和少量示例。每个Agent甚至可以由单独经过微调的大型语言模型（LLM）驱动</p></li>
+<li><p><strong>有助于开发概念模型</strong>：你可以单独评估和改进每个Agent，而不会破坏更大的应用。</p></li>
+</ol>
+<p>Multi-agent设计允许你将复杂的问题划分为可由专门的Agent和大型语言模型（LLM）程序解决的可行工作单元。</p>
+<h2 id="二multi-agent-例子">二、Multi-Agent 例子</h2>
+<h3 id="agent-supervisor">2.1 Agent Supervisor</h3>
+<p><img src="/images/supervisor-diagram.png" srcset="/img/loading.gif" lazyload></p>
+<p>如图Agent
+Supervisor负责将任务路由到各个独立Agent。而每个独立Agent都是一个LangChain
+Agent，它们有自己的prompt、LLM和Tools，调用每个独立Agent时不仅仅是一次LLM调用，而是一次AgentExecutor
+的运行。</p>
+<p>Supervisor也可以被认为是一个Agent，它的Tools是其他Agent.</p>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-3c48c61d" role="button" aria-expanded="false" aria-controls="collapse-3c48c61d">
+        <div class="fold-arrow">▶</div>LangGraph代码示例
+      </div>
+      <div class="fold-collapse collapse" id="collapse-3c48c61d">
+        <div class="fold-content">
+          <p><strong>Tools</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> Annotated, <span class="hljs-type">List</span>, <span class="hljs-type">Tuple</span>, <span class="hljs-type">Union</span><br><br><span class="hljs-keyword">from</span> langchain_community.tools.tavily_search <span class="hljs-keyword">import</span> TavilySearchResults<br><span class="hljs-keyword">from</span> langchain_core.tools <span class="hljs-keyword">import</span> tool<br><span class="hljs-keyword">from</span> langchain_experimental.tools <span class="hljs-keyword">import</span> PythonREPLTool<br><br>tavily_tool = TavilySearchResults(max_results=<span class="hljs-number">5</span>)<br><br><span class="hljs-comment"># This executes code locally, which can be unsafe</span><br>python_repl_tool = PythonREPLTool()<br></code></pre></td></tr></table></figure><p><strong>Utilites</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> AgentExecutor, create_openai_tools_agent<br><span class="hljs-keyword">from</span> langchain_core.messages <span class="hljs-keyword">import</span> BaseMessage, HumanMessage<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">create_agent</span>(<span class="hljs-params">llm: ChatOpenAI, tools: <span class="hljs-built_in">list</span>, system_prompt: <span class="hljs-built_in">str</span></span>):<br>    <span class="hljs-comment"># Each worker node will be given a name and some tools.</span><br>    prompt = ChatPromptTemplate.from_messages(<br>        [<br>            (<br>                <span class="hljs-string">"system"</span>,<br>                system_prompt,<br>            ),<br>            MessagesPlaceholder(variable_name=<span class="hljs-string">"messages"</span>),<br>            MessagesPlaceholder(variable_name=<span class="hljs-string">"agent_scratchpad"</span>),<br>        ]<br>    )<br>    agent = create_openai_tools_agent(llm, tools, prompt)<br>    executor = AgentExecutor(agent=agent, tools=tools)<br>    <span class="hljs-keyword">return</span> executor<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">agent_node</span>(<span class="hljs-params">state, agent, name</span>):<br>    result = agent.invoke(state)<br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"messages"</span>: [HumanMessage(content=result[<span class="hljs-string">"output"</span>], name=name)]}<br></code></pre></td></tr></table></figure><p><strong>Agent Supervisor</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.output_parsers.openai_functions <span class="hljs-keyword">import</span> JsonOutputFunctionsParser<br><span class="hljs-keyword">from</span> langchain_core.prompts <span class="hljs-keyword">import</span> ChatPromptTemplate, MessagesPlaceholder<br><br>members = [<span class="hljs-string">"Researcher"</span>, <span class="hljs-string">"Coder"</span>]<br>system_prompt = (<br>    <span class="hljs-string">"You are a supervisor tasked with managing a conversation between the"</span><br>    <span class="hljs-string">" following workers:  {members}. Given the following user request,"</span><br>    <span class="hljs-string">" respond with the worker to act next. Each worker will perform a"</span><br>    <span class="hljs-string">" task and respond with their results and status. When finished,"</span><br>    <span class="hljs-string">" respond with FINISH."</span><br>)<br><span class="hljs-comment"># Our team supervisor is an LLM node. It just picks the next agent to process</span><br><span class="hljs-comment"># and decides when the work is completed</span><br>options = [<span class="hljs-string">"FINISH"</span>] + members<br><span class="hljs-comment"># Using openai function calling can make output parsing easier for us</span><br>function_def = {<br>    <span class="hljs-string">"name"</span>: <span class="hljs-string">"route"</span>,<br>    <span class="hljs-string">"description"</span>: <span class="hljs-string">"Select the next role."</span>,<br>    <span class="hljs-string">"parameters"</span>: {<br>        <span class="hljs-string">"title"</span>: <span class="hljs-string">"routeSchema"</span>,<br>        <span class="hljs-string">"type"</span>: <span class="hljs-string">"object"</span>,<br>        <span class="hljs-string">"properties"</span>: {<br>            <span class="hljs-string">"next"</span>: {<br>                <span class="hljs-string">"title"</span>: <span class="hljs-string">"Next"</span>,<br>                <span class="hljs-string">"anyOf"</span>: [<br>                    {<span class="hljs-string">"enum"</span>: options},<br>                ],<br>            }<br>        },<br>        <span class="hljs-string">"required"</span>: [<span class="hljs-string">"next"</span>],<br>    },<br>}<br>prompt = ChatPromptTemplate.from_messages(<br>    [<br>        (<span class="hljs-string">"system"</span>, system_prompt),<br>        MessagesPlaceholder(variable_name=<span class="hljs-string">"messages"</span>),<br>        (<br>            <span class="hljs-string">"system"</span>,<br>            <span class="hljs-string">"Given the conversation above, who should act next?"</span><br>            <span class="hljs-string">" Or should we FINISH? Select one of: {options}"</span>,<br>        ),<br>    ]<br>).partial(options=<span class="hljs-built_in">str</span>(options), members=<span class="hljs-string">", "</span>.join(members))<br><br>llm = ChatOpenAI(model=<span class="hljs-string">"gpt-3.5-turbo"</span>)<br><br>supervisor_chain = (<br>    prompt<br>    | llm.bind_functions(functions=[function_def], function_call=<span class="hljs-string">"route"</span>)<br>    | JsonOutputFunctionsParser()<br>)<br></code></pre></td></tr></table></figure><p><strong>Graph</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> operator<br><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> Annotated, <span class="hljs-type">Any</span>, <span class="hljs-type">Dict</span>, <span class="hljs-type">List</span>, <span class="hljs-type">Optional</span>, <span class="hljs-type">Sequence</span>, TypedDict<br><span class="hljs-keyword">import</span> functools<br><br><span class="hljs-keyword">from</span> langchain_core.prompts <span class="hljs-keyword">import</span> ChatPromptTemplate, MessagesPlaceholder<br><span class="hljs-keyword">from</span> langgraph.graph <span class="hljs-keyword">import</span> StateGraph, END<br><br><br><span class="hljs-comment"># The agent state is the input to each node in the graph</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">AgentState</span>(<span class="hljs-title class_ inherited__">TypedDict</span>):<br>    <span class="hljs-comment"># The annotation tells the graph that new messages will always</span><br>    <span class="hljs-comment"># be added to the current states</span><br>    messages: Annotated[<span class="hljs-type">Sequence</span>[BaseMessage], operator.add]<br>    <span class="hljs-comment"># The 'next' field indicates where to route to next</span><br>    <span class="hljs-built_in">next</span>: <span class="hljs-built_in">str</span><br><br><br>research_agent = create_agent(llm, [tavily_tool], <span class="hljs-string">"You are a web researcher."</span>)<br>research_node = functools.partial(agent_node, agent=research_agent, name=<span class="hljs-string">"Researcher"</span>)<br><br><span class="hljs-comment"># <span class="hljs-doctag">NOTE:</span> THIS PERFORMS ARBITRARY CODE EXECUTION. PROCEED WITH CAUTION</span><br>code_agent = create_agent(<br>    llm,<br>    [python_repl_tool],<br>    <span class="hljs-string">"You may generate safe python code to analyze data and generate charts using matplotlib."</span>,<br>)<br>code_node = functools.partial(agent_node, agent=code_agent, name=<span class="hljs-string">"Coder"</span>)<br><br>workflow = StateGraph(AgentState)<br>workflow.add_node(<span class="hljs-string">"Researcher"</span>, research_node)<br>workflow.add_node(<span class="hljs-string">"Coder"</span>, code_node)<br>workflow.add_node(<span class="hljs-string">"supervisor"</span>, supervisor_chain)<br><br><span class="hljs-keyword">for</span> member <span class="hljs-keyword">in</span> members:<br>    <span class="hljs-comment"># We want our workers to ALWAYS "report back" to the supervisor when done</span><br>    workflow.add_edge(member, <span class="hljs-string">"supervisor"</span>)<br><span class="hljs-comment"># The supervisor populates the "next" field in the graph state</span><br><span class="hljs-comment"># which routes to a node or finishes</span><br>conditional_map = {k: k <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> members}<br>conditional_map[<span class="hljs-string">"FINISH"</span>] = END<br>workflow.add_conditional_edges(<span class="hljs-string">"supervisor"</span>, <span class="hljs-keyword">lambda</span> x: x[<span class="hljs-string">"next"</span>], conditional_map)<br><span class="hljs-comment"># Finally, add entrypoint</span><br>workflow.set_entry_point(<span class="hljs-string">"supervisor"</span>)<br><br>graph = workflow.<span class="hljs-built_in">compile</span>()<br></code></pre></td></tr></table></figure><p><strong>展示Graph</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> IPython.display <span class="hljs-keyword">import</span> Image<br><br>Image(graph.get_graph().draw_png())<br></code></pre></td></tr></table></figure><p><img src="/images/Supervisor.png" srcset="/img/loading.gif" lazyload></p><p><strong>执行</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> graph.stream(<br>    {<span class="hljs-string">"messages"</span>: [HumanMessage(content=<span class="hljs-string">"Write a brief research report on Python, Then Code hello world and print it to the terminal."</span>)]},<br>    {<span class="hljs-string">"recursion_limit"</span>: <span class="hljs-number">100</span>},<br>):<br>    <span class="hljs-keyword">if</span> <span class="hljs-string">"__end__"</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> s:<br>        <span class="hljs-built_in">print</span>(s)<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"----"</span>)<br></code></pre></td></tr></table></figure><p>输出</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs text">{'supervisor': {'next': 'Researcher'}}<br>----<br>{'Researcher': {'messages': [HumanMessage(content='Research Report on Python\n\nPython is a high-level programming language known for its simplicity and readability. It was created by Guido van Rossum and first released in 1991. Python is widely used for various purposes, including web development, data analysis, artificial intelligence, scientific computing, and automation.\n\n1. Features of Python:\n   - Easy to learn and understand: Python has a clean and straightforward syntax, making it beginner-friendly.\n   - Cross-platform compatibility: Python can run on different operating systems, including Windows, macOS, and Linux.\n   - Extensive standard library: Python comes with a vast collection of modules and libraries that provide pre-built functionality for various tasks.\n   - Third-party libraries and frameworks: Python has a rich ecosystem with numerous third-party libraries and frameworks, such as Django, Flask, NumPy, Pandas, and TensorFlow, which expand its capabilities.\n   - Dynamic typing: Python does not require explicit variable declarations and supports dynamic typing, allowing flexibility in coding.\n   - Object-oriented programming (OOP) support: Python supports OOP principles, allowing developers to create reusable and modular code.\n   - Interpreted language: Python code is executed line by line by the Python interpreter, eliminating the need for compilation before running.\n\n2. Use Cases of Python:\n   - Web Development: Python web frameworks like Django and Flask are popular choices for building scalable 时候只需要一个代理提供的最终答案ding advanced computational capabilities.\n\nNow, let\'s write a simple "Hello World" program in Python and print it to the terminal:\n\n```python\nprint("Hello World")\n```\n\nThis code snippet will print "Hello World" to the terminal when executed.\n\nPython\'s popularity and versatility make it a preferred language for developers across various domains. Its simplicity, extensive library support, and community-driven nature contribute to its widespread adoption and continuous growth.', name='Researcher')]}}<br>----<br>{'supervisor': {'next': 'Coder'}}<br>----<br>{'Coder': {'messages': [HumanMessage(content='The Python code to print "Hello World" to the terminal is:\n\n```python\nprint(\'Hello World\')\n```\n\nWhen executed, it will display "Hello World" as the output.', name='Coder')]}}<br>----<br>{'supervisor': {'next': 'FINISH'}}<br>----<br></code></pre></td></tr></table></figure><p>LangSmith流程展示：</p><p><img src="/images/LangSmith_Agent_Supervisor.png" srcset="/img/loading.gif" lazyload></p>
+        </div>
+      </div>
+    </div>
+<h3 id="multi-agent-协作">2.2 Multi Agent 协作</h3>
+<p><img src="/images/simple_multi_agent_diagram.png" srcset="/img/loading.gif" lazyload></p>
+<p>与Agent Supervisor不同，Multi Agent
+协作中不同的Agent在一个共享的消息草稿上进行协作。它们所做的所有工作对彼此都是可见的。这样做的好处是其他Agent可以看到完成的所有单独步骤。但是，有时传递所有这些信息可能会过于冗长且不必要，有时候只需要一个代理提供的最终答案。之所以称其为协作，是因为消息草稿的共享特性。</p>
+<p>在这种情况下，独立Agent实际上只是一个 LLM 调用。
+具体来说，它们是一个特定的提示模板（使用特定的系统消息以特定的方式格式化输入）加上
+LLM 调用。</p>
+<p>控制状态转换的主要是Router，但它是一个基于规则的Router。
+基本上，在每次大型语言模型（LLM）调用之后，它会查看输出，如果调用了一个工具，那么它就会调用那个工具；如果没有调用任何工具，而LLM响应“最终答案”，则它会返回给用户。否则（如果没有调用任何工具，且LLM没有响应“最终答案”），它就会转向另一个LLM。</p>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-7093c5f3" role="button" aria-expanded="false" aria-controls="collapse-7093c5f3">
+        <div class="fold-arrow">▶</div>LangGraph代码示例
+      </div>
+      <div class="fold-collapse collapse" id="collapse-7093c5f3">
+        <div class="fold-content">
+          <p><strong>Agents</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> json<br><br><span class="hljs-keyword">from</span> langchain_core.messages <span class="hljs-keyword">import</span> (<br>    AIMessage,<br>    BaseMessage,<br>    ChatMessage,<br>    FunctionMessage,<br>    HumanMessage,<br>)<br><span class="hljs-keyword">from</span> langchain.tools.render <span class="hljs-keyword">import</span> format_tool_to_openai_function<br><span class="hljs-keyword">from</span> langchain_core.prompts <span class="hljs-keyword">import</span> ChatPromptTemplate, MessagesPlaceholder<br><span class="hljs-keyword">from</span> langgraph.graph <span class="hljs-keyword">import</span> END, StateGraph<br><span class="hljs-keyword">from</span> langgraph.prebuilt.tool_executor <span class="hljs-keyword">import</span> ToolExecutor, ToolInvocation<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">create_agent</span>(<span class="hljs-params">llm, tools, system_message: <span class="hljs-built_in">str</span></span>):<br>    <span class="hljs-string">"""Create an agent."""</span><br>    functions = [format_tool_to_openai_function(t) <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> tools]<br><br>    prompt = ChatPromptTemplate.from_messages(<br>        [<br>            (<br>                <span class="hljs-string">"system"</span>,<br>                <span class="hljs-string">"You are a helpful AI assistant, collaborating with other assistants."</span><br>                <span class="hljs-string">" Use the provided tools to progress towards answering the question."</span><br>                <span class="hljs-string">" If you are unable to fully answer, that's OK, another assistant with different tools "</span><br>                <span class="hljs-string">" will help where you left off. Execute what you can to make progress."</span><br>                <span class="hljs-string">" If you or any of the other assistants have the final answer or deliverable,"</span><br>                <span class="hljs-string">" prefix your response with FINAL ANSWER so the team knows to stop."</span><br>                <span class="hljs-string">" You have access to the following tools: {tool_names}.\n{system_message}"</span>,<br>            ),<br>            MessagesPlaceholder(variable_name=<span class="hljs-string">"messages"</span>),<br>        ]<br>    )<br>    prompt = prompt.partial(system_message=system_message)<br>    prompt = prompt.partial(tool_names=<span class="hljs-string">", "</span>.join([tool.name <span class="hljs-keyword">for</span> tool <span class="hljs-keyword">in</span> tools]))<br>    <span class="hljs-keyword">return</span> prompt | llm.bind_functions(functions)<br></code></pre></td></tr></table></figure><p><strong>Tools</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_core.tools <span class="hljs-keyword">import</span> tool<br><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> Annotated<br><span class="hljs-keyword">from</span> langchain_experimental.utilities <span class="hljs-keyword">import</span> PythonREPL<br><span class="hljs-keyword">from</span> langchain_community.tools.tavily_search <span class="hljs-keyword">import</span> TavilySearchResults<br><br>tavily_tool = TavilySearchResults(max_results=<span class="hljs-number">5</span>)<br><br><span class="hljs-comment"># Warning: This executes code locally, which can be unsafe when not sandboxed</span><br><br>repl = PythonREPL()<br><br><br><span class="hljs-meta">@tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">python_repl</span>(<span class="hljs-params"></span><br><span class="hljs-params">    code: Annotated[<span class="hljs-built_in">str</span>, <span class="hljs-string">"The python code to execute to generate your chart."</span>]</span><br><span class="hljs-params"></span>):<br>    <span class="hljs-string">"""Use this to execute python code. If you want to see the output of a value,</span><br><span class="hljs-string">    you should print it out with `print(...)`. This is visible to the user."""</span><br>    <span class="hljs-keyword">try</span>:<br>        result = repl.run(code)<br>    <span class="hljs-keyword">except</span> BaseException <span class="hljs-keyword">as</span> e:<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">f"Failed to execute. Error: <span class="hljs-subst">{<span class="hljs-built_in">repr</span>(e)}</span>"</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-string">f"Succesfully executed:\n```python\n<span class="hljs-subst">{code}</span>\n```\nStdout: <span class="hljs-subst">{result}</span>"</span><br></code></pre></td></tr></table></figure><p><strong>Graph State</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> operator<br><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> Annotated, <span class="hljs-type">List</span>, <span class="hljs-type">Sequence</span>, <span class="hljs-type">Tuple</span>, TypedDict, <span class="hljs-type">Union</span><br><br><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> create_openai_functions_agent<br><span class="hljs-keyword">from</span> langchain.tools.render <span class="hljs-keyword">import</span> format_tool_to_openai_function<br><span class="hljs-keyword">from</span> langchain_core.prompts <span class="hljs-keyword">import</span> ChatPromptTemplate, MessagesPlaceholder<br><br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">from</span> typing_extensions <span class="hljs-keyword">import</span> TypedDict<br><br><br><span class="hljs-comment"># This defines the object that is passed between each node</span><br><span class="hljs-comment"># in the graph. We will create different nodes for each agent and tool</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">AgentState</span>(<span class="hljs-title class_ inherited__">TypedDict</span>):<br>    messages: Annotated[<span class="hljs-type">Sequence</span>[BaseMessage], operator.add]<br>    sender: <span class="hljs-built_in">str</span><br></code></pre></td></tr></table></figure><p><strong>Agent Node</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> functools<br><br><br><span class="hljs-comment"># Helper function to create a node for a given agent</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">agent_node</span>(<span class="hljs-params">state, agent, name</span>):<br>    result = agent.invoke(state)<br>    <span class="hljs-comment"># We convert the agent output into a format that is suitable to append to the global state</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(result, FunctionMessage):<br>        <span class="hljs-keyword">pass</span><br>    <span class="hljs-keyword">else</span>:<br>        result = HumanMessage(**result.<span class="hljs-built_in">dict</span>(exclude={<span class="hljs-string">"type"</span>, <span class="hljs-string">"name"</span>}), name=name)<br>    <span class="hljs-keyword">return</span> {<br>        <span class="hljs-string">"messages"</span>: [result],<br>        <span class="hljs-comment"># Since we have a strict workflow, we can</span><br>        <span class="hljs-comment"># track the sender so we know who to pass to next.</span><br>        <span class="hljs-string">"sender"</span>: name,<br>    }<br><br><br>llm = ChatOpenAI(model=<span class="hljs-string">"gpt-4-turbo"</span>)<br><br><span class="hljs-comment"># Research agent and node</span><br>research_agent = create_agent(<br>    llm,<br>    [tavily_tool],<br>    system_message=<span class="hljs-string">"You should provide accurate data for the Chart Generator to use."</span>,<br>)<br>research_node = functools.partial(agent_node, agent=research_agent, name=<span class="hljs-string">"Researcher"</span>)<br><br><span class="hljs-comment"># Chart Generator</span><br>chart_agent = create_agent(<br>    llm,<br>    [python_repl],<br>    system_message=<span class="hljs-string">"Any charts you display will be visible by the user."</span>,<br>)<br>chart_node = functools.partial(agent_node, agent=chart_agent, name=<span class="hljs-string">"Chart_Generator"</span>)<br></code></pre></td></tr></table></figure><p><strong>Tool Node</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs python">tools = [tavily_tool, python_repl]<br>tool_executor = ToolExecutor(tools)<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">tool_node</span>(<span class="hljs-params">state</span>):<br>    <span class="hljs-string">"""This runs tools in the graph</span><br><span class="hljs-string"></span><br><span class="hljs-string">    It takes in an agent action and calls that tool and returns the result."""</span><br>    messages = state[<span class="hljs-string">"messages"</span>]<br>    <span class="hljs-comment"># Based on the continue condition</span><br>    <span class="hljs-comment"># we know the last message involves a function call</span><br>    last_message = messages[-<span class="hljs-number">1</span>]<br>    <span class="hljs-comment"># We construct an ToolInvocation from the function_call</span><br>    tool_input = json.loads(<br>        last_message.additional_kwargs[<span class="hljs-string">"function_call"</span>][<span class="hljs-string">"arguments"</span>]<br>    )<br>    <span class="hljs-comment"># We can pass single-arg inputs by value</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(tool_input) == <span class="hljs-number">1</span> <span class="hljs-keyword">and</span> <span class="hljs-string">"__arg1"</span> <span class="hljs-keyword">in</span> tool_input:<br>        tool_input = <span class="hljs-built_in">next</span>(<span class="hljs-built_in">iter</span>(tool_input.values()))<br>    tool_name = last_message.additional_kwargs[<span class="hljs-string">"function_call"</span>][<span class="hljs-string">"name"</span>]<br>    action = ToolInvocation(<br>        tool=tool_name,<br>        tool_input=tool_input,<br>    )<br>    <span class="hljs-comment"># We call the tool_executor and get back a response</span><br>    response = tool_executor.invoke(action)<br>    <span class="hljs-comment"># We use the response to create a FunctionMessage</span><br>    function_message = FunctionMessage(<br>        content=<span class="hljs-string">f"<span class="hljs-subst">{tool_name}</span> response: <span class="hljs-subst">{<span class="hljs-built_in">str</span>(response)}</span>"</span>, name=action.tool<br>    )<br>    <span class="hljs-comment"># We return a list, because this will get added to the existing list</span><br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"messages"</span>: [function_message]}<br></code></pre></td></tr></table></figure><p><strong>条件Edge</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># Either agent can decide to end</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">router</span>(<span class="hljs-params">state</span>):<br>    <span class="hljs-comment"># This is the router</span><br>    messages = state[<span class="hljs-string">"messages"</span>]<br>    last_message = messages[-<span class="hljs-number">1</span>]<br>    <span class="hljs-keyword">if</span> <span class="hljs-string">"function_call"</span> <span class="hljs-keyword">in</span> last_message.additional_kwargs:<br>        <span class="hljs-comment"># The previus agent is invoking a tool</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-string">"call_tool"</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-string">"FINAL ANSWER"</span> <span class="hljs-keyword">in</span> last_message.content:<br>        <span class="hljs-comment"># Any agent decided the work is done</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-string">"end"</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-string">"continue"</span><br></code></pre></td></tr></table></figure><p><strong>Graph</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs python">workflow = StateGraph(AgentState)<br><br>workflow.add_node(<span class="hljs-string">"Researcher"</span>, research_node)<br>workflow.add_node(<span class="hljs-string">"Chart_Generator"</span>, chart_node)<br>workflow.add_node(<span class="hljs-string">"call_tool"</span>, tool_node)<br><br>workflow.add_conditional_edges(<br>    <span class="hljs-string">"Researcher"</span>,<br>    router,<br>    {<span class="hljs-string">"continue"</span>: <span class="hljs-string">"Chart_Generator"</span>, <span class="hljs-string">"call_tool"</span>: <span class="hljs-string">"call_tool"</span>, <span class="hljs-string">"end"</span>: END},<br>)<br>workflow.add_conditional_edges(<br>    <span class="hljs-string">"Chart_Generator"</span>,<br>    router,<br>    {<span class="hljs-string">"continue"</span>: <span class="hljs-string">"Researcher"</span>, <span class="hljs-string">"call_tool"</span>: <span class="hljs-string">"call_tool"</span>, <span class="hljs-string">"end"</span>: END},<br>)<br><br>workflow.add_conditional_edges(<br>    <span class="hljs-string">"call_tool"</span>,<br>    <span class="hljs-comment"># Each agent node updates the 'sender' field</span><br>    <span class="hljs-comment"># the tool calling node does not, meaning</span><br>    <span class="hljs-comment"># this edge will route back to the original agent</span><br>    <span class="hljs-comment"># who invoked the tool</span><br>    <span class="hljs-keyword">lambda</span> x: x[<span class="hljs-string">"sender"</span>],<br>    {<br>        <span class="hljs-string">"Researcher"</span>: <span class="hljs-string">"Researcher"</span>,<br>        <span class="hljs-string">"Chart_Generator"</span>: <span class="hljs-string">"Chart_Generator"</span>,<br>    },<br>)<br>workflow.set_entry_point(<span class="hljs-string">"Researcher"</span>)<br>graph = workflow.<span class="hljs-built_in">compile</span>()<br></code></pre></td></tr></table></figure><p><strong>Graph 预览</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> IPython.display <span class="hljs-keyword">import</span> Image<br><br>Image(graph.get_graph().draw_png())<br></code></pre></td></tr></table></figure><p><img src="/images/multi_agent.png" srcset="/img/loading.gif" lazyload></p><p><strong>执行</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> graph.stream(<br>    {<br>        <span class="hljs-string">"messages"</span>: [<br>            HumanMessage(<br>                content=<span class="hljs-string">"Fetch the UK's GDP over the past 5 years,"</span><br>                <span class="hljs-string">" then draw a line graph of it."</span><br>                <span class="hljs-string">" Once you code it up, finish."</span><br>            )<br>        ],<br>    },<br>    <span class="hljs-comment"># Maximum number of steps to take in the graph</span><br>    {<span class="hljs-string">"recursion_limit"</span>: <span class="hljs-number">150</span>},<br>):<br>    <span class="hljs-built_in">print</span>(s)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"----"</span>)<br></code></pre></td></tr></table></figure><p>输出</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs text">{'Researcher': {'messages': [HumanMessage(content='', additional_kwargs={'function_call': {'arguments': '{"query":"UK GDP past 5 years"}', 'name': 'tavily_search_results_json'}}, response_metadata={'token_usage': {'completion_tokens': 23, 'prompt_tokens': 221, 'total_tokens': 244}, 'model_name': 'gpt-4-turbo', 'system_fingerprint': 'fp_ea6eb70039', 'finish_reason': 'function_call', 'logprobs': None}, name='Researcher', id='run-ff1edf83-d634-4016-8884-a72f4ace82a3-0', invalid_tool_calls=[], tool_calls=[])], 'sender': 'Researcher'}}<br>----<br>{'call_tool': {'messages': [FunctionMessage(content='tavily_search_results_json response: [{\'url\': \'https://www.macrotrends.net/global-metrics/countries/GBR/united-kingdom/gdp-gross-domestic-product\', \'content\': "U.K. gdp for 2021 was $3,141.51B, a 16.45% increase from 2020. U.K. gdp for 2020 was $2,697.81B, a 5.39% decline from 2019. U.K. gdp for 2019 was $2,851.41B, a 0.69% decline from 2018. GDP at purchaser\'s prices is the sum of gross value added by all resident producers in the economy plus any product taxes and minus any subsidies not included in ..."}, {\'url\': \'https://www.ons.gov.uk/economy/grossdomesticproductgdp/timeseries/ihyp/pn2\', \'content\': \'Preliminary estimate of GDP time series (PGDP), released on 27 April 2018\\nPublications that use this data\\nContact details for this data\\nFooter links\\nHelp\\nAbout ONS\\nConnect with us\\nAll content is available under the Open Government Licence v3.0, except where otherwise stated Year on Year growth: CVM SA %\\nDownload full time series as:\\nDownload filtered time series as:\\nTable\\nNotes\\nFollowing a quality review it has been identified that the methodology used to estimate elements of purchased software within gross fixed capital formation (GFCF) has led to some double counting from 1997 onwards. GDP quarterly national accounts time series (QNA), released on 22 December 2023\\nIHYP: UK Economic Accounts time series (UKEA), released on 22 December 2023\\nIHYP: GDP first quarterly estimate time series\\n(PN2), released on 10 November 2023\\nIHYP: Year on Year growth: CVM SA %\\nSource dataset: GDP first quarterly estimate time series (PN2)\\nContact: Niamh McAuley\\nRelease date: 10 November 2023\\nView previous versions\\n %\\nFilters\\nCustom time period\\nChart\\nDownload this time seriesGross Domestic Product:\'}, {\'url\': \'https://www.macrotrends.net/global-metrics/countries/GBR/united-kingdom/gdp-growth-rate\', \'content\': \'U.K. gdp growth rate for 2021 was 8.67%, a 19.03% increase from 2020. U.K. gdp growth rate for 2020 was -10.36%, a 12% decline from 2019. U.K. gdp growth rate for 2019 was 1.64%, a 0.24% increase from 2018. Annual percentage growth rate of GDP at market prices based on constant local currency. Aggregates are based on constant 2010 U.S. dollars.\'}, {\'url\': \'https://data.worldbank.org/indicator/NY.GDP.MKTP.KD.ZG?locations=GB\', \'content\': \'GDP growth (annual %) - United Kingdom. World Bank national accounts data, and OECD National Accounts data files. License : CC BY-4.0. LineBarMap. Also Show Share Details. Label. 1961 - 2022.\'}, {\'url\': \'https://www.ons.gov.uk/economy/grossdomesticproductgdp\', \'content\': \'Quarter on Quarter growth: CVM SA %\\nChained Volume Measures (CVM)\\nGross Domestic Product: q-on-q4 growth rate CVM SA %\\nChained Volume Measures (CVM)\\nGross Domestic Product at market prices: Current price: Seasonally adjusted £m\\nCurrent Prices (CP)\\nGross Domestic Product: quarter on quarter growth rate: CP SA %\\nCurrent Prices (CP)\\nGross Domestic Product: q-on-q4 growth quarter growth: CP SA %\\nCurrent Prices (CP)\\nDatasets related to Gross Domestic Product (GDP)\\n A roundup of the latest data and trends on the economy, business and jobs\\nTime series related to Gross Domestic Product (GDP)\\nGross Domestic Product: chained volume measures: Seasonally adjusted £m\\nChained Volume Measures (CVM)\\nGross Domestic Product: Hide\\nData and analysis from Census 2021\\nGross Domestic Product (GDP)\\nGross domestic product (GDP) estimates as the main measure of UK economic growth based on the value of goods and services produced during a given period. Contains current and constant price data on the value of goods and services to indicate the economic performance of the UK.\\nEstimates of short-term indicators of investment in non-financial assets; business investment and asset and sector breakdowns of total gross fixed capital formation.\\n Monthly gross domestic product by gross value added\\nThe gross value added (GVA) tables showing the monthly and annual growths and indices as published within the monthly gross domestic product (GDP) statistical bulletin.\\n\'}]', name='tavily_search_results_json')]}}<br>----<br>{'Researcher': {'messages': [HumanMessage(content="Based on the search results, here are the GDP values for the UK over the past five years:\n\n- 2023: Data not explicitly given, but the GDP for 2022 will be used as a reference for the latest year.\n- 2022: Data not explicitly given, but given trends and the GDP from 2021, we can estimate or use the 2021 data.\n- 2021: $3,141.51 billion\n- 2020: $2,697.81 billion\n- 2019: $2,851.41 billion\n- 2018: Approximately $2,870 billion (estimated from the 2019 value noting a 0.69% decline)\n\nNow, let's create the line graph based on these values. Since the exact figure for 2022 and 2023 is not specified, I will use the value from 2021 as a placeholder for both to illustrate the trend. This assumption is to maintain continuity in the graph but should be updated with exact figures when available. \n\nHere is the data ready for the graph:\n\n- 2018: $2,870 billion\n- 2019: $2,851.41 billion\n- 2020: $2,697.81 billion\n- 2021: $3,141.51 billion\n- 2022: $3,141.51 billion (estimated, needs exact data)\n- 2023: $3,141.51 billion (estimated, needs exact data)\n\nThis dataset will be used to plot the line graph.", response_metadata={'token_usage': {'completion_tokens': 324, 'prompt_tokens': 1293, 'total_tokens': 1617}, 'model_name': 'gpt-4-turbo', 'system_fingerprint': 'fp_3450ce39d5', 'finish_reason': 'stop', 'logprobs': None}, name='Researcher', id='run-79fd4e6f-74ce-410a-90c2-e211bc383d7a-0', invalid_tool_calls=[], tool_calls=[])], 'sender': 'Researcher'}}<br>----<br>{'Chart_Generator': {'messages': [HumanMessage(content='', additional_kwargs={'function_call': {'arguments': '{"code":"import matplotlib.pyplot as plt\\n\\nyears = [2018, 2019, 2020, 2021, 2022, 2023]\\ngdp_values = [2870, 2851.41, 2697.81, 3141.51, 3141.51, 3141.51]  # in billions\\n\\nplt.figure(figsize=(10, 5))\\nplt.plot(years, gdp_values, marker=\'o\')\\nplt.title(\'UK GDP Over the Past 5 Years\')\\nplt.xlabel(\'Year\')\\nplt.ylabel(\'GDP (in billions USD)\')\\nplt.grid(True)\\nplt.xticks(years)\\nplt.yticks(range(2600, 3200, 100))\\nplt.show()"}', 'name': 'python_repl'}}, response_metadata={'token_usage': {'completion_tokens': 182, 'prompt_tokens': 1637, 'total_tokens': 1819}, 'model_name': 'gpt-4-turbo', 'system_fingerprint': 'fp_ea6eb70039', 'finish_reason': 'function_call', 'logprobs': None}, name='Chart_Generator', id='run-1bb9abd1-52df-44a8-8c0b-d5227f8e9a2a-0', invalid_tool_calls=[], tool_calls=[])], 'sender': 'Chart_Generator'}}<br>----<br>{'call_tool': {'messages': [FunctionMessage(content="python_repl response: Succesfully executed:\n```python\nimport matplotlib.pyplot as plt\n\nyears = [2018, 2019, 2020, 2021, 2022, 2023]\ngdp_values = [2870, 2851.41, 2697.81, 3141.51, 3141.51, 3141.51]  # in billions\n\nplt.figure(figsize=(10, 5))\nplt.plot(years, gdp_values, marker='o')\nplt.title('UK GDP Over the Past 5 Years')\nplt.xlabel('Year')\nplt.ylabel('GDP (in billions USD)')\nplt.grid(True)\nplt.xticks(years)\nplt.yticks(range(2600, 3200, 100))\nplt.show()\n```\nStdout: ", name='python_repl')]}}<br>----<br>{'Chart_Generator': {'messages': [HumanMessage(content="Here is the line graph depicting the UK's GDP over the past 5 years:\n\n![UK GDP Over the Past 5 Years](sandbox:/mnt/data/plot1.png)", response_metadata={'token_usage': {'completion_tokens': 37, 'prompt_tokens': 1812, 'total_tokens': 1849}, 'model_name': 'gpt-4-turbo', 'system_fingerprint': 'fp_46a93fa712', 'finish_reason': 'stop', 'logprobs': None}, name='Chart_Generator', id='run-1ef41caf-107f-441c-8ea6-ae96cc5e3b39-0', invalid_tool_calls=[], tool_calls=[])], 'sender': 'Chart_Generator'}}<br>----<br>{'Researcher': {'messages': [HumanMessage(content="FINAL ANSWER\n\nThe line graph above illustrates the UK's GDP over the past 5 years. It shows a decline in GDP from 2018 to 2020, followed by a significant recovery in 2021. The values for 2022 and 2023 are estimated based on the 2021 data, as the exact figures were not available at the time of the search. For the most accurate and up-to-date data, it is recommended to refer to official sources like the UK's Office for National Statistics or the World Bank.", response_metadata={'token_usage': {'completion_tokens': 111, 'prompt_tokens': 1842, 'total_tokens': 1953}, 'model_name': 'gpt-4-turbo', 'system_fingerprint': 'fp_ea6eb70039', 'finish_reason': 'stop', 'logprobs': None}, name='Researcher', id='run-8099f53f-9c23-4f69-9bf4-6a80a678c52b-0', invalid_tool_calls=[], tool_calls=[])], 'sender': 'Researcher'}}<br>----<br></code></pre></td></tr></table></figure><p><img src="/images/UK_GDP.png" srcset="/img/loading.gif" lazyload></p><p>LangSmith流程展示：</p><p><img src="/images/LangSmith_Multi_Agent.png" srcset="/img/loading.gif" lazyload></p>
+        </div>
+      </div>
+    </div>
+<h3 id="层级agent-teams">2.3 层级Agent Teams</h3>
+<p><img src="/images/hierarchical-diagram.png" srcset="/img/loading.gif" lazyload></p>
+<p>层级Agent Teams与Agent Supervisor类似，但节点中的Agent实际上是其他
+LangGraph 对象。这比使用 LangChain AgentExecutor 作为Agent
+Runtime更灵活。称其为分层团队，因为子Agent在某种程度上可以被视为团队。这里每个LangGraph
+Agent是一个独立的Agent了。</p>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-f5f0a661" role="button" aria-expanded="false" aria-controls="collapse-f5f0a661">
+        <div class="fold-arrow">▶</div>LangGraph代码示例
+      </div>
+      <div class="fold-collapse collapse" id="collapse-f5f0a661">
+        <div class="fold-content">
+          <p><strong>Tools</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> Annotated, <span class="hljs-type">List</span>, <span class="hljs-type">Tuple</span>, <span class="hljs-type">Union</span><br><br><span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt<br><span class="hljs-keyword">from</span> langchain_community.document_loaders <span class="hljs-keyword">import</span> WebBaseLoader<br><span class="hljs-keyword">from</span> langchain_community.tools.tavily_search <span class="hljs-keyword">import</span> TavilySearchResults<br><span class="hljs-keyword">from</span> langchain_core.tools <span class="hljs-keyword">import</span> tool<br><span class="hljs-keyword">from</span> langsmith <span class="hljs-keyword">import</span> trace<br><br>tavily_tool = TavilySearchResults(max_results=<span class="hljs-number">5</span>)<br><br><br><span class="hljs-meta">@tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">scrape_webpages</span>(<span class="hljs-params">urls: <span class="hljs-type">List</span>[<span class="hljs-built_in">str</span>]</span>) -&gt; <span class="hljs-built_in">str</span>:<br>    <span class="hljs-string">"""Use requests and bs4 to scrape the provided web pages for detailed information."""</span><br>    loader = WebBaseLoader(urls)<br>    docs = loader.load()<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">"\n\n"</span>.join(<br>        [<br>            <span class="hljs-string">f'&lt;Document name="<span class="hljs-subst">{doc.metadata.get(<span class="hljs-string">"title"</span>, <span class="hljs-string">""</span>)}</span>"&gt;\n<span class="hljs-subst">{doc.page_content}</span>\n&lt;/Document&gt;'</span><br>            <span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> docs<br>        ]<br>    )<br></code></pre></td></tr></table></figure><p><code>Document writing team tools</code></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pathlib <span class="hljs-keyword">import</span> Path<br><span class="hljs-keyword">from</span> tempfile <span class="hljs-keyword">import</span> TemporaryDirectory<br><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">Dict</span>, <span class="hljs-type">Optional</span><br><br><span class="hljs-keyword">from</span> langchain_experimental.utilities <span class="hljs-keyword">import</span> PythonREPL<br><span class="hljs-keyword">from</span> typing_extensions <span class="hljs-keyword">import</span> TypedDict<br><br>_TEMP_DIRECTORY = TemporaryDirectory()<br>WORKING_DIRECTORY = Path(_TEMP_DIRECTORY.name)<br><br><br><span class="hljs-meta">@tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">create_outline</span>(<span class="hljs-params"></span><br><span class="hljs-params">    points: Annotated[<span class="hljs-type">List</span>[<span class="hljs-built_in">str</span>], <span class="hljs-string">"List of main points or sections."</span>],</span><br><span class="hljs-params">    file_name: Annotated[<span class="hljs-built_in">str</span>, <span class="hljs-string">"File path to save the outline."</span>],</span><br><span class="hljs-params"></span>) -&gt; Annotated[<span class="hljs-built_in">str</span>, <span class="hljs-string">"Path of the saved outline file."</span>]:<br>    <span class="hljs-string">"""Create and save an outline."""</span><br>    <span class="hljs-keyword">with</span> (WORKING_DIRECTORY / file_name).<span class="hljs-built_in">open</span>(<span class="hljs-string">"w"</span>) <span class="hljs-keyword">as</span> file:<br>        <span class="hljs-keyword">for</span> i, point <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(points):<br>            file.write(<span class="hljs-string">f"<span class="hljs-subst">{i + <span class="hljs-number">1</span>}</span>. <span class="hljs-subst">{point}</span>\n"</span>)<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">f"Outline saved to <span class="hljs-subst">{file_name}</span>"</span><br><br><br><span class="hljs-meta">@tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">read_document</span>(<span class="hljs-params"></span><br><span class="hljs-params">    file_name: Annotated[<span class="hljs-built_in">str</span>, <span class="hljs-string">"File path to save the document."</span>],</span><br><span class="hljs-params">    start: Annotated[<span class="hljs-type">Optional</span>[<span class="hljs-built_in">int</span>], <span class="hljs-string">"The start line. Default is 0"</span>] = <span class="hljs-literal">None</span>,</span><br><span class="hljs-params">    end: Annotated[<span class="hljs-type">Optional</span>[<span class="hljs-built_in">int</span>], <span class="hljs-string">"The end line. Default is None"</span>] = <span class="hljs-literal">None</span>,</span><br><span class="hljs-params"></span>) -&gt; <span class="hljs-built_in">str</span>:<br>    <span class="hljs-string">"""Read the specified document."""</span><br>    <span class="hljs-keyword">with</span> (WORKING_DIRECTORY / file_name).<span class="hljs-built_in">open</span>(<span class="hljs-string">"r"</span>) <span class="hljs-keyword">as</span> file:<br>        lines = file.readlines()<br>    <span class="hljs-keyword">if</span> start <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:<br>        start = <span class="hljs-number">0</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-string">"\n"</span>.join(lines[start:end])<br><br><br><span class="hljs-meta">@tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">write_document</span>(<span class="hljs-params"></span><br><span class="hljs-params">    content: Annotated[<span class="hljs-built_in">str</span>, <span class="hljs-string">"Text content to be written into the document."</span>],</span><br><span class="hljs-params">    file_name: Annotated[<span class="hljs-built_in">str</span>, <span class="hljs-string">"File path to save the document."</span>],</span><br><span class="hljs-params"></span>) -&gt; Annotated[<span class="hljs-built_in">str</span>, <span class="hljs-string">"Path of the saved document file."</span>]:<br>    <span class="hljs-string">"""Create and save a text document."""</span><br>    <span class="hljs-keyword">with</span> (WORKING_DIRECTORY / file_name).<span class="hljs-built_in">open</span>(<span class="hljs-string">"w"</span>) <span class="hljs-keyword">as</span> file:<br>        file.write(content)<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">f"Document saved to <span class="hljs-subst">{file_name}</span>"</span><br><br><br><span class="hljs-meta">@tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">edit_document</span>(<span class="hljs-params"></span><br><span class="hljs-params">    file_name: Annotated[<span class="hljs-built_in">str</span>, <span class="hljs-string">"Path of the document to be edited."</span>],</span><br><span class="hljs-params">    inserts: Annotated[</span><br><span class="hljs-params">        <span class="hljs-type">Dict</span>[<span class="hljs-built_in">int</span>, <span class="hljs-built_in">str</span>],</span><br><span class="hljs-params">        <span class="hljs-string">"Dictionary where key is the line number (1-indexed) and value is the text to be inserted at that line."</span>,</span><br><span class="hljs-params">    ],</span><br><span class="hljs-params"></span>) -&gt; Annotated[<span class="hljs-built_in">str</span>, <span class="hljs-string">"Path of the edited document file."</span>]:<br>    <span class="hljs-string">"""Edit a document by inserting text at specific line numbers."""</span><br><br>    <span class="hljs-keyword">with</span> (WORKING_DIRECTORY / file_name).<span class="hljs-built_in">open</span>(<span class="hljs-string">"r"</span>) <span class="hljs-keyword">as</span> file:<br>        lines = file.readlines()<br><br>    sorted_inserts = <span class="hljs-built_in">sorted</span>(inserts.items())<br><br>    <span class="hljs-keyword">for</span> line_number, text <span class="hljs-keyword">in</span> sorted_inserts:<br>        <span class="hljs-keyword">if</span> <span class="hljs-number">1</span> &lt;= line_number &lt;= <span class="hljs-built_in">len</span>(lines) + <span class="hljs-number">1</span>:<br>            lines.insert(line_number - <span class="hljs-number">1</span>, text + <span class="hljs-string">"\n"</span>)<br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-keyword">return</span> <span class="hljs-string">f"Error: Line number <span class="hljs-subst">{line_number}</span> is out of range."</span><br><br>    <span class="hljs-keyword">with</span> (WORKING_DIRECTORY / file_name).<span class="hljs-built_in">open</span>(<span class="hljs-string">"w"</span>) <span class="hljs-keyword">as</span> file:<br>        file.writelines(lines)<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-string">f"Document edited and saved to <span class="hljs-subst">{file_name}</span>"</span><br><br><br><span class="hljs-comment"># Warning: This executes code locally, which can be unsafe when not sandboxed</span><br><br>repl = PythonREPL()<br><br><br><span class="hljs-meta">@tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">python_repl</span>(<span class="hljs-params"></span><br><span class="hljs-params">    code: Annotated[<span class="hljs-built_in">str</span>, <span class="hljs-string">"The python code to execute to generate your chart."</span>]</span><br><span class="hljs-params"></span>):<br>    <span class="hljs-string">"""Use this to execute python code. If you want to see the output of a value,</span><br><span class="hljs-string">    you should print it out with `print(...)`. This is visible to the user."""</span><br>    <span class="hljs-keyword">try</span>:<br>        result = repl.run(code)<br>    <span class="hljs-keyword">except</span> BaseException <span class="hljs-keyword">as</span> e:<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">f"Failed to execute. Error: <span class="hljs-subst">{<span class="hljs-built_in">repr</span>(e)}</span>"</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-string">f"Succesfully executed:\n```python\n<span class="hljs-subst">{code}</span>\n```\nStdout: <span class="hljs-subst">{result}</span>"</span><br></code></pre></td></tr></table></figure><p><strong>Helper Utilities</strong> <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">Any</span>, <span class="hljs-type">Callable</span>, <span class="hljs-type">List</span>, <span class="hljs-type">Optional</span>, TypedDict, <span class="hljs-type">Union</span><br><br><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> AgentExecutor, create_openai_functions_agent<br><span class="hljs-keyword">from</span> langchain.output_parsers.openai_functions <span class="hljs-keyword">import</span> JsonOutputFunctionsParser<br><span class="hljs-keyword">from</span> langchain_core.prompts <span class="hljs-keyword">import</span> ChatPromptTemplate, MessagesPlaceholder<br><span class="hljs-keyword">from</span> langchain_core.runnables <span class="hljs-keyword">import</span> Runnable<br><span class="hljs-keyword">from</span> langchain_core.tools <span class="hljs-keyword">import</span> BaseTool<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><br><span class="hljs-keyword">from</span> langgraph.graph <span class="hljs-keyword">import</span> END, StateGraph<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">create_agent</span>(<span class="hljs-params"></span><br><span class="hljs-params">    llm: ChatOpenAI,</span><br><span class="hljs-params">    tools: <span class="hljs-built_in">list</span>,</span><br><span class="hljs-params">    system_prompt: <span class="hljs-built_in">str</span>,</span><br><span class="hljs-params"></span>) -&gt; <span class="hljs-built_in">str</span>:<br>    <span class="hljs-string">"""Create a function-calling agent and add it to the graph."""</span><br>    system_prompt += <span class="hljs-string">"\nWork autonomously according to your specialty, using the tools available to you."</span><br>    <span class="hljs-string">" Do not ask for clarification."</span><br>    <span class="hljs-string">" Your other team members (and other teams) will collaborate with you with their own specialties."</span><br>    <span class="hljs-string">" You are chosen for a reason! You are one of the following team members: {team_members}."</span><br>    prompt = ChatPromptTemplate.from_messages(<br>        [<br>            (<br>                <span class="hljs-string">"system"</span>,<br>                system_prompt,<br>            ),<br>            MessagesPlaceholder(variable_name=<span class="hljs-string">"messages"</span>),<br>            MessagesPlaceholder(variable_name=<span class="hljs-string">"agent_scratchpad"</span>),<br>        ]<br>    )<br>    agent = create_openai_functions_agent(llm, tools, prompt)<br>    executor = AgentExecutor(agent=agent, tools=tools)<br>    <span class="hljs-keyword">return</span> executor<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">agent_node</span>(<span class="hljs-params">state, agent, name</span>):<br>    result = agent.invoke(state)<br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"messages"</span>: [HumanMessage(content=result[<span class="hljs-string">"output"</span>], name=name)]}<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">create_team_supervisor</span>(<span class="hljs-params">llm: ChatOpenAI, system_prompt, members</span>) -&gt; <span class="hljs-built_in">str</span>:<br>    <span class="hljs-string">"""An LLM-based router."""</span><br>    options = [<span class="hljs-string">"FINISH"</span>] + members<br>    function_def = {<br>        <span class="hljs-string">"name"</span>: <span class="hljs-string">"route"</span>,<br>        <span class="hljs-string">"description"</span>: <span class="hljs-string">"Select the next role."</span>,<br>        <span class="hljs-string">"parameters"</span>: {<br>            <span class="hljs-string">"title"</span>: <span class="hljs-string">"routeSchema"</span>,<br>            <span class="hljs-string">"type"</span>: <span class="hljs-string">"object"</span>,<br>            <span class="hljs-string">"properties"</span>: {<br>                <span class="hljs-string">"next"</span>: {<br>                    <span class="hljs-string">"title"</span>: <span class="hljs-string">"Next"</span>,<br>                    <span class="hljs-string">"anyOf"</span>: [<br>                        {<span class="hljs-string">"enum"</span>: options},<br>                    ],<br>                },<br>            },<br>            <span class="hljs-string">"required"</span>: [<span class="hljs-string">"next"</span>],<br>        },<br>    }<br>    prompt = ChatPromptTemplate.from_messages(<br>        [<br>            (<span class="hljs-string">"system"</span>, system_prompt),<br>            MessagesPlaceholder(variable_name=<span class="hljs-string">"messages"</span>),<br>            (<br>                <span class="hljs-string">"system"</span>,<br>                <span class="hljs-string">"Given the conversation above, who should act next?"</span><br>                <span class="hljs-string">" Or should we FINISH? Select one of: {options}"</span>,<br>            ),<br>        ]<br>    ).partial(options=<span class="hljs-built_in">str</span>(options), team_members=<span class="hljs-string">", "</span>.join(members))<br>    <span class="hljs-keyword">return</span> (<br>        prompt<br>        | llm.bind_functions(functions=[function_def], function_call=<span class="hljs-string">"route"</span>)<br>        | JsonOutputFunctionsParser()<br>    )<br></code></pre></td></tr></table></figure></p><p><strong>Research Team</strong></p><p><code>supervisor agent</code></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> functools<br><span class="hljs-keyword">import</span> operator<br><br><span class="hljs-keyword">from</span> langchain_core.messages <span class="hljs-keyword">import</span> AIMessage, BaseMessage, HumanMessage<br><span class="hljs-keyword">from</span> langchain_openai.chat_models <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">import</span> functools<br><br><br><span class="hljs-comment"># Research team graph state</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ResearchTeamState</span>(<span class="hljs-title class_ inherited__">TypedDict</span>):<br>    <span class="hljs-comment"># A message is added after each team member finishes</span><br>    messages: Annotated[<span class="hljs-type">List</span>[BaseMessage], operator.add]<br>    <span class="hljs-comment"># The team members are tracked so they are aware of</span><br>    <span class="hljs-comment"># the others' skill-sets</span><br>    team_members: <span class="hljs-type">List</span>[<span class="hljs-built_in">str</span>]<br>    <span class="hljs-comment"># Used to route work. The supervisor calls a function</span><br>    <span class="hljs-comment"># that will update this every time it makes a decision</span><br>    <span class="hljs-built_in">next</span>: <span class="hljs-built_in">str</span><br><br><br>llm = ChatOpenAI(model=<span class="hljs-string">"gpt-4-turbo"</span>)<br><br>search_agent = create_agent(<br>    llm,<br>    [tavily_tool],<br>    <span class="hljs-string">"You are a research assistant who can search for up-to-date info using the tavily search engine."</span>,<br>)<br>search_node = functools.partial(agent_node, agent=search_agent, name=<span class="hljs-string">"Search"</span>)<br><br>research_agent = create_agent(<br>    llm,<br>    [scrape_webpages],<br>    <span class="hljs-string">"You are a research assistant who can scrape specified urls for more detailed information using the scrape_webpages function."</span>,<br>)<br>research_node = functools.partial(agent_node, agent=research_agent, name=<span class="hljs-string">"Web Scraper"</span>)<br><br>supervisor_agent = create_team_supervisor(<br>    llm,<br>    <span class="hljs-string">"You are a supervisor tasked with managing a conversation between the"</span><br>    <span class="hljs-string">" following workers:  Search, Web Scraper. Given the following user request,"</span><br>    <span class="hljs-string">" respond with the worker to act next. Each worker will perform a"</span><br>    <span class="hljs-string">" task and respond with their results and status. When finished,"</span><br>    <span class="hljs-string">" respond with FINISH."</span>,<br>    [<span class="hljs-string">"Search"</span>, <span class="hljs-string">"Web Scraper"</span>],<br>)<br></code></pre></td></tr></table></figure><p><code>Research Graph</code> <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs python">research_graph = StateGraph(ResearchTeamState)<br>research_graph.add_node(<span class="hljs-string">"Search"</span>, search_node)<br>research_graph.add_node(<span class="hljs-string">"Web Scraper"</span>, research_node)<br>research_graph.add_node(<span class="hljs-string">"supervisor"</span>, supervisor_agent)<br><br><span class="hljs-comment"># Define the control flow</span><br>research_graph.add_edge(<span class="hljs-string">"Search"</span>, <span class="hljs-string">"supervisor"</span>)<br>research_graph.add_edge(<span class="hljs-string">"Web Scraper"</span>, <span class="hljs-string">"supervisor"</span>)<br>research_graph.add_conditional_edges(<br>    <span class="hljs-string">"supervisor"</span>,<br>    <span class="hljs-keyword">lambda</span> x: x[<span class="hljs-string">"next"</span>],<br>    {<span class="hljs-string">"Search"</span>: <span class="hljs-string">"Search"</span>, <span class="hljs-string">"Web Scraper"</span>: <span class="hljs-string">"Web Scraper"</span>, <span class="hljs-string">"FINISH"</span>: END},<br>)<br><br><br>research_graph.set_entry_point(<span class="hljs-string">"supervisor"</span>)<br>chain = research_graph.<span class="hljs-built_in">compile</span>()<br><br><br><span class="hljs-comment"># The following functions interoperate between the top level graph state</span><br><span class="hljs-comment"># and the state of the research sub-graph</span><br><span class="hljs-comment"># this makes it so that the states of each graph don't get intermixed</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">enter_chain</span>(<span class="hljs-params">message: <span class="hljs-built_in">str</span></span>):<br>    results = {<br>        <span class="hljs-string">"messages"</span>: [HumanMessage(content=message)],<br>    }<br>    <span class="hljs-keyword">return</span> results<br><br><br>research_chain = enter_chain | chain<br></code></pre></td></tr></table></figure></p><p><code>Research Graph</code>预览</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">Image(chain.get_graph().draw_png())<br></code></pre></td></tr></table></figure><p><img src="/images/Research_Graph.png" srcset="/img/loading.gif" lazyload></p><p><strong>Document Writing Team</strong></p><p><code>doc writing supervisor</code></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> operator<br><span class="hljs-keyword">from</span> pathlib <span class="hljs-keyword">import</span> Path<br><br><br><span class="hljs-comment"># Document writing team graph state</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">DocWritingState</span>(<span class="hljs-title class_ inherited__">TypedDict</span>):<br>    <span class="hljs-comment"># This tracks the team's conversation internally</span><br>    messages: Annotated[<span class="hljs-type">List</span>[BaseMessage], operator.add]<br>    <span class="hljs-comment"># This provides each worker with context on the others' skill sets</span><br>    team_members: <span class="hljs-built_in">str</span><br>    <span class="hljs-comment"># This is how the supervisor tells langgraph who to work next</span><br>    <span class="hljs-built_in">next</span>: <span class="hljs-built_in">str</span><br>    <span class="hljs-comment"># This tracks the shared directory state</span><br>    current_files: <span class="hljs-built_in">str</span><br><br><br><span class="hljs-comment"># This will be run before each worker agent begins work</span><br><span class="hljs-comment"># It makes it so they are more aware of the current state</span><br><span class="hljs-comment"># of the working directory.</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">prelude</span>(<span class="hljs-params">state</span>):<br>    written_files = []<br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> WORKING_DIRECTORY.exists():<br>        WORKING_DIRECTORY.mkdir()<br>    <span class="hljs-keyword">try</span>:<br>        written_files = [<br>            f.relative_to(WORKING_DIRECTORY) <span class="hljs-keyword">for</span> f <span class="hljs-keyword">in</span> WORKING_DIRECTORY.rglob(<span class="hljs-string">"*"</span>)<br>        ]<br>    <span class="hljs-keyword">except</span>:<br>        <span class="hljs-keyword">pass</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> written_files:<br>        <span class="hljs-keyword">return</span> {**state, <span class="hljs-string">"current_files"</span>: <span class="hljs-string">"No files written."</span>}<br>    <span class="hljs-keyword">return</span> {<br>        **state,<br>        <span class="hljs-string">"current_files"</span>: <span class="hljs-string">"\nBelow are files your team has written to the directory:\n"</span><br>        + <span class="hljs-string">"\n"</span>.join([<span class="hljs-string">f" - <span class="hljs-subst">{f}</span>"</span> <span class="hljs-keyword">for</span> f <span class="hljs-keyword">in</span> written_files]),<br>    }<br><br><br>llm = ChatOpenAI(model=<span class="hljs-string">"gpt-4-turbo"</span>)<br><br>doc_writer_agent = create_agent(<br>    llm,<br>    [write_document, edit_document, read_document],<br>    <span class="hljs-string">"You are an expert writing a research document.\n"</span><br>    <span class="hljs-comment"># The {current_files} value is populated automatically by the graph state</span><br>    <span class="hljs-string">"Below are files currently in your directory:\n{current_files}"</span>,<br>)<br><span class="hljs-comment"># Injects current directory working state before each call</span><br>context_aware_doc_writer_agent = prelude | doc_writer_agent<br>doc_writing_node = functools.partial(<br>    agent_node, agent=context_aware_doc_writer_agent, name=<span class="hljs-string">"Doc_Writer"</span><br>)<br><br>note_taking_agent = create_agent(<br>    llm,<br>    [create_outline, read_document],<br>    <span class="hljs-string">"You are an expert senior researcher tasked with writing a paper outline and"</span><br>    <span class="hljs-string">" taking notes to craft a perfect paper.{current_files}"</span>,<br>)<br>context_aware_note_taking_agent = prelude | note_taking_agent<br>note_taking_node = functools.partial(<br>    agent_node, agent=context_aware_note_taking_agent, name=<span class="hljs-string">"Note_Taker"</span><br>)<br><br>chart_generating_agent = create_agent(<br>    llm,<br>    [read_document, python_repl],<br>    <span class="hljs-string">"You are a data viz expert tasked with generating charts for a research project."</span><br>    <span class="hljs-string">"{current_files}"</span>,<br>)<br>context_aware_chart_generating_agent = prelude | chart_generating_agent<br>chart_generating_node = functools.partial(<br>    agent_node, agent=context_aware_note_taking_agent, name=<span class="hljs-string">"Chart_Generator"</span><br>)<br><br>doc_writing_supervisor = create_team_supervisor(<br>    llm,<br>    <span class="hljs-string">"You are a supervisor tasked with managing a conversation between the"</span><br>    <span class="hljs-string">" following workers:  {team_members}. Given the following user request,"</span><br>    <span class="hljs-string">" respond with the worker to act next. Each worker will perform a"</span><br>    <span class="hljs-string">" task and respond with their results and status. When finished,"</span><br>    <span class="hljs-string">" respond with FINISH."</span>,<br>    [<span class="hljs-string">"Doc_Writer"</span>, <span class="hljs-string">"Note_Taker"</span>, <span class="hljs-string">"Chart_Generator"</span>],<br>)<br></code></pre></td></tr></table></figure><p><code>Document Writing Graph</code></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># Create the graph here:</span><br><span class="hljs-comment"># Note that we have unrolled the loop for the sake of this doc</span><br>authoring_graph = StateGraph(DocWritingState)<br>authoring_graph.add_node(<span class="hljs-string">"Doc_Writer"</span>, doc_writing_node)<br>authoring_graph.add_node(<span class="hljs-string">"Note_Taker"</span>, note_taking_node)<br>authoring_graph.add_node(<span class="hljs-string">"Chart_Generator"</span>, chart_generating_node)<br>authoring_graph.add_node(<span class="hljs-string">"supervisor"</span>, doc_writing_supervisor)<br><br><span class="hljs-comment"># Add the edges that always occur</span><br>authoring_graph.add_edge(<span class="hljs-string">"Doc_Writer"</span>, <span class="hljs-string">"supervisor"</span>)<br>authoring_graph.add_edge(<span class="hljs-string">"Note_Taker"</span>, <span class="hljs-string">"supervisor"</span>)<br>authoring_graph.add_edge(<span class="hljs-string">"Chart_Generator"</span>, <span class="hljs-string">"supervisor"</span>)<br><br><span class="hljs-comment"># Add the edges where routing applies</span><br>authoring_graph.add_conditional_edges(<br>    <span class="hljs-string">"supervisor"</span>,<br>    <span class="hljs-keyword">lambda</span> x: x[<span class="hljs-string">"next"</span>],<br>    {<br>        <span class="hljs-string">"Doc_Writer"</span>: <span class="hljs-string">"Doc_Writer"</span>,<br>        <span class="hljs-string">"Note_Taker"</span>: <span class="hljs-string">"Note_Taker"</span>,<br>        <span class="hljs-string">"Chart_Generator"</span>: <span class="hljs-string">"Chart_Generator"</span>,<br>        <span class="hljs-string">"FINISH"</span>: END,<br>    },<br>)<br><br>authoring_graph.set_entry_point(<span class="hljs-string">"supervisor"</span>)<br>chain = authoring_graph.<span class="hljs-built_in">compile</span>()<br><br><br><span class="hljs-comment"># The following functions interoperate between the top level graph state</span><br><span class="hljs-comment"># and the state of the research sub-graph</span><br><span class="hljs-comment"># this makes it so that the states of each graph don't get intermixed</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">enter_chain</span>(<span class="hljs-params">message: <span class="hljs-built_in">str</span>, members: <span class="hljs-type">List</span>[<span class="hljs-built_in">str</span>]</span>):<br>    results = {<br>        <span class="hljs-string">"messages"</span>: [HumanMessage(content=message)],<br>        <span class="hljs-string">"team_members"</span>: <span class="hljs-string">", "</span>.join(members),<br>    }<br>    <span class="hljs-keyword">return</span> results<br><br><br><span class="hljs-comment"># We re-use the enter/exit functions to wrap the graph</span><br>authoring_chain = (<br>    functools.partial(enter_chain, members=authoring_graph.nodes)<br>    | authoring_graph.<span class="hljs-built_in">compile</span>()<br>)<br></code></pre></td></tr></table></figure><p><code>Document Writing Graph</code> 预览</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">Image(chain.get_graph().draw_png())<br></code></pre></td></tr></table></figure><p><img src="/images/Doc_Write_Graph.png" srcset="/img/loading.gif" lazyload></p><p><strong>Add Layers</strong></p><p><code>Supervisor Node</code></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_core.messages <span class="hljs-keyword">import</span> AIMessage, BaseMessage, HumanMessage<br><span class="hljs-keyword">from</span> langchain_openai.chat_models <span class="hljs-keyword">import</span> ChatOpenAI<br><br><br>llm = ChatOpenAI(model=<span class="hljs-string">"gpt-4-turbo"</span>)<br><br>supervisor_node = create_team_supervisor(<br>    llm,<br>    <span class="hljs-string">"You are a supervisor tasked with managing a conversation between the"</span><br>    <span class="hljs-string">" following teams: {team_members}. Given the following user request,"</span><br>    <span class="hljs-string">" respond with the worker to act next. Each worker will perform a"</span><br>    <span class="hljs-string">" task and respond with their results and status. When finished,"</span><br>    <span class="hljs-string">" respond with FINISH."</span>,<br>    [<span class="hljs-string">"Research team"</span>, <span class="hljs-string">"Paper writing team"</span>],<br>)<br></code></pre></td></tr></table></figure><p><code>Graph</code></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># Top-level graph state</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">State</span>(<span class="hljs-title class_ inherited__">TypedDict</span>):<br>    messages: Annotated[<span class="hljs-type">List</span>[BaseMessage], operator.add]<br>    <span class="hljs-built_in">next</span>: <span class="hljs-built_in">str</span><br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_last_message</span>(<span class="hljs-params">state: State</span>) -&gt; <span class="hljs-built_in">str</span>:<br>    <span class="hljs-keyword">return</span> state[<span class="hljs-string">"messages"</span>][-<span class="hljs-number">1</span>].content<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">join_graph</span>(<span class="hljs-params">response: <span class="hljs-built_in">dict</span></span>):<br>    <span class="hljs-keyword">return</span> {<span class="hljs-string">"messages"</span>: [response[<span class="hljs-string">"messages"</span>][-<span class="hljs-number">1</span>]]}<br><br><br><span class="hljs-comment"># Define the graph.</span><br>super_graph = StateGraph(State)<br><span class="hljs-comment"># First add the nodes, which will do the work</span><br>super_graph.add_node(<span class="hljs-string">"Research team"</span>, get_last_message | research_chain | join_graph)<br>super_graph.add_node(<br>    <span class="hljs-string">"Paper writing team"</span>, get_last_message | authoring_chain | join_graph<br>)<br>super_graph.add_node(<span class="hljs-string">"supervisor"</span>, supervisor_node)<br><br><span class="hljs-comment"># Define the graph connections, which controls how the logic</span><br><span class="hljs-comment"># propagates through the program</span><br>super_graph.add_edge(<span class="hljs-string">"Research team"</span>, <span class="hljs-string">"supervisor"</span>)<br>super_graph.add_edge(<span class="hljs-string">"Paper writing team"</span>, <span class="hljs-string">"supervisor"</span>)<br>super_graph.add_conditional_edges(<br>    <span class="hljs-string">"supervisor"</span>,<br>    <span class="hljs-keyword">lambda</span> x: x[<span class="hljs-string">"next"</span>],<br>    {<br>        <span class="hljs-string">"Paper writing team"</span>: <span class="hljs-string">"Paper writing team"</span>,<br>        <span class="hljs-string">"Research team"</span>: <span class="hljs-string">"Research team"</span>,<br>        <span class="hljs-string">"FINISH"</span>: END,<br>    },<br>)<br>super_graph.set_entry_point(<span class="hljs-string">"supervisor"</span>)<br>super_graph = super_graph.<span class="hljs-built_in">compile</span>()<br></code></pre></td></tr></table></figure><p><code>Graph</code>预览</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">Image(super_graph.get_graph().draw_png())<br></code></pre></td></tr></table></figure><p><img src="/images/Total.png" srcset="/img/loading.gif" lazyload></p><p><strong>执行</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> super_graph.stream(<br>    {<br>        <span class="hljs-string">"messages"</span>: [<br>            HumanMessage(<br>                content=<span class="hljs-string">"Write a brief research report on the North American sturgeon. Include a chart."</span><br>            )<br>        ],<br>    },<br>    {<span class="hljs-string">"recursion_limit"</span>: <span class="hljs-number">150</span>},<br>):<br>    <span class="hljs-keyword">if</span> <span class="hljs-string">"__end__"</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> s:<br>        <span class="hljs-built_in">print</span>(s)<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"---"</span>)<br></code></pre></td></tr></table></figure><p>输出</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs text">{'supervisor': {'next': 'Research team'}}<br>---<br>{'Research team': {'messages': [HumanMessage(content='### Research Report on North American Sturgeon\n\n#### Overview\nSturgeons are ancient fish known for their distinctive anatomical features such as a heterocercal caudal fin, rows of bony scutes along the body, and a protrusible, toothless mouth with tactile barbels. These fish are bottom-dwellers and primarily feed on invertebrates and smaller fish. Sturgeons are notable for their significant sizes, long lifespans, and slow reproduction rates, which unfortunately make them highly susceptible to overexploitation and environmental changes.\n\n#### Species of North American Sturgeon\n1. **White Sturgeon (Acipenser transmontanus)** - Also known as the Pacific sturgeon, this is the largest freshwater fish in North America. It can weigh up to 1,800 pounds and measure up to 20 feet in length. This species is found from Alaska down to Mexico along the western coast.\n\n2. **Shortnose Sturgeon (Acipenser brevirostrum)** - Found on the eastern coast, from New Brunswick to Florida, this species is smaller, reaching up to 4 feet and weighing about 50 pounds.\n\n3. **Green Sturgeon (Acipenser medirostris)** - This species inhabits the western coast from Mexico to Alaska. It can grow up to 7 feet long and weighs up to 350 pounds.\n\n#### Conservation Status\nNorth American sturgeons are under significant threat due to factors such as overfishing, habitat loss (particularly from dam construction), and pollution. The White Sturgeon has a stable population overall, but localized populations, such as those in the Kootenai River, have been listed as endangered. The Green and Shortnose sturgeons face similar challenges, with the latter being listed under the Endangered Species Act.\n\n#### International Protection\nAll sturgeon species are protected under the Convention on International Trade in Endangered Species of Wild Fauna and Flora (CITES), which regulates international trade and aims to prevent species extinction due to excessive commercial exploitation.\n\n#### Chart: North American Sturgeon Species Overview\n\n| Species           | Length (feet) | Weight (pounds) | Distribution                        | Status           |\n|-------------------|---------------|-----------------|-------------------------------------|------------------|\n| White Sturgeon    | Up to 20      | Up to 1,800     | Western coast from Mexico to Alaska | Not endangered*  |\n| Shortnose Sturgeon| Up to 4       | Up to 50        | Eastern coast from New Brunswick to Florida | Endangered    |\n| Green Sturgeon    | Up to 7       | Up to 350       | Western coast from Mexico to Alaska | Threatened       |\n\n*Note: Local populations such as those in the Kootenai River are considered endangered.\n\n#### Conclusion\nThe North American sturgeons, with their impressive sizes and ancient lineage, are crucial components of their aquatic ecosystems. However, they are facing significant threats that require concerted conservation efforts to ensure their survival and the health of their habitats.', name='Search')]}}<br>---<br>{'supervisor': {'next': 'Paper writing team'}}<br>---<br>{'Paper writing team': {'messages': [HumanMessage(content='The research report on North American Sturgeon has been successfully created and saved. If you need further analysis, edits, or additional information, feel free to let me know!', name='Doc_Writer')]}}<br>---<br>{'supervisor': {'next': 'FINISH'}}<br>---<br></code></pre></td></tr></table></figure><p>LangSmith流程展示：</p><p><img src="/images/LangSmith_H_Agent_Team.png" srcset="/img/loading.gif" lazyload></p>
+        </div>
+      </div>
+    </div>
+<h2 id="三第三方应用">三、第三方应用</h2>
+<p>基于LangGraph构建的 Multi-Agent 架构</p>
+<h3 id="gpt-newspaper">3.1 <a target="_blank" rel="noopener" href="https://github.com/rotemweiss57/gpt-newspaper">GPT-Newspaper</a></h3>
+<p><img src="/images/GPT-Newspaper.png" srcset="/img/loading.gif" lazyload></p>
+<p>GPT-Newspaper
+是一个创新的自治Agent，旨在创建根据用户偏好量身定制的个性化报纸。GPT-Newspaper
+通过利用人工智能的力量，根据个人的品味和兴趣来策划、撰写、设计和编辑内容，从而彻底改变了我们消费新闻的方式。该架构由六个专门的子Agent组成。其中有一个关键步骤——一个作者与评论者之间的循环，这个循环增加了一个有益的循环过程。</p>
+<h3 id="crew-ai-example">3.2 <a target="_blank" rel="noopener" href="https://github.com/joaomdmoura/crewAI-examples/tree/main/CrewAI-LangGraph">Crew
+AI example</a></h3>
+<p>CrewAI 结合 LangChain 和 LangGraph
+自动化检查电子邮件和创建草稿的过程。CrewAI 对自主 AI
+代理进行编排，使它们能够高效地协作并执行复杂任务。</p>
+<p><img src="/images/CrewAI-LangGraph.png" srcset="/img/loading.gif" lazyload></p>
+<p>YouTube视频：<a target="_blank" rel="noopener" href="https://youtu.be/OzYdPqzlcPo">https://youtu.be/OzYdPqzlcPo</a></p>
+<h2 id="四其他框架">四、其他框架</h2>
+<p>LangGraph
+并不是第一个支持Multi-Agent工作流的框架。这些框架之间的大部分差异主要在于它们引入的mental
+model和概念。</p>
+<h3 id="autogen">4.1 <a target="_blank" rel="noopener" href="https://github.com/microsoft/autogen">Autogen</a></h3>
+<p>Autogen 可能是第一个Multi-Agent框架。LangGraph 和 Autogen 在mental
+model上的最大区别在于Agent的构建方式。LangGraph
+倾向于明确定义不同的Agent和转换概率，并将其表示为图。Autogen
+则更多地将其框架用于“对话”。LangGraph官方认为这种“图”框架更直观，并为构建更复杂和有特定意见的工作流（真正想要控制节点之间的转换概率）提供了更好的开发者体验。它还支持那些没有被“对话”明确捕获的工作流。</p>
+<p>Autogen 和 LangGraph 之间的另一个关键区别是，LangGraph 完全集成到了
+LangChain 生态系统中，这意味着你可以充分利用所有 LangChain 集成和
+LangSmith 的可观测性。</p>
+<h3 id="crewai">4.2 <a target="_blank" rel="noopener" href="https://github.com/joaomdmoura/crewAI">CrewAI</a></h3>
+<p>CrewAI 最近成为创建 Multi-Agent Teams
+的流行方式。与LangGraph相比，CrewAI是一个更高级别的框架。LangGraph官方正在积极与CrewAI团队合作，将LangGraph集成到CrewAI中。CrewAI已经实现了一个非常棒的更高级别的开发者体验（DevEx）。</p>
+<h2 id="官方资源">官方资源</h2>
+<p>代码示例更详细说明：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langgraph/blob/main/examples/multi_agent/agent_supervisor.ipynb">Agent
+Supervisor</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langgraph/blob/main/examples/multi_agent/multi-agent-collaboration.ipynb">Multi
+Agent Collaboration</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=hvAPnpSfSGo&amp;list=PLfaIDFEXuae16n2TWUkKq5PgJ0w6Pkwtg&amp;index=9">官方YouTube</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.langchain.dev/langgraph-multi-agent-workflows/">官方Blog</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1F541117kW">B站视频</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LangGraph/" class="category-chain-item">LangGraph</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#LLM学习笔记</a>
+      
+        <a href="/tags/Agent/" class="print-no-link">#Agent</a>
+      
+        <a href="/tags/LangGraph/" class="print-no-link">#LangGraph</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LangGraph(三)—— Multi-Agent Workflows</div>
+      <div>https://mztchaoqun.com.cn/posts/D34_LangGraph_Multi-Agent/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年8月25日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D35_LangGraph_Self_Reflective_RAG/" title="LangGraph(四)——Self-Reflective RAG">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LangGraph(四)——Self-Reflective RAG</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D33_LangGraph_Human-in-the-loop/" title="LangGraph(二)——Human-in-the-loop">
+                        <span class="hidden-mobile">LangGraph(二)——Human-in-the-loop</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

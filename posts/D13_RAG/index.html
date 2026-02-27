@@ -1,0 +1,1129 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、RAG 1.1 RAG是什么 RAG（Retrieval Augmented Generation）顾名思义，通过检索的方法来增强生成模型的能力。简而言之，RAG 结合了搜索技术和大语言模型的提示功能，即模型根据搜索算法找到的信息作为上下文来回答查询问题。无论是查询还是检索的上下文，都会被整合到发给大语言模型的提示中。 1.2 为什么要有 RAG LLM 固有的局限性  LLM 的知识不是实时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RAG">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D13_RAG/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、RAG 1.1 RAG是什么 RAG（Retrieval Augmented Generation）顾名思义，通过检索的方法来增强生成模型的能力。简而言之，RAG 结合了搜索技术和大语言模型的提示功能，即模型根据搜索算法找到的信息作为上下文来回答查询问题。无论是查询还是检索的上下文，都会被整合到发给大语言模型的提示中。 1.2 为什么要有 RAG LLM 固有的局限性  LLM 的知识不是实时">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/RAG.png">
+<meta property="article:published_time" content="2024-02-26T03:27:38.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.269Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="LLM学习笔记">
+<meta property="article:tag" content="RAG">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/RAG.png">
+  
+  
+  
+  <title>RAG - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="RAG"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-02-26 11:27" pubdate>
+          2024年2月26日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          40 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">RAG</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一rag">一、RAG</h2>
+<h3 id="rag是什么">1.1 RAG是什么</h3>
+<p>RAG（Retrieval Augmented
+Generation）顾名思义，通过检索的方法来增强生成模型的能力。简而言之，RAG
+结合了搜索技术和大语言模型的提示功能，即模型根据搜索算法找到的信息作为上下文来回答查询问题。无论是查询还是检索的上下文，都会被整合到发给大语言模型的提示中。</p>
+<h3 id="为什么要有-rag">1.2 为什么要有 RAG</h3>
+<p>LLM 固有的局限性</p>
+<ol type="1">
+<li>LLM 的知识不是实时的</li>
+<li>LLM 可能不知道你私有的领域/业务知识</li>
+<li>对于企业来说,并不希望将自己的数据和文档上传到互联网上的LLM</li>
+</ol>
+<h3 id="rag-的机制">1.3 RAG 的机制</h3>
+<p>你可以把这个过程想象成开卷考试。让 LLM 先翻书，再回答问题。</p>
+<p><img src="/images/RAG_Base.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="二最基本的rag系统搭建">二、最基本的RAG系统搭建</h2>
+<p>搭建过程：</p>
+<ol type="1">
+<li>文档加载，并按一定条件<strong>切割</strong>成片段</li>
+<li>将切割的文本片段灌入<strong>检索引擎</strong></li>
+<li>封装<strong>检索接口</strong></li>
+<li>构建<strong>调用流程</strong>：Query -&gt; 检索 -&gt; Prompt -&gt;
+LLM -&gt; 回复</li>
+</ol>
+<h3 id="文档的加载与切割">2.1 文档的加载与切割</h3>
+<p>LLM的输入序列长度是固定的，即便现在很多LLM上下文窗口很大，但相比与比较长的文本的平均向量，一句话或几句话的向量更能准确的代表语义含义。因此，你需要将数据进行分块
+—— 把初始文档分成一些块，每块大小适中，既不丢失原有的含义。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">安装 pdf 解析库</span><br>pip install pdfminer.six<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> random<br><span class="hljs-keyword">from</span> http <span class="hljs-keyword">import</span> HTTPStatus<br><span class="hljs-keyword">from</span> dashscope <span class="hljs-keyword">import</span> Generation<br><span class="hljs-keyword">from</span> pdfminer.high_level <span class="hljs-keyword">import</span> extract_pages<br><span class="hljs-keyword">from</span> pdfminer.layout <span class="hljs-keyword">import</span> LTTextContainer<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">extract_text_from_pdf</span>(<span class="hljs-params">filename, page_numbers=<span class="hljs-literal">None</span>, min_line_length=<span class="hljs-number">1</span></span>):<br>    <span class="hljs-string">'''从 PDF 文件中（按指定页码）提取文字'''</span><br>    paragraphs = []<br>    buffer = <span class="hljs-string">''</span><br>    full_text = <span class="hljs-string">''</span><br>    <span class="hljs-comment"># 提取全部文本</span><br>    <span class="hljs-keyword">for</span> i, page_layout <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(extract_pages(filename)):<br>        <span class="hljs-comment"># 如果指定了页码范围，跳过范围外的页</span><br>        <span class="hljs-keyword">if</span> page_numbers <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span> <span class="hljs-keyword">and</span> i <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> page_numbers:<br>            <span class="hljs-keyword">continue</span><br>        <span class="hljs-keyword">for</span> element <span class="hljs-keyword">in</span> page_layout:<br>            <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(element, LTTextContainer):<br>                full_text += element.get_text() + <span class="hljs-string">'\n'</span><br>    <span class="hljs-comment"># 按空行分隔，将文本重新组织成段落</span><br>    lines = full_text.split(<span class="hljs-string">'\n'</span>)<br>    <span class="hljs-keyword">for</span> text <span class="hljs-keyword">in</span> lines:<br>        <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(text) &gt;= min_line_length:<br>            buffer += (<span class="hljs-string">' '</span>+text) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> text.endswith(<span class="hljs-string">'-'</span>) <span class="hljs-keyword">else</span> text.strip(<span class="hljs-string">'-'</span>)<br>        <span class="hljs-keyword">elif</span> buffer:<br>            paragraphs.append(buffer)<br>            buffer = <span class="hljs-string">''</span><br>    <span class="hljs-keyword">if</span> buffer:<br>        paragraphs.append(buffer)<br>    <span class="hljs-keyword">return</span> paragraphs<br><br>paragraphs = extract_text_from_pdf(<span class="hljs-string">"llama2.pdf"</span>, min_line_length=<span class="hljs-number">10</span>) <span class="hljs-comment">#llama2.pdf是llama2原始论文</span><br><br><span class="hljs-keyword">for</span> para <span class="hljs-keyword">in</span> paragraphs[:<span class="hljs-number">3</span>]:<br>    <span class="hljs-built_in">print</span>(para+<span class="hljs-string">"\n"</span>)<br> <br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-e064c6af" role="button" aria-expanded="false" aria-controls="collapse-e064c6af">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-e064c6af">
+        <div class="fold-content">
+          <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>: Open Foundation <span class="hljs-keyword">and </span>Fine-Tuned Chat Models<br><br>Hugo Touvron∗ Louis Martin† Kevin Stone† Peter Albert Amjad Almahairi Yasmine <span class="hljs-keyword">Babaei </span>Nikolay <span class="hljs-keyword">Bashlykov </span>Soumya <span class="hljs-keyword">Batra </span>Prajjwal <span class="hljs-keyword">Bhargava </span><span class="hljs-keyword">Shruti </span><span class="hljs-keyword">Bhosale </span>Dan <span class="hljs-keyword">Bikel </span>Lukas <span class="hljs-keyword">Blecher </span>Cristian Canton Ferrer Moya Chen Guillem Cucurull David Esiobu <span class="hljs-keyword">Jude </span>Fernandes <span class="hljs-keyword">Jeremy </span>Fu Wenyin Fu <span class="hljs-keyword">Brian </span>Fuller Cynthia Gao Vedanuj Goswami Naman Goyal Anthony Hartshorn Saghar Hosseini Rui Hou Hakan Inan Marcin Kardas Viktor Kerkez Madian Khabsa Isabel Kloumann Artem Korenev Punit Singh Koura Marie-Anne Lachaux Thibaut Lavril <span class="hljs-keyword">Jenya </span>Lee <span class="hljs-keyword">Diana </span>Liskovich Yinghai Lu Yuning Mao Xavier Martinet Todor Mihaylov Pushkar Mishra Igor Molybog Yixin Nie <span class="hljs-keyword">Andrew </span>Poulton <span class="hljs-keyword">Jeremy </span>Reizenstein Rashi Rungta Kalyan Saladi Alan <span class="hljs-keyword">Schelten </span>Ruan Silva Eric Michael Smith Ranjan <span class="hljs-keyword">Subramanian </span>Xiaoqing Ellen Tan <span class="hljs-keyword">Binh </span>Tang Ross Taylor Adina Williams <span class="hljs-keyword">Jian </span>Xiang Kuan Puxin Xu Zheng Yan Iliyan Zarov Yuchen Zhang Angela Fan Melanie Kambadur <span class="hljs-keyword">Sharan </span>Narang Aurelien Rodriguez Robert Stojnic Sergey Edunov Thomas <span class="hljs-keyword">Scialom∗</span><br><span class="hljs-keyword"></span><br>GenAI, Meta<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<h3 id="实现检索引擎">2.2 实现检索引擎</h3>
+<p>我们首先实现一个基于ES的关键词查找的检索引擎</p>
+<h4 id="文本处理">文本处理</h4>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs shell">from elasticsearch7 import Elasticsearch, helpers<br>from nltk.stem import PorterStemmer<br>from nltk.tokenize import word_tokenize<br>from nltk.corpus import stopwords<br>import nltk<br>import re<br><br>import warnings<br>warnings.simplefilter("ignore")  # 屏蔽 ES 的一些Warnings<br><br>nltk.download('punkt')  # 英文切词、词根、切句等方法<br>nltk.download('stopwords')  # 英文停用词库<br><br>def to_keywords(input_string):<br>    '''（英文）文本只保留关键字'''<br>    # 使用正则表达式替换所有非字母数字的字符为空格<br>    no_symbols = re.sub(r'[^a-zA-Z0-9\s]', ' ', input_string)<br>    word_tokens = word_tokenize(no_symbols)<br>    # 加载停用词表<br>    stop_words = set(stopwords.words('english'))<br>    ps = PorterStemmer()<br>    # 去停用词，取词根<br>    filtered_sentence = [ps.stem(w)<br>                         for w in word_tokens if not w.lower() in stop_words]<br>    return ' '.join(filtered_sentence)<br></code></pre></td></tr></table></figure>
+<h4 id="将文本灌入检索引擎">将文本灌入检索引擎</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 1. 创建Elasticsearch连接</span><br>es = Elasticsearch(<br>    hosts=[<span class="hljs-string">'http://ip:port'</span>],  <span class="hljs-comment"># 服务地址与端口</span><br>    http_auth=(<span class="hljs-string">"es_user"</span>, <span class="hljs-string">"es_password"</span>),  <span class="hljs-comment"># 用户名，密码</span><br>)<br><br><span class="hljs-comment"># 2. 定义索引名称</span><br>index_name = <span class="hljs-string">"llama2_demo_tmp"</span><br><br><span class="hljs-comment"># 3. 如果索引已存在，删除它（仅供演示，实际应用时不需要这步）</span><br><span class="hljs-keyword">if</span> es.indices.exists(index=index_name):<br>    es.indices.delete(index=index_name)<br><br><span class="hljs-comment"># 4. 创建索引</span><br>es.indices.create(index=index_name)<br><br><span class="hljs-comment"># 5. 灌库指令</span><br>actions = [<br>    {<br>        <span class="hljs-string">"_index"</span>: index_name,<br>        <span class="hljs-string">"_source"</span>: {<br>            <span class="hljs-string">"keywords"</span>: to_keywords(para),<br>            <span class="hljs-string">"text"</span>: para<br>        }<br>    }<br>    <span class="hljs-keyword">for</span> para <span class="hljs-keyword">in</span> paragraphs<br>]<br><br><span class="hljs-comment"># 6. 文本灌库</span><br>helpers.bulk(es, actions)<br></code></pre></td></tr></table></figure>
+<h4 id="实现关键字检索">实现关键字检索</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">search</span>(<span class="hljs-params">query_string, top_n=<span class="hljs-number">3</span></span>):<br>    <span class="hljs-comment"># ES 的查询语言</span><br>    search_query = {<br>        <span class="hljs-string">"match"</span>: {<br>            <span class="hljs-string">"keywords"</span>: to_keywords(query_string)<br>        }<br>    }<br>    res = es.search(index=index_name, query=search_query, size=top_n)<br>    <span class="hljs-keyword">return</span> [hit[<span class="hljs-string">"_source"</span>][<span class="hljs-string">"text"</span>] <span class="hljs-keyword">for</span> hit <span class="hljs-keyword">in</span> res[<span class="hljs-string">"hits"</span>][<span class="hljs-string">"hits"</span>]]<br><br>results = search(<span class="hljs-string">"how many parameters does llama 2 have?"</span>, <span class="hljs-number">2</span>)<br><span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> results:<br>    <span class="hljs-built_in">print</span>(r+<span class="hljs-string">"\n"</span>)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-dc73f5fd" role="button" aria-expanded="false" aria-controls="collapse-dc73f5fd">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-dc73f5fd">
+        <div class="fold-content">
+          <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-number">1</span>. <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>, an updated version of <span class="hljs-keyword">Llama </span><span class="hljs-number">1</span>, trained on a new mix of publicly available data. We also increased the size of the pretraining corpus <span class="hljs-keyword">by </span><span class="hljs-number">40</span>%, doubled the <span class="hljs-built_in">context</span> length of the model, <span class="hljs-keyword">and </span>adopted grouped-query attention (Ainslie et al., <span class="hljs-number">2023</span>). We are releasing variants of <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span> with <span class="hljs-number">7</span>B, <span class="hljs-number">13</span>B, <span class="hljs-keyword">and </span><span class="hljs-number">70</span>B parameters. We have also trained <span class="hljs-number">34</span>B variants, which we report on in this paper <span class="hljs-keyword">but </span>are not releasing.§<br><br>In this work, we develop <span class="hljs-keyword">and </span>release <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>, a collection of pretrained <span class="hljs-keyword">and </span>ﬁne-tuned large language models (<span class="hljs-keyword">LLMs) </span>ranging in <span class="hljs-keyword">scale </span>from <span class="hljs-number">7</span> <span class="hljs-keyword">billion </span>to <span class="hljs-number">70</span> <span class="hljs-keyword">billion </span>parameters. Our ﬁne-tuned <span class="hljs-keyword">LLMs, </span>called <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat, are optimized for <span class="hljs-keyword">dialogue </span>use cases. Our models outperform open-source chat models on most <span class="hljs-keyword">benchmarks </span>we tested, <span class="hljs-keyword">and </span><span class="hljs-keyword">based </span>onour human evaluations for helpfulness <span class="hljs-keyword">and </span>safety, may <span class="hljs-keyword">be </span>a suitable <span class="hljs-keyword">substitute </span>for <span class="hljs-keyword">closed </span>source models. We provide a detailed description of our approach to ﬁne-tuning <span class="hljs-keyword">and </span>safety improvements of <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat in <span class="hljs-keyword">order </span>to enable the community to <span class="hljs-keyword">build </span>on our work <span class="hljs-keyword">and </span>contribute to the responsible development of <span class="hljs-keyword">LLMs.</span><br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<h3 id="llm-接口封装">2.3、LLM 接口封装</h3>
+<p>使用<code>qwen-max</code>模型做演示</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> random<br><span class="hljs-keyword">from</span> dashscope <span class="hljs-keyword">import</span> Generation<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_completion</span>(<span class="hljs-params">prompt, model=<span class="hljs-string">"qwen-max"</span></span>):<br>    <span class="hljs-string">'''封装 qwen 接口'''</span><br>    messages = [{<span class="hljs-string">"role"</span>: <span class="hljs-string">"user"</span>, <span class="hljs-string">"content"</span>: prompt}]<br>    response = Generation.call(<span class="hljs-string">"qwen-turbo"</span>,<br>                               messages=messages,<br>                               <span class="hljs-comment"># 设置随机数种子seed，如果没有设置，则随机数种子默认为1234</span><br>                               seed=random.randint(<span class="hljs-number">1</span>, <span class="hljs-number">10000</span>),<br>                               <span class="hljs-comment"># 将输出设置为"message"格式</span><br>                               result_format=<span class="hljs-string">'message'</span>)<br>    <span class="hljs-keyword">return</span> response.output.choices[<span class="hljs-number">0</span>].message.content<br></code></pre></td></tr></table></figure>
+<h3 id="prompt构建">2.4、Prompt构建</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">build_prompt</span>(<span class="hljs-params">prompt_template, **kwargs</span>):<br>    <span class="hljs-string">'''将 Prompt 模板赋值'''</span><br>    prompt = prompt_template<br>    <span class="hljs-keyword">for</span> k, v <span class="hljs-keyword">in</span> kwargs.items():<br>        <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(v, <span class="hljs-built_in">str</span>):<br>            val = v<br>        <span class="hljs-keyword">elif</span> <span class="hljs-built_in">isinstance</span>(v, <span class="hljs-built_in">list</span>) <span class="hljs-keyword">and</span> <span class="hljs-built_in">all</span>(<span class="hljs-built_in">isinstance</span>(elem, <span class="hljs-built_in">str</span>) <span class="hljs-keyword">for</span> elem <span class="hljs-keyword">in</span> v):<br>            val = <span class="hljs-string">'\n'</span>.join(v)<br>        <span class="hljs-keyword">else</span>:<br>            val = <span class="hljs-built_in">str</span>(v)<br>        prompt = prompt.replace(<span class="hljs-string">f"__<span class="hljs-subst">{k.upper()}</span>__"</span>, val)<br>    <span class="hljs-keyword">return</span> prompt<br><br>prompt_template = <span class="hljs-string">"""</span><br><span class="hljs-string">你是一个问答机器人。</span><br><span class="hljs-string">你的任务是根据下述给定的已知信息回答用户问题。</span><br><span class="hljs-string">确保你的回复完全依据下述已知信息。不要编造答案。</span><br><span class="hljs-string">如果下述已知信息不足以回答用户的问题，请直接回复"我无法回答您的问题"。</span><br><span class="hljs-string"></span><br><span class="hljs-string">已知信息:</span><br><span class="hljs-string">__INFO__</span><br><span class="hljs-string"></span><br><span class="hljs-string">用户问：</span><br><span class="hljs-string">__QUERY__</span><br><span class="hljs-string"></span><br><span class="hljs-string">请用中文回答用户问题。</span><br><span class="hljs-string">"""</span><br></code></pre></td></tr></table></figure>
+<h3 id="rag-pipeline">2.5、RAG Pipeline</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python">user_query = <span class="hljs-string">"how many parameters does llama 2 have?"</span><br><br><span class="hljs-comment"># 1. 检索</span><br>search_results = search(user_query, <span class="hljs-number">2</span>)<br><br><span class="hljs-comment"># 2. 构建 Prompt</span><br>prompt = build_prompt(prompt_template, info=search_results, query=user_query)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">"===Prompt==="</span>)<br><span class="hljs-built_in">print</span>(prompt)<br><br><span class="hljs-comment"># 3. 调用 LLM</span><br>response = get_completion(prompt)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">"===回复==="</span>)<br><span class="hljs-built_in">print</span>(response)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">===Prompt===<br><br>你是一个问答机器人。<br>你的任务是根据下述给定的已知信息回答用户问题。<br>确保你的回复完全依据下述已知信息。不要编造答案。<br>如果下述已知信息不足以回答用户的问题，请直接回复<span class="hljs-string">"我无法回答您的问题"</span>。<br><br>已知信息:<br> <span class="hljs-number">1</span>. <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>, an updated version of <span class="hljs-keyword">Llama </span><span class="hljs-number">1</span>, trained on a new mix of publicly available data. We also increased the size of the pretraining corpus <span class="hljs-keyword">by </span><span class="hljs-number">40</span>%, doubled the <span class="hljs-built_in">context</span> length of the model, <span class="hljs-keyword">and </span>adopted grouped-query attention (Ainslie et al., <span class="hljs-number">2023</span>). We are releasing variants of <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span> with <span class="hljs-number">7</span>B, <span class="hljs-number">13</span>B, <span class="hljs-keyword">and </span><span class="hljs-number">70</span>B parameters. We have also trained <span class="hljs-number">34</span>B variants, which we report on in this paper <span class="hljs-keyword">but </span>are not releasing.§<br> In this work, we develop <span class="hljs-keyword">and </span>release <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>, a collection of pretrained <span class="hljs-keyword">and </span>ﬁne-tuned large language models (<span class="hljs-keyword">LLMs) </span>ranging in <span class="hljs-keyword">scale </span>from <span class="hljs-number">7</span> <span class="hljs-keyword">billion </span>to <span class="hljs-number">70</span> <span class="hljs-keyword">billion </span>parameters. Our ﬁne-tuned <span class="hljs-keyword">LLMs, </span>called <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat, are optimized for <span class="hljs-keyword">dialogue </span>use cases. Our models outperform open-source chat models on most <span class="hljs-keyword">benchmarks </span>we tested, <span class="hljs-keyword">and </span><span class="hljs-keyword">based </span>onour human evaluations for helpfulness <span class="hljs-keyword">and </span>safety, may <span class="hljs-keyword">be </span>a suitable <span class="hljs-keyword">substitute </span>for <span class="hljs-keyword">closed </span>source models. We provide a detailed description of our approach to ﬁne-tuning <span class="hljs-keyword">and </span>safety improvements of <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat in <span class="hljs-keyword">order </span>to enable the community to <span class="hljs-keyword">build </span>on our work <span class="hljs-keyword">and </span>contribute to the responsible development of <span class="hljs-keyword">LLMs.</span><br><span class="hljs-keyword"></span><br>用户问：<br>how many parameters does <span class="hljs-keyword">llama </span><span class="hljs-number">2</span> have?<br><br>请用中文回答用户问题。<br><br>===回复===<br><span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>有<span class="hljs-number">70</span>亿、<span class="hljs-number">130</span>亿和<span class="hljs-number">700</span>亿参数的变体。此外，还训练了<span class="hljs-number">340</span>亿参数的变体，但并未发布。<br></code></pre></td></tr></table></figure>
+<h3 id="关键字检索的局限性">2.6、关键字检索的局限性</h3>
+<p>同一个语义，用词不同，可能导致检索不到有效的结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># user_query="Does llama 2 have a chat version?"</span><br>user_query = <span class="hljs-string">"Does llama 2 have a conversational variant?"</span><br><br>search_results = search(user_query, <span class="hljs-number">2</span>)<br><br><span class="hljs-keyword">for</span> res <span class="hljs-keyword">in</span> search_results:<br>    <span class="hljs-built_in">print</span>(res+<span class="hljs-string">"\n"</span>)<span class="hljs-comment"># user_query="Does llama 2 have a chat version?"</span><br>user_query = <span class="hljs-string">"Does llama 2 have a conversational variant?"</span><br><br>search_results = search(user_query, <span class="hljs-number">2</span>)<br><br><span class="hljs-keyword">for</span> res <span class="hljs-keyword">in</span> search_results:<br>    <span class="hljs-built_in">print</span>(res+<span class="hljs-string">"\n"</span>)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">1</span>. Llama <span class="hljs-number">2</span>, an updated version of Llama <span class="hljs-number">1</span>, trained <span class="hljs-literal">on</span> a new mix of publicly available data. We also increased the size of the pretraining corpus by <span class="hljs-number">40</span>%, doubled the context length of the model, and adopted grouped-query attention (Ainslie et al., <span class="hljs-number">2023</span>). We are releasing variants of Llama <span class="hljs-number">2</span> with <span class="hljs-number">7</span>B, <span class="hljs-number">13</span>B, and <span class="hljs-number">70</span>B parameters. We have also trained <span class="hljs-number">34</span>B variants, which we report <span class="hljs-literal">on</span> in this paper but are not releasing.§<br><br><span class="hljs-attribute">variants</span> of this model with <span class="hljs-number">7</span>B, <span class="hljs-number">13</span>B, and <span class="hljs-number">70</span>B parameters as well.<br></code></pre></td></tr></table></figure>
+<h2 id="三向量检索">三、向量检索</h2>
+<p>向量检索机制</p>
+<p><img src="/images/RAG_Emb.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>向量化</strong>（embedding）：这是将文本、图像、音频和视频等转化为向量矩阵的过程，embedding模型的好坏会直接影响到后面检索的质量，特别是相关度。</p>
+<h3 id="文本向量text-embeddings">3.1、文本向量（Text Embeddings）</h3>
+<ol type="1">
+<li>将文本转成一组浮点数：每个下标 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.025ex;" xmlns="http://www.w3.org/2000/svg" width="0.781ex" height="1.52ex" role="img" focusable="false" viewBox="0 -661 345 672"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D456" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"></path></g></g></g></svg></mjx-container></span>，对应一个维度</li>
+<li>整个数组对应一个 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.025ex;" xmlns="http://www.w3.org/2000/svg" width="1.357ex" height="1.025ex" role="img" focusable="false" viewBox="0 -442 600 453"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path></g></g></g></svg></mjx-container></span>
+维空间的一个点，即<strong>文本向量</strong>又叫 Embeddings</li>
+<li>向量之间可以计算距离，距离远近对应<strong>语义相似度</strong>大小</li>
+</ol>
+<p><img src="/images/embeddings.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="文本向量是怎么得到的-1">3.1.1、文本向量是怎么得到的
+<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="">[1]</span></a></sup></h4>
+<ol type="1">
+<li>构建相关（正立）与不相关（负例）的句子对儿样本</li>
+<li>训练双塔式模型，让正例间的距离小，负例间的距离大</li>
+</ol>
+<p>例如：</p>
+<p><img src="/images/sbert.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="向量间的相似度计算">3.2、向量间的相似度计算</h3>
+<p><img src="/images/sim.png" srcset="/img/loading.gif" lazyload></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np<br><span class="hljs-keyword">from</span> numpy <span class="hljs-keyword">import</span> dot<br><span class="hljs-keyword">from</span> numpy.linalg <span class="hljs-keyword">import</span> norm<br><span class="hljs-keyword">import</span> dashscope<br><span class="hljs-keyword">import</span> os<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">cos_sim</span>(<span class="hljs-params">a, b</span>):<br>    <span class="hljs-string">'''余弦距离 -- 越大越相似'''</span><br>    <span class="hljs-keyword">return</span> dot(a, b)/(norm(a)*norm(b))<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">l2</span>(<span class="hljs-params">a, b</span>):<br>    <span class="hljs-string">'''欧式距离 -- 越小越相似'''</span><br>    x = np.asarray(a)-np.asarray(b)<br>    <span class="hljs-keyword">return</span> norm(x)<br><br><span class="hljs-comment">#通义前文embeding模型</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_embedings</span>(<span class="hljs-params">texts</span>):<br>    resp = dashscope.TextEmbedding.call(<br>        model=dashscope.TextEmbedding.Models.text_embedding_v2,<br>        <span class="hljs-built_in">input</span>=texts)<br>    <span class="hljs-keyword">return</span> [x.embedding <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> resp]<br><br><br><span class="hljs-comment"># query = "国际争端"</span><br>query = <span class="hljs-string">"global conflicts"</span><br><br>documents = [<br>    <span class="hljs-string">"联合国就苏丹达尔富尔地区大规模暴力事件发出警告"</span>,<br>    <span class="hljs-string">"土耳其、芬兰、瑞典与北约代表将继续就瑞典“入约”问题进行谈判"</span>,<br>    <span class="hljs-string">"日本岐阜市陆上自卫队射击场内发生枪击事件 3人受伤"</span>,<br>    <span class="hljs-string">"国家游泳中心（水立方）：恢复游泳、嬉水乐园等水上项目运营"</span>,<br>    <span class="hljs-string">"我国首次在空间站开展舱外辐射生物学暴露实验"</span>,<br>]<br><br>query_vec = get_embeddings([query])[<span class="hljs-number">0</span>]<br>doc_vecs = get_embeddings(documents)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">"Cosine distance:"</span>)<br><span class="hljs-built_in">print</span>(cos_sim(query_vec, query_vec))<br><span class="hljs-keyword">for</span> vec <span class="hljs-keyword">in</span> doc_vecs:<br>    <span class="hljs-built_in">print</span>(cos_sim(query_vec, vec))<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">"\nEuclidean distance:"</span>)<br><span class="hljs-built_in">print</span>(l2(query_vec, query_vec))<br><span class="hljs-keyword">for</span> vec <span class="hljs-keyword">in</span> doc_vecs:<br>    <span class="hljs-built_in">print</span>(l2(query_vec, vec))<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">Cosine</span> distance:<br><span class="hljs-attribute">1</span>.<span class="hljs-number">0</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">7622749944010915</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">7563038106493584</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">7426665802579038</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">7079273699608006</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">7254355321045072</span><br><br><span class="hljs-attribute">Euclidean</span> distance:<br><span class="hljs-attribute">0</span>.<span class="hljs-number">0</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">6895288502682277</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">6981349637998769</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">7174028746492277</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">7642939833636829</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">7410323668625171</span><br></code></pre></td></tr></table></figure>
+<h3 id="向量数据库">3.3、向量数据库</h3>
+<h4 id="主流向量数据库">3.3.1 主流向量数据库</h4>
+<p><img src="/images/vectordb.png" srcset="/img/loading.gif" lazyload></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/facebookresearch/faiss">FAISS</a>: Meta
+开源的向量检索引擎</li>
+<li><a target="_blank" rel="noopener" href="https://www.pinecone.io/">Pinecone</a>:
+商用向量数据库，只有云服务</li>
+<li><a target="_blank" rel="noopener" href="https://milvus.io/">Milvus</a>:
+开源向量数据库，同时有云服务</li>
+<li><a target="_blank" rel="noopener" href="https://weaviate.io/">Weaviate</a>:
+开源向量数据库，同时有云服务</li>
+<li><a target="_blank" rel="noopener" href="https://qdrant.tech/">Qdrant</a>:
+开源向量数据库，同时有云服务</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/pgvector/pgvector">PGVector</a>:
+Postgres 的开源向量检索引擎</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/RediSearch/RediSearch">RediSearch</a>:
+Redis 的开源向量检索引擎</li>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/enterprise-search/vector-search">ElasticSearch</a>:
+也支持向量检索</li>
+</ul>
+<h4 id="向量数据库检索">3.3.2 向量数据库检索</h4>
+<p>安装依赖</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cmake">pip <span class="hljs-keyword">install</span> chromadb<br>pip <span class="hljs-keyword">install</span> pysqlite3<br></code></pre></td></tr></table></figure>
+<p>实现检索</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-built_in">__import__</span>(<span class="hljs-string">'pysqlite3'</span>)<br><span class="hljs-keyword">import</span> sys<br><span class="hljs-keyword">import</span> chromadb<br><span class="hljs-keyword">from</span> chromadb.config <span class="hljs-keyword">import</span> Settings<br><br>sys.modules[<span class="hljs-string">'sqlite3'</span>] = sys.modules.pop(<span class="hljs-string">'pysqlite3'</span>)<br><br><span class="hljs-comment"># 为了演示方便，只取两页</span><br>paragraphs = extract_text_from_pdf(<br>    <span class="hljs-string">"llama2.pdf"</span>,<br>    page_numbers=[<span class="hljs-number">2</span>, <span class="hljs-number">3</span>],<br>    min_line_length=<span class="hljs-number">10</span><br>)<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyVectorDBConnector</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, collection_name, embedding_fn</span>):<br>        chroma_client = chromadb.Client(Settings(allow_reset=<span class="hljs-literal">True</span>))<br><br>        <span class="hljs-comment"># 为了演示，实际不需要每次 reset()</span><br>        chroma_client.reset()<br><br>        <span class="hljs-comment"># 创建一个 collection</span><br>        <span class="hljs-variable language_">self</span>.collection = chroma_client.get_or_create_collection(<br>            name=collection_name)<br>        <span class="hljs-variable language_">self</span>.embedding_fn = embedding_fn<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">add_documents</span>(<span class="hljs-params">self, documents</span>):<br>        <span class="hljs-string">'''向 collection 中添加文档与向量'''</span><br>        <span class="hljs-variable language_">self</span>.collection.add(<br>            embeddings=<span class="hljs-variable language_">self</span>.embedding_fn(documents),  <span class="hljs-comment"># 每个文档的向量</span><br>            documents=documents,  <span class="hljs-comment"># 文档的原文</span><br>            ids=[<span class="hljs-string">f"id<span class="hljs-subst">{i}</span>"</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(documents))]  <span class="hljs-comment"># 每个文档的 id</span><br>        )<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">search</span>(<span class="hljs-params">self, query, top_n</span>):<br>        <span class="hljs-string">'''检索向量数据库'''</span><br>        results = <span class="hljs-variable language_">self</span>.collection.query(<br>            query_embeddings=<span class="hljs-variable language_">self</span>.embedding_fn([query]),<br>            n_results=top_n<br>        )<br>        <span class="hljs-keyword">return</span> results<br></code></pre></td></tr></table></figure>
+<p>添加文档并检索</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 创建一个向量数据库对象</span><br>vector_db = MyVectorDBConnector(<span class="hljs-string">"demo"</span>, get_embeddings)<br><span class="hljs-comment"># 向向量数据库中添加文档</span><br>vector_db.add_documents(paragraphs)<br><br>user_query = <span class="hljs-string">"Llama 2有多少参数"</span><br>results = vector_db.search(user_query, <span class="hljs-number">2</span>)<br><br><span class="hljs-keyword">for</span> para <span class="hljs-keyword">in</span> results[<span class="hljs-string">'documents'</span>][<span class="hljs-number">0</span>]:<br>    <span class="hljs-built_in">print</span>(para+<span class="hljs-string">"\n"</span>)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-fcf67c0f" role="button" aria-expanded="false" aria-controls="collapse-fcf67c0f">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-fcf67c0f">
+        <div class="fold-content">
+          <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-number">1.</span> Llama <span class="hljs-number">2</span>, an updated <span class="hljs-keyword">version</span> <span class="hljs-keyword">of</span> Llama <span class="hljs-number">1</span>, trained <span class="hljs-keyword">on</span> a <span class="hljs-built_in">new</span> mix <span class="hljs-keyword">of</span> publicly available data. We <span class="hljs-keyword">also</span> increased the size <span class="hljs-keyword">of</span> the pretraining corpus <span class="hljs-keyword">by</span> <span class="hljs-number">40</span>%, doubled the context length <span class="hljs-keyword">of</span> the model, <span class="hljs-keyword">and</span> adopted grouped-query attention (Ainslie et al., <span class="hljs-number">2023</span>). We are releasing variants <span class="hljs-keyword">of</span> Llama <span class="hljs-number">2</span> <span class="hljs-keyword">with</span> <span class="hljs-number">7</span>B, <span class="hljs-number">13</span>B, <span class="hljs-keyword">and</span> <span class="hljs-number">70</span>B parameters. We have <span class="hljs-keyword">also</span> trained <span class="hljs-number">34</span>B variants, which we report <span class="hljs-keyword">on</span> <span class="hljs-keyword">in</span> this paper but are <span class="hljs-keyword">not</span> releasing.§<br><br><span class="hljs-keyword">In</span> this <span class="hljs-keyword">work</span>, we develop <span class="hljs-keyword">and</span> <span class="hljs-keyword">release</span> Llama <span class="hljs-number">2</span>, a <span class="hljs-keyword">family</span> <span class="hljs-keyword">of</span> pretrained <span class="hljs-keyword">and</span> ﬁne-tuned LLMs, Llama <span class="hljs-number">2</span> <span class="hljs-keyword">and</span> Llama <span class="hljs-number">2</span>-Chat, at scales up <span class="hljs-keyword">to</span> <span class="hljs-number">70</span>B parameters. <span class="hljs-keyword">On</span> the series <span class="hljs-keyword">of</span> helpfulness <span class="hljs-keyword">and</span> safety benchmarks we tested, Llama <span class="hljs-number">2</span>-Chat models generally <span class="hljs-keyword">perform</span> better than existing <span class="hljs-keyword">open</span>-source models. They <span class="hljs-keyword">also</span> appear <span class="hljs-keyword">to</span> be <span class="hljs-keyword">on</span> par <span class="hljs-keyword">with</span> <span class="hljs-keyword">some</span> <span class="hljs-keyword">of</span> the closed-source models, at least <span class="hljs-keyword">on</span> the human evaluations we performed (see Figures <span class="hljs-number">1</span> <span class="hljs-keyword">and</span> <span class="hljs-number">3</span>). We have taken measures <span class="hljs-keyword">to</span> increase the safety <span class="hljs-keyword">of</span> these models, <span class="hljs-keyword">using</span> safety-speciﬁc data annotation <span class="hljs-keyword">and</span> tuning, <span class="hljs-keyword">as</span> well <span class="hljs-keyword">as</span> conducting red-teaming <span class="hljs-keyword">and</span> employing iterative evaluations. Additionally, this paper contributes a thorough description <span class="hljs-keyword">of</span> our ﬁne-tuning methodology <span class="hljs-keyword">and</span> approach <span class="hljs-keyword">to</span> improving LLM safety. We hope that this openness will <span class="hljs-keyword">enable</span> the community <span class="hljs-keyword">to</span> reproduce ﬁne-tuned LLMs <span class="hljs-keyword">and</span> <span class="hljs-keyword">continue</span> <span class="hljs-keyword">to</span> improve the safety <span class="hljs-keyword">of</span> those models, paving the way <span class="hljs-keyword">for</span> more responsible development <span class="hljs-keyword">of</span> LLMs. We <span class="hljs-keyword">also</span> <span class="hljs-keyword">share</span> novel observations we made during the development <span class="hljs-keyword">of</span> Llama <span class="hljs-number">2</span> <span class="hljs-keyword">and</span> Llama <span class="hljs-number">2</span>-Chat, such <span class="hljs-keyword">as</span> the emergence <span class="hljs-keyword">of</span> tool <span class="hljs-keyword">usage</span> <span class="hljs-keyword">and</span> temporal organization <span class="hljs-keyword">of</span> knowledge.<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<h3 id="基于向量检索的-rag">3.4、基于向量检索的 RAG</h3>
+<p>检索</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">RAG_Bot</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, vector_db, llm_api, n_results=<span class="hljs-number">2</span></span>):<br>        <span class="hljs-variable language_">self</span>.vector_db = vector_db<br>        <span class="hljs-variable language_">self</span>.llm_api = llm_api<br>        <span class="hljs-variable language_">self</span>.n_results = n_results<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">chat</span>(<span class="hljs-params">self, user_query</span>):<br>        <span class="hljs-comment"># 1. 检索</span><br>        search_results = <span class="hljs-variable language_">self</span>.vector_db.search(user_query, <span class="hljs-variable language_">self</span>.n_results)<br><br>        <span class="hljs-comment"># 2. 构建 Prompt</span><br>        prompt = build_prompt(<br>            prompt_template, info=search_results[<span class="hljs-string">'documents'</span>][<span class="hljs-number">0</span>], query=user_query)<br><br>        <span class="hljs-comment"># 3. 调用 LLM</span><br>        response = <span class="hljs-variable language_">self</span>.llm_api(prompt)<br>        <span class="hljs-keyword">return</span> response<br><br><span class="hljs-comment"># 创建一个RAG机器人</span><br>bot = RAG_Bot(<br>    vector_db,<br>    llm_api=get_completion<br>)<br><br>user_query = <span class="hljs-string">"llama 2有对话版吗？"</span><br><br>response = bot.chat(user_query)<br><br><span class="hljs-built_in">print</span>(response)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">是的，<span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>有一个针对对话用例优化的版本，称为<span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat。<br></code></pre></td></tr></table></figure>
+<h3 id="openai-新发布的两个-embedding-模型">3.5、OpenAI 新发布的两个
+Embedding 模型</h3>
+<p>2024 年 1 月 25 日，OpenAI 新发布了两个 Embedding 模型</p>
+<ul>
+<li>text-embedding-3-large</li>
+<li>text-embedding-3-small</li>
+</ul>
+<p>其最大特点是，支持自定义的缩短向量维度，从而在几乎不影响最终效果的情况下降低向量检索与相似度计算的复杂度。</p>
+<p>通俗的说：<strong>越大越准、越小越快。</strong>
+官方公布的评测结果:</p>
+<p><img src="/images/mteb.png" srcset="/img/loading.gif" lazyload></p>
+<p>注：<a target="_blank" rel="noopener" href="https://huggingface.co/blog/mteb">MTEB</a>
+是一个大规模多任务的 Embedding 模型公开评测集</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> openai <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-comment"># 加载环境变量</span><br><span class="hljs-keyword">from</span> dotenv <span class="hljs-keyword">import</span> load_dotenv, find_dotenv<br>_ = load_dotenv(find_dotenv())  <span class="hljs-comment"># 读取本地 .env 文件，里面定义了 OPENAI_API_KEY</span><br><br>client = OpenAI()<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_embeddings</span>(<span class="hljs-params">texts, model=<span class="hljs-string">"text-embedding-ada-002"</span>, dimensions=<span class="hljs-literal">None</span></span>):<br>    <span class="hljs-string">'''封装 OpenAI 的 Embedding 模型接口'''</span><br>    <span class="hljs-keyword">if</span> model == <span class="hljs-string">"text-embedding-ada-002"</span>:<br>        dimensions = <span class="hljs-literal">None</span><br>    <span class="hljs-keyword">if</span> dimensions:<br>        data = client.embeddings.create(<br>            <span class="hljs-built_in">input</span>=texts, model=model, dimensions=dimensions).data<br>    <span class="hljs-keyword">else</span>:<br>        data = client.embeddings.create(<span class="hljs-built_in">input</span>=texts, model=model).data<br>    <span class="hljs-keyword">return</span> [x.embedding <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> data]<br><br>model = <span class="hljs-string">"text-embedding-3-large"</span><br>dimensions = <span class="hljs-number">128</span><br><br>query = <span class="hljs-string">"国际争端"</span><br><br><span class="hljs-comment"># 且能支持跨语言</span><br><span class="hljs-comment"># query = "global conflicts"</span><br><br>documents = [<br>    <span class="hljs-string">"联合国就苏丹达尔富尔地区大规模暴力事件发出警告"</span>,<br>    <span class="hljs-string">"土耳其、芬兰、瑞典与北约代表将继续就瑞典“入约”问题进行谈判"</span>,<br>    <span class="hljs-string">"日本岐阜市陆上自卫队射击场内发生枪击事件 3人受伤"</span>,<br>    <span class="hljs-string">"国家游泳中心（水立方）：恢复游泳、嬉水乐园等水上项目运营"</span>,<br>    <span class="hljs-string">"我国首次在空间站开展舱外辐射生物学暴露实验"</span>,<br>]<br><br>query_vec = get_embeddings([query], model=model, dimensions=dimensions)[<span class="hljs-number">0</span>]<br>doc_vecs = get_embeddings(documents, model=model, dimensions=dimensions)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">"Dim: {}"</span>.<span class="hljs-built_in">format</span>(<span class="hljs-built_in">len</span>(query_vec)))<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">"Cosine distance:"</span>)<br><span class="hljs-keyword">for</span> vec <span class="hljs-keyword">in</span> doc_vecs:<br>    <span class="hljs-built_in">print</span>(cos_sim(query_vec, vec))<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">"\nEuclidean distance:"</span>)<br><span class="hljs-keyword">for</span> vec <span class="hljs-keyword">in</span> doc_vecs:<br>    <span class="hljs-built_in">print</span>(l2(query_vec, vec))<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-7467bebd" role="button" aria-expanded="false" aria-controls="collapse-7467bebd">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-7467bebd">
+        <div class="fold-content">
+          <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">Dim</span>: <span class="hljs-number">128</span><br><span class="hljs-attribute">Cosine</span> distance:<br><span class="hljs-attribute">0</span>.<span class="hljs-number">28595529341628745</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">4193233011210104</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">21555240850631385</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">13925410790653184</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">17101392063341334</span><br><br><span class="hljs-attribute">Euclidean</span> distance:<br><span class="hljs-attribute">1</span>.<span class="hljs-number">1950269560302964</span><br><span class="hljs-attribute">1</span>.<span class="hljs-number">0776610725305211</span><br><span class="hljs-attribute">1</span>.<span class="hljs-number">2525554845176528</span><br><span class="hljs-attribute">1</span>.<span class="hljs-number">3120563550406072</span><br><span class="hljs-attribute">1</span>.<span class="hljs-number">2876226583438741</span><br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<h2 id="四rag系统进阶">四、RAG系统进阶</h2>
+<h3 id="文本分割的粒度">4.1、文本分割的粒度</h3>
+<p><strong>缺陷</strong></p>
+<ol type="1">
+<li>粒度太大可能导致检索不精准，粒度太小可能导致信息不全面</li>
+<li>问题的答案可能跨越两个片段</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 创建一个向量数据库对象</span><br>vector_db = MyVectorDBConnector(<span class="hljs-string">"demo_text_split"</span>, get_embeddings)<br><span class="hljs-comment"># 向向量数据库中添加文档</span><br>vector_db.add_documents(paragraphs)<br><br><span class="hljs-comment"># 创建一个RAG机器人</span><br>bot = RAG_Bot(<br>    vector_db,<br>    llm_api=get_completion<br>)<br><br>user_query = <span class="hljs-string">"llama 2可以商用吗？"</span><br><span class="hljs-comment"># user_query="llama 2 chat有多少参数"</span><br>search_results = vector_db.search(user_query, <span class="hljs-number">2</span>)<br><br><span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> search_results[<span class="hljs-string">'documents'</span>][<span class="hljs-number">0</span>]:<br>    <span class="hljs-built_in">print</span>(doc+<span class="hljs-string">"\n"</span>)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">"====回复===="</span>)<br>bot.chat(user_query)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-112ab24c" role="button" aria-expanded="false" aria-controls="collapse-112ab24c">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-112ab24c">
+        <div class="fold-content">
+          <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"> We believe that the <span class="hljs-keyword">open</span> <span class="hljs-keyword">release</span> <span class="hljs-keyword">of</span> LLMs, <span class="hljs-keyword">when</span> done safely, will be a net beneﬁt <span class="hljs-keyword">to</span> society. <span class="hljs-keyword">Like</span> <span class="hljs-keyword">all</span> LLMs, Llama <span class="hljs-number">2</span> <span class="hljs-keyword">is</span> a <span class="hljs-built_in">new</span> technology that carries potential risks <span class="hljs-keyword">with</span> use (Bender et al., <span class="hljs-number">2021</span>b; Weidinger et al., <span class="hljs-number">2021</span>; Solaiman et al., <span class="hljs-number">2023</span>). Testing conducted <span class="hljs-keyword">to</span> <span class="hljs-type">date</span> has been <span class="hljs-keyword">in</span> English <span class="hljs-keyword">and</span> has <span class="hljs-keyword">not</span> — <span class="hljs-keyword">and</span> could <span class="hljs-keyword">not</span> — cover <span class="hljs-keyword">all</span> scenarios. Therefore, <span class="hljs-keyword">before</span> deploying <span class="hljs-keyword">any</span> applications <span class="hljs-keyword">of</span> Llama <span class="hljs-number">2</span>-Chat, developers should <span class="hljs-keyword">perform</span> safety testing <span class="hljs-keyword">and</span> tuning tailored <span class="hljs-keyword">to</span> their speciﬁc applications <span class="hljs-keyword">of</span> the model. We provide a responsible use guide¶ <span class="hljs-keyword">and</span> code examples‖ <span class="hljs-keyword">to</span> facilitate the safe deployment <span class="hljs-keyword">of</span> Llama <span class="hljs-number">2</span> <span class="hljs-keyword">and</span> Llama <span class="hljs-number">2</span>-Chat. More details <span class="hljs-keyword">of</span> our responsible <span class="hljs-keyword">release</span> strategy can be <span class="hljs-built_in">found</span> <span class="hljs-keyword">in</span> Section <span class="hljs-number">5.3</span>.<br><br> <span class="hljs-keyword">In</span> this <span class="hljs-keyword">work</span>, we develop <span class="hljs-keyword">and</span> <span class="hljs-keyword">release</span> Llama <span class="hljs-number">2</span>, a <span class="hljs-keyword">family</span> <span class="hljs-keyword">of</span> pretrained <span class="hljs-keyword">and</span> ﬁne-tuned LLMs, Llama <span class="hljs-number">2</span> <span class="hljs-keyword">and</span> Llama <span class="hljs-number">2</span>-Chat, at scales up <span class="hljs-keyword">to</span> <span class="hljs-number">70</span>B parameters. <span class="hljs-keyword">On</span> the series <span class="hljs-keyword">of</span> helpfulness <span class="hljs-keyword">and</span> safety benchmarks we tested, Llama <span class="hljs-number">2</span>-Chat models generally <span class="hljs-keyword">perform</span> better than existing <span class="hljs-keyword">open</span>-source models. They <span class="hljs-keyword">also</span> appear <span class="hljs-keyword">to</span> be <span class="hljs-keyword">on</span> par <span class="hljs-keyword">with</span> <span class="hljs-keyword">some</span> <span class="hljs-keyword">of</span> the closed-source models, at least <span class="hljs-keyword">on</span> the human evaluations we performed (see Figures <span class="hljs-number">1</span> <span class="hljs-keyword">and</span> <span class="hljs-number">3</span>). We have taken measures <span class="hljs-keyword">to</span> increase the safety <span class="hljs-keyword">of</span> these models, <span class="hljs-keyword">using</span> safety-speciﬁc data annotation <span class="hljs-keyword">and</span> tuning, <span class="hljs-keyword">as</span> well <span class="hljs-keyword">as</span> conducting red-teaming <span class="hljs-keyword">and</span> employing iterative evaluations. Additionally, this paper contributes a thorough description <span class="hljs-keyword">of</span> our ﬁne-tuning methodology <span class="hljs-keyword">and</span> approach <span class="hljs-keyword">to</span> improving LLM safety. We hope that this openness will <span class="hljs-keyword">enable</span> the community <span class="hljs-keyword">to</span> reproduce ﬁne-tuned LLMs <span class="hljs-keyword">and</span> <span class="hljs-keyword">continue</span> <span class="hljs-keyword">to</span> improve the safety <span class="hljs-keyword">of</span> those models, paving the way <span class="hljs-keyword">for</span> more responsible development <span class="hljs-keyword">of</span> LLMs. We <span class="hljs-keyword">also</span> <span class="hljs-keyword">share</span> novel observations we made during the development <span class="hljs-keyword">of</span> Llama <span class="hljs-number">2</span> <span class="hljs-keyword">and</span> Llama <span class="hljs-number">2</span>-Chat, such <span class="hljs-keyword">as</span> the emergence <span class="hljs-keyword">of</span> tool <span class="hljs-keyword">usage</span> <span class="hljs-keyword">and</span> temporal organization <span class="hljs-keyword">of</span> knowledge.<br><br>====回复====<br><span class="hljs-string">'在部署任何Llama 2-Chat的应用之前，开发者应该进行安全测试和调整，以适应他们的特定模型应用。这表明Llama 2是可以商用的，但前提是要确保安全性和适用性，且建议进行相应的测试和措施来增加安全性。'</span><br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<p><strong>改进</strong>:
+按一定粒度，部分重叠式的切割文本，使上下文更完整</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> nltk.tokenize <span class="hljs-keyword">import</span> sent_tokenize<br><span class="hljs-keyword">import</span> json<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">split_text</span>(<span class="hljs-params">paragraphs, chunk_size=<span class="hljs-number">300</span>, overlap_size=<span class="hljs-number">100</span></span>):<br>    <span class="hljs-string">'''按指定 chunk_size 和 overlap_size 交叠割文本'''</span><br>    sentences = [s.strip() <span class="hljs-keyword">for</span> p <span class="hljs-keyword">in</span> paragraphs <span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> sent_tokenize(p)]<br>    chunks = []<br>    i = <span class="hljs-number">0</span><br>    <span class="hljs-keyword">while</span> i &lt; <span class="hljs-built_in">len</span>(sentences):<br>        chunk = sentences[i]<br>        overlap = <span class="hljs-string">''</span><br>        prev_len = <span class="hljs-number">0</span><br>        prev = i - <span class="hljs-number">1</span><br>        <span class="hljs-comment"># 向前计算重叠部分</span><br>        <span class="hljs-keyword">while</span> prev &gt;= <span class="hljs-number">0</span> <span class="hljs-keyword">and</span> <span class="hljs-built_in">len</span>(sentences[prev])+<span class="hljs-built_in">len</span>(overlap) &lt;= overlap_size:<br>            overlap = sentences[prev] + <span class="hljs-string">' '</span> + overlap<br>            prev -= <span class="hljs-number">1</span><br>        chunk = overlap+chunk<br>        <span class="hljs-built_in">next</span> = i + <span class="hljs-number">1</span><br>        <span class="hljs-comment"># 向后计算当前chunk</span><br>        <span class="hljs-keyword">while</span> <span class="hljs-built_in">next</span> &lt; <span class="hljs-built_in">len</span>(sentences) <span class="hljs-keyword">and</span> <span class="hljs-built_in">len</span>(sentences[<span class="hljs-built_in">next</span>])+<span class="hljs-built_in">len</span>(chunk) &lt;= chunk_size:<br>            chunk = chunk + <span class="hljs-string">' '</span> + sentences[<span class="hljs-built_in">next</span>]<br>            <span class="hljs-built_in">next</span> += <span class="hljs-number">1</span><br>        chunks.append(chunk)<br>        i = <span class="hljs-built_in">next</span><br>    <span class="hljs-keyword">return</span> chunks<br></code></pre></td></tr></table></figure>
+<p>检索</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python">chunks = split_text(paragraphs, <span class="hljs-number">300</span>, <span class="hljs-number">100</span>)<br><br><span class="hljs-comment"># 创建一个向量数据库对象</span><br>vector_db = MyVectorDBConnector(<span class="hljs-string">"demo_text_split"</span>, get_embeddings)<br><span class="hljs-comment"># 向向量数据库中添加文档</span><br>vector_db.add_documents(chunks)<br><span class="hljs-comment"># 创建一个RAG机器人</span><br>bot = RAG_Bot(<br>    vector_db,<br>    llm_api=get_completion<br>)<br><br><br>user_query = <span class="hljs-string">"llama 2可以商用吗？"</span><br><span class="hljs-comment"># user_query="llama 2 chat有多少参数"</span><br><br>search_results = vector_db.search(user_query, <span class="hljs-number">2</span>)<br><span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> search_results[<span class="hljs-string">'documents'</span>][<span class="hljs-number">0</span>]:<br>    <span class="hljs-built_in">print</span>(doc+<span class="hljs-string">"\n"</span>)<br><br>response = bot.chat(user_query)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">"====回复===="</span>)<br><span class="hljs-built_in">print</span>(response)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-number">2.</span> Llama <span class="hljs-number">2</span>-Chat, a ﬁne-tuned <span class="hljs-keyword">version</span> <span class="hljs-keyword">of</span> Llama <span class="hljs-number">2</span> that <span class="hljs-keyword">is</span> optimized <span class="hljs-keyword">for</span> dialogue use cases. We <span class="hljs-keyword">release</span> variants <span class="hljs-keyword">of</span> this model <span class="hljs-keyword">with</span> <span class="hljs-number">7</span>B, <span class="hljs-number">13</span>B, <span class="hljs-keyword">and</span> <span class="hljs-number">70</span>B parameters <span class="hljs-keyword">as</span> well. We believe that the <span class="hljs-keyword">open</span> <span class="hljs-keyword">release</span> <span class="hljs-keyword">of</span> LLMs, <span class="hljs-keyword">when</span> done safely, will be a net beneﬁt <span class="hljs-keyword">to</span> society.<br><br>We are releasing the <span class="hljs-keyword">following</span> models <span class="hljs-keyword">to</span> the general <span class="hljs-built_in">public</span> <span class="hljs-keyword">for</span> research <span class="hljs-keyword">and</span> commercial use‡: <span class="hljs-number">1.</span> Llama <span class="hljs-number">2</span>, an updated <span class="hljs-keyword">version</span> <span class="hljs-keyword">of</span> Llama <span class="hljs-number">1</span>, trained <span class="hljs-keyword">on</span> a <span class="hljs-built_in">new</span> mix <span class="hljs-keyword">of</span> publicly available data.<br><br>====回复====<br>Llama <span class="hljs-number">2</span>可以供研究和商业使用。<br></code></pre></td></tr></table></figure>
+<h3 id="检索后排序">4.2、检索后排序</h3>
+<p><strong>问题</strong>: 有时，最合适的答案不一定排在检索的最前面</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python">user_query = <span class="hljs-string">"how safe is llama 2"</span><br>search_results = vector_db.search(user_query, <span class="hljs-number">5</span>)<br><br><span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> search_results[<span class="hljs-string">'documents'</span>][<span class="hljs-number">0</span>]:<br>    <span class="hljs-built_in">print</span>(doc+<span class="hljs-string">"\n"</span>)<br><br>response = bot.chat(user_query)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">"====回复===="</span>)<br><span class="hljs-built_in">print</span>(response)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-9de670e2" role="button" aria-expanded="false" aria-controls="collapse-9de670e2">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-9de670e2">
+        <div class="fold-content">
+          <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">We <span class="hljs-keyword">believe </span>that the open release of <span class="hljs-keyword">LLMs, </span>when done safely, will <span class="hljs-keyword">be </span>a net <span class="hljs-keyword">beneﬁt </span>to society. Like all <span class="hljs-keyword">LLMs, </span><span class="hljs-keyword">Llama </span><span class="hljs-number">2</span> is a new technology that carries potential risks with use (<span class="hljs-keyword">Bender </span>et al., <span class="hljs-number">2021</span>b<span class="hljs-comment">; Weidinger et al., 2021; Solaiman et al., 2023).</span><br><br>We also <span class="hljs-keyword">share </span>novel observations we made during the development of <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span> <span class="hljs-keyword">and </span><span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat, such as the emergence of tool usage <span class="hljs-keyword">and </span>temporal <span class="hljs-keyword">organization </span>of knowledge. Figure <span class="hljs-number">3</span>: Safety human evaluation results for <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat compared to other open-source <span class="hljs-keyword">and </span><span class="hljs-keyword">closed </span>source models.<br><br>In this work, we develop <span class="hljs-keyword">and </span>release <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>, a family of pretrained <span class="hljs-keyword">and </span>ﬁne-tuned <span class="hljs-keyword">LLMs, </span><span class="hljs-keyword">Llama </span><span class="hljs-number">2</span> <span class="hljs-keyword">and </span><span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat, <span class="hljs-built_in">at</span> <span class="hljs-keyword">scales </span>up to <span class="hljs-number">70</span>B parameters. On the series of helpfulness <span class="hljs-keyword">and </span>safety <span class="hljs-keyword">benchmarks </span>we tested, <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat models generally perform <span class="hljs-keyword">better </span>than existing open-source models.<br><br><span class="hljs-keyword">Additionally, </span>these safety evaluations are performed using content standards that are likely to <span class="hljs-keyword">be </span><span class="hljs-keyword">biased </span>towards the <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat models. We are releasing the following models to the general public for research <span class="hljs-keyword">and </span>commercial use‡: <span class="hljs-number">1</span>.<br><br>We provide a responsible use guide¶ <span class="hljs-keyword">and </span>code examples‖ to facilitate the safe deployment of <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span> <span class="hljs-keyword">and </span><span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat. More details of our responsible release strategy can <span class="hljs-keyword">be </span>found in Section <span class="hljs-number">5</span>.<span class="hljs-number">3</span>.<br><br>====回复====<br><span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>的安全性在人类评估中有所体现，但所有<span class="hljs-keyword">LLMs，包括Llama </span><span class="hljs-number">2</span>，都存在潜在风险（<span class="hljs-keyword">Bender </span>et al., <span class="hljs-number">2021</span>b<span class="hljs-comment">; Weidinger et al., 2021; Solaiman et al., 2023）。具体到Llama 2-Chat，图3展示了与开源和闭源模型相比的安全性结果。然而，没有提供详细的比较或分数，所以我无法直接告诉你Llama 2的整体安全等级。建议参考相关研究或最新的人类评估报告来了解其安全性情况。</span><br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<p><strong>方案</strong>:</p>
+<ol type="1">
+<li>检索时多召回一部分文本</li>
+<li>通过一个排序模型对 query 和 document 重新打分排序</li>
+</ol>
+<p>机制如下</p>
+<p><img src="/images/RAG_ReRanker.png" srcset="/img/loading.gif" lazyload></p>
+<p>RAG ReRanker实现</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> sentence_transformers <span class="hljs-keyword">import</span> CrossEncoder<br><br>model = CrossEncoder(<span class="hljs-string">'cross-encoder/ms-marco-MiniLM-L-6-v2'</span>, max_length=<span class="hljs-number">512</span>) <span class="hljs-comment">#huggingface下载对应模型 </span><br><br>user_query = <span class="hljs-string">"how safe is llama 2"</span><br><br>scores = model.predict([(user_query, doc)<br>                       <span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> search_results[<span class="hljs-string">'documents'</span>][<span class="hljs-number">0</span>]])<br><span class="hljs-comment"># 按得分排序</span><br>sorted_list = <span class="hljs-built_in">sorted</span>(<br>    <span class="hljs-built_in">zip</span>(scores, search_results[<span class="hljs-string">'documents'</span>][<span class="hljs-number">0</span>]), key=<span class="hljs-keyword">lambda</span> x: x[<span class="hljs-number">0</span>], reverse=<span class="hljs-literal">True</span>)<br><span class="hljs-keyword">for</span> score, doc <span class="hljs-keyword">in</span> sorted_list:<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"<span class="hljs-subst">{score}</span>\t<span class="hljs-subst">{doc}</span>\n"</span>)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-8c48914c" role="button" aria-expanded="false" aria-controls="collapse-8c48914c">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-8c48914c">
+        <div class="fold-content">
+          <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-number">6</span>.<span class="hljs-number">613733291625977</span>	We <span class="hljs-keyword">believe </span>that the open release of <span class="hljs-keyword">LLMs, </span>when done safely, will <span class="hljs-keyword">be </span>a net <span class="hljs-keyword">beneﬁt </span>to society. Like all <span class="hljs-keyword">LLMs, </span><span class="hljs-keyword">Llama </span><span class="hljs-number">2</span> is a new technology that carries potential risks with use (<span class="hljs-keyword">Bender </span>et al., <span class="hljs-number">2021</span>b<span class="hljs-comment">; Weidinger et al., 2021; Solaiman et al., 2023).</span><br><br><span class="hljs-number">5</span>.<span class="hljs-number">310719013214111</span>	In this work, we develop <span class="hljs-keyword">and </span>release <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>, a family of pretrained <span class="hljs-keyword">and </span>ﬁne-tuned <span class="hljs-keyword">LLMs, </span><span class="hljs-keyword">Llama </span><span class="hljs-number">2</span> <span class="hljs-keyword">and </span><span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat, <span class="hljs-built_in">at</span> <span class="hljs-keyword">scales </span>up to <span class="hljs-number">70</span>B parameters. On the series of helpfulness <span class="hljs-keyword">and </span>safety <span class="hljs-keyword">benchmarks </span>we tested, <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat models generally perform <span class="hljs-keyword">better </span>than existing open-source models.<br><br><span class="hljs-number">4</span>.<span class="hljs-number">709953308105469</span>	We provide a responsible use guide¶ <span class="hljs-keyword">and </span>code examples‖ to facilitate the safe deployment of <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span> <span class="hljs-keyword">and </span><span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat. More details of our responsible release strategy can <span class="hljs-keyword">be </span>found in Section <span class="hljs-number">5</span>.<span class="hljs-number">3</span>.<br><br><span class="hljs-number">4</span>.<span class="hljs-number">5439653396606445</span>	We also <span class="hljs-keyword">share </span>novel observations we made during the development of <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span> <span class="hljs-keyword">and </span><span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat, such as the emergence of tool usage <span class="hljs-keyword">and </span>temporal <span class="hljs-keyword">organization </span>of knowledge. Figure <span class="hljs-number">3</span>: Safety human evaluation results for <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat compared to other open-source <span class="hljs-keyword">and </span><span class="hljs-keyword">closed </span>source models.<br><br><span class="hljs-number">4</span>.<span class="hljs-number">03388786315918</span>	<span class="hljs-keyword">Additionally, </span>these safety evaluations are performed using content standards that are likely to <span class="hljs-keyword">be </span><span class="hljs-keyword">biased </span>towards the <span class="hljs-keyword">Llama </span><span class="hljs-number">2</span>-Chat models. We are releasing the following models to the general public for research <span class="hljs-keyword">and </span>commercial use‡: <span class="hljs-number">1</span>.<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<h3 id="混合检索hybrid-search">4.3、混合检索（Hybrid Search）</h3>
+<p>在<strong>实际生产</strong>中，传统的关键字检索（稀疏表示）与向量检索（稠密表示）各有优劣。</p>
+<p>举个具体例子，比如文档中包含很长的专有名词，关键字检索往往更精准而向量检索容易引入概念混淆。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 背景说明：在医学中“小细胞肺癌”和“非小细胞肺癌”是两种不同的癌症</span><br><br>query = <span class="hljs-string">"非小细胞肺癌的患者"</span><br><br>documents = [<br>    <span class="hljs-string">"李某患有肺癌，癌细胞已转移"</span>,<br>    <span class="hljs-string">"刘某肺癌I期"</span>,<br>    <span class="hljs-string">"张某经诊断为非小细胞肺癌III期"</span>,<br>    <span class="hljs-string">"小细胞肺癌是肺癌的一种"</span><br>]<br><br>query_vec = get_embeddings([query])[<span class="hljs-number">0</span>]<br>doc_vecs = get_embeddings(documents)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">"Cosine distance:"</span>)<br><span class="hljs-keyword">for</span> vec <span class="hljs-keyword">in</span> doc_vecs:<br>    <span class="hljs-built_in">print</span>(cos_sim(query_vec, vec))<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">Cosine</span> distance:<br><span class="hljs-attribute">0</span>.<span class="hljs-number">9104978086098472</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">8897648918974229</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">9040803406710735</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">9132102982983261</span><br></code></pre></td></tr></table></figure>
+<p>所以，有时候我们需要结合不同的检索算法，来达到比单一检索算法更优的效果。这就是<strong>混合检索</strong>。</p>
+<p>混合检索的核心是，综合文档<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.023ex;" xmlns="http://www.w3.org/2000/svg" width="1.176ex" height="1.593ex" role="img" focusable="false" viewBox="0 -694 520 704"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g></g></g></svg></mjx-container></span>在不同检索算法下的排序名次（rank），为其生成最终排序。</p>
+<p>一个最常用的算法叫 <strong>Reciprocal Rank Fusion（RRF）</strong>
+<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="">[2]</span></a></sup></p>
+<p><span class="math display"><mjx-container class="MathJax" jax="SVG" display="true"><svg style="vertical-align: -2.832ex;" xmlns="http://www.w3.org/2000/svg" width="26.547ex" height="5.868ex" role="img" focusable="false" viewBox="0 -1342 11733.7 2593.6"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mi" transform="translate(451,0)"><path data-c="1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mi" transform="translate(902,0)"><path data-c="1D453" d="M118 -162Q120 -162 124 -164T135 -167T147 -168Q160 -168 171 -155T187 -126Q197 -99 221 27T267 267T289 382V385H242Q195 385 192 387Q188 390 188 397L195 425Q197 430 203 430T250 431Q298 431 298 432Q298 434 307 482T319 540Q356 705 465 705Q502 703 526 683T550 630Q550 594 529 578T487 561Q443 561 443 603Q443 622 454 636T478 657L487 662Q471 668 457 668Q445 668 434 658T419 630Q412 601 403 552T387 469T380 433Q380 431 435 431Q480 431 487 430T498 424Q499 420 496 407T491 391Q489 386 482 386T428 385H372L349 263Q301 15 282 -47Q255 -132 212 -173Q175 -205 139 -205Q107 -205 81 -186T55 -132Q55 -95 76 -78T118 -61Q162 -61 162 -103Q162 -122 151 -136T127 -157L118 -162Z"></path></g><g data-mml-node="mo" transform="translate(1452,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mi" transform="translate(1841,0)"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g><g data-mml-node="mo" transform="translate(2361,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g><g data-mml-node="mo" transform="translate(3027.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="munder" transform="translate(4083.6,0)"><g data-mml-node="mo"><path data-c="2211" d="M60 948Q63 950 665 950H1267L1325 815Q1384 677 1388 669H1348L1341 683Q1320 724 1285 761Q1235 809 1174 838T1033 881T882 898T699 902H574H543H251L259 891Q722 258 724 252Q725 250 724 246Q721 243 460 -56L196 -356Q196 -357 407 -357Q459 -357 548 -357T676 -358Q812 -358 896 -353T1063 -332T1204 -283T1307 -196Q1328 -170 1348 -124H1388Q1388 -125 1381 -145T1356 -210T1325 -294L1267 -449L666 -450Q64 -450 61 -448Q55 -446 55 -439Q55 -437 57 -433L590 177Q590 178 557 222T452 366T322 544L56 909L55 924Q55 945 60 948Z"></path></g><g data-mml-node="TeXAtom" transform="translate(34,-1123.3) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D44E" d="M33 157Q33 258 109 349T280 441Q331 441 370 392Q386 422 416 422Q429 422 439 414T449 394Q449 381 412 234T374 68Q374 43 381 35T402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487Q506 153 506 144Q506 138 501 117T481 63T449 13Q436 0 417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157ZM351 328Q351 334 346 350T323 385T277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q217 26 254 59T298 110Q300 114 325 217T351 328Z"></path></g><g data-mml-node="mo" transform="translate(529,0)"><path data-c="2208" d="M84 250Q84 372 166 450T360 539Q361 539 377 539T419 540T469 540H568Q583 532 583 520Q583 511 570 501L466 500Q355 499 329 494Q280 482 242 458T183 409T147 354T129 306T124 272V270H568Q583 262 583 250T568 230H124V228Q124 207 134 177T167 112T231 48T328 7Q355 1 466 0H570Q583 -10 583 -20Q583 -32 568 -40H471Q464 -40 446 -40T417 -41Q262 -41 172 45Q84 127 84 250Z"></path></g><g data-mml-node="mi" transform="translate(1196,0)"><path data-c="1D434" d="M208 74Q208 50 254 46Q272 46 272 35Q272 34 270 22Q267 8 264 4T251 0Q249 0 239 0T205 1T141 2Q70 2 50 0H42Q35 7 35 11Q37 38 48 46H62Q132 49 164 96Q170 102 345 401T523 704Q530 716 547 716H555H572Q578 707 578 706L606 383Q634 60 636 57Q641 46 701 46Q726 46 726 36Q726 34 723 22Q720 7 718 4T704 0Q701 0 690 0T651 1T578 2Q484 2 455 0H443Q437 6 437 9T439 27Q443 40 445 43L449 46H469Q523 49 533 63L521 213H283L249 155Q208 86 208 74ZM516 260Q516 271 504 416T490 562L463 519Q447 492 400 412L310 260L413 259Q516 259 516 260Z"></path></g></g></g><g data-mml-node="mfrac" transform="translate(5694.2,0)"><g data-mml-node="mn" transform="translate(2769.8,676)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mrow" transform="translate(220,-710)"><g data-mml-node="mi"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path></g><g data-mml-node="mo" transform="translate(743.2,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path></g><g data-mml-node="mi" transform="translate(1743.4,0)"><path data-c="1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mi" transform="translate(2194.4,0)"><path data-c="1D44E" d="M33 157Q33 258 109 349T280 441Q331 441 370 392Q386 422 416 422Q429 422 439 414T449 394Q449 381 412 234T374 68Q374 43 381 35T402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487Q506 153 506 144Q506 138 501 117T481 63T449 13Q436 0 417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157ZM351 328Q351 334 346 350T323 385T277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q217 26 254 59T298 110Q300 114 325 217T351 328Z"></path></g><g data-mml-node="mi" transform="translate(2723.4,0)"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="msub" transform="translate(3323.4,0)"><g data-mml-node="mi"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path></g><g data-mml-node="mi" transform="translate(554,-150) scale(0.707)"><path data-c="1D44E" d="M33 157Q33 258 109 349T280 441Q331 441 370 392Q386 422 416 422Q429 422 439 414T449 394Q449 381 412 234T374 68Q374 43 381 35T402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487Q506 153 506 144Q506 138 501 117T481 63T449 13Q436 0 417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157ZM351 328Q351 334 346 350T323 385T277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q217 26 254 59T298 110Q300 114 325 217T351 328Z"></path></g></g><g data-mml-node="mo" transform="translate(4301.5,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mi" transform="translate(4690.5,0)"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g><g data-mml-node="mo" transform="translate(5210.5,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g><rect width="5799.5" height="60" x="120" y="220"></rect></g></g></g></svg></mjx-container></span></p>
+<p>其中 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0;" xmlns="http://www.w3.org/2000/svg" width="1.697ex" height="1.62ex" role="img" focusable="false" viewBox="0 -716 750 716"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D434" d="M208 74Q208 50 254 46Q272 46 272 35Q272 34 270 22Q267 8 264 4T251 0Q249 0 239 0T205 1T141 2Q70 2 50 0H42Q35 7 35 11Q37 38 48 46H62Q132 49 164 96Q170 102 345 401T523 704Q530 716 547 716H555H572Q578 707 578 706L606 383Q634 60 636 57Q641 46 701 46Q726 46 726 36Q726 34 723 22Q720 7 718 4T704 0Q701 0 690 0T651 1T578 2Q484 2 455 0H443Q437 6 437 9T439 27Q443 40 445 43L449 46H469Q523 49 533 63L521 213H283L249 155Q208 86 208 74ZM516 260Q516 271 504 416T490 562L463 519Q447 492 400 412L310 260L413 259Q516 259 516 260Z"></path></g></g></g></svg></mjx-container></span>
+表示所有使用的检索算法的集合，<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="8.724ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 3856.1 1000"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mi" transform="translate(451,0)"><path data-c="1D44E" d="M33 157Q33 258 109 349T280 441Q331 441 370 392Q386 422 416 422Q429 422 439 414T449 394Q449 381 412 234T374 68Q374 43 381 35T402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487Q506 153 506 144Q506 138 501 117T481 63T449 13Q436 0 417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157ZM351 328Q351 334 346 350T323 385T277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q217 26 254 59T298 110Q300 114 325 217T351 328Z"></path></g><g data-mml-node="mi" transform="translate(980,0)"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="msub" transform="translate(1580,0)"><g data-mml-node="mi"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path></g><g data-mml-node="mi" transform="translate(554,-150) scale(0.707)"><path data-c="1D44E" d="M33 157Q33 258 109 349T280 441Q331 441 370 392Q386 422 416 422Q429 422 439 414T449 394Q449 381 412 234T374 68Q374 43 381 35T402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487Q506 153 506 144Q506 138 501 117T481 63T449 13Q436 0 417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157ZM351 328Q351 334 346 350T323 385T277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q217 26 254 59T298 110Q300 114 325 217T351 328Z"></path></g></g><g data-mml-node="mo" transform="translate(2558.1,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mi" transform="translate(2947.1,0)"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g><g data-mml-node="mo" transform="translate(3467.1,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g></g></svg></mjx-container></span> 表示使用算法 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.023ex;" xmlns="http://www.w3.org/2000/svg" width="1.197ex" height="1.02ex" role="img" focusable="false" viewBox="0 -441 529 451"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D44E" d="M33 157Q33 258 109 349T280 441Q331 441 370 392Q386 422 416 422Q429 422 439 414T449 394Q449 381 412 234T374 68Q374 43 381 35T402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487Q506 153 506 144Q506 138 501 117T481 63T449 13Q436 0 417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157ZM351 328Q351 334 346 350T323 385T277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q217 26 254 59T298 110Q300 114 325 217T351 328Z"></path></g></g></g></svg></mjx-container></span> 检索时，文档 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.023ex;" xmlns="http://www.w3.org/2000/svg" width="1.176ex" height="1.593ex" role="img" focusable="false" viewBox="0 -694 520 704"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g></g></g></svg></mjx-container></span> 的排序，<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.025ex;" xmlns="http://www.w3.org/2000/svg" width="1.179ex" height="1.595ex" role="img" focusable="false" viewBox="0 -694 521 705"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path></g></g></g></svg></mjx-container></span> 是个常数。</p>
+<p>很多向量数据库都支持混合检索，比如 <a target="_blank" rel="noopener" href="https://weaviate.io/blog/hybrid-search-explained">Weaviate</a>、<a target="_blank" rel="noopener" href="https://www.pinecone.io/learn/hybrid-search-intro/">Pinecone</a>
+等。也可以根据上述原理自己实现。</p>
+<p>RRF机制</p>
+<p><img src="/images/RAG_RRF.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="写个简单的例子">4.3.1、写个简单的例子</h4>
+<h5 id="基于关键字检索的排序">1. 基于关键字检索的排序</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> time<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyEsConnector</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, es_client, index_name, keyword_fn</span>):<br>        <span class="hljs-variable language_">self</span>.es_client = es_client<br>        <span class="hljs-variable language_">self</span>.index_name = index_name<br>        <span class="hljs-variable language_">self</span>.keyword_fn = keyword_fn<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">add_documents</span>(<span class="hljs-params">self, documents</span>):<br>        <span class="hljs-string">'''文档灌库'''</span><br>        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.es_client.indices.exists(index=<span class="hljs-variable language_">self</span>.index_name):<br>            <span class="hljs-variable language_">self</span>.es_client.indices.delete(index=<span class="hljs-variable language_">self</span>.index_name)<br>        <span class="hljs-variable language_">self</span>.es_client.indices.create(index=<span class="hljs-variable language_">self</span>.index_name)<br>        actions = [<br>            {<br>                <span class="hljs-string">"_index"</span>: <span class="hljs-variable language_">self</span>.index_name,<br>                <span class="hljs-string">"_source"</span>: {<br>                    <span class="hljs-string">"keywords"</span>: <span class="hljs-variable language_">self</span>.keyword_fn(doc),<br>                    <span class="hljs-string">"text"</span>: doc,<br>                    <span class="hljs-string">"id"</span>: <span class="hljs-string">f"doc_<span class="hljs-subst">{i}</span>"</span><br>                }<br>            }<br>            <span class="hljs-keyword">for</span> i, doc <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(documents)<br>        ]<br>        helpers.bulk(<span class="hljs-variable language_">self</span>.es_client, actions)<br>        time.sleep(<span class="hljs-number">1</span>)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">search</span>(<span class="hljs-params">self, query_string, top_n=<span class="hljs-number">3</span></span>):<br>        <span class="hljs-string">'''检索'''</span><br>        search_query = {<br>            <span class="hljs-string">"match"</span>: {<br>                <span class="hljs-string">"keywords"</span>: <span class="hljs-variable language_">self</span>.keyword_fn(query_string)<br>            }<br>        }<br>        res = <span class="hljs-variable language_">self</span>.es_client.search(<br>            index=<span class="hljs-variable language_">self</span>.index_name, query=search_query, size=top_n)<br>        <span class="hljs-keyword">return</span> {<br>            hit[<span class="hljs-string">"_source"</span>][<span class="hljs-string">"id"</span>]: {<br>                <span class="hljs-string">"text"</span>: hit[<span class="hljs-string">"_source"</span>][<span class="hljs-string">"text"</span>],<br>                <span class="hljs-string">"rank"</span>: i,<br>            }<br>            <span class="hljs-keyword">for</span> i, hit <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(res[<span class="hljs-string">"hits"</span>][<span class="hljs-string">"hits"</span>])<br>        }<br></code></pre></td></tr></table></figure>
+<p>中文处理</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> re<br><span class="hljs-keyword">import</span> jieba<br><span class="hljs-keyword">import</span> nltk<br><span class="hljs-keyword">from</span> nltk.corpus <span class="hljs-keyword">import</span> stopwords<br><br>nltk.download(<span class="hljs-string">'stopwords'</span>)  <br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">to_keywords</span>(<span class="hljs-params">input_string</span>):<br>    <span class="hljs-string">"""将句子转成检索关键词序列"""</span><br>    <span class="hljs-comment"># 按搜索引擎模式分词</span><br>    word_tokens = jieba.cut_for_search(input_string)<br>    <span class="hljs-comment"># 加载停用词表</span><br>    stop_words = <span class="hljs-built_in">set</span>(stopwords.words(<span class="hljs-string">'chinese'</span>))<br>    <span class="hljs-comment"># 去除停用词</span><br>    filtered_sentence = [w <span class="hljs-keyword">for</span> w <span class="hljs-keyword">in</span> word_tokens <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> w <span class="hljs-keyword">in</span> stop_words]<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">' '</span>.join(filtered_sentence)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">sent_tokenize</span>(<span class="hljs-params">input_string</span>):<br>    <span class="hljs-string">"""按标点断句"""</span><br>    <span class="hljs-comment"># 按标点切分</span><br>    sentences = re.split(<span class="hljs-string">r'(?&lt;=[。！？；?!])'</span>, input_string)<br>    <span class="hljs-comment"># 去掉空字符串</span><br>    <span class="hljs-keyword">return</span> [sentence <span class="hljs-keyword">for</span> sentence <span class="hljs-keyword">in</span> sentences <span class="hljs-keyword">if</span> sentence.strip()]<br><br><br>es = Elasticsearch(<br>    hosts=[<span class="hljs-string">'http://ip:port'</span>],  <span class="hljs-comment"># 服务地址与端口</span><br>    http_auth=(<span class="hljs-string">"es_user"</span>, <span class="hljs-string">"es_passwd"</span>),  <span class="hljs-comment"># 用户名，密码</span><br>)<br><br><span class="hljs-comment"># 创建 ES 连接器</span><br>es_connector = MyEsConnector(es, <span class="hljs-string">"demo_es_rrf"</span>, to_keywords)<br><br><span class="hljs-comment"># 文档灌库</span><br>es_connector.add_documents(documents)<br><br><span class="hljs-comment"># 关键字检索</span><br>keyword_search_results = es_connector.search(query, <span class="hljs-number">3</span>)<br><br><span class="hljs-built_in">print</span>(keyword_search_results)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs 1c">{'doc_2'<span class="hljs-punctuation">:</span> {'text'<span class="hljs-punctuation">:</span> '张某经诊断为非小细胞肺癌III期'<span class="hljs-punctuation">,</span> 'rank'<span class="hljs-punctuation">:</span> <span class="hljs-number">0</span>}<span class="hljs-punctuation">,</span> 'doc_0'<span class="hljs-punctuation">:</span> {'text'<span class="hljs-punctuation">:</span> '李某患有肺癌，癌细胞已转移'<span class="hljs-punctuation">,</span> 'rank'<span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>}<span class="hljs-punctuation">,</span> 'doc_3'<span class="hljs-punctuation">:</span> {'text'<span class="hljs-punctuation">:</span> '小细胞肺癌是肺癌的一种'<span class="hljs-punctuation">,</span> 'rank'<span class="hljs-punctuation">:</span> <span class="hljs-number">2</span>}}<br></code></pre></td></tr></table></figure>
+<h5 id="基于向量检索的排序">2. 基于向量检索的排序</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 创建向量数据库连接器</span><br>vecdb_connector = MyVectorDBConnector(<span class="hljs-string">"demo_vec_rrf"</span>, get_embeddings)<br><br><span class="hljs-comment"># 文档灌库</span><br>vecdb_connector.add_documents(documents)<br><br><span class="hljs-comment"># 向量检索</span><br>vector_search_results = {<br>    <span class="hljs-string">"doc_"</span>+<span class="hljs-built_in">str</span>(documents.index(doc)): {<br>        <span class="hljs-string">"text"</span>: doc,<br>        <span class="hljs-string">"rank"</span>: i<br>    }<br>    <span class="hljs-keyword">for</span> i, doc <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(<br>        vecdb_connector.search(query, <span class="hljs-number">3</span>)[<span class="hljs-string">"documents"</span>][<span class="hljs-number">0</span>]<br>    )<br>}  <span class="hljs-comment"># 把结果转成跟上面关键字检索结果一样的格式</span><br><br><span class="hljs-built_in">print</span>(vector_search_results)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs 1c">{'doc_3'<span class="hljs-punctuation">:</span> {'text'<span class="hljs-punctuation">:</span> '小细胞肺癌是肺癌的一种'<span class="hljs-punctuation">,</span> 'rank'<span class="hljs-punctuation">:</span> <span class="hljs-number">0</span>}<span class="hljs-punctuation">,</span> 'doc_0'<span class="hljs-punctuation">:</span> {'text'<span class="hljs-punctuation">:</span> '李某患有肺癌，癌细胞已转移'<span class="hljs-punctuation">,</span> 'rank'<span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>}<span class="hljs-punctuation">,</span> 'doc_2'<span class="hljs-punctuation">:</span> {'text'<span class="hljs-punctuation">:</span> '张某经诊断为非小细胞肺癌III期'<span class="hljs-punctuation">,</span> 'rank'<span class="hljs-punctuation">:</span> <span class="hljs-number">2</span>}}<br></code></pre></td></tr></table></figure>
+<h5 id="基于-rrf-的融合排序">3. 基于 RRF 的融合排序</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> json<br><span class="hljs-keyword">def</span> <span class="hljs-title function_">rrf</span>(<span class="hljs-params">ranks, k=<span class="hljs-number">1</span></span>):<br>    ret = {}<br>    <span class="hljs-comment"># 遍历每次的排序结果</span><br>    <span class="hljs-keyword">for</span> rank <span class="hljs-keyword">in</span> ranks:<br>        <span class="hljs-comment"># 遍历排序中每个元素</span><br>        <span class="hljs-keyword">for</span> <span class="hljs-built_in">id</span>, val <span class="hljs-keyword">in</span> rank.items():<br>            <span class="hljs-keyword">if</span> <span class="hljs-built_in">id</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> ret:<br>                ret[<span class="hljs-built_in">id</span>] = {<span class="hljs-string">"score"</span>: <span class="hljs-number">0</span>, <span class="hljs-string">"text"</span>: val[<span class="hljs-string">"text"</span>]}<br>            <span class="hljs-comment"># 计算 RRF 得分</span><br>            ret[<span class="hljs-built_in">id</span>][<span class="hljs-string">"score"</span>] += <span class="hljs-number">1.0</span>/(k+val[<span class="hljs-string">"rank"</span>])<br>    <span class="hljs-comment"># 按 RRF 得分排序，并返回</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">dict</span>(<span class="hljs-built_in">sorted</span>(ret.items(), key=<span class="hljs-keyword">lambda</span> item: item[<span class="hljs-number">1</span>][<span class="hljs-string">"score"</span>], reverse=<span class="hljs-literal">True</span>))<br><br><br><span class="hljs-comment"># 融合两次检索的排序结果</span><br>reranked = rrf([keyword_search_results, vector_search_results])<br><br><span class="hljs-built_in">print</span>(json.dumps(reranked, indent=<span class="hljs-number">4</span>, ensure_ascii=<span class="hljs-literal">False</span>))<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"doc_2"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"score"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1.3333333333333333</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">"text"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"张某经诊断为非小细胞肺癌III期"</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"doc_3"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"score"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1.3333333333333333</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">"text"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"小细胞肺癌是肺癌的一种"</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"doc_0"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"score"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1.0</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">"text"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"李某患有肺癌，癌细胞已转移"</span><br>    <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<h3 id="rag-fusion">4.4 RAG-Fusion</h3>
+<p>RAG-Fusion 就是利用了 RRF 的原理来提升检索的准确性。</p>
+<p><img src="/images/rag-fusion.jpeg" srcset="/img/loading.gif" lazyload></p>
+<p>原始项目（一段非常简短的演示代码）：<a target="_blank" rel="noopener" href="https://github.com/Raudaschl/rag-fusion">https://github.com/Raudaschl/rag-fusion</a></p>
+<h2 id="五向量模型的本地部署">五、向量模型的本地部署</h2>
+<p>moka-ai/m3e-base 模型，需要去huggingface下载</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> sentence_transformers <span class="hljs-keyword">import</span> SentenceTransformer<br><br><span class="hljs-comment"># model_name = 'BAAI/bge-large-zh-v1.5' #中文</span><br>model_name = <span class="hljs-string">'moka-ai/m3e-base'</span>  <span class="hljs-comment"># 中英双语，但效果一般</span><br><br>model = SentenceTransformer(model_name)<br><br><span class="hljs-comment"># query = "国际争端"</span><br>query = <span class="hljs-string">"global conflicts"</span><br><br>documents = [<br>    <span class="hljs-string">"联合国就苏丹达尔富尔地区大规模暴力事件发出警告"</span>,<br>    <span class="hljs-string">"土耳其、芬兰、瑞典与北约代表将继续就瑞典“入约”问题进行谈判"</span>,<br>    <span class="hljs-string">"日本岐阜市陆上自卫队射击场内发生枪击事件 3人受伤"</span>,<br>    <span class="hljs-string">"国家游泳中心（水立方）：恢复游泳、嬉水乐园等水上项目运营"</span>,<br>    <span class="hljs-string">"我国首次在空间站开展舱外辐射生物学暴露实验"</span>,<br>]<br><br>query_vec = model.encode(query)<br><br>doc_vecs = [<br>    model.encode(doc)<br>    <span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> documents<br>]<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">"Cosine distance:"</span>)  <span class="hljs-comment"># 越大越相似</span><br><span class="hljs-comment"># print(cos_sim(query_vec, query_vec))</span><br><span class="hljs-keyword">for</span> vec <span class="hljs-keyword">in</span> doc_vecs:<br>    <span class="hljs-built_in">print</span>(cos_sim(query_vec, vec))<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">Cosine</span> distance:<br><span class="hljs-attribute">0</span>.<span class="hljs-number">69588137</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">6573522</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">66534257</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">6371887</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">6942898</span><br></code></pre></td></tr></table></figure>
+<h2 id="总结">总结</h2>
+<h3 id="rag-的流程">RAG 的流程</h3>
+<ul>
+<li>离线步骤：
+<ol type="1">
+<li>文档加载</li>
+<li>文档切分</li>
+<li>向量化</li>
+<li>灌入向量数据库</li>
+</ol></li>
+<li>在线步骤：
+<ol type="1">
+<li>获得用户问题</li>
+<li>用户问题向量化</li>
+<li>检索向量数据库</li>
+<li>将检索结果和用户问题填入 Prompt 模版</li>
+<li>用最终获得的 Prompt 调用 LLM</li>
+<li>由 LLM 生成回复
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span><a target="_blank" rel="noopener" href="https://www.sbert.net" class="uri">https://www.sbert.net</a>
+<a href="#fnref:1" rev="footnote" class="footnote-backref">
+↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span><a target="_blank" rel="noopener" href="https://baoyu.io/translations/rag/advanced-rag-techniques-an-illustrated-overview" class="uri">https://baoyu.io/translations/rag/advanced-rag-techniques-an-illustrated-overview</a>
+<a href="#fnref:2" rev="footnote" class="footnote-backref">
+↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section></li>
+</ol></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#LLM学习笔记</a>
+      
+        <a href="/tags/RAG/" class="print-no-link">#RAG</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>RAG</div>
+      <div>https://mztchaoqun.com.cn/posts/D13_RAG/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年2月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D14_LlamaIndex/" title="LlamaIndex(一)——LlamaIndex简介">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LlamaIndex(一)——LlamaIndex简介</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D8_Manjaro_Install_Rime/" title="manjaro安装中文输入法">
+                        <span class="hidden-mobile">manjaro安装中文输入法</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

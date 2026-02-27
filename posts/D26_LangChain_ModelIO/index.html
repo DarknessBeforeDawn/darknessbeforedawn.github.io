@@ -1,0 +1,908 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="LangChain模块架构图 [1]  一、Model I&#x2F;O 简介 Model I&#x2F;O三元组  PromptTemple：模板化、动态选择和管理模型输入 Language Models：通过通用接口调用LLM OutputParser：从LLM输出中提取信息  数据流：Prompt-&gt;Model-&gt;Output Parser  二、模型API 2.1 OpenAI模型封装 12345">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LangChain(二)——Model I&#x2F;O">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D26_LangChain_ModelIO/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="LangChain模块架构图 [1]  一、Model I&#x2F;O 简介 Model I&#x2F;O三元组  PromptTemple：模板化、动态选择和管理模型输入 Language Models：通过通用接口调用LLM OutputParser：从LLM输出中提取信息  数据流：Prompt-&gt;Model-&gt;Output Parser  二、模型API 2.1 OpenAI模型封装 12345">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/LangChain.jpg">
+<meta property="article:published_time" content="2024-06-28T01:46:23.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.270Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="LLM学习笔记">
+<meta property="article:tag" content="LangChain">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/LangChain.jpg">
+  
+  
+  
+  <title>LangChain(二)——Model I/O - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LangChain(二)——Model I/O"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-06-28 09:46" pubdate>
+          2024年6月28日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          35 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LangChain(二)——Model I/O</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><strong>LangChain模块架构图</strong>
+<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span
+class="hint--top hint--rounded" aria-label="">[1]</span></a></sup></p>
+<p><img src="/images/LangChainAll.jpeg" srcset="/img/loading.gif" lazyload /></p>
+<h2 id="一model-io-简介">一、Model I/O 简介</h2>
+<p><strong>Model I/O三元组</strong></p>
+<ul>
+<li>PromptTemple：模板化、动态选择和管理模型输入</li>
+<li>Language Models：通过通用接口调用LLM</li>
+<li>OutputParser：从LLM输出中提取信息</li>
+</ul>
+<p><strong>数据流：</strong>Prompt-&gt;Model-&gt;Output Parser</p>
+<p><img src="/images/model_io.jpg" srcset="/img/loading.gif" lazyload /></p>
+<h2 id="二模型api">二、模型API</h2>
+<h3 id="openai模型封装">2.1 OpenAI模型封装</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><br>llm = ChatOpenAI(model=<span class="hljs-string">&quot;gpt-3.5-turbo&quot;</span>)  <span class="hljs-comment"># 默认是gpt-3.5-turbo</span><br>response = llm.invoke(<span class="hljs-string">&quot;你是谁&quot;</span>)<br><span class="hljs-built_in">print</span>(response.content)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">我是一个人工智能助手，可以回答你的问题和提供帮助。你有什么想知道的或者需要帮忙的吗？<br></code></pre></td></tr></table></figure>
+<h3 id="多轮对话session封装">2.2 多轮对话Session封装</h3>
+<h4 id="消息组成">2.2.1. 消息组成</h4>
+<ul>
+<li><strong>角色（Role）</strong>：描述消息的发送者是谁。</li>
+<li><strong>内容（Content）</strong>：消息的具体内容，可以是：
+<ul>
+<li>字符串（大多数模型处理这种类型的内容）</li>
+<li>列表（包含字典），用于多模态输入，字典中包含输入类型和位置的信息。</li>
+</ul></li>
+<li><strong>附加参数（additional_kwargs）</strong>：用于传递关于消息的额外信息，通常用于特定提供商的输入参数，而非通用参数。一个著名的例子是OpenAI的<code>function_call</code>。</li>
+</ul>
+<h4 id="消息类型">2.2.2 消息类型</h4>
+<ul>
+<li><strong>HumanMessage</strong>：代表用户的消息，通常只包含内容。</li>
+<li><strong>AIMessage</strong>：代表模型的消息，可能包含<code>additional_kwargs</code>，例如使用OpenAI工具调用时的<code>tool_calls</code>。</li>
+<li><strong>SystemMessage</strong>：代表系统消息，指示模型如何行为，通常只包含内容。并非所有模型都支持这种类型。</li>
+<li><strong>FunctionMessage</strong>：代表函数调用的结果。除了<code>role</code>和<code>content</code>，此消息还有一个<code>name</code>参数，表示产生此结果的函数名称。</li>
+<li><strong>ToolMessage</strong>：代表工具调用的结果。与FunctionMessage不同，为了匹配OpenAI的<code>function</code>和<code>tool</code>消息类型。除了<code>role</code>和<code>content</code>，此消息还有一个<code>tool_call_id</code>参数，表示产生此结果的工具调用的ID。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.schema <span class="hljs-keyword">import</span> (<br>    AIMessage,  <span class="hljs-comment"># 等价于OpenAI接口中的assistant role</span><br>    HumanMessage,  <span class="hljs-comment"># 等价于OpenAI接口中的user role</span><br>    SystemMessage  <span class="hljs-comment"># 等价于OpenAI接口中的system role</span><br>)<br><br>messages = [<br>    SystemMessage(content=<span class="hljs-string">&quot;你是一个课程助理。&quot;</span>),<br>    HumanMessage(content=<span class="hljs-string">&quot;我叫小明。&quot;</span>),<br>    AIMessage(content=<span class="hljs-string">&quot;欢迎！&quot;</span>),<br>    HumanMessage(content=<span class="hljs-string">&quot;我是谁&quot;</span>)<br>]<br><br>ret = llm.invoke(messages)<br><br><span class="hljs-built_in">print</span>(ret)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs 1c">content<span class="hljs-punctuation">=</span>&#x27;您是小明先生。&#x27; response_metadata<span class="hljs-punctuation">=</span>&#123;&#x27;token_usage&#x27;<span class="hljs-punctuation">:</span> &#123;&#x27;completion_tokens&#x27;<span class="hljs-punctuation">:</span> <span class="hljs-number">7</span><span class="hljs-punctuation">,</span> &#x27;prompt_tokens&#x27;<span class="hljs-punctuation">:</span> <span class="hljs-number">53</span><span class="hljs-punctuation">,</span> &#x27;total_tokens&#x27;<span class="hljs-punctuation">:</span> <span class="hljs-number">60</span>&#125;<span class="hljs-punctuation">,</span> &#x27;model_name&#x27;<span class="hljs-punctuation">:</span> &#x27;gpt-3.5-turbo&#x27;<span class="hljs-punctuation">,</span> &#x27;system_fingerprint&#x27;<span class="hljs-punctuation">:</span> &#x27;fp_c<span class="hljs-number">2295</span>e73ad&#x27;<span class="hljs-punctuation">,</span> &#x27;finish_reason&#x27;<span class="hljs-punctuation">:</span> &#x27;stop&#x27;<span class="hljs-punctuation">,</span> &#x27;logprobs&#x27;<span class="hljs-punctuation">:</span> None&#125; id<span class="hljs-punctuation">=</span>&#x27;run-b<span class="hljs-number">324601</span>8-<span class="hljs-number">5513</span>-4b19-<span class="hljs-number">8959-08</span>a70b6f2cf8-0&#x27;<br></code></pre></td></tr></table></figure>
+<h3 id="通义千问">2.3 通义千问</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_community.chat_models <span class="hljs-keyword">import</span> ChatTongyi<br>llm = ChatTongyi(model_name=<span class="hljs-string">&#x27;qwen-max&#x27;</span>)<br>messages = [<br>    HumanMessage(content=<span class="hljs-string">&quot;你是谁&quot;</span>)<br>]<br><br>ret = llm.invoke(messages)<br><br><span class="hljs-built_in">print</span>(ret.content)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">我是阿里云开发的一款超大规模语言模型，我叫通义千问。作为一个AI助手，我的设计目标是帮助用户获得准确、有用的信息，解答各种问题，提供知识性支持，进行富有成效的对话交流。在与您的互动中，我会运用我所学习的广泛知识和语言理解能力，竭诚为您提供服务。有什么我可以帮助您的吗？<br></code></pre></td></tr></table></figure>
+<h3 id="tool-calling">2.4 Tool calling</h3>
+<p>支持工具调用特性的 LangChain ChatModels 实现了一个
+<code>.bind_tools</code> 方法，该方法接收一个 LangChain
+工具对象、Pydantic 类或 JSON Schemas
+的列表，并以提供商特定的预期格式将它们绑定到聊天模型。</p>
+<h4 id="工具实现">2.4.1 工具实现</h4>
+<p><strong>LangChain Tool</strong></p>
+<p>使用 <span class="citation" data-cites="tool">@tool</span> 装饰器在
+Python 函数上定义自定义工具的模式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_core.tools <span class="hljs-keyword">import</span> tool<br><br><br><span class="hljs-meta">@tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">add</span>(<span class="hljs-params">a: <span class="hljs-built_in">int</span>, b: <span class="hljs-built_in">int</span></span>) -&gt; <span class="hljs-built_in">int</span>:<br>    <span class="hljs-string">&quot;&quot;&quot;Adds a and b.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        a: first int</span><br><span class="hljs-string">        b: second int</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br>    <span class="hljs-keyword">return</span> a + b<br><br><br><span class="hljs-meta">@tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">multiply</span>(<span class="hljs-params">a: <span class="hljs-built_in">int</span>, b: <span class="hljs-built_in">int</span></span>) -&gt; <span class="hljs-built_in">int</span>:<br>    <span class="hljs-string">&quot;&quot;&quot;Multiplies a and b.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        a: first int</span><br><span class="hljs-string">        b: second int</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br>    <span class="hljs-keyword">return</span> a * b<br><br><br>tools = [add, multiply]<br></code></pre></td></tr></table></figure>
+<p><strong>Pydantic class</strong></p>
+<p>也可以等效地使用 Pydantic 来定义模式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_core.pydantic_v1 <span class="hljs-keyword">import</span> BaseModel, Field<br><br><br><span class="hljs-comment"># Note that the docstrings here are crucial, as they will be passed along</span><br><span class="hljs-comment"># to the model along with the class name.</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">add</span>(<span class="hljs-title class_ inherited__">BaseModel</span>):<br>    <span class="hljs-string">&quot;&quot;&quot;Add two integers together.&quot;&quot;&quot;</span><br><br>    a: <span class="hljs-built_in">int</span> = Field(..., description=<span class="hljs-string">&quot;First integer&quot;</span>)<br>    b: <span class="hljs-built_in">int</span> = Field(..., description=<span class="hljs-string">&quot;Second integer&quot;</span>)<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">multiply</span>(<span class="hljs-title class_ inherited__">BaseModel</span>):<br>    <span class="hljs-string">&quot;&quot;&quot;Multiply two integers together.&quot;&quot;&quot;</span><br><br>    a: <span class="hljs-built_in">int</span> = Field(..., description=<span class="hljs-string">&quot;First integer&quot;</span>)<br>    b: <span class="hljs-built_in">int</span> = Field(..., description=<span class="hljs-string">&quot;Second integer&quot;</span>)<br><br><br>tools = [add, multiply]<br></code></pre></td></tr></table></figure>
+<h4 id="tool-calling-1">2.4.2 Tool calling</h4>
+<p>使用 bind_tools() 方法来处理将 Multiply
+转换为“工具”，并将其绑定到模型（即，每次调用模型时都传递它）。</p>
+<p>工具调用包含在 LLM 响应中，它们将作为 .tool_calls 属性中的 ToolCall
+对象列表附加到相应的 AIMessage 或 AIMessageChunk（流式传输时）。
+ToolCall
+是一个类型化字典，其中包括工具名称、参数值字典和（可选）标识符。
+没有工具调用的消息默认为此属性的空列表。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><br>llm = ChatOpenAI(model=<span class="hljs-string">&quot;gpt-4-turbo&quot;</span>, temperature=<span class="hljs-number">0</span>)<br><br>llm_with_tools = llm.bind_tools(tools)<br><br>query = <span class="hljs-string">&quot;What is 3 * 12? Also, what is 11 + 49?&quot;</span><br><br>llm_with_tools.invoke(query).tool_calls<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;,<br>  &#x27;args&#x27;: &#123;&#x27;a&#x27;: 3, &#x27;b&#x27;: 12&#125;,<br>  &#x27;id&#x27;: &#x27;call_ZrGba27mD7sblS4b9wQLAomE&#x27;&#125;,<br> &#123;&#x27;name&#x27;: &#x27;add&#x27;,<br>  &#x27;args&#x27;: &#123;&#x27;a&#x27;: 11, &#x27;b&#x27;: 49&#125;,<br>  &#x27;id&#x27;: &#x27;call_SCJTaNMIgbV9REQWV5GqcHzH&#x27;&#125;]<br></code></pre></td></tr></table></figure>
+<p>输出解析器可以进一步处理输出</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_core.output_parsers.openai_tools <span class="hljs-keyword">import</span> PydanticToolsParser<br><br>chain = llm_with_tools | PydanticToolsParser(tools=[multiply, add])<br>chain.invoke(query)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">[multiply(a=3, b=12), add(a=11, b=49)]<br></code></pre></td></tr></table></figure>
+<p>当仅使用<code>bind_tools(tools)</code>时，模型可以选择是否返回一个工具调用、多个工具调用或根本不返回工具调用。
+某些模型支持 <code>tool_choice</code> 参数，该参数能够强制模型调用工具。
+对于支持此功能的模型，可以传入希望模型始终调用
+<code>tool_choice="xyz_tool_name"</code> 的工具名称。 或者您可以传入
+<code>tool_choice="any"</code>
+来强制模型调用至少一个工具，而无需具体指定哪个工具。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 模型始终调用乘法工具</span><br>always_multiply_llm = llm.bind_tools([multiply], tool_choice=<span class="hljs-string">&quot;multiply&quot;</span>)<br><span class="hljs-comment"># 始终至少调用加法或乘法之一</span><br>always_call_tool_llm = llm.bind_tools([add, multiply], tool_choice=<span class="hljs-string">&quot;any&quot;</span>)<br></code></pre></td></tr></table></figure>
+<h3 id="流式响应">2.5 流式响应</h3>
+<p>当在流式上下文中调用工具时，消息块将通过
+<code>.tool_call_chunks</code> 属性使用列表中的工具调用块对象填充。
+<code>ToolCallChunk</code> 包含工具名称、参数和 id
+的可选字符串字段，并包含可用于将块连接在一起的可选整数字段索引。</p>
+<p>由于消息块继承自其父消息类，因此具有工具调用块的
+<code>AIMessageChunk</code> 还将包含 <code>.tool_calls</code> 和
+<code>.invalid_tool_calls</code> 字段。
+这些字段是从消息的工具调用块中解析的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">async</span> <span class="hljs-keyword">for</span> chunk <span class="hljs-keyword">in</span> llm_with_tools.astream(query):<br>    <span class="hljs-built_in">print</span>(chunk.tool_call_chunks)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs text">[]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#x27;&#x27;, &#x27;id&#x27;: &#x27;call_5Gdgx3R2z97qIycWKixgD2OU&#x27;, &#x27;index&#x27;: 0&#125;]<br>[&#123;&#x27;name&#x27;: None, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;&#x27;, &#x27;id&#x27;: None, &#x27;index&#x27;: 0&#125;]<br>[&#123;&#x27;name&#x27;: None, &#x27;args&#x27;: &#x27;: 3, &#x27;, &#x27;id&#x27;: None, &#x27;index&#x27;: 0&#125;]<br>[&#123;&#x27;name&#x27;: None, &#x27;args&#x27;: &#x27;&quot;b&quot;: 1&#x27;, &#x27;id&#x27;: None, &#x27;index&#x27;: 0&#125;]<br>[&#123;&#x27;name&#x27;: None, &#x27;args&#x27;: &#x27;2&#125;&#x27;, &#x27;id&#x27;: None, &#x27;index&#x27;: 0&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;add&#x27;, &#x27;args&#x27;: &#x27;&#x27;, &#x27;id&#x27;: &#x27;call_DpeKaF8pUCmLP0tkinhdmBgD&#x27;, &#x27;index&#x27;: 1&#125;]<br>[&#123;&#x27;name&#x27;: None, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;&#x27;, &#x27;id&#x27;: None, &#x27;index&#x27;: 1&#125;]<br>[&#123;&#x27;name&#x27;: None, &#x27;args&#x27;: &#x27;: 11,&#x27;, &#x27;id&#x27;: None, &#x27;index&#x27;: 1&#125;]<br>[&#123;&#x27;name&#x27;: None, &#x27;args&#x27;: &#x27; &quot;b&quot;: &#x27;, &#x27;id&#x27;: None, &#x27;index&#x27;: 1&#125;]<br>[&#123;&#x27;name&#x27;: None, &#x27;args&#x27;: &#x27;49&#125;&#x27;, &#x27;id&#x27;: None, &#x27;index&#x27;: 1&#125;]<br>[]<br></code></pre></td></tr></table></figure>
+<p>添加消息块将合并其相应的工具调用块</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python">first = <span class="hljs-literal">True</span><br><span class="hljs-keyword">async</span> <span class="hljs-keyword">for</span> chunk <span class="hljs-keyword">in</span> llm_with_tools.astream(query):<br>    <span class="hljs-keyword">if</span> first:<br>        gathered = chunk<br>        first = <span class="hljs-literal">False</span><br>    <span class="hljs-keyword">else</span>:<br>        gathered = gathered + chunk<br><br>    <span class="hljs-built_in">print</span>(gathered.tool_call_chunks)<br><br><br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">type</span>(gathered.tool_call_chunks[<span class="hljs-number">0</span>][<span class="hljs-string">&quot;args&quot;</span>]))<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs text">[]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#x27;&#x27;, &#x27;id&#x27;: &#x27;call_hXqj6HxzACkpiPG4hFFuIKuP&#x27;, &#x27;index&#x27;: 0&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;&#x27;, &#x27;id&#x27;: &#x27;call_hXqj6HxzACkpiPG4hFFuIKuP&#x27;, &#x27;index&#x27;: 0&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;: 3, &#x27;, &#x27;id&#x27;: &#x27;call_hXqj6HxzACkpiPG4hFFuIKuP&#x27;, &#x27;index&#x27;: 0&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;: 3, &quot;b&quot;: 1&#x27;, &#x27;id&#x27;: &#x27;call_hXqj6HxzACkpiPG4hFFuIKuP&#x27;, &#x27;index&#x27;: 0&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;: 3, &quot;b&quot;: 12&#125;&#x27;, &#x27;id&#x27;: &#x27;call_hXqj6HxzACkpiPG4hFFuIKuP&#x27;, &#x27;index&#x27;: 0&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;: 3, &quot;b&quot;: 12&#125;&#x27;, &#x27;id&#x27;: &#x27;call_hXqj6HxzACkpiPG4hFFuIKuP&#x27;, &#x27;index&#x27;: 0&#125;, &#123;&#x27;name&#x27;: &#x27;add&#x27;, &#x27;args&#x27;: &#x27;&#x27;, &#x27;id&#x27;: &#x27;call_GERgANDUbRqdtmXRbIAS9JTS&#x27;, &#x27;index&#x27;: 1&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;: 3, &quot;b&quot;: 12&#125;&#x27;, &#x27;id&#x27;: &#x27;call_hXqj6HxzACkpiPG4hFFuIKuP&#x27;, &#x27;index&#x27;: 0&#125;, &#123;&#x27;name&#x27;: &#x27;add&#x27;, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;&#x27;, &#x27;id&#x27;: &#x27;call_GERgANDUbRqdtmXRbIAS9JTS&#x27;, &#x27;index&#x27;: 1&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;: 3, &quot;b&quot;: 12&#125;&#x27;, &#x27;id&#x27;: &#x27;call_hXqj6HxzACkpiPG4hFFuIKuP&#x27;, &#x27;index&#x27;: 0&#125;, &#123;&#x27;name&#x27;: &#x27;add&#x27;, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;: 11,&#x27;, &#x27;id&#x27;: &#x27;call_GERgANDUbRqdtmXRbIAS9JTS&#x27;, &#x27;index&#x27;: 1&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;: 3, &quot;b&quot;: 12&#125;&#x27;, &#x27;id&#x27;: &#x27;call_hXqj6HxzACkpiPG4hFFuIKuP&#x27;, &#x27;index&#x27;: 0&#125;, &#123;&#x27;name&#x27;: &#x27;add&#x27;, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;: 11, &quot;b&quot;: &#x27;, &#x27;id&#x27;: &#x27;call_GERgANDUbRqdtmXRbIAS9JTS&#x27;, &#x27;index&#x27;: 1&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;: 3, &quot;b&quot;: 12&#125;&#x27;, &#x27;id&#x27;: &#x27;call_hXqj6HxzACkpiPG4hFFuIKuP&#x27;, &#x27;index&#x27;: 0&#125;, &#123;&#x27;name&#x27;: &#x27;add&#x27;, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;: 11, &quot;b&quot;: 49&#125;&#x27;, &#x27;id&#x27;: &#x27;call_GERgANDUbRqdtmXRbIAS9JTS&#x27;, &#x27;index&#x27;: 1&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;: 3, &quot;b&quot;: 12&#125;&#x27;, &#x27;id&#x27;: &#x27;call_hXqj6HxzACkpiPG4hFFuIKuP&#x27;, &#x27;index&#x27;: 0&#125;, &#123;&#x27;name&#x27;: &#x27;add&#x27;, &#x27;args&#x27;: &#x27;&#123;&quot;a&quot;: 11, &quot;b&quot;: 49&#125;&#x27;, &#x27;id&#x27;: &#x27;call_GERgANDUbRqdtmXRbIAS9JTS&#x27;, &#x27;index&#x27;: 1&#125;]<br><br>&lt;class &#x27;str&#x27;&gt;<br></code></pre></td></tr></table></figure>
+<p>部分解析</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python">first = <span class="hljs-literal">True</span><br><span class="hljs-keyword">async</span> <span class="hljs-keyword">for</span> chunk <span class="hljs-keyword">in</span> llm_with_tools.astream(query):<br>    <span class="hljs-keyword">if</span> first:<br>        gathered = chunk<br>        first = <span class="hljs-literal">False</span><br>    <span class="hljs-keyword">else</span>:<br>        gathered = gathered + chunk<br><br>    <span class="hljs-built_in">print</span>(gathered.tool_calls)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">type</span>(gathered.tool_calls[<span class="hljs-number">0</span>][<span class="hljs-string">&quot;args&quot;</span>]))<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs text">[]<br>[]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#123;&#125;, &#x27;id&#x27;: &#x27;call_aXQdLhKJpEpUxTNPXIS4l7Mv&#x27;&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#123;&#x27;a&#x27;: 3&#125;, &#x27;id&#x27;: &#x27;call_aXQdLhKJpEpUxTNPXIS4l7Mv&#x27;&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#123;&#x27;a&#x27;: 3, &#x27;b&#x27;: 1&#125;, &#x27;id&#x27;: &#x27;call_aXQdLhKJpEpUxTNPXIS4l7Mv&#x27;&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#123;&#x27;a&#x27;: 3, &#x27;b&#x27;: 12&#125;, &#x27;id&#x27;: &#x27;call_aXQdLhKJpEpUxTNPXIS4l7Mv&#x27;&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#123;&#x27;a&#x27;: 3, &#x27;b&#x27;: 12&#125;, &#x27;id&#x27;: &#x27;call_aXQdLhKJpEpUxTNPXIS4l7Mv&#x27;&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#123;&#x27;a&#x27;: 3, &#x27;b&#x27;: 12&#125;, &#x27;id&#x27;: &#x27;call_aXQdLhKJpEpUxTNPXIS4l7Mv&#x27;&#125;, &#123;&#x27;name&#x27;: &#x27;add&#x27;, &#x27;args&#x27;: &#123;&#125;, &#x27;id&#x27;: &#x27;call_P39VunIrq9MQOxHgF30VByuB&#x27;&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#123;&#x27;a&#x27;: 3, &#x27;b&#x27;: 12&#125;, &#x27;id&#x27;: &#x27;call_aXQdLhKJpEpUxTNPXIS4l7Mv&#x27;&#125;, &#123;&#x27;name&#x27;: &#x27;add&#x27;, &#x27;args&#x27;: &#123;&#x27;a&#x27;: 11&#125;, &#x27;id&#x27;: &#x27;call_P39VunIrq9MQOxHgF30VByuB&#x27;&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#123;&#x27;a&#x27;: 3, &#x27;b&#x27;: 12&#125;, &#x27;id&#x27;: &#x27;call_aXQdLhKJpEpUxTNPXIS4l7Mv&#x27;&#125;, &#123;&#x27;name&#x27;: &#x27;add&#x27;, &#x27;args&#x27;: &#123;&#x27;a&#x27;: 11&#125;, &#x27;id&#x27;: &#x27;call_P39VunIrq9MQOxHgF30VByuB&#x27;&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#123;&#x27;a&#x27;: 3, &#x27;b&#x27;: 12&#125;, &#x27;id&#x27;: &#x27;call_aXQdLhKJpEpUxTNPXIS4l7Mv&#x27;&#125;, &#123;&#x27;name&#x27;: &#x27;add&#x27;, &#x27;args&#x27;: &#123;&#x27;a&#x27;: 11, &#x27;b&#x27;: 49&#125;, &#x27;id&#x27;: &#x27;call_P39VunIrq9MQOxHgF30VByuB&#x27;&#125;]<br>[&#123;&#x27;name&#x27;: &#x27;multiply&#x27;, &#x27;args&#x27;: &#123;&#x27;a&#x27;: 3, &#x27;b&#x27;: 12&#125;, &#x27;id&#x27;: &#x27;call_aXQdLhKJpEpUxTNPXIS4l7Mv&#x27;&#125;, &#123;&#x27;name&#x27;: &#x27;add&#x27;, &#x27;args&#x27;: &#123;&#x27;a&#x27;: 11, &#x27;b&#x27;: 49&#125;, &#x27;id&#x27;: &#x27;call_P39VunIrq9MQOxHgF30VByuB&#x27;&#125;]<br><br><br>&lt;class &#x27;dict&#x27;&gt;<br></code></pre></td></tr></table></figure>
+<h2 id="三prompt-模板">三、Prompt 模板</h2>
+<h3 id="prompt-模板封装">3.1 Prompt 模板封装</h3>
+<ol type="1">
+<li>PromptTemplate 可以在模板中自定义变量</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.prompts <span class="hljs-keyword">import</span> PromptTemplate<br><br>template = PromptTemplate.from_template(<span class="hljs-string">&quot;给我写一首关于&#123;subject&#125;的诗&quot;</span>)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;===Template===&quot;</span>)<br><span class="hljs-built_in">print</span>(template)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;===Prompt===&quot;</span>)<br><span class="hljs-built_in">print</span>(template.<span class="hljs-built_in">format</span>(subject=<span class="hljs-string">&#x27;黄河&#x27;</span>))<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs routeros">===<span class="hljs-attribute">Template</span>===<br>input_variables=[<span class="hljs-string">&#x27;subject&#x27;</span>] <span class="hljs-attribute">template</span>=<span class="hljs-string">&#x27;给我写一首关于&#123;subject&#125;的诗&#x27;</span><br>===<span class="hljs-attribute">Prompt</span>===<br>给我写一首关于黄河的诗<br></code></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>ChatPromptTemplate 用模板表示的对话上下文</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.prompts <span class="hljs-keyword">import</span> (<br>    ChatPromptTemplate,<br>    HumanMessagePromptTemplate,<br>    SystemMessagePromptTemplate,<br>)<br><span class="hljs-keyword">from</span> langchain_community.chat_models <span class="hljs-keyword">import</span> ChatTongyi<br><br>llm = ChatTongyi(model_name=<span class="hljs-string">&#x27;qwen-max&#x27;</span>)<br><br>template = ChatPromptTemplate.from_messages(<br>    [<br>        SystemMessagePromptTemplate.from_template(<br>            <span class="hljs-string">&quot;你是&#123;product&#125;的客服助手。你的名字叫&#123;name&#125;&quot;</span>),<br>        HumanMessagePromptTemplate.from_template(<span class="hljs-string">&quot;&#123;query&#125;&quot;</span>),<br>    ]<br>)<br><br>prompt = template.format_messages(<br>    product=<span class="hljs-string">&quot;服装店&quot;</span>,<br>    name=<span class="hljs-string">&quot;西瓜&quot;</span>,<br>    query=<span class="hljs-string">&quot;你是谁&quot;</span><br>)<br><br>ret = llm.invoke(prompt)<br><br><span class="hljs-built_in">print</span>(ret.content)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">我是西瓜，您的智能客服助手。我在这家时尚服装店中为您提供服务，帮助您解答关于商品、尺码、搭配建议、购物政策等方面的疑问，协助您挑选合适的服饰，确保您在购物过程中获得满意的支持与体验。有什么我可以帮您的吗？<br></code></pre></td></tr></table></figure>
+<ol start="3" type="1">
+<li>MessagesPlaceholder 把多轮对话变成模板</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.prompts <span class="hljs-keyword">import</span> (<br>    ChatPromptTemplate,<br>    HumanMessagePromptTemplate,<br>    MessagesPlaceholder,<br>)<br><span class="hljs-keyword">from</span> langchain_core.messages <span class="hljs-keyword">import</span> AIMessage, HumanMessage<br><br>human_prompt = <span class="hljs-string">&quot;Translate your answer to &#123;language&#125;.&quot;</span><br>human_message_template = HumanMessagePromptTemplate.from_template(human_prompt)<br><br>chat_prompt = ChatPromptTemplate.from_messages(<br>    <span class="hljs-comment"># variable_name 是 message placeholder 在模板中的变量名</span><br>    <span class="hljs-comment"># 用于在赋值时使用</span><br>    [MessagesPlaceholder(variable_name=<span class="hljs-string">&quot;conversation&quot;</span>), human_message_template]<br>)<br><br>human_message = HumanMessage(content=<span class="hljs-string">&quot;Who is Elon Musk?&quot;</span>)<br>ai_message = AIMessage(<br>    content=<span class="hljs-string">&quot;Elon Musk is a billionaire entrepreneur, inventor, and industrial designer&quot;</span><br>)<br><br>messages = chat_prompt.format_prompt(<br>    <span class="hljs-comment"># 对 &quot;conversation&quot; 和 &quot;language&quot; 赋值</span><br>    conversation=[human_message, ai_message], language=<span class="hljs-string">&quot;中文&quot;</span><br>)<br><br><span class="hljs-built_in">print</span>(messages.to_messages())<br><br>result = llm.invoke(messages)<br><span class="hljs-built_in">print</span>(result.content)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs routeros">[HumanMessage(<span class="hljs-attribute">content</span>=<span class="hljs-string">&#x27;Who is Elon Musk?&#x27;</span>), AIMessage(<span class="hljs-attribute">content</span>=<span class="hljs-string">&#x27;Elon Musk is a billionaire entrepreneur, inventor, and industrial designer&#x27;</span>), HumanMessage(<span class="hljs-attribute">content</span>=<span class="hljs-string">&#x27;Translate your answer to 中文.&#x27;</span>)]<br>埃隆·马斯克是一位亿万富翁企业家、发明家和工业设计师<br></code></pre></td></tr></table></figure>
+<h3 id="从文件加载-prompt-模板">3.2 从文件加载 Prompt 模板</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.prompts <span class="hljs-keyword">import</span> PromptTemplate<br><br>template = PromptTemplate.from_file(<span class="hljs-string">&quot;example_prompt_template.txt&quot;</span>)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;===Template===&quot;</span>)<br><span class="hljs-built_in">print</span>(template)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;===Prompt===&quot;</span>)<br><span class="hljs-built_in">print</span>(template.<span class="hljs-built_in">format</span>(topic=<span class="hljs-string">&#x27;三体&#x27;</span>))<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs routeros">===<span class="hljs-attribute">Template</span>===<br>input_variables=[<span class="hljs-string">&#x27;topic&#x27;</span>] <span class="hljs-attribute">template</span>=<span class="hljs-string">&#x27;举一个关于&#123;topic&#125;的例子&#x27;</span><br>===<span class="hljs-attribute">Prompt</span>===<br>举一个关于三体的例子<br></code></pre></td></tr></table></figure>
+<h2 id="四输出封装-outputparser">四、输出封装 OutputParser</h2>
+<p>自动把 LLM 输出的字符串按指定格式加载。</p>
+<p>LangChain 内置的 OutputParser 包括:</p>
+<ul>
+<li>ListParser</li>
+<li>DatetimeParser</li>
+<li>EnumParser</li>
+<li>JsonOutputParser</li>
+<li>PydanticParser</li>
+<li>XMLParser</li>
+</ul>
+<p>等等
+<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span
+class="hint--top hint--rounded" aria-label="">[2]</span></a></sup></p>
+<h3 id="pydantic-json-parser">4.1 Pydantic (JSON) Parser</h3>
+<p>自动根据 Pydantic 类的定义，生成输出的格式说明</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_core.pydantic_v1 <span class="hljs-keyword">import</span> BaseModel, Field, validator<br><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">List</span>, <span class="hljs-type">Dict</span><br>    <br><span class="hljs-keyword">from</span> langchain.prompts <span class="hljs-keyword">import</span> PromptTemplate, ChatPromptTemplate, HumanMessagePromptTemplate<br><span class="hljs-keyword">from</span> langchain_core.output_parsers <span class="hljs-keyword">import</span> PydanticOutputParser<br><span class="hljs-keyword">from</span> langchain_community.chat_models <span class="hljs-keyword">import</span> ChatTongyi<br><br><br><span class="hljs-comment"># 定义你的输出对象</span><br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Date</span>(<span class="hljs-title class_ inherited__">BaseModel</span>):<br>    year: <span class="hljs-built_in">int</span> = Field(description=<span class="hljs-string">&quot;Year&quot;</span>)<br>    month: <span class="hljs-built_in">int</span> = Field(description=<span class="hljs-string">&quot;Month&quot;</span>)<br>    day: <span class="hljs-built_in">int</span> = Field(description=<span class="hljs-string">&quot;Day&quot;</span>)<br>    era: <span class="hljs-built_in">str</span> = Field(description=<span class="hljs-string">&quot;BC or AD&quot;</span>)<br><br>    <span class="hljs-comment"># ----- 可选机制 --------</span><br>    <span class="hljs-comment"># 你可以添加自定义的校验机制</span><br><span class="hljs-meta">    @validator(<span class="hljs-params"><span class="hljs-string">&#x27;month&#x27;</span></span>)</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">valid_month</span>(<span class="hljs-params">cls, field</span>):<br>        <span class="hljs-keyword">if</span> field &lt;= <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> field &gt; <span class="hljs-number">12</span>:<br>            <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">&quot;月份必须在1-12之间&quot;</span>)<br>        <span class="hljs-keyword">return</span> field<br><br><span class="hljs-meta">    @validator(<span class="hljs-params"><span class="hljs-string">&#x27;day&#x27;</span></span>)</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">valid_day</span>(<span class="hljs-params">cls, field</span>):<br>        <span class="hljs-keyword">if</span> field &lt;= <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> field &gt; <span class="hljs-number">31</span>:<br>            <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">&quot;日期必须在1-31日之间&quot;</span>)<br>        <span class="hljs-keyword">return</span> field<br><br><span class="hljs-meta">    @validator(<span class="hljs-params"><span class="hljs-string">&#x27;day&#x27;</span>, pre=<span class="hljs-literal">True</span>, always=<span class="hljs-literal">True</span></span>)</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">valid_date</span>(<span class="hljs-params">cls, day, values</span>):<br>        year = values.get(<span class="hljs-string">&#x27;year&#x27;</span>)<br>        month = values.get(<span class="hljs-string">&#x27;month&#x27;</span>)<br><br>        <span class="hljs-comment"># 确保年份和月份都已经提供</span><br>        <span class="hljs-keyword">if</span> year <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span> <span class="hljs-keyword">or</span> month <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:<br>            <span class="hljs-keyword">return</span> day  <span class="hljs-comment"># 无法验证日期，因为没有年份和月份</span><br><br>        <span class="hljs-comment"># 检查日期是否有效</span><br>        <span class="hljs-keyword">if</span> month == <span class="hljs-number">2</span>:<br>            <span class="hljs-keyword">if</span> cls.is_leap_year(year) <span class="hljs-keyword">and</span> day &gt; <span class="hljs-number">29</span>:<br>                <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">&quot;闰年2月最多有29天&quot;</span>)<br>            <span class="hljs-keyword">elif</span> <span class="hljs-keyword">not</span> cls.is_leap_year(year) <span class="hljs-keyword">and</span> day &gt; <span class="hljs-number">28</span>:<br>                <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">&quot;非闰年2月最多有28天&quot;</span>)<br>        <span class="hljs-keyword">elif</span> month <span class="hljs-keyword">in</span> [<span class="hljs-number">4</span>, <span class="hljs-number">6</span>, <span class="hljs-number">9</span>, <span class="hljs-number">11</span>] <span class="hljs-keyword">and</span> day &gt; <span class="hljs-number">30</span>:<br>            <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">f&quot;<span class="hljs-subst">&#123;month&#125;</span>月最多有30天&quot;</span>)<br><br>        <span class="hljs-keyword">return</span> day<br><br><span class="hljs-meta">    @staticmethod</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">is_leap_year</span>(<span class="hljs-params">year</span>):<br>        <span class="hljs-keyword">if</span> year % <span class="hljs-number">400</span> == <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> (year % <span class="hljs-number">4</span> == <span class="hljs-number">0</span> <span class="hljs-keyword">and</span> year % <span class="hljs-number">100</span> != <span class="hljs-number">0</span>):<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span><br><br><br>model = ChatTongyi(model_name=<span class="hljs-string">&#x27;qwen-max&#x27;</span>,top_p=<span class="hljs-number">0.1</span>)<br><br><span class="hljs-comment"># 根据Pydantic对象的定义，构造一个OutputParser</span><br>parser = PydanticOutputParser(pydantic_object=Date)<br><br>template = <span class="hljs-string">&quot;&quot;&quot;提取用户输入中的日期。</span><br><span class="hljs-string">&#123;format_instructions&#125;</span><br><span class="hljs-string">用户输入:</span><br><span class="hljs-string">&#123;query&#125;&quot;&quot;&quot;</span><br><br>prompt = PromptTemplate(<br>    template=template,<br>    input_variables=[<span class="hljs-string">&quot;query&quot;</span>],<br>    <span class="hljs-comment"># 直接从OutputParser中获取输出描述，并对模板的变量预先赋值</span><br>    partial_variables=&#123;<span class="hljs-string">&quot;format_instructions&quot;</span>: parser.get_format_instructions()&#125;<br>)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====Format Instruction=====&quot;</span>)<br><span class="hljs-built_in">print</span>(parser.get_format_instructions())<br><br><br>query = <span class="hljs-string">&quot;2077年八月6日，三体舰队打过来了&quot;</span><br>model_input = prompt.format_prompt(query=query)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====Prompt=====&quot;</span>)<br><span class="hljs-built_in">print</span>(model_input.to_string())<br><br>output = model.invoke(model_input.to_messages())<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====模型原始输出=====&quot;</span>)<br><span class="hljs-built_in">print</span>(output.content)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;====Parse后的输出=====&quot;</span>)<br>date = parser.parse(output.content)<br><span class="hljs-built_in">print</span>(date)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-68e34b00" role="button" aria-expanded="false" aria-controls="collapse-68e34b00">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-68e34b00">
+        <div class="fold-content">
+          <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">====Format <span class="hljs-keyword">Instruction=====</span><br><span class="hljs-keyword"></span>The output <span class="hljs-keyword">should </span><span class="hljs-keyword">be </span>formatted as a <span class="hljs-keyword">JSON </span><span class="hljs-keyword">instance </span>that conforms to the <span class="hljs-keyword">JSON </span><span class="hljs-keyword">schema </span><span class="hljs-keyword">below.</span><br><span class="hljs-keyword"></span><br>As an example, for the <span class="hljs-keyword">schema </span>&#123;<span class="hljs-string">&quot;properties&quot;</span>: &#123;<span class="hljs-string">&quot;foo&quot;</span>: &#123;<span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Foo&quot;</span>, <span class="hljs-string">&quot;description&quot;</span>: <span class="hljs-string">&quot;a list of strings&quot;</span>, <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;array&quot;</span>, <span class="hljs-string">&quot;items&quot;</span>: &#123;<span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>&#125;&#125;&#125;, <span class="hljs-string">&quot;required&quot;</span>: [<span class="hljs-string">&quot;foo&quot;</span>]&#125;<br>the object &#123;<span class="hljs-string">&quot;foo&quot;</span>: [<span class="hljs-string">&quot;bar&quot;</span>, <span class="hljs-string">&quot;baz&quot;</span>]&#125; is a well-formatted <span class="hljs-keyword">instance </span>of the <span class="hljs-keyword">schema. </span>The object &#123;<span class="hljs-string">&quot;properties&quot;</span>: &#123;<span class="hljs-string">&quot;foo&quot;</span>: [<span class="hljs-string">&quot;bar&quot;</span>, <span class="hljs-string">&quot;baz&quot;</span>]&#125;&#125; is not well-formatted.<br><br>Here is the output <span class="hljs-keyword">schema:</span><br></code></pre></td></tr></table></figure><p>{“properties”: {“year”: {“title”: “Year”, “description”: “Year”,“type”: “integer”}, “month”: {“title”: “Month”, “description”: “Month”,“type”: “integer”}, “day”: {“title”: “Day”, “description”: “Day”,“type”: “integer”}, “era”: {“title”: “Era”, “description”: “BC or AD”,“type”: “string”}}, “required”: [“year”, “month”, “day”, “era”]}<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs xquery">====Prompt=====<br>提取用户输入中的日期。<br>The output should be formatted <span class="hljs-keyword">as</span> a JSON <span class="hljs-keyword">instance</span> that conforms <span class="hljs-keyword">to</span> the JSON <span class="hljs-keyword">schema</span> below.<br><br>As an example, <span class="hljs-keyword">for</span> the <span class="hljs-keyword">schema</span> &#123;<span class="hljs-string">&quot;properties&quot;</span>: &#123;<span class="hljs-string">&quot;foo&quot;</span>: &#123;<span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Foo&quot;</span>, <span class="hljs-string">&quot;description&quot;</span>: <span class="hljs-string">&quot;a list of strings&quot;</span>, <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;array&quot;</span>, <span class="hljs-string">&quot;items&quot;</span>: &#123;<span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>&#125;&#125;&#125;, <span class="hljs-string">&quot;required&quot;</span>: [<span class="hljs-string">&quot;foo&quot;</span>]&#125;<br>the object &#123;<span class="hljs-string">&quot;foo&quot;</span>: [<span class="hljs-string">&quot;bar&quot;</span>, <span class="hljs-string">&quot;baz&quot;</span>]&#125; <span class="hljs-literal">is</span> a well-formatted <span class="hljs-keyword">instance</span> <span class="hljs-keyword">of</span> the <span class="hljs-keyword">schema</span>. The object &#123;<span class="hljs-string">&quot;properties&quot;</span>: &#123;<span class="hljs-string">&quot;foo&quot;</span>: [<span class="hljs-string">&quot;bar&quot;</span>, <span class="hljs-string">&quot;baz&quot;</span>]&#125;&#125; <span class="hljs-literal">is</span><span class="hljs-built_in"> not</span> well-formatted.<br><br>Here <span class="hljs-literal">is</span> the output schema:<br></code></pre></td></tr></table></figure> {“properties”: {“year”: {“title”: “Year”, “description”:“Year”, “type”: “integer”}, “month”: {“title”: “Month”, “description”:“Month”, “type”: “integer”}, “day”: {“title”: “Day”, “description”:“Day”, “type”: “integer”}, “era”: {“title”: “Era”, “description”: “BC orAD”, “type”: “string”}}, “required”: [“year”, “month”, “day”, “era”]}<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs routeros">用户输入:<br>2077年八月6日，三体舰队打过来了<br>====模型原始输出=====<br>&#123;<span class="hljs-string">&quot;year&quot;</span>: 2077, <span class="hljs-string">&quot;month&quot;</span>: 8, <span class="hljs-string">&quot;day&quot;</span>: 6, <span class="hljs-string">&quot;era&quot;</span>: <span class="hljs-string">&quot;AD&quot;</span>&#125;<br>====Parse后的输出=====<br><span class="hljs-attribute">year</span>=2077 <span class="hljs-attribute">month</span>=8 <span class="hljs-attribute">day</span>=6 <span class="hljs-attribute">era</span>=<span class="hljs-string">&#x27;AD&#x27;</span><br></code></pre></td></tr></table></figure></p>
+        </div>
+      </div>
+    </div>
+<h3 id="auto-fixing-parser">4.2 Auto-Fixing Parser</h3>
+<p>利用 LLM 自动根据解析异常修复并重新解析</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.output_parsers <span class="hljs-keyword">import</span> OutputFixingParser<br><br>new_parser = OutputFixingParser.from_llm(<br>    parser=parser, llm= ChatTongyi(model_name=<span class="hljs-string">&#x27;qwen-max&#x27;</span>))<br><br><span class="hljs-comment"># 我们把之前output的格式改错</span><br>output = output.content.replace(<span class="hljs-string">&quot;8&quot;</span>, <span class="hljs-string">&quot;八月&quot;</span>)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;===格式错误的Output===&quot;</span>)<br><span class="hljs-built_in">print</span>(output)<br><span class="hljs-keyword">try</span>:<br>    date = parser.parse(output)<br><span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;===出现异常===&quot;</span>)<br>    <span class="hljs-built_in">print</span>(e)<br><br><span class="hljs-comment"># 用OutputFixingParser自动修复并解析</span><br>date = new_parser.parse(output)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;===重新解析结果===&quot;</span>)<br><span class="hljs-built_in">print</span>(date.json())<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs routeros">===格式错误的<span class="hljs-attribute">Output</span>===<br>&#123;<span class="hljs-string">&quot;year&quot;</span>: 2077, <span class="hljs-string">&quot;month&quot;</span>: 八月, <span class="hljs-string">&quot;day&quot;</span>: 6, <span class="hljs-string">&quot;era&quot;</span>: <span class="hljs-string">&quot;AD&quot;</span>&#125;<br>===出现异常===<br>Invalid json output: &#123;<span class="hljs-string">&quot;year&quot;</span>: 2077, <span class="hljs-string">&quot;month&quot;</span>: 八月, <span class="hljs-string">&quot;day&quot;</span>: 6, <span class="hljs-string">&quot;era&quot;</span>: <span class="hljs-string">&quot;AD&quot;</span>&#125;<br>===重新解析结果===<br>&#123;<span class="hljs-string">&quot;year&quot;</span>: 2077, <span class="hljs-string">&quot;month&quot;</span>: 8, <span class="hljs-string">&quot;day&quot;</span>: 6, <span class="hljs-string">&quot;era&quot;</span>: <span class="hljs-string">&quot;AD&quot;</span>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/datawhalechina/prompt-engineering-for-developers">datawhalechina/prompt-engineering-for-developers:
+吴恩达大模型系列课程中文版</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/get_started/introduction">LangChain官方python文档</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://nanonets.com/blog/langchain/#langchain-expression-language">A
+Complete LangChain Guide</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://space.bilibili.com/28357052/channel/collectiondetail?sid=1611560">LangChain
+架构解析和应用开发实践分享</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/webup/agi-talks/tree/master">webup/agi-talks
+AGI 内外部分享材料合集</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com.cn/docs/">LangChain 中文文档
+v0.1.7</a>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1"
+class="footnote-text"><span><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1214y1X7Aq"
+class="uri">https://www.bilibili.com/video/BV1214y1X7Aq</a>
+<a href="#fnref:1" rev="footnote" class="footnote-backref">
+↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span><a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/modules/model_io/output_parsers/"
+class="uri">https://python.langchain.com/docs/modules/model_io/output_parsers/</a>
+<a href="#fnref:2" rev="footnote" class="footnote-backref">
+↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LangChain/" class="category-chain-item">LangChain</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#LLM学习笔记</a>
+      
+        <a href="/tags/LangChain/" class="print-no-link">#LangChain</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LangChain(二)——Model I/O</div>
+      <div>https://mztchaoqun.com.cn/posts/D26_LangChain_ModelIO/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年6月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D27_LangChain_Retrieval/" title="LangChain(三)——Data Connection">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LangChain(三)——Data Connection</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D25_LangChain/" title="LangChain(一)——LangChain简介">
+                        <span class="hidden-mobile">LangChain(一)——LangChain简介</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

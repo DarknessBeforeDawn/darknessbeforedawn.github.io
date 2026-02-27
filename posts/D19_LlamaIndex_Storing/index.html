@@ -1,0 +1,1058 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、简介 LlamaIndex 提供了一个高级接口，用于提取、索引和查询您的外部数据。在底层，LlamaIndex 还支持可互换的存储组件，允许您自定义：  Document stores: 存储提取的文档（即，Node 对象）的地方 Index stores: 存储索引元数据的地方 Vector stores: 存储向量的地方 Graph stores: 存储知识图谱的地方（即 Knowledg">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LlamaIndex(六)——LlamaIndex Storing">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D19_LlamaIndex_Storing/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、简介 LlamaIndex 提供了一个高级接口，用于提取、索引和查询您的外部数据。在底层，LlamaIndex 还支持可互换的存储组件，允许您自定义：  Document stores: 存储提取的文档（即，Node 对象）的地方 Index stores: 存储索引元数据的地方 Vector stores: 存储向量的地方 Graph stores: 存储知识图谱的地方（即 Knowledg">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/LlamaIndex6.png">
+<meta property="article:published_time" content="2024-05-01T05:54:21.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.269Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="LLM学习笔记">
+<meta property="article:tag" content="LlamaIndex">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/LlamaIndex6.png">
+  
+  
+  
+  <title>LlamaIndex(六)——LlamaIndex Storing - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LlamaIndex(六)——LlamaIndex Storing"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-05-01 13:54" pubdate>
+          2024年5月1日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          24 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LlamaIndex(六)——LlamaIndex Storing</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一简介">一、简介</h2>
+<p>LlamaIndex
+提供了一个高级接口，用于提取、索引和查询您的外部数据。在底层，LlamaIndex
+还支持可互换的存储组件，允许您自定义：</p>
+<ul>
+<li>Document stores: 存储提取的文档（即，Node 对象）的地方</li>
+<li>Index stores: 存储索引元数据的地方</li>
+<li>Vector stores: 存储向量的地方</li>
+<li>Graph stores: 存储知识图谱的地方（即 KnowledgeGraphIndex）</li>
+<li>Chat Stores: 存储和组织聊天记录的地方</li>
+</ul>
+<p>文档/索引存储依赖于一个共同的键值存储抽象。LlamaIndex
+支持将数据持久化到 <a target="_blank" rel="noopener" href="https://filesystem-spec.readthedocs.io/en/latest/index.html">fsspec</a>
+支持的任何存储后端。已确认支持以下存储后端：</p>
+<ul>
+<li>本地文件系统</li>
+<li>AWS S3</li>
+<li>Cloudflare R2</li>
+</ul>
+<p><img src="/images/storage.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="使用示例">1.1 使用示例</h3>
+<p>许多向量存储（除了
+FAISS）会同时存储数据和索引（embeddings）。这意味着不需要使用单独的文档存储或索引存储。这也意味着不需要显式地持久化这些数据
+- 这会自动发生。构建新索引/重新加载现有索引的用法可能如下所示。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">## build a new index</span><br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex, StorageContext<br><span class="hljs-keyword">from</span> llama_index.vector_stores.deeplake <span class="hljs-keyword">import</span> DeepLakeVectorStore<br><br><span class="hljs-comment"># construct vector store and customize storage context</span><br>vector_store = DeepLakeVectorStore(dataset_path=<span class="hljs-string">"&lt;dataset_path&gt;"</span>)<br>storage_context = StorageContext.from_defaults(vector_store=vector_store)<br><span class="hljs-comment"># Load documents and build index</span><br>index = VectorStoreIndex.from_documents(<br>    documents, storage_context=storage_context<br>)<br><br><br><span class="hljs-comment">## reload an existing one</span><br>index = VectorStoreIndex.from_vector_store(vector_store=vector_store)<br></code></pre></td></tr></table></figure>
+<p>通常要使用存储抽象，需要定义一个 <code>StorageContext</code>
+对象：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.storage.docstore <span class="hljs-keyword">import</span> SimpleDocumentStore<br><span class="hljs-keyword">from</span> llama_index.core.storage.index_store <span class="hljs-keyword">import</span> SimpleIndexStore<br><span class="hljs-keyword">from</span> llama_index.core.vector_stores <span class="hljs-keyword">import</span> SimpleVectorStore<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> StorageContext<br><br><span class="hljs-comment"># create storage context using default stores</span><br>storage_context = StorageContext.from_defaults(<br>    docstore=SimpleDocumentStore(),<br>    vector_store=SimpleVectorStore(),<br>    index_store=SimpleIndexStore(),<br>)<br></code></pre></td></tr></table></figure>
+<h2 id="二vector-stores">二、Vector Stores</h2>
+<p>向量存储包含被提取文档块的向量（有时也包含文档块本身）。</p>
+<h3 id="简单向量存储">2.1 简单向量存储</h3>
+<p>默认情况下，LlamaIndex 使用一个简单的内存向量存储，非常适合快速实验。
+它们可以通过调用 <code>vector_store.persist()</code>（以及
+<code>SimpleVectorStore.from_persist_path(...)</code>
+）保存到磁盘上（并从磁盘加载）。</p>
+<p>LlamaIndex 支持超过 20 种不同的向量存储选项。具体可查看：<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/community/integrations/vector_stores/">https://docs.llamaindex.ai/en/stable/community/integrations/vector_stores/</a></p>
+<h2 id="三document-stores">三、Document Stores</h2>
+<p>文档存储包含了已提取的文档块，称之为节点对象（Node objects）<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/api_reference/storage/docstore/">API
+Reference</a></p>
+<h3 id="简单文档存储">3.1 简单文档存储</h3>
+<p>默认情况下，<code>SimpleDocumentStore</code>
+将节点对象存储在内存中。可以通过调用
+<code>docstore.persist()</code>（以及
+<code>SimpleDocumentStore.from_persist_path(...)</code>）将它们持久化到磁盘（并从磁盘加载）。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/docstore/DocstoreDemo/">完整例子</a></p>
+<h3 id="mongodb-文档存储">3.2 MongoDB 文档存储</h3>
+<p>LlamaIndex支持 MongoDB
+作为另一种文档存储后端，它在提取节点对象时持久化数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.storage.docstore.mongodb <span class="hljs-keyword">import</span> MongoDocumentStore<br><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SentenceSplitter<br><br><span class="hljs-comment"># create parser and parse document into nodes</span><br>parser = SentenceSplitter()<br>nodes = parser.get_nodes_from_documents(documents)<br><br><span class="hljs-comment"># create (or load) docstore and add nodes</span><br>docstore = MongoDocumentStore.from_uri(uri=<span class="hljs-string">"&lt;mongodb+srv://...&gt;"</span>)<br>docstore.add_documents(nodes)<br><br><span class="hljs-comment"># create storage context</span><br>storage_context = StorageContext.from_defaults(docstore=docstore)<br><br><span class="hljs-comment"># build index</span><br>index = VectorStoreIndex(nodes, storage_context=storage_context)<br></code></pre></td></tr></table></figure>
+<p>在底层，<code>MongoDocumentStore</code> 连接到一个固定的
+<code>MongoDB</code>
+数据库，并将节点初始化新集合（或加载现有集合）。在实例化
+<code>MongoDocumentStore</code> 时，可以配置 <code>db_name</code> 和
+<code>namespace</code>，否则它们默认为
+<code>db_name="db_docstore"</code> 和
+<code>namespace="docstore"</code>。当使用
+<code>MongoDocumentStore</code> 时，不必调用
+<code>storage_context.persist()</code>（或
+<code>docstore.persist()</code>），因为数据默认情况下会被持久化。</p>
+<p>可以通过使用现有的 <code>db_name</code> 和
+<code>collection_name</code> 重新初始化
+<code>MongoDocumentStore</code>，轻松地重新连接到 <code>MongoDB</code>
+集合并重新加载索引。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/docstore/MongoDocstoreDemo/">完整的示例</a></p>
+<h3 id="redis-文档存储">3.3 Redis 文档存储</h3>
+<p>LlamaIndex支持 Redis
+作为另一种文档存储后端，它在提取节点对象时持久化数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.storage.docstore.redis <span class="hljs-keyword">import</span> RedisDocumentStore<br><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SentenceSplitter<br><br><span class="hljs-comment"># create parser and parse document into nodes</span><br>parser = SentenceSplitter()<br>nodes = parser.get_nodes_from_documents(documents)<br><br><span class="hljs-comment"># create (or load) docstore and add nodes</span><br>docstore = RedisDocumentStore.from_host_and_port(<br>    host=<span class="hljs-string">"127.0.0.1"</span>, port=<span class="hljs-string">"6379"</span>, namespace=<span class="hljs-string">"llama_index"</span><br>)<br>docstore.add_documents(nodes)<br><br><span class="hljs-comment"># create storage context</span><br>storage_context = StorageContext.from_defaults(docstore=docstore)<br><br><span class="hljs-comment"># build index</span><br>index = VectorStoreIndex(nodes, storage_context=storage_context)<br></code></pre></td></tr></table></figure>
+<p>在底层，<code>RedisDocumentStore</code> 连接到一个 <code>redis</code>
+数据库，并将您的节点添加到一个存储在 <code>{namespace}/docs</code>
+下的命名空间中。在实例化 <code>RedisDocumentStore</code>
+时，可以配置命名空间，否则它默认为
+<code>namespace="docstore"</code>。可以通过使用现有的
+<code>host、port</code> 和 <code>namespace</code> 重新初始化
+<code>RedisDocumentStore</code>，轻松地重新连接到 <code>Redis</code>
+客户端并重新加载索引。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/docstore/RedisDocstoreIndexStoreDemo/">完整的示例</a></p>
+<h3 id="firestore-文档存储">3.4 Firestore 文档存储</h3>
+<p>LlamaIndex支持 Firestore
+作为另一种文档存储后端，它在提取节点对象时持久化数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.storage.docstore.firestore <span class="hljs-keyword">import</span> FirestoreDocumentStore<br><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SentenceSplitter<br><br><span class="hljs-comment"># create parser and parse document into nodes</span><br>parser = SentenceSplitter()<br>nodes = parser.get_nodes_from_documents(documents)<br><br><span class="hljs-comment"># create (or load) docstore and add nodes</span><br>docstore = FirestoreDocumentStore.from_database(<br>    project=<span class="hljs-string">"project-id"</span>,<br>    database=<span class="hljs-string">"(default)"</span>,<br>)<br>docstore.add_documents(nodes)<br><br><span class="hljs-comment"># create storage context</span><br>storage_context = StorageContext.from_defaults(docstore=docstore)<br><br><span class="hljs-comment"># build index</span><br>index = VectorStoreIndex(nodes, storage_context=storage_context)<br></code></pre></td></tr></table></figure>
+<p>在底层，<code>FirestoreDocumentStore</code> 连接到
+<code>Google Cloud</code> 中的 <code>firestore</code>
+数据库，并将节点添加到存储在 <code>{namespace}/docs</code>
+下的命名空间中。在实例化 <code>FirestoreDocumentStore</code>
+时，您可以配置命名空间，否则它默认为
+<code>namespace="docstore"</code>。可以通过使用现有的
+<code>project、database</code> 和 <code>namespace</code>
+重新初始化<code>FirestoreDocumentStore</code>，轻松地重新连接到
+<code>Firestore</code> 数据库并重新加载索引。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/docstore/FirestoreDemo/">完整的示例</a></p>
+<h2 id="四index-stores">四、Index Stores</h2>
+<p>索引存储包含轻量级索引元数据（即构建索引时创建的附加状态信息）。<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/api_reference/storage/index_store/">API
+Reference</a></p>
+<h3 id="简单索引存储">4.1 简单索引存储</h3>
+<p>默认情况下，LlamaIndex
+使用一个简单的索引存储，该存储由内存中的键值存储支持。它们可以通过调用
+<code>index_store.persist()</code>（以及
+<code>SimpleIndexStore.from_persist_path(...)</code>）持久化到磁盘并从磁盘加载。</p>
+<h3 id="mongodb-索引存储">4.2 MongoDB 索引存储</h3>
+<p>类似于文档存储，LlamaIndex也可以将 <code>MongoDB</code>
+用作索引存储的存储后端。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.storage.index_store.mongodb <span class="hljs-keyword">import</span> MongoIndexStore<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex<br><br><span class="hljs-comment"># create (or load) index store</span><br>index_store = MongoIndexStore.from_uri(uri=<span class="hljs-string">"&lt;mongodb+srv://...&gt;"</span>)<br><br><span class="hljs-comment"># create storage context</span><br>storage_context = StorageContext.from_defaults(index_store=index_store)<br><br><span class="hljs-comment"># build index</span><br>index = VectorStoreIndex(nodes, storage_context=storage_context)<br><br><span class="hljs-comment"># or alternatively, load index</span><br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> load_index_from_storage<br><br>index = load_index_from_storage(storage_context)<br></code></pre></td></tr></table></figure>
+<p>在底层，<code>MongoIndexStore</code> 连接到一个固定的
+<code>MongoDB</code>
+数据库，并为索引元数据初始化新集合（或加载现有集合）。可以在实例化
+<code>MongoIndexStore</code> 时配置 <code>db_name</code> 和
+<code>namespace</code>，否则它们默认为
+<code>db_name="db_docstore"</code> 和
+<code>namespace="docstore"</code>。当使用 <code>MongoIndexStore</code>
+时，没有必要调用 <code>storage_context.persist()</code>（或
+<code>index_store.persist()</code>），因为数据默认情况下会被持久化。可以通过使用现有的
+<code>db_name</code> 和 <code>collection_name</code> 重新初始化
+<code>MongoIndexStore</code>，轻松地重新连接到 <code>MongoDB</code>
+集合并重新加载索引。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/docstore/MongoDocstoreDemo/">完整的示例</a></p>
+<h3 id="redis-索引存储">4.3 Redis 索引存储</h3>
+<p>LlamaIndex支持 Redis
+作为另一种文档存储后端，它在提取节点对象时持久化数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.storage.index_store.redis <span class="hljs-keyword">import</span> RedisIndexStore<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex<br><br><span class="hljs-comment"># create (or load) docstore and add nodes</span><br>index_store = RedisIndexStore.from_host_and_port(<br>    host=<span class="hljs-string">"127.0.0.1"</span>, port=<span class="hljs-string">"6379"</span>, namespace=<span class="hljs-string">"llama_index"</span><br>)<br><br><span class="hljs-comment"># create storage context</span><br>storage_context = StorageContext.from_defaults(index_store=index_store)<br><br><span class="hljs-comment"># build index</span><br>index = VectorStoreIndex(nodes, storage_context=storage_context)<br><br><span class="hljs-comment"># or alternatively, load index</span><br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> load_index_from_storage<br><br>index = load_index_from_storage(storage_context)<br></code></pre></td></tr></table></figure>
+<p>在底层，<code>RedisIndexStore</code> 连接到一个 <code>redis</code>
+数据库，并将节点添加到一个存储在 <code>{namespace}/index</code>
+下的命名空间中。可以在实例化 <code>RedisIndexStore</code>
+时配置命名空间，否则它默认为
+<code>namespace="index_store"</code>。可以通过使用现有的<code>host,port</code>和<code>namespace</code>重新初始化
+<code>RedisIndexStore</code>，轻松地重新连接到 <code>Redis</code>
+客户端并重新加载索引。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/docstore/RedisDocstoreIndexStoreDemo/">完整的示例</a></p>
+<h2 id="五chat-stores">五、Chat Stores</h2>
+<p>聊天存储充当一个集中的接口来存储聊天记录。与其他存储格式相比，聊天记录是独特的，因为消息的顺序对于维持整个对话至关重要。
+聊天存储可以通过键（如<code>user_ids</code>或其他唯一可识别的字符串）组织聊天消息序列，并处理删除、插入和获取操作。</p>
+<h3 id="simplechatstore">5.1 SimpleChatStore</h3>
+<p>最基本的聊天存储是<code>SimpleChatStore</code>，它将消息存储在内存中，并且可以保存到/从磁盘，或者可以序列化并存储在其他地方。
+通常，将实例化一个聊天存储并将其提供给一个记忆模块。使用聊天存储的记忆模块将默认使用<code>SimpleChatStore</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.storage.chat_store <span class="hljs-keyword">import</span> SimpleChatStore<br><span class="hljs-keyword">from</span> llama_index.core.memory <span class="hljs-keyword">import</span> ChatMemoryBuffer<br><br>chat_store = SimpleChatStore()<br><br>chat_memory = ChatMemoryBuffer.from_defaults(<br>    token_limit=<span class="hljs-number">3000</span>,<br>    chat_store=chat_store,<br>    chat_store_key=<span class="hljs-string">"user1"</span>,<br>)<br></code></pre></td></tr></table></figure>
+<p>一旦创建了记忆，可以将其包含在代理或聊天引擎中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">agent = OpenAIAgent.from_tools(tools, memory=memory)<br><span class="hljs-comment"># OR</span><br>chat_engine = index.as_chat_engine(memory=memory)<br></code></pre></td></tr></table></figure>
+<p>为了稍后保存聊天存储，可以通过磁盘保存/加载</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python">chat_store.persist(persist_path=<span class="hljs-string">"chat_store.json"</span>)<br>loaded_chat_store = SimpleChatStore.from_persist_path(<br>    persist_path=<span class="hljs-string">"chat_store.json"</span><br>)<br></code></pre></td></tr></table></figure>
+<p>或者可以将聊天存储转换为字符串，然后将其保存在其他地方</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">chat_store_string = chat_store.json()<br>loaded_chat_store = SimpleChatStore.parse_raw(chat_store_string)<br></code></pre></td></tr></table></figure>
+<h3 id="redischatstore">5.2 RedisChatStore</h3>
+<p>使用<code>RedisChatStore</code>，可以远程存储聊天记录，而无需担心手动持久化和加载聊天记录。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.storage.chat_store.redis <span class="hljs-keyword">import</span> RedisChatStore<br><span class="hljs-keyword">from</span> llama_index.core.memory <span class="hljs-keyword">import</span> ChatMemoryBuffer<br><br>chat_store = RedisChatStore(redis_url=<span class="hljs-string">"redis://localhost:6379"</span>, ttl=<span class="hljs-number">300</span>)<br><br>chat_memory = ChatMemoryBuffer.from_defaults(<br>    token_limit=<span class="hljs-number">3000</span>,<br>    chat_store=chat_store,<br>    chat_store_key=<span class="hljs-string">"user1"</span>,<br>)<br></code></pre></td></tr></table></figure>
+<h2 id="六key-value-stores">六、Key-Value Stores</h2>
+<p>键值存储是<a href="#三document-stores">Document Stores</a>和<a href="#四index-stores">Index Stores</a>背后的基础存储抽象。</p>
+<p>提供以下键值存储：</p>
+<ul>
+<li><p><strong>Simple Key-Value Store</strong>：一个内存中的 KV
+存储。用户可以选择调用<code>persist</code>进行持久化操作，将数据持久化到磁盘。</p></li>
+<li><p><strong>MongoDB Key-Value Store</strong>：一个 MongoDB KV
+存储。</p></li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/api_reference/storage/kvstore/">API
+Reference</a></p>
+<h2 id="七persisting-loading-data">七、Persisting &amp; Loading
+Data</h2>
+<h3 id="持久化数据">7.1 持久化数据</h3>
+<p>默认情况下，LlamaIndex
+将数据存储在内存中，如果需要，可以显式地将数据持久化到磁盘：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">storage_context.persist(persist_dir=<span class="hljs-string">"&lt;persist_dir&gt;"</span>)<br></code></pre></td></tr></table></figure>
+<p>这将把数据持久化到磁盘，在指定的 <code>persist_dir</code>（或默认的
+./storage）下。
+可以在同一目录下持久化并从该目录加载多个索引，假设你在加载时能跟踪索引
+ID。 用户还可以配置其他存储后端（例如
+<code>MongoDB</code>），这些后端默认会持久化数据。在这种情况下，调用
+<code>storage_context.persist()</code> 将不执行任何操作。</p>
+<h3 id="加载数据">7.2 加载数据</h3>
+<p>要加载数据，用户只需使用相同的配置重新创建存储上下文（例如，传入相同的
+<code>persist_dir</code> 或向量存储客户端）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python">storage_context = StorageContext.from_defaults(<br>    docstore=SimpleDocumentStore.from_persist_dir(persist_dir=<span class="hljs-string">"&lt;persist_dir&gt;"</span>),<br>    vector_store=SimpleVectorStore.from_persist_dir(<br>        persist_dir=<span class="hljs-string">"&lt;persist_dir&gt;"</span><br>    ),<br>    index_store=SimpleIndexStore.from_persist_dir(persist_dir=<span class="hljs-string">"&lt;persist_dir&gt;"</span>),<br>)<br></code></pre></td></tr></table></figure>
+<p>然后，可以通过以下便捷函数从 <code>StorageContext</code>
+加载特定的索引。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> (<br>    load_index_from_storage,<br>    load_indices_from_storage,<br>    load_graph_from_storage,<br>)<br><br><span class="hljs-comment"># load a single index</span><br><span class="hljs-comment"># need to specify index_id if multiple indexes are persisted to the same directory</span><br>index = load_index_from_storage(storage_context, index_id=<span class="hljs-string">"&lt;index_id&gt;"</span>)<br><br><span class="hljs-comment"># don't need to specify index_id if there's only one index in storage context</span><br>index = load_index_from_storage(storage_context)<br><br><span class="hljs-comment"># load multiple indices</span><br>indices = load_indices_from_storage(storage_context)  <span class="hljs-comment"># loads all indices</span><br>indices = load_indices_from_storage(<br>    storage_context, index_ids=[index_id1, ...]<br>)  <span class="hljs-comment"># loads specific indices</span><br><br><span class="hljs-comment"># load composable graph</span><br>graph = load_graph_from_storage(<br>    storage_context, root_id=<span class="hljs-string">"&lt;root_id&gt;"</span><br>)  <span class="hljs-comment"># loads graph with the specified root_id</span><br></code></pre></td></tr></table></figure>
+<h3 id="使用远程后端">7.3 使用远程后端</h3>
+<p>默认情况下，LlamaIndex
+使用本地文件系统加载和保存文件。但是，可以通过传递一个
+<code>fsspec.AbstractFileSystem</code> 对象来覆盖这个行为。</p>
+<p>以下是一个简单的例子，实例化一个向量存储：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> dotenv<br><span class="hljs-keyword">import</span> s3fs<br><span class="hljs-keyword">import</span> os<br><br>dotenv.load_dotenv(<span class="hljs-string">"../../../.env"</span>)<br><br><span class="hljs-comment"># load documents</span><br>documents = SimpleDirectoryReader(<br>    <span class="hljs-string">"../../../examples/paul_graham_essay/data/"</span><br>).load_data()<br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(documents))<br>index = VectorStoreIndex.from_documents(documents)<br></code></pre></td></tr></table></figure>
+<p>实例化一个 S3 文件系统，并从那里保存 / 加载。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># set up s3fs</span><br>AWS_KEY = os.environ[<span class="hljs-string">"AWS_ACCESS_KEY_ID"</span>]<br>AWS_SECRET = os.environ[<span class="hljs-string">"AWS_SECRET_ACCESS_KEY"</span>]<br>R2_ACCOUNT_ID = os.environ[<span class="hljs-string">"R2_ACCOUNT_ID"</span>]<br><br><span class="hljs-keyword">assert</span> AWS_KEY <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span> <span class="hljs-keyword">and</span> AWS_KEY != <span class="hljs-string">""</span><br><br>s3 = s3fs.S3FileSystem(<br>    key=AWS_KEY,<br>    secret=AWS_SECRET,<br>    endpoint_url=<span class="hljs-string">f"https://<span class="hljs-subst">{R2_ACCOUNT_ID}</span>.r2.cloudflarestorage.com"</span>,<br>    s3_additional_kwargs={<span class="hljs-string">"ACL"</span>: <span class="hljs-string">"public-read"</span>},<br>)<br><br><span class="hljs-comment"># If you're using 2+ indexes with the same StorageContext,</span><br><span class="hljs-comment"># run this to save the index to remote blob storage</span><br>index.set_index_id(<span class="hljs-string">"vector_index"</span>)<br><br><span class="hljs-comment"># persist index to s3</span><br>s3_bucket_name = <span class="hljs-string">"llama-index/storage_demo"</span>  <span class="hljs-comment"># {bucket_name}/{index_name}</span><br>index.storage_context.persist(persist_dir=s3_bucket_name, fs=s3)<br><br><span class="hljs-comment"># load index from s3</span><br>index_from_s3 = load_index_from_storage(<br>    StorageContext.from_defaults(persist_dir=s3_bucket_name, fs=s3),<br>    index_id=<span class="hljs-string">"vector_index"</span>,<br>)<br></code></pre></td></tr></table></figure>
+<p>默认情况下，如果没有传递一个文件系统，将使用本地文件系统。</p>
+<h2 id="八customizing-storage">八、Customizing Storage</h2>
+<p>LlamaIndex 隐藏了复杂性，可以在不到五行代码的情况下查询您的数据：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex, SimpleDirectoryReader<br><br>documents = SimpleDirectoryReader(<span class="hljs-string">"data"</span>).load_data()<br>index = VectorStoreIndex.from_documents(documents)<br>query_engine = index.as_query_engine()<br>response = query_engine.query(<span class="hljs-string">"Summarize the documents."</span>)<br></code></pre></td></tr></table></figure>
+<p>在底层，LlamaIndex 还支持可互换的存储层，允许自定义存储提取的文档（即
+Node 对象）、embedding vectors和索引元数据的位置。</p>
+<p><img src="/images/storage.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="low-level-api">8.1 Low-Level API</h3>
+<p>high-level API</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">index = VectorStoreIndex.from_documents(documents)<br></code></pre></td></tr></table></figure>
+<p>Low-Level API提供了更细粒度的控制：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.storage.docstore <span class="hljs-keyword">import</span> SimpleDocumentStore<br><span class="hljs-keyword">from</span> llama_index.core.storage.index_store <span class="hljs-keyword">import</span> SimpleIndexStore<br><span class="hljs-keyword">from</span> llama_index.core.vector_stores <span class="hljs-keyword">import</span> SimpleVectorStore<br><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SentenceSplitter<br><br><span class="hljs-comment"># create parser and parse document into nodes</span><br>parser = SentenceSplitter()<br>nodes = parser.get_nodes_from_documents(documents)<br><br><span class="hljs-comment"># create storage context using default stores</span><br>storage_context = StorageContext.from_defaults(<br>    docstore=SimpleDocumentStore(),<br>    vector_store=SimpleVectorStore(),<br>    index_store=SimpleIndexStore(),<br>)<br><br><span class="hljs-comment"># create (or load) docstore and add nodes</span><br>storage_context.docstore.add_documents(nodes)<br><br><span class="hljs-comment"># build index</span><br>index = VectorStoreIndex(nodes, storage_context=storage_context)<br><br><span class="hljs-comment"># save index</span><br>index.storage_context.persist(persist_dir=<span class="hljs-string">"&lt;persist_dir&gt;"</span>)<br><br><span class="hljs-comment"># can also set index_id to save multiple indexes to the same folder</span><br>index.set_index_id(<span class="hljs-string">"&lt;index_id&gt;"</span>)<br>index.storage_context.persist(persist_dir=<span class="hljs-string">"&lt;persist_dir&gt;"</span>)<br><br><span class="hljs-comment"># to load index later, make sure you setup the storage context</span><br><span class="hljs-comment"># this will loaded the persisted stores from persist_dir</span><br>storage_context = StorageContext.from_defaults(persist_dir=<span class="hljs-string">"&lt;persist_dir&gt;"</span>)<br><br><span class="hljs-comment"># then load the index object</span><br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> load_index_from_storage<br><br>loaded_index = load_index_from_storage(storage_context)<br><br><span class="hljs-comment"># if loading an index from a persist_dir containing multiple indexes</span><br>loaded_index = load_index_from_storage(storage_context, index_id=<span class="hljs-string">"&lt;index_id&gt;"</span>)<br><br><span class="hljs-comment"># if loading multiple indexes from a persist dir</span><br>loaded_indicies = load_index_from_storage(<br>    storage_context, index_ids=[<span class="hljs-string">"&lt;index_id&gt;"</span>, ...]<br>)<br></code></pre></td></tr></table></figure>
+<p>可以通过一行代码更改实例化不同的<a href="#三document-stores">文档存储</a>、<a href="#四index-stores">索引存储</a>和<a href="#二vector-stores">向量存储</a>，来自定义底层存储。</p>
+<h3 id="向量存储集成和存储">8.2 向量存储集成和存储</h3>
+<p>LlamaIndex的大多数向量存储集成将整个索引（向量 +
+文本）存储在向量存储本身中。这带来了一个主要的好处，即不必像上面所示明确地持久化索引，因为向量存储已经托管并持久化了索引中的数据。</p>
+<p>支持这种做法的向量存储有：</p>
+<ul>
+<li>AzureAISearchVectorStore</li>
+<li>ChatGPTRetrievalPluginClient</li>
+<li>CassandraVectorStore</li>
+<li>ChromaVectorStore</li>
+<li>EpsillaVectorStore</li>
+<li>DocArrayHnswVectorStore</li>
+<li>DocArrayInMemoryVectorStore</li>
+<li>JaguarVectorStore</li>
+<li>LanceDBVectorStore</li>
+<li>MetalVectorStore</li>
+<li>MilvusVectorStore</li>
+<li>MyScaleVectorStore</li>
+<li>OpensearchVectorStore</li>
+<li>PineconeVectorStore</li>
+<li>QdrantVectorStore</li>
+<li>RedisVectorStore</li>
+<li>UpstashVectorStore</li>
+<li>WeaviateVectorStore</li>
+</ul>
+<p>使用 Pinecone 的一个示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> pinecone<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex, SimpleDirectoryReader<br><span class="hljs-keyword">from</span> llama_index.vector_stores.pinecone <span class="hljs-keyword">import</span> PineconeVectorStore<br><br><span class="hljs-comment"># Creating a Pinecone index</span><br>api_key = <span class="hljs-string">"api_key"</span><br>pinecone.init(api_key=api_key, environment=<span class="hljs-string">"us-west1-gcp"</span>)<br>pinecone.create_index(<br>    <span class="hljs-string">"quickstart"</span>, dimension=<span class="hljs-number">1536</span>, metric=<span class="hljs-string">"euclidean"</span>, pod_type=<span class="hljs-string">"p1"</span><br>)<br>index = pinecone.Index(<span class="hljs-string">"quickstart"</span>)<br><br><span class="hljs-comment"># construct vector store</span><br>vector_store = PineconeVectorStore(pinecone_index=index)<br><br><span class="hljs-comment"># create storage context</span><br>storage_context = StorageContext.from_defaults(vector_store=vector_store)<br><br><span class="hljs-comment"># load documents</span><br>documents = SimpleDirectoryReader(<span class="hljs-string">"./data"</span>).load_data()<br><br><span class="hljs-comment"># create index, which will insert documents/vectors to pinecone</span><br>index = VectorStoreIndex.from_documents(<br>    documents, storage_context=storage_context<br>)<br></code></pre></td></tr></table></figure>
+<p>如果有一个已经加载了数据的现有向量存储，可以连接到它并直接创建
+<code>VectorStoreIndex</code>，如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">index = pinecone.Index(<span class="hljs-string">"quickstart"</span>)<br>vector_store = PineconeVectorStore(pinecone_index=index)<br>loaded_index = VectorStoreIndex.from_vector_store(vector_store=vector_store)<br></code></pre></td></tr></table></figure>
+<h2 id="官方资源">官方资源</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/storing/">官方文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.llamaindex.ai/blog">官方博客</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples">官方全部例子</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LlamaIndex/" class="category-chain-item">LlamaIndex</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#LLM学习笔记</a>
+      
+        <a href="/tags/LlamaIndex/" class="print-no-link">#LlamaIndex</a>
+      
+        <a href="/tags/Agent/" class="print-no-link">#Agent</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LlamaIndex(六)——LlamaIndex Storing</div>
+      <div>https://mztchaoqun.com.cn/posts/D19_LlamaIndex_Storing/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年5月1日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D20_LlamaIndex_Quering/" title="LlamaIndex(七)——LlamaIndex Quering">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LlamaIndex(七)——LlamaIndex Quering</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D18_LlamaIndex_Indexing/" title="LlamaIndex(五)——LlamaIndex Indexing">
+                        <span class="hidden-mobile">LlamaIndex(五)——LlamaIndex Indexing</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

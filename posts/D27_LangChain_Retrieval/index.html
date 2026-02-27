@@ -1,0 +1,1006 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="LangChain模块架构图 [1]  一、Retrieval简介  Document Loaders：从不同的源加载文档 Document Transformers：拆分文档，删除冗余文档等 Embedding Models：获取结构化文本并将其转化为向量数据 Vector Stores：存储和搜索向量数据 Retrievers：从Vector Stores和其他数据源查询数据 Indexing">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LangChain(三)——Data Connection">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D27_LangChain_Retrieval/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="LangChain模块架构图 [1]  一、Retrieval简介  Document Loaders：从不同的源加载文档 Document Transformers：拆分文档，删除冗余文档等 Embedding Models：获取结构化文本并将其转化为向量数据 Vector Stores：存储和搜索向量数据 Retrievers：从Vector Stores和其他数据源查询数据 Indexing">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/LangChain1.png">
+<meta property="article:published_time" content="2024-07-06T07:33:27.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.270Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="LLM学习笔记">
+<meta property="article:tag" content="LangChain">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/LangChain1.png">
+  
+  
+  
+  <title>LangChain(三)——Data Connection - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LangChain(三)——Data Connection"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-07-06 15:33" pubdate>
+          2024年7月6日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          38 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LangChain(三)——Data Connection</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><strong>LangChain模块架构图</strong>
+<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span
+class="hint--top hint--rounded" aria-label="">[1]</span></a></sup></p>
+<p><img src="/images/LangChainAll.jpeg" srcset="/img/loading.gif" lazyload /></p>
+<h2 id="一retrieval简介">一、Retrieval简介</h2>
+<ul>
+<li>Document Loaders：从不同的源加载文档</li>
+<li>Document Transformers：拆分文档，删除冗余文档等</li>
+<li>Embedding Models：获取结构化文本并将其转化为向量数据</li>
+<li>Vector Stores：存储和搜索向量数据</li>
+<li>Retrievers：从Vector Stores和其他数据源查询数据</li>
+<li>Indexing: 将来自任何来源的文档加载并保持与向量存储的同步</li>
+</ul>
+<p><strong>数据流：</strong>Loders-&gt;Transformers-&gt;Embeddings
+Model-&gt;Vector Stores-&gt;Retrievers</p>
+<p><img src="/images/data_connection.jpg" srcset="/img/loading.gif" lazyload /></p>
+<h2 id="二文档加载document-loaders">二、文档加载：Document Loaders</h2>
+<p>更多类型的文档加载请参考：<a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/modules/data_connection/document_loaders/">https://python.langchain.com/docs/modules/data_connection/document_loaders/</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_community.document_loaders <span class="hljs-keyword">import</span> PyPDFLoader<br><br>loader = PyPDFLoader(<span class="hljs-string">&quot;MachineLearning-Lecture01.pdf&quot;</span>)<br>pages = loader.load_and_split()<br><br><span class="hljs-built_in">print</span>(pages[<span class="hljs-number">0</span>].page_content[<span class="hljs-number">0</span>:<span class="hljs-number">500</span>])<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">MachineLearning-Lecture01  <br>Instructor (Andrew Ng):  Okay. Good morning. Welcome <span class="hljs-keyword">to</span> CS229, the machine <br>learning <span class="hljs-keyword">class</span>. So what I wanna <span class="hljs-keyword">do</span> today <span class="hljs-keyword">is</span> ju st spend a little <span class="hljs-type">time</span> going <span class="hljs-keyword">over</span> the logistics <br><span class="hljs-keyword">of</span> the <span class="hljs-keyword">class</span>, <span class="hljs-keyword">and</span> <span class="hljs-keyword">then</span> w<span class="hljs-string">e&#x27;ll start to  talk a bit about machine learning.  </span><br><span class="hljs-string">By way of introduction, my name&#x27;</span>s  Andrew Ng <span class="hljs-keyword">and</span> I<span class="hljs-string">&#x27;ll be instru ctor for this class. And so </span><br><span class="hljs-string">I personally work in machine learning, and I&#x27;</span> ve worked <span class="hljs-keyword">on</span> it <span class="hljs-keyword">for</span> about <span class="hljs-number">15</span> years now, <span class="hljs-keyword">and</span> <br>I actually think that machine learning i<br></code></pre></td></tr></table></figure>
+<h2 id="三文档分割">三、文档分割</h2>
+<p><strong>文档分割原因</strong></p>
+<ol type="1">
+<li><strong>模型大小和内存限制</strong>：LLM模型参数量巨大，有数十亿、上百亿甚至上千亿的参数。为了在一次前向传播中处理这么多的参数，需要大量的计算能力和内存。但是，大多数硬件设备（例如
+GPU 或 TPU ）有内存限制。文档分割使模型能够在这些限制内工作。</li>
+<li><strong>计算效率</strong>：处理更长的文本序列需要更多的计算资源。通过将长文档分割成更小的块，可以更高效地进行计算。</li>
+<li><strong>序列长度限制</strong>：LLM模型基本都有一个固定的最大序列长度，例如2048个
+token 。这意味着模型一次只能处理这么多 token
+。对于超过这个长度的文档，需要进行分割才能被模型处理。</li>
+<li><strong>更好的泛化</strong>：通过在多个文档块上进行训练，模型可以更好地学习和泛化到各种不同的文本样式和结构。</li>
+<li><strong>数据增强</strong>：分割文档可以为训练数据提供更多的样本。例如，一个长文档可以被分割成多个部分，并分别作为单独的训练样本。</li>
+</ol>
+<p>更多类型的文档分割请参考：<a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/modules/data_connection/document_transformers/">https://python.langchain.com/docs/modules/data_connection/document_transformers/</a></p>
+<p><img src="/images/document-splitting.png" srcset="/img/loading.gif" lazyload /></p>
+<p>Langchain中文本分割器都根据chunk_size(块大小)和chunk_overlap(块与块之间的重叠大小)进行分割。</p>
+<ul>
+<li><p>chunk_size指每个块包含的字符或Token（如单词、句子等）的数量</p></li>
+<li><p>chunk_overlap指两个块之间共享的字符数量，用于保持上下文的连贯性，避免分割丢失上下文信息</p></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_text_splitters <span class="hljs-keyword">import</span> RecursiveCharacterTextSplitter<br><br>text_splitter = RecursiveCharacterTextSplitter(<br>    chunk_size=<span class="hljs-number">200</span>,<br>    chunk_overlap=<span class="hljs-number">100</span>,<br>    length_function=<span class="hljs-built_in">len</span>,<br>    add_start_index=<span class="hljs-literal">True</span>,<br>)<br><br>paragraphs = text_splitter.create_documents([pages[<span class="hljs-number">0</span>].page_content])<br><span class="hljs-keyword">for</span> para <span class="hljs-keyword">in</span> paragraphs[<span class="hljs-number">0</span>:<span class="hljs-number">5</span>]:<br>    <span class="hljs-built_in">print</span>(para.page_content)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;-------&#x27;</span>)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-5b75660a" role="button" aria-expanded="false" aria-controls="collapse-5b75660a">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-5b75660a">
+        <div class="fold-content">
+          <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc">MachineLearning-Lecture01  <br>Instructor (Andrew Ng):  Okay. Good morning. Welcome to CS229, the machine <br><span class="hljs-section">learning class. So what I wanna do today is ju st spend a little time going over the logistics</span><br><span class="hljs-section">-------</span><br>learning class. So what I wanna do today is ju st spend a little time going over the logistics <br><span class="hljs-section">of the class, and then we&#x27;ll start to  talk a bit about machine learning.</span><br><span class="hljs-section">-------</span><br>of the class, and then we&#x27;ll start to  talk a bit about machine learning.  <br><span class="hljs-section">By way of introduction, my name&#x27;s  Andrew Ng and I&#x27;ll be instru ctor for this class. And so</span><br><span class="hljs-section">-------</span><br>By way of introduction, my name&#x27;s  Andrew Ng and I&#x27;ll be instru ctor for this class. And so <br><span class="hljs-section">I personally work in machine learning, and I&#x27; ve worked on it for about 15 years now, and</span><br><span class="hljs-section">-------</span><br>I personally work in machine learning, and I&#x27; ve worked on it for about 15 years now, and <br><span class="hljs-section">I actually think that machine learning is th e most exciting field of all the computer</span><br><span class="hljs-section">-------</span><br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<h2 id="四向量数据库和向量检索">四、向量数据库和向量检索</h2>
+<p>检索是指根据用户的问题去向量数据库中搜索与问题相关的文档内容</p>
+<p><img src="/images/vector_stores.jpg" srcset="/img/loading.gif" lazyload /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_text_splitters <span class="hljs-keyword">import</span> RecursiveCharacterTextSplitter<br><span class="hljs-keyword">from</span> langchain_community.vectorstores <span class="hljs-keyword">import</span> Chroma<br><span class="hljs-keyword">from</span> langchain_community.document_loaders <span class="hljs-keyword">import</span> PyPDFLoader<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> OpenAIEmbeddings<br><span class="hljs-keyword">from</span> langchain_community.embeddings.dashscope <span class="hljs-keyword">import</span> DashScopeEmbeddings<br><br><span class="hljs-comment"># 加载 PDF</span><br>loaders = [<br>    <span class="hljs-comment"># 故意添加重复文档，使数据混乱</span><br>    PyPDFLoader(<span class="hljs-string">&quot;MachineLearning-Lecture01.pdf&quot;</span>),<br>    PyPDFLoader(<span class="hljs-string">&quot;MachineLearning-Lecture01.pdf&quot;</span>),<br>    PyPDFLoader(<span class="hljs-string">&quot;MachineLearning-Lecture02.pdf&quot;</span>),<br>    PyPDFLoader(<span class="hljs-string">&quot;MachineLearning-Lecture03.pdf&quot;</span>)<br>]<br>docs = []<br><span class="hljs-keyword">for</span> loader <span class="hljs-keyword">in</span> loaders:<br>    docs.extend(loader.load())<br><br><span class="hljs-comment"># 分割文本</span><br><br>text_splitter = RecursiveCharacterTextSplitter(<br>    chunk_size = <span class="hljs-number">1500</span>,  <span class="hljs-comment"># 每个文本块的大小。这意味着每次切分文本时，会尽量使每个块包含 1500 个字符。</span><br>    chunk_overlap = <span class="hljs-number">150</span>  <span class="hljs-comment"># 每个文本块之间的重叠部分。</span><br>)<br><br>texts = text_splitter.split_documents(docs)<br><br><span class="hljs-comment"># 灌库 </span><br><span class="hljs-comment">#阿里的向量模型，没有Openai的好用</span><br><span class="hljs-comment"># embeddings = DashScopeEmbeddings(</span><br><span class="hljs-comment">#     model=&quot;text-embedding-v2&quot;,</span><br><span class="hljs-comment"># )</span><br><br><br>embeddings = OpenAIEmbeddings() <span class="hljs-comment">#Embedding模型</span><br><br>persist_directory = <span class="hljs-string">&#x27;cs229_lectures/&#x27;</span><br><br>db = Chroma.from_documents(texts, embeddings,persist_directory=persist_directory) <span class="hljs-comment">#向量数据导入数据库</span><br><br><span class="hljs-built_in">print</span>(db._collection.count())<br><br><span class="hljs-comment"># 检索 top-3 结果</span><br>retriever = db.as_retriever(search_kwargs=&#123;<span class="hljs-string">&quot;k&quot;</span>: <span class="hljs-number">3</span>&#125;) <span class="hljs-comment">#默认为similarity相似性搜索</span><br><br>docs = retriever.get_relevant_documents(<span class="hljs-string">&quot;is there an email i can ask for help&quot;</span>)<br><br><span class="hljs-built_in">print</span>(docs[<span class="hljs-number">0</span>].page_content)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-5b5bd572" role="button" aria-expanded="false" aria-controls="collapse-5b5bd572">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-5b5bd572">
+        <div class="fold-content">
+          <figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs gauss"><span class="hljs-number">627</span><br>cs229-qa<span class="hljs-comment">@cs.stanford.edu. This goes to an acc ount that&#x27;s read by all the TAs and me. So </span><br><span class="hljs-comment">rather than sending us email individually, if you send email to this account, it will </span><br><span class="hljs-comment">actually let us get back to you maximally quickly with answers to your questions.  </span><br><span class="hljs-comment">If you&#x27;re asking questions about homework probl ems, please say in the subject line which </span><br><span class="hljs-comment">assignment and which question the email refers to, since that will also help us to route </span><br><span class="hljs-comment">your question to the appropriate TA or to me  appropriately and get the response back to </span><br><span class="hljs-comment">you quickly.  </span><br><span class="hljs-comment">Let&#x27;s see. Skipping ahead — let&#x27;s see — for homework, one midterm, one open and term </span><br><span class="hljs-comment">project. Notice on the honor code. So one thi ng that I think will help you to succeed and </span><br><span class="hljs-comment">do well in this class and even help you to enjoy this cla ss more is if you form a study </span><br><span class="hljs-comment">group.  </span><br><span class="hljs-comment">So start looking around where you&#x27; re sitting now or at the end of class today, mingle a </span><br><span class="hljs-comment">little bit and get to know your classmates. I strongly encourage you to form study groups </span><br><span class="hljs-comment">and sort of have a group of people to study with and have a group of your fellow students </span><br><span class="hljs-comment">to talk over these concepts with. You can also  post on the class news group if you want to </span><br><span class="hljs-comment">use that to try to form a study group.  </span><br><span class="hljs-comment">But some of the problems sets in this cla ss are reasonably difficult.  People that have </span><br><span class="hljs-comment">taken the class before may tell you they were very difficult. And just I bet it would be </span><br><span class="hljs-comment">more fun for you, and you&#x27;d probably have a be tter learning experience if you form a</span><br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<p>更多的三方检索组件链接，参考：<a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/integrations/vectorstores">https://python.langchain.com/docs/integrations/vectorstores</a></p>
+<h3 id="检索出现不好的情况">4.1 检索出现不好的情况</h3>
+<p>在加载文档时，我们故意添加重复文档，使数据混乱，结果会出现重复结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python">question = <span class="hljs-string">&quot;what did they say about matlab?&quot;</span> <br><br>retriever = db.as_retriever(search_kwargs=&#123;<span class="hljs-string">&quot;k&quot;</span>: <span class="hljs-number">5</span>&#125;) <span class="hljs-comment">#默认为similarity相似性搜索</span><br><br>docs = retriever.get_relevant_documents(question)<br><br><br><span class="hljs-built_in">print</span>(docs[<span class="hljs-number">0</span>].page_content[:<span class="hljs-number">100</span>])<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;==========&quot;</span>)<br><span class="hljs-built_in">print</span>(docs[<span class="hljs-number">1</span>].page_content[:<span class="hljs-number">100</span>])<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc">those homeworks will be done in either MATLA B or in Octave, which is sort of — I <br><span class="hljs-section">know some people </span><br><span class="hljs-section">==========</span><br>those homeworks will be done in either MATLA B or in Octave, which is sort of — I <br>know some people <br></code></pre></td></tr></table></figure>
+<p>我们可以看到一种新的失败的情况。</p>
+<p>下面的问题询问了关于第三讲的问题，但也包括了来自其他讲的结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python">question = <span class="hljs-string">&quot;what did they say about regression in the third lecture?&quot;</span><br>docs = retriever.get_relevant_documents(question)<br><br><span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> docs:<br>    <span class="hljs-built_in">print</span>(doc.metadata)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight sml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs sml">&#123;<span class="hljs-symbol">&#x27;page&#x27;</span>: <span class="hljs-number">0</span>, <span class="hljs-symbol">&#x27;source&#x27;</span>: <span class="hljs-symbol">&#x27;MachineLearning</span>-<span class="hljs-type">Lecture03</span>.pdf&#x27;&#125;<br>&#123;<span class="hljs-symbol">&#x27;page&#x27;</span>: <span class="hljs-number">14</span>, <span class="hljs-symbol">&#x27;source&#x27;</span>: <span class="hljs-symbol">&#x27;MachineLearning</span>-<span class="hljs-type">Lecture03</span>.pdf&#x27;&#125;<br>&#123;<span class="hljs-symbol">&#x27;page&#x27;</span>: <span class="hljs-number">0</span>, <span class="hljs-symbol">&#x27;source&#x27;</span>: <span class="hljs-symbol">&#x27;MachineLearning</span>-<span class="hljs-type">Lecture02</span>.pdf&#x27;&#125;<br>&#123;<span class="hljs-symbol">&#x27;page&#x27;</span>: <span class="hljs-number">6</span>, <span class="hljs-symbol">&#x27;source&#x27;</span>: <span class="hljs-symbol">&#x27;MachineLearning</span>-<span class="hljs-type">Lecture03</span>.pdf&#x27;&#125;<br>&#123;<span class="hljs-symbol">&#x27;page&#x27;</span>: <span class="hljs-number">8</span>, <span class="hljs-symbol">&#x27;source&#x27;</span>: <span class="hljs-symbol">&#x27;MachineLearning</span>-<span class="hljs-type">Lecture01</span>.pdf&#x27;&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="解决多样性最大边际相关性mmr">4.2
+解决多样性：最大边际相关性(MMR)</h3>
+<p>最大边际相关性(<code>Maximum marginal relevance</code>)试图在查询的相关性和结果的多样性之间实现两全其美。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python">question = <span class="hljs-string">&quot;what did they say about matlab?&quot;</span> <br><br>retriever = db.as_retriever(search_type=<span class="hljs-string">&quot;mmr&quot;</span>,search_kwargs=&#123;<span class="hljs-string">&quot;k&quot;</span>: <span class="hljs-number">5</span>&#125;) <span class="hljs-comment">#默认为similarity相似性搜索</span><br><br>docs = retriever.get_relevant_documents(question)<br><br><br><span class="hljs-built_in">print</span>(docs[<span class="hljs-number">0</span>].page_content[:<span class="hljs-number">100</span>])<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;==========&quot;</span>)<br><span class="hljs-built_in">print</span>(docs[<span class="hljs-number">1</span>].page_content[:<span class="hljs-number">100</span>])<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc">those homeworks will be done in either MATLA B or in Octave, which is sort of — I <br><span class="hljs-section">know some people </span><br><span class="hljs-section">==========</span><br>into his office and he said, &quot;Oh, professo r, professor, thank you so much for your <br>machine learnin<br></code></pre></td></tr></table></figure>
+<p>可以看到输出已经不同了</p>
+<h3 id="解决特殊性">4.3 解决特殊性</h3>
+<p>关于第三讲的问题，输出包括了来自其他讲的结果</p>
+<p><strong>使用元数据</strong></p>
+<p>为了解决这一问题，很多向量数据库都支持对<code>metadata</code>的操作。</p>
+<p><code>metadata</code>为每个嵌入的块(embedded chunk)提供上下文。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python">question = <span class="hljs-string">&quot;what did they say about regression in the third lecture?&quot;</span><br>retriever = db.as_retriever(search_kwargs=&#123;<span class="hljs-string">&quot;k&quot;</span>:<span class="hljs-number">3</span>,<span class="hljs-string">&#x27;filter&#x27;</span>: &#123;<span class="hljs-string">&#x27;source&#x27;</span>:<span class="hljs-string">&#x27;MachineLearning-Lecture03.pdf&#x27;</span>&#125;&#125;) <span class="hljs-comment">#默认为similarity相似性搜索</span><br><br>docs = retriever.get_relevant_documents(question)<br><span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> docs:<br>    <span class="hljs-built_in">print</span>(doc.metadata)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight sml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sml">&#123;<span class="hljs-symbol">&#x27;page&#x27;</span>: <span class="hljs-number">0</span>, <span class="hljs-symbol">&#x27;source&#x27;</span>: <span class="hljs-symbol">&#x27;MachineLearning</span>-<span class="hljs-type">Lecture03</span>.pdf&#x27;&#125;<br>&#123;<span class="hljs-symbol">&#x27;page&#x27;</span>: <span class="hljs-number">14</span>, <span class="hljs-symbol">&#x27;source&#x27;</span>: <span class="hljs-symbol">&#x27;MachineLearning</span>-<span class="hljs-type">Lecture03</span>.pdf&#x27;&#125;<br>&#123;<span class="hljs-symbol">&#x27;page&#x27;</span>: <span class="hljs-number">4</span>, <span class="hljs-symbol">&#x27;source&#x27;</span>: <span class="hljs-symbol">&#x27;MachineLearning</span>-<span class="hljs-type">Lecture03</span>.pdf&#x27;&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>在元数据中使用自查询检索器</strong></p>
+<p>为了解决这个问题，还可以使用SelfQueryRetriever，它使用LLM来提取：</p>
+<ol type="1">
+<li>用于向量搜索的查询(<code>query</code>)字符串，即：问题</li>
+<li>要一起传入的元数据过滤器</li>
+</ol>
+<p>大多数向量数据库支持元数据过滤器，因此不需要任何新的数据库及索引。</p>
+<p><code>AttributeInfo</code>是我们可以指定元数据中的不同字段以及它们对应的位置。</p>
+<p>在元数据中，我们只有两个字段，<code>source</code>和<code>page</code>。</p>
+<p>我们将填写每个属性的名称、描述和类型的描述。</p>
+<p>这些信息实际上将被传递给LLM，所以需要尽可能详细地描述。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.retrievers.self_query.base <span class="hljs-keyword">import</span> SelfQueryRetriever<br><span class="hljs-keyword">from</span> langchain.chains.query_constructor.base <span class="hljs-keyword">import</span> AttributeInfo<br><br>metadata_field_info = [<br>    AttributeInfo(<br>        name=<span class="hljs-string">&quot;source&quot;</span>,<br>        description=<span class="hljs-string">&quot;The lecture the chunk is from, should be one of `MachineLearning-Lecture01.pdf`, `MachineLearning-Lecture02.pdf`, or `MachineLearning-Lecture03.pdf`&quot;</span>,<br>        <span class="hljs-built_in">type</span>=<span class="hljs-string">&quot;string&quot;</span>,<br>    ),<br>    AttributeInfo(<br>        name=<span class="hljs-string">&quot;page&quot;</span>,<br>        description=<span class="hljs-string">&quot;The page from the lecture&quot;</span>,<br>        <span class="hljs-built_in">type</span>=<span class="hljs-string">&quot;integer&quot;</span>,<br>    ),<br>]<br><br>document_content_description = <span class="hljs-string">&quot;Lecture notes&quot;</span><br>retriever = SelfQueryRetriever.from_llm(<br>    llm,<br>    db,<br>    document_content_description,<br>    metadata_field_info,<br>    verbose=<span class="hljs-literal">True</span><br>)<br><br>question = <span class="hljs-string">&quot;what did they say about regression in the third lecture?&quot;</span><br><br>docs = retriever.get_relevant_documents(question)<br><span class="hljs-keyword">for</span> d <span class="hljs-keyword">in</span> docs:<br>    <span class="hljs-built_in">print</span>(d.metadata)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight sml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs sml">&#123;<span class="hljs-symbol">&#x27;page&#x27;</span>: <span class="hljs-number">14</span>, <span class="hljs-symbol">&#x27;source&#x27;</span>: <span class="hljs-symbol">&#x27;MachineLearning</span>-<span class="hljs-type">Lecture03</span>.pdf&#x27;&#125;<br>&#123;<span class="hljs-symbol">&#x27;page&#x27;</span>: <span class="hljs-number">14</span>, <span class="hljs-symbol">&#x27;source&#x27;</span>: <span class="hljs-symbol">&#x27;MachineLearning</span>-<span class="hljs-type">Lecture03</span>.pdf&#x27;&#125;<br>&#123;<span class="hljs-symbol">&#x27;page&#x27;</span>: <span class="hljs-number">10</span>, <span class="hljs-symbol">&#x27;source&#x27;</span>: <span class="hljs-symbol">&#x27;MachineLearning</span>-<span class="hljs-type">Lecture03</span>.pdf&#x27;&#125;<br>&#123;<span class="hljs-symbol">&#x27;page&#x27;</span>: <span class="hljs-number">10</span>, <span class="hljs-symbol">&#x27;source&#x27;</span>: <span class="hljs-symbol">&#x27;MachineLearning</span>-<span class="hljs-type">Lecture03</span>.pdf&#x27;&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="其他技巧压缩">4.4 其他技巧：压缩</h3>
+<p>在使用向量检索获取相关文档时，直接返回整个文档片段可能带来资源浪费，因为实际相关的只是文档的一小部分。为改进这一点，LangChain提供了一种“<code>压缩</code>”检索机制。其工作原理是，<strong>先使用标准向量检索获得候选文档，然后基于查询语句的语义，使用语言模型压缩这些文档,只保留与问题相关的部分</strong></p>
+<p><img src="/images/Compression.png" srcset="/img/loading.gif" lazyload /></p>
+<p>从上图中我们看到，当向量数据库返回了所有与问题相关的所有文档块的全部内容后，会有一个Compression
+LLM来负责对这些返回的文档块的内容进行压缩，所谓压缩是指仅从文档块中提取出和用户问题相关的内容，并舍弃掉那些不相关的内容。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.retrievers <span class="hljs-keyword">import</span> ContextualCompressionRetriever<br><span class="hljs-keyword">from</span> langchain.retrievers.document_compressors <span class="hljs-keyword">import</span> LLMChainExtractor<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">pretty_print_docs</span>(<span class="hljs-params">docs</span>):<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;\n<span class="hljs-subst">&#123;<span class="hljs-string">&#x27;-&#x27;</span> * <span class="hljs-number">100</span>&#125;</span>\n&quot;</span>.join([<span class="hljs-string">f&quot;Document <span class="hljs-subst">&#123;i+<span class="hljs-number">1</span>&#125;</span>:\n\n&quot;</span> + d.page_content <span class="hljs-keyword">for</span> i, d <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(docs)]))<br><br>llm = ChatOpenAI(temperature=<span class="hljs-number">0</span>)<br>compressor = LLMChainExtractor.from_llm(llm)  <span class="hljs-comment"># 压缩器</span><br><br>compression_retriever = ContextualCompressionRetriever(<br>    base_compressor=compressor,<br>    base_retriever=db.as_retriever()<br>)<br><br>question = <span class="hljs-string">&quot;what did they say about matlab?&quot;</span><br>compressed_docs = compression_retriever.get_relevant_documents(question)<br>pretty_print_docs(compressed_docs)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-2a25062f" role="button" aria-expanded="false" aria-controls="collapse-2a25062f">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-2a25062f">
+        <div class="fold-content">
+          <figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs applescript">Document <span class="hljs-number">1</span>:<br><br>MATLAB <span class="hljs-keyword">is</span> I guess part <span class="hljs-keyword">of</span> <span class="hljs-keyword">the</span> programming language <span class="hljs-keyword">that</span> makes <span class="hljs-keyword">it</span> very easy <span class="hljs-keyword">to</span> <span class="hljs-built_in">write</span> codes using matrices, <span class="hljs-keyword">to</span> <span class="hljs-built_in">write</span> code <span class="hljs-keyword">for</span> numerical routines, <span class="hljs-keyword">to</span> move data <span class="hljs-keyword">around</span>, <span class="hljs-keyword">to</span> plot data. And <span class="hljs-keyword">it</span>&#x27;s sort <span class="hljs-keyword">of</span> an extremely easy <span class="hljs-keyword">to</span> learn tool <span class="hljs-keyword">to</span> use <span class="hljs-keyword">for</span> implementing a lot <span class="hljs-keyword">of</span> learning algorithms.<br><span class="hljs-comment">----------------------------------------------------------------------------------------------------</span><br>Document <span class="hljs-number">2</span>:<br><br>MATLAB <span class="hljs-keyword">is</span> I guess part <span class="hljs-keyword">of</span> <span class="hljs-keyword">the</span> programming language <span class="hljs-keyword">that</span> makes <span class="hljs-keyword">it</span> very easy <span class="hljs-keyword">to</span> <span class="hljs-built_in">write</span> codes using matrices, <span class="hljs-keyword">to</span> <span class="hljs-built_in">write</span> code <span class="hljs-keyword">for</span> numerical routines, <span class="hljs-keyword">to</span> move data <span class="hljs-keyword">around</span>, <span class="hljs-keyword">to</span> plot data. And <span class="hljs-keyword">it</span>&#x27;s sort <span class="hljs-keyword">of</span> an extremely easy <span class="hljs-keyword">to</span> learn tool <span class="hljs-keyword">to</span> use <span class="hljs-keyword">for</span> implementing a lot <span class="hljs-keyword">of</span> learning algorithms.<br><span class="hljs-comment">----------------------------------------------------------------------------------------------------</span><br>Document <span class="hljs-number">3</span>:<br><br>MATLAB <span class="hljs-keyword">is</span> I guess part <span class="hljs-keyword">of</span> <span class="hljs-keyword">the</span> programming language <span class="hljs-keyword">that</span> makes <span class="hljs-keyword">it</span> very easy <span class="hljs-keyword">to</span> <span class="hljs-built_in">write</span> codes using matrices, <span class="hljs-keyword">to</span> <span class="hljs-built_in">write</span> code <span class="hljs-keyword">for</span> numerical routines, <span class="hljs-keyword">to</span> move data <span class="hljs-keyword">around</span>, <span class="hljs-keyword">to</span> plot data. And <span class="hljs-keyword">it</span>&#x27;s sort <span class="hljs-keyword">of</span> an extremely easy <span class="hljs-keyword">to</span> learn tool <span class="hljs-keyword">to</span> use <span class="hljs-keyword">for</span> implementing a lot <span class="hljs-keyword">of</span> learning algorithms.<br><span class="hljs-comment">----------------------------------------------------------------------------------------------------</span><br>Document <span class="hljs-number">4</span>:<br><br>MATLAB <span class="hljs-keyword">is</span> I guess part <span class="hljs-keyword">of</span> <span class="hljs-keyword">the</span> programming language <span class="hljs-keyword">that</span> makes <span class="hljs-keyword">it</span> very easy <span class="hljs-keyword">to</span> <span class="hljs-built_in">write</span> codes using matrices, <span class="hljs-keyword">to</span> <span class="hljs-built_in">write</span> code <span class="hljs-keyword">for</span> numerical routines, <span class="hljs-keyword">to</span> move data <span class="hljs-keyword">around</span>, <span class="hljs-keyword">to</span> plot data. And <span class="hljs-keyword">it</span>&#x27;s sort <span class="hljs-keyword">of</span> an extremely easy <span class="hljs-keyword">to</span> learn tool <span class="hljs-keyword">to</span> use <span class="hljs-keyword">for</span> implementing a lot <span class="hljs-keyword">of</span> learning algorithms.  <br>there&#x27;s also a software package called Octave <span class="hljs-keyword">that</span> you can download <span class="hljs-keyword">for</span> free off <span class="hljs-keyword">the</span> Internet. And <span class="hljs-keyword">it</span> has somewhat fewer features than MATLAB, <span class="hljs-keyword">but</span> <span class="hljs-keyword">it</span>&#x27;s free, <span class="hljs-keyword">and</span> <span class="hljs-keyword">for</span> <span class="hljs-keyword">the</span> purposes <span class="hljs-keyword">of</span> this <span class="hljs-built_in">class</span>, <span class="hljs-keyword">it</span> will work <span class="hljs-keyword">for</span> just <span class="hljs-keyword">about</span> everything.<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<p>现在当我们提出问题后，查看结果文档，我们可以看到两件事。</p>
+<ol type="1">
+<li>它们比正常文档短很多</li>
+<li>仍然有一些重复的东西，这是因为在底层我们使用的是语义搜索算法。</li>
+</ol>
+<p>从上述例子中，我们可以发现这种压缩可以有效提升输出质量，同时节省通过长文档带来的计算资源浪费，降低成本。上下文相关的压缩检索技术，使得到的支持文档更严格匹配问题需求，是提升问答系统效率的重要手段。读者可以在实际应用中考虑这一技术。</p>
+<h3 id="以上技术融合">4.5 以上技术融合</h3>
+<p>为了做到这一点，我们在从向量数据库创建检索器时，可以将搜索类型设置为MMR。</p>
+<p>然后我们可以重新运行这个过程，看到我们返回的是一个过滤过的结果集，其中不包含任何重复的信息。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python">compression_retriever = ContextualCompressionRetriever(<br>    base_compressor=compressor,<br>    base_retriever=db.as_retriever(search_type = <span class="hljs-string">&quot;mmr&quot;</span>)<br>)<br><br>question = <span class="hljs-string">&quot;what did they say about matlab?&quot;</span><br>compressed_docs = compression_retriever.get_relevant_documents(question)<br>pretty_print_docs(compressed_docs)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-687cd73f" role="button" aria-expanded="false" aria-controls="collapse-687cd73f">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-687cd73f">
+        <div class="fold-content">
+          <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc">Document 1:<br><br><span class="hljs-section">MATLAB is I guess part of the programming language that makes it very easy to write codes using matrices, to write code for numerical routines, to move data around, to plot data. And it&#x27;s sort of an extremely easy to learn tool to use for implementing a lot of learning algorithms.</span><br><span class="hljs-section">----------------------------------------------------------------------------------------------------</span><br>Document 2:<br><br><span class="hljs-section">&quot;Oh, it was the MATLAB.&quot;</span><br><span class="hljs-section">----------------------------------------------------------------------------------------------------</span><br>Document 3:<br><br>All the homeworks can be done in MATLAB or Octave.<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<h2 id="五indexing">五、Indexing</h2>
+<p>索引 API
+允许将来自任何来源的文档加载并保持与向量存储的同步。具体来说，它帮助：</p>
+<ul>
+<li>避免将重复内容写入向量存储</li>
+<li>避免重写未更改的内容</li>
+<li>避免重新计算未更改内容的嵌入</li>
+</ul>
+<p>即使文档经过了多次转换步骤（例如，通过文本分块），索引 API
+也能正常工作。</p>
+<h3 id="工作原理">5.1 工作原理</h3>
+<p>LangChain
+索引使用一个记录管理器（<code>RecordManager</code>），它跟踪文档写入向量存储的情况。</p>
+<p>在索引内容时，为每个文档计算哈希值，并将以下信息存储在记录管理器中：</p>
+<ul>
+<li>文档哈希（页面内容和元数据的哈希）</li>
+<li>写入时间</li>
+<li>源 ID ——
+每个文档的元数据中应包含信息，以便我们确定此文档的最终来源</li>
+</ul>
+<h3 id="删除模式">5.2 删除模式</h3>
+<p>在将文档索引到向量存储时，可能需要删除向量存储中的一些现有文档。在某些情况下，您可能希望删除与正在索引的新文档来源相同的任何现有文档。在其他情况下，您可能希望一次性删除所有现有文档。索引
+API 删除模式允许您选择您想要的行为：</p>
+<ul>
+<li><strong>无（None）</strong>：不执行任何自动清理，允许用户手动清理旧内容。</li>
+<li><strong>增量（Incremental）</strong>：如果源文档或派生文档的内容已更改，增量或完全模式将清理（删除）内容的先前版本。</li>
+<li><strong>完全（Full）</strong>：如果源文档已被删除（意味着它未包含在当前正在索引的文档中），完全清理模式将正确地将其从向量存储中删除，但增量模式则不会。</li>
+</ul>
+<p>当内容发生变化（例如，源 PDF
+文件已修订）时，在索引期间将有一段时间，新旧版本都可能返回给用户。这发生在新内容写入之后，但在旧版本被删除之前。</p>
+<ul>
+<li>增量索引通过在写入时持续进行清理，最小化这段时间。</li>
+<li>完全模式在所有批次写入完成后进行清理。</li>
+<li>不要与独立于索引 API
+预填充内容的存储一起使用，因为记录管理器不会知道之前已插入了记录。</li>
+<li>仅与支持以下功能的 LangChain 向量存储一起工作：按 ID 添加文档（带
+IDs 参数的 add_documents 方法）和按 ID 删除（带 IDs 参数的 delete
+方法）。</li>
+</ul>
+<h3 id="示例">5.3 示例</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.indexes <span class="hljs-keyword">import</span> SQLRecordManager, index<br><span class="hljs-keyword">from</span> langchain_core.documents <span class="hljs-keyword">import</span> Document<br><span class="hljs-keyword">from</span> langchain_elasticsearch <span class="hljs-keyword">import</span> ElasticsearchStore<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> OpenAIEmbeddings<br><br><span class="hljs-comment"># 初始化向量存储并设置Embedding</span><br>collection_name = <span class="hljs-string">&quot;test_index&quot;</span><br><br>embedding = OpenAIEmbeddings()<br><br>vectorstore = ElasticsearchStore(<br>    es_url=<span class="hljs-string">&quot;http://localhost:9200&quot;</span>, index_name=<span class="hljs-string">&quot;test_index&quot;</span>, embedding=embedding<br>)<br><br><span class="hljs-comment"># 使用适当的命名空间初始化记录管理器</span><br>namespace = <span class="hljs-string">f&quot;elasticsearch/<span class="hljs-subst">&#123;collection_name&#125;</span>&quot;</span><br>record_manager = SQLRecordManager(<br>    namespace, db_url=<span class="hljs-string">&quot;sqlite:///record_manager_cache.sql&quot;</span><br>)<br><br><span class="hljs-comment"># 在使用记录管理器之前创建一个模式</span><br>record_manager.create_schema()<br><br><span class="hljs-comment"># 索引一些测试文档</span><br>doc1 = Document(page_content=<span class="hljs-string">&quot;kitty&quot;</span>, metadata=&#123;<span class="hljs-string">&quot;source&quot;</span>: <span class="hljs-string">&quot;kitty.txt&quot;</span>&#125;)<br>doc2 = Document(page_content=<span class="hljs-string">&quot;doggy&quot;</span>, metadata=&#123;<span class="hljs-string">&quot;source&quot;</span>: <span class="hljs-string">&quot;doggy.txt&quot;</span>&#125;)<br><br><span class="hljs-comment"># 索引到一个空的向量存储：</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">_clear</span>():<br>    <span class="hljs-string">&quot;&quot;&quot;Hacky helper method to clear content. See the `full` mode section to to understand why it works.&quot;&quot;&quot;</span><br>    index([], record_manager, vectorstore, cleanup=<span class="hljs-string">&quot;full&quot;</span>, source_id_key=<span class="hljs-string">&quot;source&quot;</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="none-删除模式">5.3.1 None 删除模式</h4>
+<p>该模式不会自动清理旧版本的内容； 但是，它仍然负责内容重复删除。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python">_clear()<br><br>index(<br>    [doc1, doc1, doc1, doc1, doc1],<br>    record_manager,<br>    vectorstore,<br>    cleanup=<span class="hljs-literal">None</span>,<br>    source_id_key=<span class="hljs-string">&quot;source&quot;</span>,<br>)<br><br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">&#123;&#x27;num_added&#x27;: 1, &#x27;num_updated&#x27;: 0, &#x27;num_skipped&#x27;: 0, &#x27;num_deleted&#x27;: 0&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">_clear()<br><br>index([doc1, doc2], record_manager, vectorstore, cleanup=<span class="hljs-literal">None</span>, source_id_key=<span class="hljs-string">&quot;source&quot;</span>)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">&#123;&#x27;num_added&#x27;: 2, &#x27;num_updated&#x27;: 0, &#x27;num_skipped&#x27;: 0, &#x27;num_deleted&#x27;: 0&#125;<br></code></pre></td></tr></table></figure>
+<p>第二次将跳过所有内容:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">index([doc1, doc2], record_manager, vectorstore, cleanup=<span class="hljs-literal">None</span>, source_id_key=<span class="hljs-string">&quot;source&quot;</span>)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">&#123;&#x27;num_added&#x27;: 0, &#x27;num_updated&#x27;: 0, &#x27;num_skipped&#x27;: 2, &#x27;num_deleted&#x27;: 0&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="incremental-删除模式">5.3.2 incremental 删除模式</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python">_clear()<br><br>index(<br>    [doc1, doc2],<br>    record_manager,<br>    vectorstore,<br>    cleanup=<span class="hljs-string">&quot;incremental&quot;</span>,<br>    source_id_key=<span class="hljs-string">&quot;source&quot;</span>,<br>)<br><br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">&#123;&#x27;num_added&#x27;: 2, &#x27;num_updated&#x27;: 0, &#x27;num_skipped&#x27;: 0, &#x27;num_deleted&#x27;: 0&#125;<br></code></pre></td></tr></table></figure>
+<p>再次索引应该会两个文档都被跳过 —— 同时跳过Embeding操作</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python">index(<br>    [doc1, doc2],<br>    record_manager,<br>    vectorstore,<br>    cleanup=<span class="hljs-string">&quot;incremental&quot;</span>,<br>    source_id_key=<span class="hljs-string">&quot;source&quot;</span>,<br>)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">&#123;&#x27;num_added&#x27;: 0, &#x27;num_updated&#x27;: 0, &#x27;num_skipped&#x27;: 2, &#x27;num_deleted&#x27;: 0&#125;<br></code></pre></td></tr></table></figure>
+<p>如果没有提供文档进行增量索引模式，将不会有任何变化。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">index([], record_manager, vectorstore, cleanup=<span class="hljs-string">&quot;incremental&quot;</span>, source_id_key=<span class="hljs-string">&quot;source&quot;</span>)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">&#123;&#x27;num_added&#x27;: 0, &#x27;num_updated&#x27;: 0, &#x27;num_skipped&#x27;: 0, &#x27;num_deleted&#x27;: 0&#125;<br></code></pre></td></tr></table></figure>
+<p>如果更改了一个文档，新版本将被写入，并且所有旧版本共享同一源的文档将被删除。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python">changed_doc_2 = Document(page_content=<span class="hljs-string">&quot;puppy&quot;</span>, metadata=&#123;<span class="hljs-string">&quot;source&quot;</span>: <span class="hljs-string">&quot;doggy.txt&quot;</span>&#125;)<br><br>index(<br>    [changed_doc_2],<br>    record_manager,<br>    vectorstore,<br>    cleanup=<span class="hljs-string">&quot;incremental&quot;</span>,<br>    source_id_key=<span class="hljs-string">&quot;source&quot;</span>,<br>)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">&#123;&#x27;num_added&#x27;: 1, &#x27;num_updated&#x27;: 0, &#x27;num_skipped&#x27;: 0, &#x27;num_deleted&#x27;: 1&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="full删除模式">5.3.3 full删除模式</h4>
+<p>在完全模式下，用户应该将应该被索引的全部内容传递给索引函数。任何没有传递给索引函数且存在于向量存储中的文档都将被删除。此行为对于处理源文档的删除很有用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python">_clear()<br><br>all_docs = [doc1, doc2]<br><br>index(all_docs, record_manager, vectorstore, cleanup=<span class="hljs-string">&quot;full&quot;</span>, source_id_key=<span class="hljs-string">&quot;source&quot;</span>)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">&#123;&#x27;num_added&#x27;: 2, &#x27;num_updated&#x27;: 0, &#x27;num_skipped&#x27;: 0, &#x27;num_deleted&#x27;: 0&#125;<br></code></pre></td></tr></table></figure>
+<p>假设有人删除了第一个文档：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">del</span> all_docs[<span class="hljs-number">0</span>]<br><br>all_docs<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">[Document(page_content=&#x27;doggy&#x27;, metadata=&#123;&#x27;source&#x27;: &#x27;doggy.txt&#x27;&#125;)]<br></code></pre></td></tr></table></figure>
+<p>使用<code>full</code>模式将会清除已删除的内容。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">index(all_docs, record_manager, vectorstore, cleanup=<span class="hljs-string">&quot;full&quot;</span>, source_id_key=<span class="hljs-string">&quot;source&quot;</span>)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">&#123;&#x27;num_added&#x27;: 0, &#x27;num_updated&#x27;: 0, &#x27;num_skipped&#x27;: 1, &#x27;num_deleted&#x27;: 1&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="source">5.4 Source</h3>
+<p>元数据属性包含一个名为 <code>source</code> 的字段。这个
+<code>source</code>
+应该指向与给定文档相关联的最终来源。例如，如果这些文档代表某个父文档的一些块，那么两个文档的
+source 应该相同，并引用父文档。一般来说，应该始终指定
+source。只有在不打算使用增量模式，并且由于某些原因无法正确指定 source
+字段时，才使用 None。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_text_splitters <span class="hljs-keyword">import</span> CharacterTextSplitter<br><br>doc1 = Document(<br>    page_content=<span class="hljs-string">&quot;kitty kitty kitty kitty kitty&quot;</span>, metadata=&#123;<span class="hljs-string">&quot;source&quot;</span>: <span class="hljs-string">&quot;kitty.txt&quot;</span>&#125;<br>)<br>doc2 = Document(page_content=<span class="hljs-string">&quot;doggy doggy the doggy&quot;</span>, metadata=&#123;<span class="hljs-string">&quot;source&quot;</span>: <span class="hljs-string">&quot;doggy.txt&quot;</span>&#125;)<br><br>new_docs = CharacterTextSplitter(<br>    separator=<span class="hljs-string">&quot;t&quot;</span>, keep_separator=<span class="hljs-literal">True</span>, chunk_size=<span class="hljs-number">12</span>, chunk_overlap=<span class="hljs-number">2</span><br>).split_documents([doc1, doc2])<br>new_docs<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">[Document(page_content=&#x27;kitty kit&#x27;, metadata=&#123;&#x27;source&#x27;: &#x27;kitty.txt&#x27;&#125;),<br> Document(page_content=&#x27;tty kitty ki&#x27;, metadata=&#123;&#x27;source&#x27;: &#x27;kitty.txt&#x27;&#125;),<br> Document(page_content=&#x27;tty kitty&#x27;, metadata=&#123;&#x27;source&#x27;: &#x27;kitty.txt&#x27;&#125;),<br> Document(page_content=&#x27;doggy doggy&#x27;, metadata=&#123;&#x27;source&#x27;: &#x27;doggy.txt&#x27;&#125;),<br> Document(page_content=&#x27;the doggy&#x27;, metadata=&#123;&#x27;source&#x27;: &#x27;doggy.txt&#x27;&#125;)]<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python">_clear()<br><br>index(<br>    new_docs,<br>    record_manager,<br>    vectorstore,<br>    cleanup=<span class="hljs-string">&quot;incremental&quot;</span>,<br>    source_id_key=<span class="hljs-string">&quot;source&quot;</span>,<br>)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">&#123;&#x27;num_added&#x27;: 5, &#x27;num_updated&#x27;: 0, &#x27;num_skipped&#x27;: 0, &#x27;num_deleted&#x27;: 0&#125;<br></code></pre></td></tr></table></figure>
+<p>这应该删除与<code>doggy.txt</code>源关联的文档的旧版本，并将其替换为新版本。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python">changed_doggy_docs = [<br>    Document(page_content=<span class="hljs-string">&quot;woof woof&quot;</span>, metadata=&#123;<span class="hljs-string">&quot;source&quot;</span>: <span class="hljs-string">&quot;doggy.txt&quot;</span>&#125;),<br>    Document(page_content=<span class="hljs-string">&quot;woof woof woof&quot;</span>, metadata=&#123;<span class="hljs-string">&quot;source&quot;</span>: <span class="hljs-string">&quot;doggy.txt&quot;</span>&#125;),<br>]<br><br>index(<br>    changed_doggy_docs,<br>    record_manager,<br>    vectorstore,<br>    cleanup=<span class="hljs-string">&quot;incremental&quot;</span>,<br>    source_id_key=<span class="hljs-string">&quot;source&quot;</span>,<br>)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">&#123;&#x27;num_added&#x27;: 2, &#x27;num_updated&#x27;: 0, &#x27;num_skipped&#x27;: 0, &#x27;num_deleted&#x27;: 2&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">vectorstore.similarity_search(<span class="hljs-string">&quot;dog&quot;</span>, k=<span class="hljs-number">30</span>)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">[Document(page_content=&#x27;woof woof&#x27;, metadata=&#123;&#x27;source&#x27;: &#x27;doggy.txt&#x27;&#125;),<br> Document(page_content=&#x27;woof woof woof&#x27;, metadata=&#123;&#x27;source&#x27;: &#x27;doggy.txt&#x27;&#125;),<br> Document(page_content=&#x27;tty kitty&#x27;, metadata=&#123;&#x27;source&#x27;: &#x27;kitty.txt&#x27;&#125;),<br> Document(page_content=&#x27;tty kitty ki&#x27;, metadata=&#123;&#x27;source&#x27;: &#x27;kitty.txt&#x27;&#125;),<br> Document(page_content=&#x27;kitty kit&#x27;, metadata=&#123;&#x27;source&#x27;: &#x27;kitty.txt&#x27;&#125;)]<br></code></pre></td></tr></table></figure>
+<h3 id="和loaders一起用">5.5 和loaders一起用</h3>
+<p>索引可以接受文档的可迭代或任何加载器。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_community.document_loaders.base <span class="hljs-keyword">import</span> BaseLoader<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyCustomLoader</span>(<span class="hljs-title class_ inherited__">BaseLoader</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">lazy_load</span>(<span class="hljs-params">self</span>):<br>        text_splitter = CharacterTextSplitter(<br>            separator=<span class="hljs-string">&quot;t&quot;</span>, keep_separator=<span class="hljs-literal">True</span>, chunk_size=<span class="hljs-number">12</span>, chunk_overlap=<span class="hljs-number">2</span><br>        )<br>        docs = [<br>            Document(page_content=<span class="hljs-string">&quot;woof woof&quot;</span>, metadata=&#123;<span class="hljs-string">&quot;source&quot;</span>: <span class="hljs-string">&quot;doggy.txt&quot;</span>&#125;),<br>            Document(page_content=<span class="hljs-string">&quot;woof woof woof&quot;</span>, metadata=&#123;<span class="hljs-string">&quot;source&quot;</span>: <span class="hljs-string">&quot;doggy.txt&quot;</span>&#125;),<br>        ]<br>        <span class="hljs-keyword">yield</span> <span class="hljs-keyword">from</span> text_splitter.split_documents(docs)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">load</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">list</span>(<span class="hljs-variable language_">self</span>.lazy_load())<br><br>_clear()<br><br>loader = MyCustomLoader()<br><br>loader.load()<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">[Document(page_content=&#x27;woof woof&#x27;, metadata=&#123;&#x27;source&#x27;: &#x27;doggy.txt&#x27;&#125;),<br> Document(page_content=&#x27;woof woof woof&#x27;, metadata=&#123;&#x27;source&#x27;: &#x27;doggy.txt&#x27;&#125;)]<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">index(loader, record_manager, vectorstore, cleanup=<span class="hljs-string">&quot;full&quot;</span>, source_id_key=<span class="hljs-string">&quot;source&quot;</span>)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">&#123;&#x27;num_added&#x27;: 2, &#x27;num_updated&#x27;: 0, &#x27;num_skipped&#x27;: 0, &#x27;num_deleted&#x27;: 0&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">vectorstore.similarity_search(<span class="hljs-string">&quot;dog&quot;</span>, k=<span class="hljs-number">30</span>)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">[Document(page_content=&#x27;woof woof&#x27;, metadata=&#123;&#x27;source&#x27;: &#x27;doggy.txt&#x27;&#125;),<br> Document(page_content=&#x27;woof woof woof&#x27;, metadata=&#123;&#x27;source&#x27;: &#x27;doggy.txt&#x27;&#125;)]<br></code></pre></td></tr></table></figure>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/datawhalechina/prompt-engineering-for-developers">datawhalechina/prompt-engineering-for-developers:
+吴恩达大模型系列课程中文版</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/get_started/introduction">LangChain官方python文档</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://nanonets.com/blog/langchain/#langchain-expression-language">A
+Complete LangChain Guide</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://space.bilibili.com/28357052/channel/collectiondetail?sid=1611560">LangChain
+架构解析和应用开发实践分享</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/webup/agi-talks/tree/master">webup/agi-talks
+AGI 内外部分享材料合集</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com.cn/docs/">LangChain 中文文档
+v0.1.7</a></li>
+</ul>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1"
+class="footnote-text"><span><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1214y1X7Aq"
+class="uri">https://www.bilibili.com/video/BV1214y1X7Aq</a>
+<a href="#fnref:1" rev="footnote" class="footnote-backref">
+↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LangChain/" class="category-chain-item">LangChain</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#LLM学习笔记</a>
+      
+        <a href="/tags/LangChain/" class="print-no-link">#LangChain</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LangChain(三)——Data Connection</div>
+      <div>https://mztchaoqun.com.cn/posts/D27_LangChain_Retrieval/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年7月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D28_LangChain_Memory/" title="LangChain(四)——Memory">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LangChain(四)——Memory</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D26_LangChain_ModelIO/" title="LangChain(二)——Model I/O">
+                        <span class="hidden-mobile">LangChain(二)——Model I/O</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

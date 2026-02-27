@@ -1,0 +1,914 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="LangChain模块架构图 [1]  一、必不可缺的 Callback 回调系统 Callback 回调系统让我们可以连接到 LLM 应用的各个阶段，这对于日志记录、监控、流传输等非常有用。LangChain提供了一些Callback处理程序，在langchain&#x2F;callbacks模块中找到。 1.1 最基本的Callback StdOutCallbackHandler是一个最基本的处理程序，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LangChain(七)——Callback">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D31_LangChain_Callback/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="LangChain模块架构图 [1]  一、必不可缺的 Callback 回调系统 Callback 回调系统让我们可以连接到 LLM 应用的各个阶段，这对于日志记录、监控、流传输等非常有用。LangChain提供了一些Callback处理程序，在langchain&#x2F;callbacks模块中找到。 1.1 最基本的Callback StdOutCallbackHandler是一个最基本的处理程序，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/Callback.jpg">
+<meta property="article:published_time" content="2024-08-06T14:32:41.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.271Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="LLM学习笔记">
+<meta property="article:tag" content="LangChain">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/Callback.jpg">
+  
+  
+  
+  <title>LangChain(七)——Callback - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LangChain(七)——Callback"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-08-06 22:32" pubdate>
+          2024年8月6日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          20 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LangChain(七)——Callback</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><strong>LangChain模块架构图</strong>
+<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span
+class="hint--top hint--rounded" aria-label="">[1]</span></a></sup></p>
+<p><img src="/images/LangChainAll.jpeg" srcset="/img/loading.gif" lazyload /></p>
+<h2 id="一必不可缺的-callback-回调系统">一、必不可缺的 Callback
+回调系统</h2>
+<p><code>Callback</code> 回调系统让我们可以连接到 LLM
+应用的各个阶段，这对于日志记录、监控、流传输等非常有用。<code>LangChain</code>提供了一些Callback处理程序，在<code>langchain/callbacks</code>模块中找到。</p>
+<h3 id="最基本的callback">1.1 最基本的Callback</h3>
+<p><code>StdOutCallbackHandler</code>是一个最基本的处理程序，将所有事件记录到<code>stdout</code>，当对象上的verbose标志被设置为
+<code>true</code>时，即使没有明确传入，<code>StdOutCallbackHandler</code>也会被调用。</p>
+<p><code>callbacks</code> 参数在整个 API（Model、Chain、Agent、Tool
+等）的大多数对象上的两个不同位置可用。</p>
+<ul>
+<li>可以在构造器位置上接入 Callback（但不能跨对象使用）</li>
+<li>也可以在模块对象的 invoke() /ainvoke() / batch() / abatch()
+实例方法中发起请求时绑定，但仅对该请求有效,以及它包含的所有子请求，回调通过
+config 参数传递</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_core.callbacks <span class="hljs-keyword">import</span> StdOutCallbackHandler<br><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> LLMChain<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> langchain_core.prompts <span class="hljs-keyword">import</span> PromptTemplate<br><br>handler = StdOutCallbackHandler()<br>llm = OpenAI()<br>prompt = PromptTemplate.from_template(<span class="hljs-string">&quot;1 + &#123;number&#125; = &quot;</span>)<br><br><span class="hljs-comment"># 初始化chain时设置</span><br>chain = LLMChain(llm=llm, prompt=prompt, callbacks=[handler])<br>chain.invoke(&#123;<span class="hljs-string">&quot;number&quot;</span>:<span class="hljs-number">2</span>&#125;)<br><br><span class="hljs-comment"># verbose=true</span><br>chain = LLMChain(llm=llm, prompt=prompt, verbose=<span class="hljs-literal">True</span>)<br>chain.invoke(&#123;<span class="hljs-string">&quot;number&quot;</span>:<span class="hljs-number">2</span>&#125;)<br><br><span class="hljs-comment"># 调用是设置</span><br>chain = LLMChain(llm=llm, prompt=prompt)<br>chain.invoke(&#123;<span class="hljs-string">&quot;number&quot;</span>:<span class="hljs-number">2</span>&#125;, &#123;<span class="hljs-string">&quot;callbacks&quot;</span>:[handler]&#125;)<br><br><br>config = &#123;<br>    <span class="hljs-string">&#x27;callbacks&#x27;</span> : [handler]<br>&#125;<br><br>chain = prompt | chain<br>chain.invoke(&#123;<span class="hljs-string">&quot;number&quot;</span>:<span class="hljs-number">2</span>&#125;, config=config)<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-28ab9646" role="button" aria-expanded="false" aria-controls="collapse-28ab9646">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-28ab9646">
+        <div class="fold-content">
+          <figure class="highlight node-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs node-repl"><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"><span class="hljs-title class_">Entering</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">LLMChain</span> chain...</span><br>Prompt after formatting:<br>1 + 2 = <br><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"><span class="hljs-title class_">Finished</span> chain.</span><br><br><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"><span class="hljs-title class_">Entering</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">LLMChain</span> chain...</span><br>Prompt after formatting:<br>1 + 2 = <br><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"><span class="hljs-title class_">Finished</span> chain.</span><br><br><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"><span class="hljs-title class_">Entering</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">LLMChain</span> chain...</span><br>Prompt after formatting:<br>1 + 2 = <br><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"><span class="hljs-title class_">Finished</span> chain.</span><br><br><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"><span class="hljs-title class_">Entering</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RunnableSequence</span> chain...</span><br><br><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"><span class="hljs-title class_">Entering</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PromptTemplate</span> chain...</span><br><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"><span class="hljs-title class_">Finished</span> chain.</span><br><br><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"><span class="hljs-title class_">Entering</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">LLMChain</span> chain...</span><br>Prompt after formatting:<br>1 + text=&#x27;1 + 2 = &#x27; = <br><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"><span class="hljs-title class_">Finished</span> chain.</span><br><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"><span class="hljs-title class_">Finished</span> chain.</span><br>&#123;&#x27;number&#x27;: StringPromptValue(text=&#x27;1 + 2 = &#x27;), &#x27;text&#x27;: &quot;&#x27;) \n\n\n1 + 2 = 3&quot;&#125;<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<h3 id="异步回调">1.2 异步回调</h3>
+<p>当使用异步API时，建议使用<code>AsyncCallbackHandler</code>以避免阻塞运行循环。异步方法运行<code>llm/chain/tool/agent</code>时使用同步<code>CallbackHandler</code>,也是可以运行的。但是如果你的<code>CallbackHandler</code>不是线程安全的，就会导致问题。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> asyncio<br><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">Any</span>, <span class="hljs-type">Dict</span>, <span class="hljs-type">List</span><br><br><span class="hljs-keyword">from</span> langchain.callbacks.base <span class="hljs-keyword">import</span> AsyncCallbackHandler, BaseCallbackHandler<br><span class="hljs-keyword">from</span> langchain_core.messages <span class="hljs-keyword">import</span> HumanMessage<br><span class="hljs-keyword">from</span> langchain_core.outputs <span class="hljs-keyword">import</span> LLMResult<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyCustomSyncHandler</span>(<span class="hljs-title class_ inherited__">BaseCallbackHandler</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">on_llm_new_token</span>(<span class="hljs-params">self, token: <span class="hljs-built_in">str</span>, **kwargs</span>) -&gt; <span class="hljs-literal">None</span>:<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Sync handler being called in a `thread_pool_executor`: token: <span class="hljs-subst">&#123;token&#125;</span>&quot;</span>)<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyCustomAsyncHandler</span>(<span class="hljs-title class_ inherited__">AsyncCallbackHandler</span>):<br>    <span class="hljs-string">&quot;&quot;&quot;Async callback handler that can be used to handle callbacks from langchain.&quot;&quot;&quot;</span><br><br>    <span class="hljs-keyword">async</span> <span class="hljs-keyword">def</span> <span class="hljs-title function_">on_llm_start</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self, serialized: <span class="hljs-type">Dict</span>[<span class="hljs-built_in">str</span>, <span class="hljs-type">Any</span>], prompts: <span class="hljs-type">List</span>[<span class="hljs-built_in">str</span>], **kwargs: <span class="hljs-type">Any</span></span><br><span class="hljs-params">    </span>) -&gt; <span class="hljs-literal">None</span>:<br>        <span class="hljs-string">&quot;&quot;&quot;Run when chain starts running.&quot;&quot;&quot;</span><br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;zzzz....&quot;</span>)<br>        <span class="hljs-keyword">await</span> asyncio.sleep(<span class="hljs-number">0.3</span>)<br>        class_name = serialized[<span class="hljs-string">&quot;name&quot;</span>]<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Hi! I just woke up. Your llm is starting&quot;</span>)<br><br>    <span class="hljs-keyword">async</span> <span class="hljs-keyword">def</span> <span class="hljs-title function_">on_llm_end</span>(<span class="hljs-params">self, response: LLMResult, **kwargs: <span class="hljs-type">Any</span></span>) -&gt; <span class="hljs-literal">None</span>:<br>        <span class="hljs-string">&quot;&quot;&quot;Run when chain ends running.&quot;&quot;&quot;</span><br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;zzzz....&quot;</span>)<br>        <span class="hljs-keyword">await</span> asyncio.sleep(<span class="hljs-number">0.3</span>)<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Hi! I just woke up. Your llm is ending&quot;</span>)<br><br><br><span class="hljs-comment"># To enable streaming, we pass in `streaming=True` to the ChatModel constructor</span><br><span class="hljs-comment"># Additionally, we pass in a list with our custom handler</span><br>chat = ChatOpenAI(<br>    max_tokens=<span class="hljs-number">25</span>,<br>    streaming=<span class="hljs-literal">True</span>,<br>    callbacks=[MyCustomSyncHandler(), MyCustomAsyncHandler()],<br>)<br><br><span class="hljs-keyword">await</span> chat.agenerate([[HumanMessage(content=<span class="hljs-string">&quot;Tell me a joke&quot;</span>)]])<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-5b75660a" role="button" aria-expanded="false" aria-controls="collapse-5b75660a">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-5b75660a">
+        <div class="fold-content">
+          <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs text">zzzz....<br>Hi! I just woke up. Your llm is starting<br>Sync handler being called in a `thread_pool_executor`: token: <br>Sync handler being called in a `thread_pool_executor`: token: Why<br>Sync handler being called in a `thread_pool_executor`: token:  couldn<br>Sync handler being called in a `thread_pool_executor`: token: &#x27;t<br>Sync handler being called in a `thread_pool_executor`: token:  the<br>Sync handler being called in a `thread_pool_executor`: token:  bicycle<br>Sync handler being called in a `thread_pool_executor`: token:  find<br>Sync handler being called in a `thread_pool_executor`: token:  its<br>Sync handler being called in a `thread_pool_executor`: token:  way<br>Sync handler being called in a `thread_pool_executor`: token:  home<br>Sync handler being called in a `thread_pool_executor`: token: ?<br>Sync handler being called in a `thread_pool_executor`: token:  Because<br>Sync handler being called in a `thread_pool_executor`: token:  it<br>Sync handler being called in a `thread_pool_executor`: token:  lost<br>Sync handler being called in a `thread_pool_executor`: token:  its<br>Sync handler being called in a `thread_pool_executor`: token:  bearings<br>Sync handler being called in a `thread_pool_executor`: token: !<br>Sync handler being called in a `thread_pool_executor`: token: <br>zzzz....<br>Hi! I just woke up. Your llm is ending<br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<h3 id="自定义多callback-handlers写入文件">1.3 自定义多callback
+handlers（写入文件）</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">Any</span>, <span class="hljs-type">Dict</span>, <span class="hljs-type">List</span>, <span class="hljs-type">Union</span>,<span class="hljs-type">Optional</span>, TextIO, cast<br><br><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> AgentType, initialize_agent, load_tools<br><span class="hljs-keyword">from</span> langchain.callbacks.base <span class="hljs-keyword">import</span> BaseCallbackHandler<br><span class="hljs-keyword">from</span> langchain_core.agents <span class="hljs-keyword">import</span> AgentAction<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> langchain_core.utils.<span class="hljs-built_in">input</span> <span class="hljs-keyword">import</span> print_text<br><br><span class="hljs-keyword">from</span> loguru <span class="hljs-keyword">import</span> logger<br><br>logfile = <span class="hljs-string">&quot;output.log&quot;</span><br>logger.add(logfile, colorize=<span class="hljs-literal">True</span>, enqueue=<span class="hljs-literal">True</span>)<br><br><br><span class="hljs-comment"># 自定义CallbackHandler</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyCustomHandlerOne</span>(<span class="hljs-title class_ inherited__">BaseCallbackHandler</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self, filename: <span class="hljs-built_in">str</span>, mode: <span class="hljs-built_in">str</span> = <span class="hljs-string">&quot;a&quot;</span>, color: <span class="hljs-type">Optional</span>[<span class="hljs-built_in">str</span>] = <span class="hljs-literal">None</span></span><br><span class="hljs-params">    </span>) -&gt; <span class="hljs-literal">None</span>:<br>        <span class="hljs-string">&quot;&quot;&quot;Initialize callback handler.&quot;&quot;&quot;</span><br>        <span class="hljs-variable language_">self</span>.file = cast(TextIO, <span class="hljs-built_in">open</span>(filename, mode, encoding=<span class="hljs-string">&quot;utf-8&quot;</span>))<br>        <span class="hljs-variable language_">self</span>.color = color<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__del__</span>(<span class="hljs-params">self</span>) -&gt; <span class="hljs-literal">None</span>:<br>        <span class="hljs-string">&quot;&quot;&quot;Destructor to cleanup when done.&quot;&quot;&quot;</span><br>        <span class="hljs-variable language_">self</span>.file.close()<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">on_llm_start</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self, serialized: <span class="hljs-type">Dict</span>[<span class="hljs-built_in">str</span>, <span class="hljs-type">Any</span>], prompts: <span class="hljs-type">List</span>[<span class="hljs-built_in">str</span>], **kwargs: <span class="hljs-type">Any</span></span><br><span class="hljs-params">    </span>) -&gt; <span class="hljs-type">Any</span>:<br>        print_text( <span class="hljs-string">f&quot;on_llm_start <span class="hljs-subst">&#123;serialized[<span class="hljs-string">&#x27;name&#x27;</span>]&#125;</span>&quot;</span>,end=<span class="hljs-string">&quot;\n&quot;</span>, file=<span class="hljs-variable language_">self</span>.file)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">on_llm_new_token</span>(<span class="hljs-params">self, token: <span class="hljs-built_in">str</span>, **kwargs: <span class="hljs-type">Any</span></span>) -&gt; <span class="hljs-type">Any</span>:<br>        print_text(<span class="hljs-string">f&quot;on_new_token <span class="hljs-subst">&#123;token&#125;</span>&quot;</span>,end=<span class="hljs-string">&quot;\n&quot;</span>, file=<span class="hljs-variable language_">self</span>.file)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">on_llm_error</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self, error: <span class="hljs-type">Union</span>[Exception, KeyboardInterrupt], **kwargs: <span class="hljs-type">Any</span></span><br><span class="hljs-params">    </span>) -&gt; <span class="hljs-type">Any</span>:<br>        <span class="hljs-string">&quot;&quot;&quot;Run when LLM errors.&quot;&quot;&quot;</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">on_chain_start</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self, serialized: <span class="hljs-type">Dict</span>[<span class="hljs-built_in">str</span>, <span class="hljs-type">Any</span>], inputs: <span class="hljs-type">Dict</span>[<span class="hljs-built_in">str</span>, <span class="hljs-type">Any</span>], **kwargs: <span class="hljs-type">Any</span></span><br><span class="hljs-params">    </span>) -&gt; <span class="hljs-type">Any</span>:<br>        print_text(<span class="hljs-string">f&quot;on_chain_start <span class="hljs-subst">&#123;serialized[<span class="hljs-string">&#x27;name&#x27;</span>]&#125;</span>&quot;</span>,end=<span class="hljs-string">&quot;\n&quot;</span>, file=<span class="hljs-variable language_">self</span>.file)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">on_tool_start</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self, serialized: <span class="hljs-type">Dict</span>[<span class="hljs-built_in">str</span>, <span class="hljs-type">Any</span>], input_str: <span class="hljs-built_in">str</span>, **kwargs: <span class="hljs-type">Any</span></span><br><span class="hljs-params">    </span>) -&gt; <span class="hljs-type">Any</span>:<br>        print_text(<span class="hljs-string">f&quot;on_tool_start <span class="hljs-subst">&#123;serialized[<span class="hljs-string">&#x27;name&#x27;</span>]&#125;</span>&quot;</span>,end=<span class="hljs-string">&quot;\n&quot;</span>, file=<span class="hljs-variable language_">self</span>.file)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">on_agent_action</span>(<span class="hljs-params">self, action: AgentAction, **kwargs: <span class="hljs-type">Any</span></span>) -&gt; <span class="hljs-type">Any</span>:<br>        print_text(<span class="hljs-string">f&quot;on_agent_action <span class="hljs-subst">&#123;action&#125;</span>&quot;</span>,end=<span class="hljs-string">&quot;\n&quot;</span>, file=<span class="hljs-variable language_">self</span>.file)<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyCustomHandlerTwo</span>(<span class="hljs-title class_ inherited__">BaseCallbackHandler</span>):<br>    <br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self, filename: <span class="hljs-built_in">str</span>, mode: <span class="hljs-built_in">str</span> = <span class="hljs-string">&quot;a&quot;</span>, color: <span class="hljs-type">Optional</span>[<span class="hljs-built_in">str</span>] = <span class="hljs-literal">None</span></span><br><span class="hljs-params">    </span>) -&gt; <span class="hljs-literal">None</span>:<br>        <span class="hljs-string">&quot;&quot;&quot;Initialize callback handler.&quot;&quot;&quot;</span><br>        <span class="hljs-variable language_">self</span>.file = cast(TextIO, <span class="hljs-built_in">open</span>(filename, mode, encoding=<span class="hljs-string">&quot;utf-8&quot;</span>))<br>        <span class="hljs-variable language_">self</span>.color = color<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__del__</span>(<span class="hljs-params">self</span>) -&gt; <span class="hljs-literal">None</span>:<br>        <span class="hljs-string">&quot;&quot;&quot;Destructor to cleanup when done.&quot;&quot;&quot;</span><br>        <span class="hljs-variable language_">self</span>.file.close()<br>        <br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">on_llm_start</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self, serialized: <span class="hljs-type">Dict</span>[<span class="hljs-built_in">str</span>, <span class="hljs-type">Any</span>], prompts: <span class="hljs-type">List</span>[<span class="hljs-built_in">str</span>], **kwargs: <span class="hljs-type">Any</span></span><br><span class="hljs-params">    </span>) -&gt; <span class="hljs-type">Any</span>:<br>        print_text(<span class="hljs-string">f&quot;on_llm_start (I&#x27;m the second handler!!) <span class="hljs-subst">&#123;serialized[<span class="hljs-string">&#x27;name&#x27;</span>]&#125;</span>&quot;</span>,end=<span class="hljs-string">&quot;\n&quot;</span>, file=<span class="hljs-variable language_">self</span>.file)<br><br><br>handler1 = MyCustomHandlerOne(logfile)<br>handler2 = MyCustomHandlerTwo(logfile)<br><br><span class="hljs-comment"># callbacks  handler2 只记录LLM</span><br>llm = OpenAI(temperature=<span class="hljs-number">0</span>, streaming=<span class="hljs-literal">True</span>, callbacks=[handler2])<br>tools = load_tools([<span class="hljs-string">&quot;llm-math&quot;</span>], llm=llm)<br>agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION)<br><br>config = &#123;<br>    <span class="hljs-string">&#x27;callbacks&#x27;</span> : [handler1]<br>&#125;<br><span class="hljs-comment"># Callbacks handler1 记录invoke整个过程</span><br>agent.invoke(<span class="hljs-string">&quot;What is 2 raised to the 0.235 power?&quot;</span>, config=config)<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs 1c">&#123;&#x27;input&#x27;<span class="hljs-punctuation">:</span> &#x27;What is 2 raised to the 0.235 power?&#x27;<span class="hljs-punctuation">,</span><br> &#x27;output&#x27;<span class="hljs-punctuation">:</span> &#x27;1.<span class="hljs-number">17690673721876</span>74&#x27;&#125;<br></code></pre></td></tr></table></figure>
+<p>查看文件内容</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> ansi2html <span class="hljs-keyword">import</span> Ansi2HTMLConverter<br><span class="hljs-keyword">from</span> IPython.display <span class="hljs-keyword">import</span> HTML, display<br><br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;output.log&quot;</span>, <span class="hljs-string">&quot;r&quot;</span>) <span class="hljs-keyword">as</span> f:<br>    content = f.read()<br><br>conv = Ansi2HTMLConverter()<br>html = conv.convert(content, full=<span class="hljs-literal">True</span>)<br><br>display(HTML(html))<br></code></pre></td></tr></table></figure>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-cb71f24e" role="button" aria-expanded="false" aria-controls="collapse-cb71f24e">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-cb71f24e">
+        <div class="fold-content">
+          <figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><code class="hljs lasso">on_chain_start AgentExecutor<br>on_chain_start LLMChain<br>on_llm_start OpenAI<br>on_llm_start (I<span class="hljs-string">&#x27;m the second handler!!) OpenAI</span><br><span class="hljs-string">on_new_token  I</span><br><span class="hljs-string">on_new_token  should</span><br><span class="hljs-string">on_new_token  use</span><br><span class="hljs-string">on_new_token  a</span><br><span class="hljs-string">on_new_token  calculator</span><br><span class="hljs-string">on_new_token  to</span><br><span class="hljs-string">on_new_token  solve</span><br><span class="hljs-string">on_new_token  this</span><br><span class="hljs-string">on_new_token .</span><br><span class="hljs-string"></span><br><span class="hljs-string">on_new_token Action</span><br><span class="hljs-string">on_new_token :</span><br><span class="hljs-string">on_new_token  Calculator</span><br><span class="hljs-string">on_new_token </span><br><span class="hljs-string"></span><br><span class="hljs-string">on_new_token Action</span><br><span class="hljs-string">on_new_token  Input</span><br><span class="hljs-string">on_new_token :</span><br><span class="hljs-string">on_new_token  </span><br><span class="hljs-string">on_new_token 2</span><br><span class="hljs-string">on_new_token  ^</span><br><span class="hljs-string">on_new_token  </span><br><span class="hljs-string">on_new_token 0</span><br><span class="hljs-string">on_new_token .</span><br><span class="hljs-string">on_new_token 235</span><br><span class="hljs-string">on_new_token </span><br><span class="hljs-string"></span><br><span class="hljs-string">on_new_token </span><br><span class="hljs-string">on_agent_action tool=&#x27;</span>Calculator<span class="hljs-string">&#x27; tool_input=&#x27;</span><span class="hljs-number">2</span> ^ <span class="hljs-number">0.235</span>\n<span class="hljs-string">&#x27; log=&#x27;</span> I should use a calculator <span class="hljs-keyword">to</span> solve this.\nAction: Calculator\nAction Input: <span class="hljs-number">2</span> ^ <span class="hljs-number">0.235</span>\n<span class="hljs-string">&#x27;</span><br><span class="hljs-string">on_tool_start Calculator</span><br><span class="hljs-string">on_chain_start LLMMathChain</span><br><span class="hljs-string">on_chain_start LLMChain</span><br><span class="hljs-string">on_llm_start OpenAI</span><br><span class="hljs-string">on_llm_start (I&#x27;</span>m the second handler!!) OpenAI<br>on_new_token <br><br>on_new_token <span class="hljs-string">``</span><span class="hljs-string">`text</span><br><span class="hljs-string">on_new_token </span><br><span class="hljs-string"></span><br><span class="hljs-string">on_new_token 2</span><br><span class="hljs-string">on_new_token  **</span><br><span class="hljs-string">on_new_token  </span><br><span class="hljs-string">on_new_token 0</span><br><span class="hljs-string">on_new_token .</span><br><span class="hljs-string">on_new_token 235</span><br><span class="hljs-string">on_new_token </span><br><span class="hljs-string"></span><br><span class="hljs-string">on_new_token `</span><span class="hljs-string">``</span><br><br>on_new_token <span class="hljs-params">...</span><br>on_new_token num<br>on_new_token expr<br>on_new_token .evaluate<br>on_new_token (<span class="hljs-string">&quot;</span><br><span class="hljs-string">on_new_token 2</span><br><span class="hljs-string">on_new_token  **</span><br><span class="hljs-string">on_new_token  </span><br><span class="hljs-string">on_new_token 0</span><br><span class="hljs-string">on_new_token .</span><br><span class="hljs-string">on_new_token 235</span><br><span class="hljs-string">on_new_token &quot;</span>)<br>on_new_token <span class="hljs-params">...</span><br><br>on_new_token <br>on_chain_start LLMChain<br>on_llm_start OpenAI<br>on_llm_start (I<span class="hljs-string">&#x27;m the second handler!!) OpenAI</span><br><span class="hljs-string">on_new_token  I</span><br><span class="hljs-string">on_new_token  now</span><br><span class="hljs-string">on_new_token  know</span><br><span class="hljs-string">on_new_token  the</span><br><span class="hljs-string">on_new_token  final</span><br><span class="hljs-string">on_new_token  answer</span><br><span class="hljs-string">on_new_token .</span><br><span class="hljs-string"></span><br><span class="hljs-string">on_new_token Final Answer:</span><br><span class="hljs-string">on_new_token  </span><br><span class="hljs-string">on_new_token 1.</span><br><span class="hljs-string">on_new_token 1769067372187674</span><br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<p>更多Callback说明请参考:<a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/modules/callbacks/">https://python.langchain.com/docs/modules/callbacks/</a></p>
+<h2 id="二langsmith">二、LangSmith</h2>
+<p>LangSmith
+是一个用于调试、测试、评估和监控大语言模型（LLM）应用程序的统一平台，由
+LangChain 公司推出。</p>
+<p><code>LangSmith</code>
+平台<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span
+class="hint--top hint--rounded" aria-label="">[2]</span></a></sup></p>
+<figure>
+<img src="/images/LangSmith.jpeg" srcset="/img/loading.gif" lazyload alt="LangSmith平台功能概览" />
+<figcaption aria-hidden="true">LangSmith平台功能概览</figcaption>
+</figure>
+<p>先去<a
+target="_blank" rel="noopener" href="https://smith.langchain.com/">LangSmith</a>官网申请<code>API_KEY</code>，申请过后会有一些免费额度。然后通过环境变量可以接入<code>LangSmith</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br>os.environ[<span class="hljs-string">&quot;LANGCHAIN_TRACING_V2&quot;</span>] = <span class="hljs-string">&quot;false&quot;</span><br>os.environ[<span class="hljs-string">&quot;LANGCHAIN_ENDPOINT&quot;</span>] = <span class="hljs-string">&quot;https://api.langchain.plus&quot;</span><br>os.environ[<span class="hljs-string">&quot;LANGCHAIN_API_KEY&quot;</span>] = <span class="hljs-string">&quot;......&quot;</span> <span class="hljs-comment"># replace dots with your api key</span><br></code></pre></td></tr></table></figure>
+<p>然后，就可以执行<code>LangChain</code>对应的代码，之后就会在<a
+target="_blank" rel="noopener" href="https://smith.langchain.com/">LangSmith</a>生成对应的Trace，Project默认为default：</p>
+<figure>
+<img src="/images/LangSmith_Trace.png" srcset="/img/loading.gif" lazyload alt="LangSmith官网预览" />
+<figcaption aria-hidden="true">LangSmith官网预览</figcaption>
+</figure>
+<p><code>LangSmith</code> 核心功能</p>
+<ul>
+<li><p>调试：LangSmith
+可以查看事件链中的每个步骤的模型输入输出。这可以方便地试验新链和新提示，找到问题根源,如意外结果、错误或延迟。同时可以查看延迟和
+Token 使用情况来定位调用性能问题。</p></li>
+<li><p>测试：LangSmith
+可以跟踪数据样本或上传自定义数据集。然后可以针对数据集运行链和提示，手动检查输入输出或者自动化测试。许多团队发现手工检查有助建立对
+LLM 交互的直观感受，从而提出更好的优化思路。</p></li>
+<li><p>评估：LangSmith 无缝集成开源评估模块，支持规则评估和 LLM
+自评估。LLM 辅助评估有潜力大幅降低成本。</p></li>
+<li><p>监控：LangSmith
+可以主动跟踪性能指标、模型链性能、调试问题、用户交互体验等，从而持续优化产品。</p></li>
+<li><p>统一平台：LangSmith
+整合上述功能，让团队无需组装各种工具组合，可以集中在核心应用创造上。</p></li>
+</ul>
+<p>更多功能，请参考官方文档：<a
+target="_blank" rel="noopener" href="https://docs.smith.langchain.com/">https://docs.smith.langchain.com/</a></p>
+<h2 id="三-langfuse">三、 LangFuse</h2>
+<p>Langfuse 是一个开源的 LLM 工程平台，可帮助团队协作调试、分析和迭代其
+LLM 应用程序。</p>
+<p>使用Langfuse，可以去申请官方搭建好的平台，也可以自己搭建平台，通过以下方法搭建:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">Clone the Langfuse repository</span><br>git clone https://github.com/langfuse/langfuse.git<br>cd langfuse<br><span class="hljs-meta prompt_"> </span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">Start the server and database</span><br>docker compose up<br></code></pre></td></tr></table></figure>
+<p>如有报错，可将 <code>docker-compose.yml</code>做如下修改试试：</p>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-9a1c5b83" role="button" aria-expanded="false" aria-controls="collapse-9a1c5b83">
+        <div class="fold-arrow">▶</div>输出
+      </div>
+      <div class="fold-collapse collapse" id="collapse-9a1c5b83">
+        <div class="fold-content">
+          <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">version:</span> <span class="hljs-string">&quot;3.5&quot;</span><br><br><span class="hljs-attr">services:</span><br><br>  <span class="hljs-attr">db:</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">postgres</span><br>    <span class="hljs-attr">restart:</span> <span class="hljs-string">always</span><br>    <span class="hljs-attr">environment:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">POSTGRES_USER=postgres</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">POSTGRES_PASSWORD=postgres</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">POSTGRES_DB=postgres</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-number">5432</span><span class="hljs-string">:5432</span><br>    <span class="hljs-attr">volumes:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">database_data:/var/lib/postgresql/data</span><br><br>  <span class="hljs-attr">langfuse-server:</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">ghcr.io/langfuse/langfuse:latest</span><br>    <span class="hljs-attr">depends_on:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">db</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;3000:3000&quot;</span><br>    <span class="hljs-attr">environment:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">NEXTAUTH_SECRET=mysecret</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">SALT=mysalt</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">NEXTAUTH_URL=http://localhost:3000</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">TELEMETRY_ENABLED=$&#123;TELEMETRY_ENABLED:-true&#125;</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES=$&#123;LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES:-false&#125;</span><br>      <br><span class="hljs-attr">volumes:</span><br>  <span class="hljs-attr">database_data:</span><br>    <span class="hljs-attr">driver:</span> <span class="hljs-string">local</span><br></code></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+<p>启动完成后，在浏览器中打开
+<code>http://localhost:3000</code>，注册帐号并登录。然后新建一个project，在新建的project下的setting里新建一个API
+KEY，复制对应代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langfuse.callback <span class="hljs-keyword">import</span> CallbackHandler<br>langfuse_handler = CallbackHandler(<br>    public_key=<span class="hljs-string">&quot;********************&quot;</span>,<br>    secret_key=<span class="hljs-string">&quot;*******************&quot;</span>,<br>    host=<span class="hljs-string">&quot;http://localhost:3000&quot;</span><br>)<br></code></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">os.environ[<span class="hljs-string">&quot;LANGFUSE_PUBLIC_KEY&quot;</span>] = <span class="hljs-string">&quot;*******************&quot;</span><br>os.environ[<span class="hljs-string">&quot;LANGFUSE_SECRET_KEY&quot;</span>] = <span class="hljs-string">&quot;*******************&quot;</span><br>os.environ[<span class="hljs-string">&quot;LANGFUSE_HOST&quot;</span>] = <span class="hljs-string">&quot;http://localhost:3000&quot;</span><br></code></pre></td></tr></table></figure>
+<p>运行代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain_core.callbacks <span class="hljs-keyword">import</span> StdOutCallbackHandler<br><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> LLMChain<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> langchain_core.prompts <span class="hljs-keyword">import</span> PromptTemplate<br><span class="hljs-keyword">from</span> langfuse.callback <span class="hljs-keyword">import</span> CallbackHandler<br><br><br>langfuse_handler = CallbackHandler()<br>llm = OpenAI()<br>prompt = PromptTemplate.from_template(<span class="hljs-string">&quot;1 + &#123;number&#125; = &quot;</span>)<br><br>config = &#123;<br>    <span class="hljs-string">&#x27;callbacks&#x27;</span> : [langfuse_handler]<br>&#125;<br><br>chain = prompt | chain<br>chain.invoke(&#123;<span class="hljs-string">&quot;number&quot;</span>:<span class="hljs-number">2</span>&#125;, config=config)<br></code></pre></td></tr></table></figure>
+<p>然后再去
+<code>http://localhost:3000</code>，在Tracing下的Traces下就可以看到对应的Trace：</p>
+<figure>
+<img src="/images/Langfuse_trace.png" srcset="/img/loading.gif" lazyload alt="Langfuse预览" />
+<figcaption aria-hidden="true">Langfuse预览</figcaption>
+</figure>
+<p><code>Langfuse</code> 核心功能</p>
+<ul>
+<li><p>开发：方便的观测和日志调试能力，使得开发者能够观察并调试应用程序，管理和部署提示信息。</p></li>
+<li><p>监控与分析：提供应用使用情况的洞见，包括成本、延迟和质量的追踪，以及评分和用户反馈的收集。</p></li>
+<li><p>测试：在发布新版本前，能够测试应用行为和性能，帮助开发者确保新版本的稳定性。</p></li>
+</ul>
+<p>更多功能，请参考官方文档：<a
+target="_blank" rel="noopener" href="https://langfuse.com/docs">https://langfuse.com/docs</a></p>
+<h2 id="四langserver">四、LangServer</h2>
+<p>LangServe 用于将 Chain 或者 Runnable 部署成一个 REST API 服务。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 安装 LangServe</span><br>!pip install <span class="hljs-string">&quot;langserve[all]&quot;</span><br></code></pre></td></tr></table></figure>
+<p><strong>Server端</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/env python</span><br><span class="hljs-keyword">from</span> fastapi <span class="hljs-keyword">import</span> FastAPI<br><span class="hljs-keyword">from</span> langchain.prompts <span class="hljs-keyword">import</span> ChatPromptTemplate<br><span class="hljs-keyword">from</span> langchain_openai <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">from</span> langserve <span class="hljs-keyword">import</span> add_routes<br><span class="hljs-keyword">import</span> uvicorn<br><br>app = FastAPI(<br>  title=<span class="hljs-string">&quot;LangChain Server&quot;</span>,<br>  version=<span class="hljs-string">&quot;1.0&quot;</span>,<br>  description=<span class="hljs-string">&quot;A simple api server using Langchain&#x27;s Runnable interfaces&quot;</span>,<br>)<br><br>model = ChatOpenAI()<br>prompt = ChatPromptTemplate.from_template(<span class="hljs-string">&quot;讲一个关于&#123;topic&#125;的笑话&quot;</span>)<br>add_routes(<br>    app,<br>    prompt | model,<br>    path=<span class="hljs-string">&quot;/joke&quot;</span>,<br>)<br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:<br>    uvicorn.run(app, host=<span class="hljs-string">&quot;localhost&quot;</span>, port=<span class="hljs-number">9999</span>)<br></code></pre></td></tr></table></figure>
+<p><strong>Client端</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> requests<br><br>response = requests.post(<br>    <span class="hljs-string">&quot;http://localhost:9999/joke/invoke&quot;</span>,<br>    json=&#123;<span class="hljs-string">&#x27;input&#x27;</span>: &#123;<span class="hljs-string">&#x27;topic&#x27;</span>: <span class="hljs-string">&#x27;小明&#x27;</span>&#125;&#125;<br>)<br><span class="hljs-built_in">print</span>(response.json()[<span class="hljs-string">&#x27;output&#x27;</span>][<span class="hljs-string">&#x27;content&#x27;</span>])<br></code></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">小明去买鞋，店员问他要什么号的鞋，小明说：“我要一双能跑的。”店员愣了一下，然后递给他一双运动鞋，小明接过来说：“谢谢，我要去追女生。”店员顿时笑喷了。<br></code></pre></td></tr></table></figure>
+<p>更多功能请参考：<a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/langserve/">https://python.langchain.com/docs/langserve/</a></p>
+<p><code>LangChain LangServer LangSmith</code><sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span
+class="hint--top hint--rounded" aria-label="">[3]</span></a></sup></p>
+<p><img src="/images/LangChain_Universe.jpeg" srcset="/img/loading.gif" lazyload /></p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/datawhalechina/prompt-engineering-for-developers">datawhalechina/prompt-engineering-for-developers:
+吴恩达大模型系列课程中文版</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://python.langchain.com/docs/get_started/introduction">LangChain官方python文档</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://nanonets.com/blog/langchain/#langchain-expression-language">A
+Complete LangChain Guide</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://space.bilibili.com/28357052/channel/collectiondetail?sid=1611560">LangChain
+架构解析和应用开发实践分享</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/webup/agi-talks/tree/master">webup/agi-talks
+AGI 内外部分享材料合集</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com.cn/docs/">LangChain 中文文档
+v0.1.7</a>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1"
+class="footnote-text"><span><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1214y1X7Aq"
+class="uri">https://www.bilibili.com/video/BV1214y1X7Aq</a>
+<a href="#fnref:1" rev="footnote" class="footnote-backref">
+↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span><a
+target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv26109315/?spm_id_from=333.999.0.0"
+class="uri">https://www.bilibili.com/read/cv26109315/?spm_id_from=333.999.0.0</a>
+<a href="#fnref:2" rev="footnote" class="footnote-backref">
+↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span><a
+target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv27103977/?spm_id_from=333.999.0.0"
+class="uri">https://www.bilibili.com/read/cv27103977/?spm_id_from=333.999.0.0</a>
+<a href="#fnref:3" rev="footnote" class="footnote-backref">
+↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LangChain/" class="category-chain-item">LangChain</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#LLM学习笔记</a>
+      
+        <a href="/tags/LangChain/" class="print-no-link">#LangChain</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LangChain(七)——Callback</div>
+      <div>https://mztchaoqun.com.cn/posts/D31_LangChain_Callback/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年8月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D32_LangGraph/" title="LangGraph(一)——LangGraph简介">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LangGraph(一)——LangGraph简介</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D30_LangChain_Agents/" title="LangChain(六)——Agents">
+                        <span class="hidden-mobile">LangChain(六)——Agents</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,1007 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="Index是一种数据结构，它允许我们快速检索与用户查询相关的上下文。对于 LlamaIndex 来说，它是RAG的核心基础。Indexes是由Documents构建的。它们用于构建Query Engines和Chat Engines，这使得可以在数据上进行问题和答案以及聊天。Indexes将数据存储在Node对象中（这些对象代表原始文档的块），并暴露了一个Retriever接口，该接口支持额外的配">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LlamaIndex(五)——LlamaIndex Indexing">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D18_LlamaIndex_Indexing/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="Index是一种数据结构，它允许我们快速检索与用户查询相关的上下文。对于 LlamaIndex 来说，它是RAG的核心基础。Indexes是由Documents构建的。它们用于构建Query Engines和Chat Engines，这使得可以在数据上进行问题和答案以及聊天。Indexes将数据存储在Node对象中（这些对象代表原始文档的块），并暴露了一个Retriever接口，该接口支持额外的配">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/LlamaIndex5.jpeg">
+<meta property="article:published_time" content="2024-04-23T05:23:37.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.269Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="LLM学习笔记">
+<meta property="article:tag" content="LlamaIndex">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/LlamaIndex5.jpeg">
+  
+  
+  
+  <title>LlamaIndex(五)——LlamaIndex Indexing - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LlamaIndex(五)——LlamaIndex Indexing"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-04-23 13:23" pubdate>
+          2024年4月23日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          22 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LlamaIndex(五)——LlamaIndex Indexing</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><code>Index</code>是一种数据结构，它允许我们快速检索与用户查询相关的上下文。对于
+LlamaIndex 来说，它是RAG的核心基础。<code>Indexes</code>是由<a href="../D17_LlamaIndex_Loading/#文档">Documents</a>构建的。它们用于构建<a href="../D20_LlamaIndex_Quering/#一query-engine">Query Engines</a>和<a href="../D20_LlamaIndex_Quering/#二chat-engine">Chat
+Engines</a>，这使得可以在数据上进行问题和答案以及聊天。<code>Indexes</code>将数据存储在<code>Node</code>对象中（这些对象代表原始文档的块），并暴露了一个Retriever接口，该接口支持额外的配置和自动化。最常见的索引是<code>VectorStoreIndex</code>。</p>
+<h2 id="一索引的工作原理">一、索引的工作原理</h2>
+<ul>
+<li><p><strong>Node</strong>：对应于文档中的一段文本，LlamaIndex
+接收文档对象，并在内部将它们解析/分块成Node对象。</p></li>
+<li><p><strong><a href="../D20_LlamaIndex_Quering/#五response-synthesizer">Response
+Synthesis</a></strong>：根据检索到的节点合成响应的模块。</p></li>
+</ul>
+<h3 id="摘要索引summary-index">1.1 摘要索引(Summary Index)</h3>
+<p>摘要索引简单地将节点存储为一个顺序链。</p>
+<p><img src="/images/Summary_index.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>查询</strong></p>
+<p>在查询时，如果没有指定其他查询参数，LlamaIndex
+简单地将列表中的所有节点加载到响应合成模块中。</p>
+<p><img src="/images/list_query.png" srcset="/img/loading.gif" lazyload></p>
+<p>摘要索引提供了多种查询摘要索引的方法，从基于Embedding的查询（将获取前k个邻居），或添加关键词过滤器，如下所示：</p>
+<p><img src="/images/list_filter_query.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="向量存储索引vector-store-index">1.2 向量存储索引(Vector Store
+Index)</h3>
+<p>向量存储索引在<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/community/integrations/vector_stores/#using-a-vector-store-as-an-index">向量存储</a>中存储每个节点及其相应的Embedding。</p>
+<p><img src="/images/vector_store.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>查询</strong></p>
+<p>查询向量存储索引涉及获取与查询最相似的前k个节点，并将这些节点传递给响应合成模块。</p>
+<p><img src="/images/vector_store_query.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="树索引tree-index">1.3 树索引(Tree Index)</h3>
+<p>树索引从一组节点（这些节点成为这棵树的叶节点）构建一个层次结构树。</p>
+<p><img src="/images/tree.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>查询</strong></p>
+<p>查询树索引涉及从根节点遍历到叶节点。默认情况下，(<code>child_branch_factor=1</code>)，一个查询给定一个父节点选择一个子节点。如果
+<code>child_branch_factor=2</code>，则查询每层选择两个子节点。</p>
+<p><img src="/images/tree_query.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="关键词表索引keyword-table-index">1.4 关键词表索引(Keyword Table
+Index)</h3>
+<p>关键词表索引从每个节点中提取关键词，并构建一个从每个关键词到相应节点的映射。</p>
+<p><img src="/images/keyword.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>查询</strong></p>
+<p>在查询时，从查询中提取相关关键词，并将其与预先提取的节点关键词匹配，以获取相应的节点。提取的节点被传递到响应合成模块。</p>
+<p><img src="/images/keyword_query.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="二vectorstoreindex">二、VectorStoreIndex</h2>
+<p>向量存储是RAG的关键组成部分，因此在使用 LlamaIndex
+构建的几乎所有应用中，都会直接或间接地使用到它们。向量存储接受一系列 <a href="../D17_LlamaIndex_Loading/#文档">Node</a>
+对象，并从它们构建索引。</p>
+<h3 id="加载数据到索引中">2.1 加载数据到索引中</h3>
+<h4 id="基本用法">2.1.1 基本用法</h4>
+<p>使用 Vector Store 的最简单方法是加载一组文档，并使用
+<code>from_documents</code> 从它们构建索引：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex, SimpleDirectoryReader<br><br><span class="hljs-comment"># Load documents and build index</span><br>documents = SimpleDirectoryReader(<br>    <span class="hljs-string">"../../examples/data/paul_graham"</span><br>).load_data()<br>index = VectorStoreIndex.from_documents(documents)<br></code></pre></td></tr></table></figure>
+<p>如果在命令行上使用 <code>from_documents</code>，可以使用
+<code>show_progress=True</code> 以在索引构建期间显示进度条。使用
+<code>from_documents</code> 时，文档会被分割成块，并解析成 Node
+对象，这些是轻量级的文本字符串抽象，用于跟踪元数据和关系。</p>
+<p>默认情况下，<code>VectorStoreIndex</code>
+将所有内容存储在内存中，<code>VectorStoreIndex</code>会以每批 2048
+个节点的批次生成并插入向量。如果内存受限（或者有大量的内存），可以通过传递
+<code>insert_batch_size=2048</code>
+并指定想要的批次大小来修改这个设置。</p>
+<h4 id="使用ingestionpipeline创建节点">2.1.2
+使用IngestionPipeline创建节点</h4>
+<p>如果想要更多地控制文档是如何被索引的，推荐使用<a href="../D17_LlamaIndex_Loading/#ingestion-pipeline">IngestionPipeline</a>。这允许自定义分块、元数据和节点的Embedding。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> Document<br><span class="hljs-keyword">from</span> llama_index.embeddings.openai <span class="hljs-keyword">import</span> OpenAIEmbedding<br><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SentenceSplitter<br><span class="hljs-keyword">from</span> llama_index.core.extractors <span class="hljs-keyword">import</span> TitleExtractor<br><span class="hljs-keyword">from</span> llama_index.core.ingestion <span class="hljs-keyword">import</span> IngestionPipeline, IngestionCache<br><br><span class="hljs-comment"># create the pipeline with transformations</span><br>pipeline = IngestionPipeline(<br>    transformations=[<br>        SentenceSplitter(chunk_size=<span class="hljs-number">25</span>, chunk_overlap=<span class="hljs-number">0</span>),<br>        TitleExtractor(),<br>        OpenAIEmbedding(),<br>    ]<br>)<br><br><span class="hljs-comment"># run the pipeline</span><br>nodes = pipeline.run(documents=[Document.example()])<br></code></pre></td></tr></table></figure>
+<h4 id="直接创建和管理节点">2.1.3 直接创建和管理节点</h4>
+<p>如果想要完全控制你的索引，可以<a href="../D17_LlamaIndex_Loading/#节点">手动创建和定义节点</a>，并将它们直接传递给索引构造器：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.schema <span class="hljs-keyword">import</span> TextNode<br><br>node1 = TextNode(text=<span class="hljs-string">"&lt;text_chunk&gt;"</span>, id_=<span class="hljs-string">"&lt;node_id&gt;"</span>)<br>node2 = TextNode(text=<span class="hljs-string">"&lt;text_chunk&gt;"</span>, id_=<span class="hljs-string">"&lt;node_id&gt;"</span>)<br>nodes = [node1, node2]<br>index = VectorStoreIndex(nodes)<br></code></pre></td></tr></table></figure>
+<p><strong>处理文档更新</strong></p>
+<p>直接管理索引时，处理随时间变化的数据源。索引类有插入、删除、更新和刷新操作，可以在下面了解更多关于它们的内容：</p>
+<ul>
+<li><a href="../D18_LlamaIndex_Indexing/#五元数据提取metadata-extraction">元数据提取</a></li>
+<li><a href="../D18_LlamaIndex_Indexing/#三文档管理document-management">文档管理</a></li>
+</ul>
+<h3 id="存储向量索引">2.2 存储向量索引</h3>
+<p>LlamaIndex 支持数十种<a href="../D19_LlamaIndex_Storing/#二vector-stores">向量存储</a>。可以通过传递
+<code>StorageContext</code> 并在上面指定 <code>vector_store</code>
+参数来指定使用哪一个，如下例中使用 Pinecone：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> pinecone<br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> (<br>    VectorStoreIndex,<br>    SimpleDirectoryReader,<br>    StorageContext,<br>)<br><span class="hljs-keyword">from</span> llama_index.vector_stores.pinecone <span class="hljs-keyword">import</span> PineconeVectorStore<br><br><span class="hljs-comment"># init pinecone</span><br>pinecone.init(api_key=<span class="hljs-string">"&lt;api_key&gt;"</span>, environment=<span class="hljs-string">"&lt;environment&gt;"</span>)<br>pinecone.create_index(<br>    <span class="hljs-string">"quickstart"</span>, dimension=<span class="hljs-number">1536</span>, metric=<span class="hljs-string">"euclidean"</span>, pod_type=<span class="hljs-string">"p1"</span><br>)<br><br><span class="hljs-comment"># construct vector store and customize storage context</span><br>storage_context = StorageContext.from_defaults(<br>    vector_store=PineconeVectorStore(pinecone.Index(<span class="hljs-string">"quickstart"</span>))<br>)<br><br><span class="hljs-comment"># Load documents and build index</span><br>documents = SimpleDirectoryReader(<br>    <span class="hljs-string">"../../examples/data/paul_graham"</span><br>).load_data()<br>index = VectorStoreIndex.from_documents(<br>    documents, storage_context=storage_context<br>)<br></code></pre></td></tr></table></figure>
+<p><code>VectorStoreIndex</code> 的<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/indexing/vector_store_guide/">更多示例</a>，还有<a href="../D19_LlamaIndex_Storing/#二vector-stores">向量存储</a></p>
+<h3 id="可组合检索">2.3 可组合检索</h3>
+<p><code>VectorStoreIndex</code>（以及任何其他索引/检索器）能够检索通用对象，包括</p>
+<ul>
+<li>对节点的引用(references to nodes)</li>
+<li>查询引擎(query engines)</li>
+<li>检索器(retrievers)</li>
+<li>查询管道(query pipelines)</li>
+</ul>
+<p>如果检索到这些对象，它们将使用提供的查询自动运行。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.schema <span class="hljs-keyword">import</span> IndexNode<br><br>query_engine = other_index.as_query_engine<br>obj = IndexNode(<br>    text=<span class="hljs-string">"A query engine describing X, Y, and Z."</span>,<br>    obj=query_engine,<br>    index_id=<span class="hljs-string">"my_query_engine"</span>,<br>)<br><br>index = VectorStoreIndex(nodes=nodes, objects=[obj])<br>retriever = index.as_retreiver(verbose=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure>
+<p>如果检索到包含查询引擎的索引节点，将运行查询引擎，并将结果响应作为节点返回。更多细节请查看:<a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples/retrievers/composable_retrievers/">https://docs.llamaindex.ai/en/stable/examples/retrievers/composable_retrievers/</a></p>
+<h2 id="三文档管理document-management">三、文档管理（Document
+Management）</h2>
+<p>大多数 LlamaIndex 索引结构都允许插入、删除、更新和刷新操作。</p>
+<h3 id="插入">3.1 插入</h3>
+<p>在构建索引后，插入一个新的文档到任何索引数据结构中。这个文档将被分解成节点，并被吸收到索引中。插入背后的机制取决于索引结构。例如，对于摘要索引，新文档被插入为列表中的附加节点。对于向量存储索引，新文档（和Embedding）被插入到底层的文档/Embedding存储中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> SummaryIndex, Document<br><br>index = SummaryIndex([])<br>text_chunks = [<span class="hljs-string">"text_chunk_1"</span>, <span class="hljs-string">"text_chunk_2"</span>, <span class="hljs-string">"text_chunk_3"</span>]<br><br>doc_chunks = []<br><span class="hljs-keyword">for</span> i, text <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(text_chunks):<br>    doc = Document(text=text, id_=<span class="hljs-string">f"doc_id_<span class="hljs-subst">{i}</span>"</span>)<br>    doc_chunks.append(doc)<br><br><span class="hljs-comment"># insert</span><br><span class="hljs-keyword">for</span> doc_chunk <span class="hljs-keyword">in</span> doc_chunks:<br>    index.insert(doc_chunk)<br></code></pre></td></tr></table></figure>
+<h3 id="删除">3.2 删除</h3>
+<p>可以删除大多数索引数据结构中的文档，只需指定
+document_id。（树索引当前不支持删除）。与文档对应的所有节点都将被删除。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">index.delete_ref_doc(<span class="hljs-string">"doc_id_0"</span>, delete_from_docstore=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure>
+<p>在使用相同文档存储的索引之间共享节点，<code>delete_from_docstore</code>
+将默认为 False。但是，当设置为 False
+时，这些节点在查询时不会被使用，因为它们将从索引的
+<code>index_struct</code> 中删除，该索引会跟踪哪些节点可用于查询。</p>
+<h3 id="更新">3.3 更新</h3>
+<p>如果文档已经在索引中存在，可以更新具有相同 <code>doc_id</code>
+的文档（例如，如果文档中的信息已更改）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># <span class="hljs-doctag">NOTE:</span> the document has a `doc_id` specified</span><br>doc_chunks[<span class="hljs-number">0</span>].text = <span class="hljs-string">"Brand new document text"</span><br>index.update_ref_doc(<br>    doc_chunks[<span class="hljs-number">0</span>],<br>    update_kwargs={<span class="hljs-string">"delete_kwargs"</span>: {<span class="hljs-string">"delete_from_docstore"</span>: <span class="hljs-literal">True</span>}},<br>)<br></code></pre></td></tr></table></figure>
+<p>可以传递了一些额外的 kwargs 以确保文档从 docstore 中删除。</p>
+<h3 id="刷新">3.4 刷新</h3>
+<p>如果在加载数据时设置了每个文档的
+<code>doc_id</code>，可以自动刷新索引。<code>refresh()</code>
+函数将只更新具有相同
+<code>doc_id</code>但文本内容不同的文档。任何在索引中完全不存在文档将被插入。<code>refresh()</code>
+还返回一个布尔列表，指示输入中的哪些文档已在索引中刷新。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># modify first document, with the same doc_id</span><br>doc_chunks[<span class="hljs-number">0</span>] = Document(text=<span class="hljs-string">"Super new document text"</span>, id_=<span class="hljs-string">"doc_id_0"</span>)<br><br><span class="hljs-comment"># add a new document</span><br>doc_chunks.append(<br>    Document(<br>        text=<span class="hljs-string">"This isn't in the index yet, but it will be soon!"</span>,<br>        id_=<span class="hljs-string">"doc_id_3"</span>,<br>    )<br>)<br><br><span class="hljs-comment"># refresh the index</span><br>refreshed_docs = index.refresh_ref_docs(<br>    doc_chunks, update_kwargs={<span class="hljs-string">"delete_kwargs"</span>: {<span class="hljs-string">"delete_from_docstore"</span>: <span class="hljs-literal">True</span>}}<br>)<br><br><span class="hljs-comment"># refreshed_docs[0] and refreshed_docs[-1] should be true</span><br><br><span class="hljs-built_in">print</span>(refreshed_docs)<br><span class="hljs-comment"># &gt; [True, False, False, True]</span><br></code></pre></td></tr></table></figure>
+<p>使用 <code>SimpleDirectoryReader</code> 时设置
+<code>filename_as_id</code> 标志就可以自动设置 <code>doc_id</code>。</p>
+<h3 id="文档跟踪">3.5 文档跟踪</h3>
+<p>任何使用 docstore
+的索引（即除大多数向量存储集成之外的所有索引），还可以查看已插入到
+docstore 中的文档。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-built_in">print</span>(index.ref_doc_info)<br><span class="hljs-string">"""</span><br><span class="hljs-string">&gt; {'doc_id_1': RefDocInfo(node_ids=['071a66a8-3c47-49ad-84fa-7010c6277479'], metadata={}),</span><br><span class="hljs-string">   'doc_id_2': RefDocInfo(node_ids=['9563e84b-f934-41c3-acfd-22e88492c869'], metadata={}),</span><br><span class="hljs-string">   'doc_id_0': RefDocInfo(node_ids=['b53e6c2f-16f7-4024-af4c-42890e945f36'], metadata={}),</span><br><span class="hljs-string">   'doc_id_3': RefDocInfo(node_ids=['6bedb29f-15db-4c7c-9885-7490e10aa33f'], metadata={})}</span><br><span class="hljs-string">"""</span><br></code></pre></td></tr></table></figure>
+<p>输出中的每个条目都以 <code>doc_id</code>
+作为键，以及它们被拆分成的节点的关联
+<code>node_ids</code>。最后，还跟踪了每个输入文档的原始元数据字典。</p>
+<h2 id="四llamacloudindex-llamacloudretriever">四、LlamaCloudIndex +
+LlamaCloudRetriever</h2>
+<p>LlamaCloud 是新一代的托管解析、提取和检索服务，旨在为 LLM和
+RAG应用带来生产级别的上下文增强。</p>
+<p>目前，LlamaCloud 支持：</p>
+<ul>
+<li>托管Ingestion API，处理解析和文档管理</li>
+<li>托管Retrieval API，为RAG 系统配置最佳检索</li>
+</ul>
+<h3 id="使用">4.1 使用</h3>
+<p><a target="_blank" rel="noopener" href="https://cloud.llamaindex.ai/">LlamaCloud</a> 登录并获取 API
+密钥。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br><br>os.environ[<br>    <span class="hljs-string">"LLAMA_CLOUD_API_KEY"</span><br>] = <span class="hljs-string">"llx-..."</span>  <span class="hljs-comment"># can provide API-key in env or in the constructor later on</span><br><br><span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> SimpleDirectoryReader<br><span class="hljs-keyword">from</span> llama_index.indices.managed.llama_cloud <span class="hljs-keyword">import</span> LlamaCloudIndex<br><br><span class="hljs-comment"># create a new index</span><br>index = LlamaCloudIndex.from_documents(<br>    documents,<br>    <span class="hljs-string">"my_first_index"</span>,<br>    project_name=<span class="hljs-string">"default"</span>,<br>    api_key=<span class="hljs-string">"llx-..."</span>,<br>    verbose=<span class="hljs-literal">True</span>,<br>)<br><br><span class="hljs-comment"># connect to an existing index</span><br>index = LlamaCloudIndex(<span class="hljs-string">"my_first_index"</span>, project_name=<span class="hljs-string">"default"</span>)<br></code></pre></td></tr></table></figure>
+<p>托管检索配置检索器</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># from the existing index</span><br>index.as_retriever()<br><br><span class="hljs-comment"># from scratch</span><br><span class="hljs-keyword">from</span> llama_index.indices.managed.llama_cloud <span class="hljs-keyword">import</span> LlamaCloudRetriever<br><br>retriever = LlamaCloudRetriever(<span class="hljs-string">"my_first_index"</span>, project_name=<span class="hljs-string">"default"</span>)<br></code></pre></td></tr></table></figure>
+<p>可以使用其他索引快捷方式来利用新托管索引：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">query_engine = index.as_query_engine(llm=llm)<br><br>chat_engine = index.as_chat_engine(llm=llm)<br></code></pre></td></tr></table></figure>
+<h3 id="检索器设置">4.2 检索器设置</h3>
+<p>以下是检索器 settings/kwargs 的完整列表：</p>
+<ul>
+<li><code>dense_similarity_top_k</code>: Optional[int] – 如果大于
+0，使用密集检索检索 k 个节点</li>
+<li><code>sparse_similarity_top_k</code>: Optional[int] – 如果大于
+0，使用稀疏检索检索 k 个节点</li>
+<li><code>enable_reranking</code>: Optional[bool] –
+是否启用重新排名。为了准确性牺牲一些速度</li>
+<li><code>rerank_top_n</code>: Optional[int] –
+重新排名初始检索结果后返回的节点数量</li>
+<li><code>alpha</code> Optional[float] – 密集和稀疏检索之间的权重。1 =
+完全密集检索，0 = 完全稀疏检索</li>
+</ul>
+<h2 id="五元数据提取metadata-extraction">五、元数据提取（Metadata
+Extraction）</h2>
+<p>在许多情况下，特别是对于长篇文档，文本片段可能缺乏必要的上下文信息，以区分该片段与其他相似文本片段。为了解决这个问题，使用LLM提取与文档相关的某些上下文信息，以更好地帮助检索和语言模型区分看起来相似的段落。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/run-llama/llama_index/blob/main/docs/docs/examples/metadata_extraction/MetadataExtractionSEC.ipynb">完整例子</a></p>
+<h3 id="使用-1">5.1 使用</h3>
+<p>首先，定义一个元数据提取器，它接受一个特征提取器的列表，这些特征提取器将按顺序处理。</p>
+<p>然后，将这些信息输入到节点解析器中，节点解析器会为每个节点添加额外的元数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.node_parser <span class="hljs-keyword">import</span> SentenceSplitter<br><span class="hljs-keyword">from</span> llama_index.core.extractors <span class="hljs-keyword">import</span> (<br>    SummaryExtractor,<br>    QuestionsAnsweredExtractor,<br>    TitleExtractor,<br>    KeywordExtractor,<br>)<br><span class="hljs-keyword">from</span> llama_index.extractors.entity <span class="hljs-keyword">import</span> EntityExtractor<br><br>transformations = [<br>    SentenceSplitter(),<br>    TitleExtractor(nodes=<span class="hljs-number">5</span>),<br>    QuestionsAnsweredExtractor(questions=<span class="hljs-number">3</span>),<br>    SummaryExtractor(summaries=[<span class="hljs-string">"prev"</span>, <span class="hljs-string">"self"</span>]),<br>    KeywordExtractor(keywords=<span class="hljs-number">10</span>),<br>    EntityExtractor(prediction_threshold=<span class="hljs-number">0.5</span>),<br>]<br></code></pre></td></tr></table></figure>
+<p>然后，可以在输入文档或节点上运行转换</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.ingestion <span class="hljs-keyword">import</span> IngestionPipeline<br><br>pipeline = IngestionPipeline(transformations=transformations)<br><br>nodes = pipeline.run(documents=documents)<br></code></pre></td></tr></table></figure>
+<h3 id="自定义提取器">5.2 自定义提取器</h3>
+<p>如果提供的提取器不符合需求，也可以像这样定义一个自定义提取器：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> llama_index.core.extractors <span class="hljs-keyword">import</span> BaseExtractor<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomExtractor</span>(<span class="hljs-title class_ inherited__">BaseExtractor</span>):<br>    <span class="hljs-keyword">async</span> <span class="hljs-keyword">def</span> <span class="hljs-title function_">aextract</span>(<span class="hljs-params">self, nodes</span>) -&gt; <span class="hljs-type">List</span>[<span class="hljs-type">Dict</span>]:<br>        metadata_list = [<br>            {<br>                <span class="hljs-string">"custom"</span>: node.metadata[<span class="hljs-string">"document_title"</span>]<br>                + <span class="hljs-string">"\n"</span><br>                + node.metadata[<span class="hljs-string">"excerpt_keywords"</span>]<br>            }<br>            <span class="hljs-keyword">for</span> node <span class="hljs-keyword">in</span> nodes<br>        ]<br>        <span class="hljs-keyword">return</span> metadata_list<br></code></pre></td></tr></table></figure>
+<p><code>extractor.extract()</code> 将自动调用
+<code>aextract()</code>，以提供同步和异步入口。</p>
+<p>在更高级的例子中，可以利用 LLM 从节点内容和现有元数据中提取特征。</p>
+<h2 id="官方资源">官方资源</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/indexing/modules/">Indexing
+Module Guides</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/module_guides/indexing/">官方文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.llamaindex.ai/blog">官方博客</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/examples">官方全部例子</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LlamaIndex/" class="category-chain-item">LlamaIndex</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/LLM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#LLM学习笔记</a>
+      
+        <a href="/tags/LlamaIndex/" class="print-no-link">#LlamaIndex</a>
+      
+        <a href="/tags/Agent/" class="print-no-link">#Agent</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LlamaIndex(五)——LlamaIndex Indexing</div>
+      <div>https://mztchaoqun.com.cn/posts/D18_LlamaIndex_Indexing/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年4月23日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D19_LlamaIndex_Storing/" title="LlamaIndex(六)——LlamaIndex Storing">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LlamaIndex(六)——LlamaIndex Storing</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D17_LlamaIndex_Loading/" title="LlamaIndex(四)——LlamaIndex Loading">
+                        <span class="hidden-mobile">LlamaIndex(四)——LlamaIndex Loading</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

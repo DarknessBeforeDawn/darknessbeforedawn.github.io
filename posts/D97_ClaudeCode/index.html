@@ -1,0 +1,1693 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、Skills简介 Agent Skills 是扩展 Claude 功能的模块化能力。每个 Skill 包含指令、元数据和可选资源（脚本、模板），Claude 在相关时会自动使用这些资源。简单说，就是通过文件和文件夹的方式，让 Claude 变得更专业、更懂行。 Claude 的 Agent Skills 系统代表了一种复杂的基于提示词的元工具架构，通过专门的指令注入来扩展 LLM 的能力。与传">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Claude Code（十）:Claude Code Skills">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D97_ClaudeCode/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、Skills简介 Agent Skills 是扩展 Claude 功能的模块化能力。每个 Skill 包含指令、元数据和可选资源（脚本、模板），Claude 在相关时会自动使用这些资源。简单说，就是通过文件和文件夹的方式，让 Claude 变得更专业、更懂行。 Claude 的 Agent Skills 系统代表了一种复杂的基于提示词的元工具架构，通过专门的指令注入来扩展 LLM 的能力。与传">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/CCS.png">
+<meta property="article:published_time" content="2025-11-26T12:41:24.000Z">
+<meta property="article:modified_time" content="2026-02-27T13:41:45.283Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/CCS.png">
+  
+  
+  
+  <title>Claude Code（十）:Claude Code Skills - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/it-tools/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Claude Code（十）:Claude Code Skills"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-11-26 20:41" pubdate>
+          2025年11月26日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          97 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Claude Code（十）:Claude Code Skills</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一skills简介">一、Skills简介</h2>
+<p>Agent Skills 是扩展 Claude 功能的模块化能力。每个 Skill
+包含指令、元数据和可选资源（脚本、模板），Claude
+在相关时会自动使用这些资源。简单说，就是通过文件和文件夹的方式，让
+Claude 变得更专业、更懂行。</p>
+<p>Claude 的 <code>Agent Skills</code>
+系统代表了一种复杂的基于提示词的元工具架构，通过专门的指令注入来扩展 LLM
+的能力。与传统的函数调用或代码执行不同，skills 通过 提示词扩展 和
+上下文修改 来改变 Claude 处理后续请求的方式，而无需编写可执行代码。</p>
+<h3 id="为什么使用-skills">1.1 为什么使用 Skills</h3>
+<p>提升 Claude
+使用效率的方法很多，网上可以找到各种提示词优化、上下文管理等技巧，也有不少开源项目和商业工具。</p>
+<p>但这些都存在一个共同问题：每次都要重新设置。每次启动新对话，都需要重复配置一遍，既浪费时间又有学习成本。</p>
+<p>Claude Skills
+的出现正是为了解决这个问题。它能将你的专业知识、工作流程和领域知识打包成可复用模块，并在遇到相关任务时自动激活。</p>
+<p>Skills 是可重用的、基于文件系统的资源，为 Claude
+提供特定领域的专业知识：工作流、上下文和最佳实践，将通用代理转变为专家。与提示不同（提示是对话级别的一次性任务指令），Skills
+按需加载，无需在多个对话中重复提供相同的指导。</p>
+<p><strong>主要优势：</strong></p>
+<ul>
+<li><strong>专业化 Claude</strong>：为特定领域的任务定制功能</li>
+<li><strong>减少重复</strong>：创建一次，自动使用</li>
+<li><strong>组合功能</strong>：结合 Skills 构建复杂工作流</li>
+</ul>
+<h2 id="二skills-如何工作">二、Skills 如何工作</h2>
+<p>Skills 利用 Claude
+的虚拟机环境提供超越仅使用提示可能实现的功能。Claude
+在具有文件系统访问权限的虚拟机中运行，允许 Skills
+作为包含指令、可执行代码和参考资料的目录存在，组织方式就像您为新团队成员创建的入职指南。</p>
+<p>这种基于文件系统的架构支持渐进式披露：Claude
+按需分阶段加载信息，而不是预先消耗上下文。</p>
+<h3 id="skills-架构">2.1 Skills 架构</h3>
+<p>Skills 在代码执行环境中运行，Claude 具有文件系统访问、bash
+命令和代码执行功能。可以这样想：Skills 作为虚拟机上的目录存在，Claude
+使用与您在计算机上导航文件相同的 bash 命令与它们交互。</p>
+<p><img src="/images/agent-skills-architecture.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>Claude 如何访问 Skill 内容：</strong></p>
+<p>触发 Skill 时，Claude 使用 bash 从文件系统读取
+SKILL.md，将其指令带入上下文窗口。如果这些指令引用其他文件（如 FORMS.md
+或数据库架构），Claude 也会使用其他 bash
+命令读取这些文件。当指令提及可执行脚本时，Claude 通过 bash
+运行它们并仅接收输出（脚本代码本身永远不会进入上下文）。</p>
+<p><strong>此架构支持的功能：</strong></p>
+<ul>
+<li><p><strong>按需文件访问</strong>：Claude
+仅读取每个特定任务所需的文件。Skill
+可以包含数十个参考文件，但如果您的任务只需要销售架构，Claude
+仅加载该文件。其余文件保留在文件系统上，消耗零令牌。</p></li>
+<li><p><strong>高效的脚本执行</strong>：当 Claude 运行 validate_form.py
+时，脚本的代码永远不会加载到上下文窗口中。仅脚本的输出（如”验证通过”或特定错误消息）消耗令牌。这使脚本比让
+Claude 即时生成等效代码要高效得多。</p></li>
+<li><p><strong>捆绑内容没有实际限制</strong>：因为文件在访问前不消耗上下文，Skills
+可以包含全面的 API
+文档、大型数据集、广泛的示例或任何您需要的参考资料。对于未使用的捆绑内容没有上下文成本。</p></li>
+</ul>
+<p>这种基于文件系统的模型是使渐进式披露工作的原因。Claude 导航您的 Skill
+就像您参考入职指南的特定部分一样，访问每个任务所需的确切内容。</p>
+<h3 id="三种-skill-内容类型三个加载级别">2.2 三种 Skill
+内容类型，三个加载级别</h3>
+<p>Skills 可以包含三种类型的内容，每种在不同时间加载。</p>
+<h4 id="第-1-级元数据始终加载">2.2.1 第 1 级：元数据（始终加载）</h4>
+<p><strong>内容类型：指令</strong>。Skill 的 YAML
+前置数据提供发现信息：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-meta">---</span><br><span class="hljs-attr">name:</span> <span class="hljs-string">pdf-processing</span><br><span class="hljs-attr">description:</span> <span class="hljs-string">从</span> <span class="hljs-string">PDF</span> <span class="hljs-string">文件中提取文本和表格、填充表单、合并文档。在处理</span> <span class="hljs-string">PDF</span> <span class="hljs-string">文件或用户提及</span> <span class="hljs-string">PDF、表单或文档提取时使用。</span><br><span class="hljs-meta">---</span><br></code></pre></td></tr></table></figure>
+<p>Claude
+在启动时加载此元数据并将其包含在系统提示中。这种轻量级方法意味着您可以安装许多
+Skills 而不会产生上下文成本；Claude 只知道每个 Skill
+的存在以及何时使用它。</p>
+<h4 id="第-2-级指令触发时加载">2.2.2 第 2 级：指令（触发时加载）</h4>
+<p><strong>内容类型：指令</strong>。SKILL.md
+的主体包含程序知识：工作流、最佳实践和指导：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section"># PDF 处理</span><br><br><span class="hljs-section">## 快速入门</span><br><br>使用 pdfplumber 从 PDF 中提取文本：<br><br><span class="hljs-code">```python</span><br><span class="hljs-code">import pdfplumber</span><br><span class="hljs-code"></span><br><span class="hljs-code">with pdfplumber.open("document.pdf") as pdf:</span><br><span class="hljs-code">    text = pdf.pages[0].extract_text()</span><br><span class="hljs-code">```</span><br><br>有关高级表单填充，请参阅 [<span class="hljs-string">FORMS.md</span>](<span class="hljs-link">FORMS.md</span>)。<br></code></pre></td></tr></table></figure>
+<p>当您请求与 Skill 描述匹配的内容时，Claude 通过 bash 从文件系统读取
+SKILL.md。只有这样，此内容才会进入上下文窗口。</p>
+<h4 id="第-3-级资源和代码按需加载">2.2.3 第 3
+级：资源和代码（按需加载）</h4>
+<p><strong>内容类型：指令、代码和资源</strong>。Skills
+可以捆绑其他材料：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs stylus">pdf-skill/<br>├── SKILL<span class="hljs-selector-class">.md</span> (主要指令)<br>├── FORMS<span class="hljs-selector-class">.md</span> (表单填充指南)<br>├── REFERENCE<span class="hljs-selector-class">.md</span> (详细 API 参考)<br>└── scripts/<br>    └── fill_form<span class="hljs-selector-class">.py</span> (实用脚本)<br></code></pre></td></tr></table></figure>
+<p><strong>指令</strong>：包含专业指导和工作流的其他 markdown
+文件（FORMS.md、REFERENCE.md）</p>
+<p><strong>代码</strong>：Claude 通过 bash
+运行的可执行脚本（fill_form.py、validate.py）；脚本提供确定性操作而不消耗上下文</p>
+<p><strong>资源</strong>：参考资料，如数据库架构、API
+文档、模板或示例</p>
+<p>Claude
+仅在引用时访问这些文件。文件系统模型意味着每种内容类型都有不同的优势：指令用于灵活指导，代码用于可靠性，资源用于事实查询。</p>
+<table>
+
+<thead>
+<tr>
+<th>级别</th>
+<th>加载时间</th>
+<th>令牌成本</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>第 1 级：元数据</strong></td>
+<td>始终（启动时）</td>
+<td>每个 Skill 约 100 个令牌</td>
+<td>YAML 前置数据中的 <code>name</code> 和 <code>description</code></td>
+</tr>
+<tr>
+<td><strong>第 2 级：指令</strong></td>
+<td>触发 Skill 时</td>
+<td>不到 5k 个令牌</td>
+<td>包含指令和指导的 SKILL.md 主体</td>
+</tr>
+<tr>
+<td><strong>第 3 级+：资源</strong></td>
+<td>按需</td>
+<td>实际上无限制</td>
+<td>通过 bash 执行的捆绑文件，不将内容加载到上下文中</td>
+</tr>
+</tbody>
+</table>
+<p>渐进式披露确保任何给定时间只有相关内容占据上下文窗口。</p>
+<h3 id="示例加载-pdf-处理-skill">2.3 示例：加载 PDF 处理 skill</h3>
+<p>以下是 Claude 如何加载和使用 PDF 处理 skill 的方式：</p>
+<ol type="1">
+<li><strong>启动</strong>：系统提示包括：<code>PDF 处理 - 从 PDF 文件中提取文本和表格、填充表单、合并文档</code></li>
+<li><strong>用户请求</strong>：「从此 PDF 中提取文本并总结」</li>
+<li><strong>Claude
+调用</strong>：<code>bash: read pdf-skill/SKILL.md</code> →
+指令加载到上下文中</li>
+<li><strong>Claude 确定</strong>：不需要表单填充，因此不读取
+FORMS.md</li>
+<li><strong>Claude 执行</strong>：使用 SKILL.md 中的指令完成任务</li>
+</ol>
+<p><img src="/images/agent-skills-context-window.png" srcset="/img/loading.gif" lazyload></p>
+<p>该图表显示：</p>
+<ol type="1">
+<li>预加载系统提示和 skill 元数据的默认状态</li>
+<li>Claude 通过 bash 读取 SKILL.md 触发 skill</li>
+<li>Claude 根据需要可选地读取其他捆绑文件，如 FORMS.md</li>
+<li>Claude 继续执行任务</li>
+</ol>
+<p>这种动态加载确保只有相关的 skill 内容占据上下文窗口。</p>
+<h3 id="skills使用">2.4 Skills使用</h3>
+<h4 id="skills-存放在哪里">2.4.1 Skills 存放在哪里</h4>
+<p>你存储 Skill 的位置决定了谁可以使用它：</p>
+<table>
+
+<thead>
+<tr>
+<th>位置</th>
+<th>路径</th>
+<th>适用于</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>个人</td>
+<td><code>~/.claude/skills/</code></td>
+<td>你，跨所有项目</td>
+</tr>
+<tr>
+<td>项目</td>
+<td><code>.claude/skills/</code></td>
+<td>在此存储库中工作的任何人</td>
+</tr>
+<tr>
+<td>插件</td>
+<td><a target="_blank" rel="noopener" href="https://code.claude.com/docs/zh-CN/plugins">与插件捆绑</a></td>
+<td>安装了该插件的任何人</td>
+</tr>
+</tbody>
+</table>
+<p>如果两个 Skills
+有相同的名称，较高的行获胜：托管覆盖个人，个人覆盖项目，项目覆盖插件。</p>
+<h4 id="何时使用-skills-与其他选项">2.4.2 何时使用 Skills
+与其他选项</h4>
+<p>Claude Code 提供了多种自定义行为的方式。关键区别：<strong>Skills 由
+Claude 根据你的请求自动触发</strong>，而斜杠命令要求你显式输入
+<code>/command</code>。</p>
+<table style="width:100%;">
+
+<thead>
+<tr>
+<th>使用这个</th>
+<th>当你想要…</th>
+<th>何时运行</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Skills</strong></td>
+<td>给 Claude 专业知识（例如，“使用我们的标准审查 PR”）</td>
+<td>Claude 在相关时选择</td>
+</tr>
+<tr>
+<td><strong>斜杠命令</strong></td>
+<td>创建可重用的提示（例如，<code>/deploy staging</code>）</td>
+<td>你输入 <code>/command</code> 来运行它</td>
+</tr>
+<tr>
+<td><strong>CLAUDE.md</strong></td>
+<td>设置项目范围的说明（例如，“使用 TypeScript 严格模式”）</td>
+<td>加载到每个对话中</td>
+</tr>
+<tr>
+<td><strong>Sub-Agents</strong></td>
+<td>将任务委托给具有自己工具的单独上下文</td>
+<td>Claude 委托，或你显式调用</td>
+</tr>
+<tr>
+<td><strong>Hooks</strong></td>
+<td>在事件上运行脚本（例如，在文件保存时 lint）</td>
+<td>在特定工具事件上触发</td>
+</tr>
+<tr>
+<td><strong>MCP 服务器</strong></td>
+<td>将 Claude 连接到外部工具和数据源</td>
+<td>Claude 根据需要调用 MCP 工具</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Skills 与Sub-Agents</strong>：Skills
+向当前对话添加知识。Sub-Agents在具有自己工具的单独上下文中运行。使用
+Skills 获得指导和标准；当你需要隔离或不同的工具访问时使用Sub-Agents。
+<strong>Skills 与 MCP</strong>：Skills 告诉 Claude _如何_使用工具；MCP
+_提供_工具。例如，MCP 服务器将 Claude 连接到你的数据库，而 Skill 教
+Claude 你的数据模型和查询模式。</p>
+<h4 id="skills-vs-sub-agents-vs-mcp">2.4.3 Skills vs Sub-Agents vs
+MCP</h4>
+<table>
+
+<thead>
+<tr>
+<th>特性</th>
+<th>Skills</th>
+<th>Sub-Agents</th>
+<th>MCP (Model Context Protocol)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>目的</td>
+<td>用专业知识、工作流程、资源扩展 Claude</td>
+<td>生成自主代理处理复杂子任务</td>
+<td>连接外部工具和数据源</td>
+</tr>
+<tr>
+<td>调用方式</td>
+<td>模型自动发现（基于上下文）</td>
+<td>父代理显式生成</td>
+<td>MCP 服务器工具调用</td>
+</tr>
+<tr>
+<td>持久性</td>
+<td>触发时加载到上下文</td>
+<td>独立运行，返回结果</td>
+<td>无状态工具执行</td>
+</tr>
+<tr>
+<td>最适合</td>
+<td>领域专业知识、工作流程、模板</td>
+<td>并行任务、研究、探索</td>
+<td>外部 API、数据库、第三方服务</td>
+</tr>
+<tr>
+<td>上下文使用</td>
+<td>渐进式披露（元数据→指令→资源）</td>
+<td>每个子代理有独立上下文</td>
+<td>最小上下文（仅工具定义）</td>
+</tr>
+<tr>
+<td>复杂度</td>
+<td>低（只需 SKILL.md + 可选文件）</td>
+<td>中等（需要编排）</td>
+<td>中-高（需要服务器设置）</td>
+</tr>
+<tr>
+<td>示例</td>
+<td>代码审查指南、部署工作流程</td>
+<td>「研究这个主题」、「探索代码库」</td>
+<td>GitHub API、数据库查询、Slack 集成</td>
+</tr>
+</tbody>
+</table>
+<p><strong>使用建议</strong>：</p>
+<ul>
+<li><strong>Skills</strong>：当你需要 Claude
+遵循特定程序、使用领域知识或重复执行脚本时</li>
+<li><strong>Sub-Agents</strong>：当你需要并行工作、委托复杂研究或隔离任务时</li>
+<li><strong>MCP</strong>：当你需要与外部系统、API 交互时</li>
+</ul>
+<h2 id="三skills结构">三、Skills结构</h2>
+<p>现在让我们通过检查 Anthropic skill 仓库中的 skill-creator Skill
+作为案例研究，深入了解如何构建 Skills。作为提醒，agent skills
+是由指令、脚本和资源组成的有组织的文件夹，agents
+可以动态发现和加载以更好地执行特定任务。Skills 通过将您的专业知识打包成
+Claude 的可组合资源来扩展 Claude 的能力，将通用 agents
+转变为符合您需求的专门 agents。</p>
+<h3 id="基础结构">3.1 基础结构</h3>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs nix">skill-name<span class="hljs-symbol">/</span><br>├── SKILL.md (必需)<br>│   ├── YAML 前置元数据 (必需)<br>│   │   ├── <span class="hljs-params">name:</span> (必需)<br>│   │   └── <span class="hljs-params">description:</span> (必需)<br>│   └── Markdown 指令 (必需)<br>└── 打包资源 (可选)<br>    ├── scripts<span class="hljs-symbol">/</span>     <span class="hljs-operator">-</span> 可执行代码<br>    ├── references<span class="hljs-symbol">/</span>  <span class="hljs-operator">-</span> 上下文文档<br>    └── assets<span class="hljs-symbol">/</span>      <span class="hljs-operator">-</span> 输出文件（模板等）<br></code></pre></td></tr></table></figure>
+<h3 id="skill.md-格式">3.2 SKILL.md 格式</h3>
+<p>每个 Skill 都需要一个带有 YAML 前置数据的 <code>SKILL.md</code>
+文件：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN">---<br>name: your-skill-name<br><span class="hljs-section">description: 简要描述此 Skill 的功能以及何时使用它</span><br><span class="hljs-section">---</span><br><br><span class="hljs-section"># 您的 Skill 名称</span><br><br><span class="hljs-section">## 指令</span><br>[Claude 要遵循的清晰、分步指导]<br><br><span class="hljs-section">## 示例</span><br>[使用此 Skill 的具体示例]<br></code></pre></td></tr></table></figure>
+<p><strong>字段要求</strong>：</p>
+<p><code>name</code>：</p>
+<ul>
+<li>最多 64 个字符</li>
+<li>只能包含小写字母、数字和连字符</li>
+<li>不能包含 XML 标签</li>
+<li>不能包含保留字：「anthropic」、「claude」</li>
+</ul>
+<p><code>description</code>：</p>
+<ul>
+<li>必须非空</li>
+<li>最多 1024 个字符</li>
+<li>不能包含 XML 标签</li>
+</ul>
+<p><code>description</code> 应包括 Skill 的功能以及 Claude
+何时应使用它。</p>
+<h2 id="四最佳实践">四、最佳实践</h2>
+<h3 id="核心原则">4.1 核心原则</h3>
+<figure>
+<img src="/images/context-window.svg" srcset="/img/loading.gif" lazyload alt="上下文窗口">
+<figcaption aria-hidden="true">上下文窗口</figcaption>
+</figure>
+<p>上下文窗口是一种公共资源。您的技能与 Claude
+需要了解的所有其他内容共享上下文窗口，包括：</p>
+<ul>
+<li>系统提示</li>
+<li>对话历史</li>
+<li>其他技能的元数据</li>
+<li>您的实际请求</li>
+</ul>
+<p>技能中的每个令牌都没有直接成本。启动时，只有所有技能的元数据（名称和描述）被预加载。Claude
+仅在技能变得相关时才读取 SKILL.md，并根据需要读取其他文件。但是，在
+SKILL.md 中保持简洁仍然很重要：一旦 Claude
+加载它，每个令牌都会与对话历史和其他上下文竞争。</p>
+<h4 id="默认假设claude-已经非常聪明">4.1.1 默认假设：Claude
+已经非常聪明</h4>
+<p>只添加 Claude 没有的上下文。质疑每一条信息：</p>
+<ul>
+<li>“Claude 真的需要这个解释吗？”</li>
+<li>“我能假设 Claude 知道这个吗？”</li>
+<li>“这段落值得它的令牌成本吗？”</li>
+</ul>
+<p><strong>好的例子：简洁</strong>（大约 50 个令牌）：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section">## 提取 PDF 文本</span><br><br>使用 pdfplumber 进行文本提取：<br><br><span class="hljs-code">```python</span><br><span class="hljs-code">import pdfplumber</span><br><span class="hljs-code"></span><br><span class="hljs-code">with pdfplumber.open("file.pdf") as pdf:</span><br><span class="hljs-code">    text = pdf.pages[0].extract_text()</span><br><span class="hljs-code">```</span><br></code></pre></td></tr></table></figure>
+<p><strong>不好的例子：过于冗长</strong>（大约 150 个令牌）：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section">## 提取 PDF 文本</span><br><br>PDF（便携式文档格式）文件是一种常见的文件格式，包含<br>文本、图像和其他内容。要从 PDF 中提取文本，您需要<br>使用一个库。有许多库可用于 PDF 处理，但我们<br>建议使用 pdfplumber，因为它易于使用且能处理大多数情况。<br>首先，您需要使用 pip 安装它。然后您可以使用下面的代码...<br></code></pre></td></tr></table></figure>
+<p>简洁版本假设 Claude 知道什么是 PDF 以及库如何工作。</p>
+<h4 id="高自由度基于文本的说明">4.1.2 高自由度（基于文本的说明）：</h4>
+<p>使用场景：</p>
+<ul>
+<li>多种方法都有效</li>
+<li>决策取决于上下文</li>
+<li>启发式方法指导方法</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section">## 代码审查流程</span><br><br><span class="hljs-bullet">1.</span> 分析代码结构和组织<br><span class="hljs-bullet">2.</span> 检查潜在的错误或边界情况<br><span class="hljs-bullet">3.</span> 建议改进可读性和可维护性<br><span class="hljs-bullet">4.</span> 验证是否遵守项目约定<br></code></pre></td></tr></table></figure>
+<h4 id="中等自由度伪代码或带参数的脚本">4.1.3
+中等自由度（伪代码或带参数的脚本）：</h4>
+<p>使用场景：</p>
+<ul>
+<li>存在首选模式</li>
+<li>某些变化是可以接受的</li>
+<li>配置影响行为</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section">## 生成报告</span><br><br>使用此模板并根据需要自定义：<br><br><span class="hljs-code">```python</span><br><span class="hljs-code">def generate_report(data, format="markdown", include_charts=True):</span><br><span class="hljs-code">    # 处理数据</span><br><span class="hljs-code">    # 以指定格式生成输出</span><br><span class="hljs-code">    # 可选地包含可视化</span><br><span class="hljs-code">```</span><br></code></pre></td></tr></table></figure>
+<h4 id="低自由度特定脚本很少或没有参数">4.1.4
+低自由度（特定脚本，很少或没有参数）：</h4>
+<p>使用场景：</p>
+<ul>
+<li>操作脆弱且容易出错</li>
+<li>一致性至关重要</li>
+<li>必须遵循特定的序列</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section">## 数据库迁移</span><br><br>运行完全相同的脚本：<br><br><span class="hljs-code">```bash</span><br><span class="hljs-code">python scripts/migrate.py --verify --backup</span><br><span class="hljs-code">```</span><br><br>不要修改命令或添加其他标志。<br></code></pre></td></tr></table></figure>
+<p><strong>类比</strong>：将 Claude 视为探索路径的机器人：</p>
+<ul>
+<li><strong>两侧都是悬崖的狭窄桥</strong>：只有一种安全的前进方式。提供具体的护栏和精确的说明（低自由度）。示例：必须按精确顺序运行的数据库迁移。</li>
+<li><strong>没有危险的开放田野</strong>：许多路径都能成功。给出一般方向并相信
+Claude
+会找到最佳路线（高自由度）。示例：上下文决定最佳方法的代码审查。</li>
+</ul>
+<p><strong>按模型的测试考虑</strong>：</p>
+<ul>
+<li><strong>Claude
+Haiku</strong>（快速、经济）：技能是否提供了足够的指导？</li>
+<li><strong>Claude Sonnet</strong>（平衡）：技能是否清晰高效？</li>
+<li><strong>Claude
+Opus</strong>（强大的推理）：技能是否避免过度解释？</li>
+</ul>
+<p>对 Opus 完美有效的东西可能需要为 Haiku
+提供更多细节。如果您计划在多个模型中使用您的技能，请针对所有模型都能很好地工作的说明。</p>
+<h3 id="skills结构">4.2 Skills结构</h3>
+<h4 id="命名约定">4.2.1 命名约定</h4>
+<p>使用一致的命名模式使技能更容易引用和讨论。我们建议对技能名称使用<strong>动名词形式</strong>（动词
++ -ing），因为这清楚地描述了技能提供的活动或能力。</p>
+<p>请记住，<code>name</code> 字段必须仅使用小写字母、数字和连字符。</p>
+<p><strong>好的命名示例（动名词形式）</strong>：</p>
+<ul>
+<li><code>processing-pdfs</code></li>
+<li><code>analyzing-spreadsheets</code></li>
+<li><code>managing-databases</code></li>
+<li><code>testing-code</code></li>
+<li><code>writing-documentation</code></li>
+</ul>
+<p><strong>可接受的替代方案</strong>：</p>
+<ul>
+<li>名词短语：<code>pdf-processing</code>、<code>spreadsheet-analysis</code></li>
+<li>面向行动：<code>process-pdfs</code>、<code>analyze-spreadsheets</code></li>
+</ul>
+<p><strong>避免</strong>：</p>
+<ul>
+<li>模糊的名称：<code>helper</code>、<code>utils</code>、<code>tools</code></li>
+<li>过于通用：<code>documents</code>、<code>data</code>、<code>files</code></li>
+<li>保留字：<code>anthropic-helper</code>、<code>claude-tools</code></li>
+<li>技能集合中的不一致模式</li>
+</ul>
+<p>一致的命名使以下操作更容易：</p>
+<ul>
+<li>在文档和对话中引用技能</li>
+<li>一目了然地理解技能的功能</li>
+<li>组织和搜索多个技能</li>
+<li>维护专业、统一的技能库</li>
+</ul>
+<p><code>description</code>
+字段启用技能发现，应包括技能的功能和使用时机。</p>
+<p><strong>始终用第三人称编写</strong>。描述被注入到系统提示中，不一致的视角可能会导致发现问题。</p>
+<ul>
+<li><strong>好的</strong>：“处理 Excel 文件并生成报告”</li>
+<li><strong>避免</strong>：“我可以帮助您处理 Excel 文件”</li>
+<li><strong>避免</strong>：“您可以使用此功能处理 Excel 文件”</li>
+</ul>
+<p><strong>具体并包含关键术语</strong>。包括技能的功能和使用它的具体触发器/上下文。</p>
+<p>每个技能恰好有一个描述字段。描述对于技能选择至关重要：Claude
+使用它从可能的 100+
+个可用技能中选择正确的技能。您的描述必须提供足够的细节，以便 Claude
+知道何时选择此技能，而 SKILL.md 的其余部分提供实现细节。</p>
+<h4 id="示例">4.2.2 示例</h4>
+<p><strong>PDF 处理技能</strong>：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN">description: 从 PDF 文件中提取文本和表格、填充表单、合并文档。在处理 PDF 文件或用户提及 PDF、表单或文档提取时使用。<br></code></pre></td></tr></table></figure>
+<p><strong>Excel 分析技能</strong>： <figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN">description: 分析 Excel 电子表格、创建数据透视表、生成图表。在分析 Excel 文件、电子表格、表格数据或 .xlsx 文件时使用。<br></code></pre></td></tr></table></figure></p>
+<p><strong>Git 提交助手技能</strong>： <figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN">description: 通过分析 git 差异生成描述性提交消息。当用户要求帮助编写提交消息或审查暂存更改时使用。<br></code></pre></td></tr></table></figure></p>
+<p>避免模糊的描述，如： <figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN">description: 帮助处理文档<br></code></pre></td></tr></table></figure></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN">description: 处理数据<br></code></pre></td></tr></table></figure>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN">description: 对文件进行各种操作<br></code></pre></td></tr></table></figure>
+<h3 id="渐进式披露模式">4.3 渐进式披露模式</h3>
+<p>SKILL.md 作为概述，指向 Claude
+根据需要查看的详细材料，就像入职指南中的目录一样。</p>
+<p><strong>实用指导</strong>：</p>
+<ul>
+<li>保持 SKILL.md 正文在 500 行以下以获得最佳性能</li>
+<li>接近此限制时将内容拆分为单独的文件</li>
+<li>使用下面的模式有效地组织说明、代码和资源</li>
+</ul>
+<p>基本技能仅包含一个 SKILL.md 文件，其中包含元数据和说明：</p>
+<p><img src="/images/agent-skills-simple-file.png" srcset="/img/loading.gif" lazyload></p>
+<p>随着您的技能增长，您可以捆绑 Claude 仅在需要时加载的其他内容：</p>
+<p><img src="/images/agent-skills-bundling-content.png" srcset="/img/loading.gif" lazyload></p>
+<p>完整的技能目录结构可能如下所示：</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs nix">pdf<span class="hljs-symbol">/</span><br>├── SKILL.md              <span class="hljs-comment"># 主要说明（触发时加载）</span><br>├── FORMS.md              <span class="hljs-comment"># 表单填充指南（根据需要加载）</span><br>├── reference.md          <span class="hljs-comment"># API 参考（根据需要加载）</span><br>├── examples.md           <span class="hljs-comment"># 使用示例（根据需要加载）</span><br>└── scripts<span class="hljs-symbol">/</span><br>    ├── analyze_form.py   <span class="hljs-comment"># 实用脚本（执行，不加载）</span><br>    ├── fill_form.py      <span class="hljs-comment"># 表单填充脚本</span><br>    └── validate.py       <span class="hljs-comment"># 验证脚本</span><br></code></pre></td></tr></table></figure>
+<h4 id="模式-1高级指南与参考">4.3.1 模式 1：高级指南与参考</h4>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN">---<br>name: pdf-processing<br><span class="hljs-section">description: 从 PDF 文件中提取文本和表格、填充表单、合并文档。在处理 PDF 文件或用户提及 PDF、表单或文档提取时使用。</span><br><span class="hljs-section">---</span><br><br><span class="hljs-section"># PDF 处理</span><br><br><span class="hljs-section">## 快速开始</span><br><br>使用 pdfplumber 提取文本：<br><span class="hljs-code">```python</span><br><span class="hljs-code">import pdfplumber</span><br><span class="hljs-code">with pdfplumber.open("file.pdf") as pdf:</span><br><span class="hljs-code">    text = pdf.pages[0].extract_text()</span><br><span class="hljs-code">```</span><br><br><span class="hljs-section">## 高级功能</span><br><br><span class="hljs-strong">**表单填充**</span>：参阅 [<span class="hljs-string">FORMS.md</span>](<span class="hljs-link">FORMS.md</span>) 获取完整指南<br><span class="hljs-strong">**API 参考**</span>：参阅 [<span class="hljs-string">REFERENCE.md</span>](<span class="hljs-link">REFERENCE.md</span>) 获取所有方法<br><span class="hljs-strong">**示例**</span>：参阅 [<span class="hljs-string">EXAMPLES.md</span>](<span class="hljs-link">EXAMPLES.md</span>) 获取常见模式<br></code></pre></td></tr></table></figure>
+<p>Claude 仅在需要时加载 FORMS.md、REFERENCE.md 或 EXAMPLES.md。</p>
+<h4 id="模式-2特定领域组织">4.3.2 模式 2：特定领域组织</h4>
+<p>对于具有多个领域的技能，按领域组织内容以避免加载无关的上下文。当用户询问销售指标时，Claude
+只需要读取与销售相关的架构，而不是财务或营销数据。这保持令牌使用低且上下文集中。</p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs dos">bigquery-skill/<br>├── SKILL.<span class="hljs-built_in">md</span> (概述和导航)<br>└── reference/<br>    ├── finance.<span class="hljs-built_in">md</span> (收入、计费指标)<br>    ├── sales.<span class="hljs-built_in">md</span> (机会、管道)<br>    ├── product.<span class="hljs-built_in">md</span> (API 使用、功能)<br>    └── marketing.<span class="hljs-built_in">md</span> (活动、归因)<br></code></pre></td></tr></table></figure>
+<p><strong>SKILL.md</strong> <figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section"># BigQuery 数据分析</span><br><br><span class="hljs-section">## 可用数据集</span><br><br><span class="hljs-strong">**财务**</span>：收入、ARR、计费 → 参阅 [<span class="hljs-string">reference/finance.md</span>](<span class="hljs-link">reference/finance.md</span>)<br><span class="hljs-strong">**销售**</span>：机会、管道、账户 → 参阅 [<span class="hljs-string">reference/sales.md</span>](<span class="hljs-link">reference/sales.md</span>)<br><span class="hljs-strong">**产品**</span>：API 使用、功能、采用 → 参阅 [<span class="hljs-string">reference/product.md</span>](<span class="hljs-link">reference/product.md</span>)<br><span class="hljs-strong">**营销**</span>：活动、归因、电子邮件 → 参阅 [<span class="hljs-string">reference/marketing.md</span>](<span class="hljs-link">reference/marketing.md</span>)<br><br><span class="hljs-section">## 快速搜索</span><br><br>使用 grep 查找特定指标：<br><br><span class="hljs-code">```bash</span><br><span class="hljs-code">grep -i "revenue" reference/finance.md</span><br><span class="hljs-code">grep -i "pipeline" reference/sales.md</span><br><span class="hljs-code">grep -i "api usage" reference/product.md</span><br><span class="hljs-code">```</span><br></code></pre></td></tr></table></figure></p>
+<h4 id="模式-3条件详情">4.3.3 模式 3：条件详情</h4>
+<p>显示基本内容，链接到高级内容：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section"># DOCX 处理</span><br><br><span class="hljs-section">## 创建文档</span><br><br>使用 docx-js 创建新文档。参阅 [<span class="hljs-string">DOCX-JS.md</span>](<span class="hljs-link">DOCX-JS.md</span>)。<br><br><span class="hljs-section">## 编辑文档</span><br><br>对于简单编辑，直接修改 XML。<br><br><span class="hljs-strong">**对于跟踪更改**</span>：参阅 [<span class="hljs-string">REDLINING.md</span>](<span class="hljs-link">REDLINING.md</span>)<br><span class="hljs-strong">**对于 OOXML 详情**</span>：参阅 [<span class="hljs-string">OOXML.md</span>](<span class="hljs-link">OOXML.md</span>)<br></code></pre></td></tr></table></figure>
+<p>Claude 仅在用户需要这些功能时读取 REDLINING.md 或 OOXML.md。</p>
+<h4 id="避免深层嵌套引用">4.3.4 避免深层嵌套引用</h4>
+<p>当从其他引用文件引用文件时，Claude
+可能会部分读取文件。遇到嵌套引用时，Claude 可能会使用
+<code>head -100</code>
+等命令预览内容，而不是读取整个文件，导致信息不完整。</p>
+<p><strong>保持引用距离 SKILL.md 一级</strong>。所有参考文件应直接从
+SKILL.md 链接，以确保 Claude 在需要时读取完整文件。</p>
+<p><strong>不好的例子：太深</strong>：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section"># SKILL.md</span><br>参阅 [<span class="hljs-string">advanced.md</span>](<span class="hljs-link">advanced.md</span>)...<br><br><span class="hljs-section"># advanced.md</span><br>参阅 [<span class="hljs-string">details.md</span>](<span class="hljs-link">details.md</span>)...<br><br><span class="hljs-section"># details.md</span><br>这是实际信息...<br></code></pre></td></tr></table></figure>
+<p><strong>好的例子：一级深</strong>：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section"># SKILL.md</span><br><br><span class="hljs-strong">**基本使用**</span>：[SKILL.md 中的说明]<br><span class="hljs-strong">**高级功能**</span>：参阅 [<span class="hljs-string">advanced.md</span>](<span class="hljs-link">advanced.md</span>)<br><span class="hljs-strong">**API 参考**</span>：参阅 [<span class="hljs-string">reference.md</span>](<span class="hljs-link">reference.md</span>)<br><span class="hljs-strong">**示例**</span>：参阅 [<span class="hljs-string">examples.md</span>](<span class="hljs-link">examples.md</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="使用目录结构化较长的参考文件">4.3.5
+使用目录结构化较长的参考文件</h4>
+<p>对于超过 100 行的参考文件，在顶部包含目录。这确保 Claude
+即使在部分读取时也能看到可用信息的完整范围。</p>
+<p><strong>示例</strong>：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section"># API 参考</span><br><br><span class="hljs-section">## 内容</span><br><span class="hljs-bullet">-</span> 身份验证和设置<br><span class="hljs-bullet">-</span> 核心方法（创建、读取、更新、删除）<br><span class="hljs-bullet">-</span> 高级功能（批量操作、webhooks）<br><span class="hljs-bullet">-</span> 错误处理模式<br><span class="hljs-bullet">-</span> 代码示例<br><br><span class="hljs-section">## 身份验证和设置</span><br>...<br><br><span class="hljs-section">## 核心方法</span><br>...<br></code></pre></td></tr></table></figure>
+<p>Claude 可以根据需要读取完整文件或跳转到特定部分。</p>
+<h3 id="工作流和反馈循环">4.4 工作流和反馈循环</h3>
+<h4 id="对复杂任务使用工作流">4.4.1 对复杂任务使用工作流</h4>
+<p>将复杂操作分解为清晰的顺序步骤。对于特别复杂的工作流，提供一个清单，Claude
+可以将其复制到其响应中并在进行时检查。</p>
+<p><strong>示例 1：研究综合工作流</strong>（适用于没有代码的技能）：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section">## 研究综合工作流</span><br><br>复制此清单并跟踪您的进度：<br><br><span class="hljs-code">```</span><br><span class="hljs-code">研究进度：</span><br><span class="hljs-code">- [ ] 步骤 1：阅读所有源文档</span><br><span class="hljs-code">- [ ] 步骤 2：识别关键主题</span><br><span class="hljs-code">- [ ] 步骤 3：交叉参考声明</span><br><span class="hljs-code">- [ ] 步骤 4：创建结构化摘要</span><br><span class="hljs-code">- [ ] 步骤 5：验证引用</span><br><span class="hljs-code">```</span><br><br><span class="hljs-strong">**步骤 1：阅读所有源文档**</span><br><br>查看 <span class="hljs-code">`sources/`</span> 目录中的每个文档。记下主要论点和支持证据。<br><br><span class="hljs-strong">**步骤 2：识别关键主题**</span><br><br>寻找跨源的模式。哪些主题重复出现？源在哪里一致或不一致？<br><br><span class="hljs-strong">**步骤 3：交叉参考声明**</span><br><br>对于每个主要声明，验证它出现在源材料中。记下哪个源支持每个点。<br><br><span class="hljs-strong">**步骤 4：创建结构化摘要**</span><br><br>按主题组织发现。包括：<br><span class="hljs-bullet">-</span> 主要声明<br><span class="hljs-bullet">-</span> 来自源的支持证据<br><span class="hljs-bullet">-</span> 相互矛盾的观点（如果有）<br><br><span class="hljs-strong">**步骤 5：验证引用**</span><br><br>检查每个声明是否引用了正确的源文档。如果引用不完整，返回步骤 3。<br></code></pre></td></tr></table></figure>
+<p>此示例展示了工作流如何应用于不需要代码的分析任务。清单模式适用于任何复杂的多步骤流程。</p>
+<p><strong>示例 2：PDF 表单填充工作流</strong>（适用于有代码的技能）：
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section">## PDF 表单填充工作流</span><br><br>复制此清单并在完成项目时检查：<br><br><span class="hljs-code">```</span><br><span class="hljs-code">任务进度：</span><br><span class="hljs-code">- [ ] 步骤 1：分析表单（运行 analyze_form.py）</span><br><span class="hljs-code">- [ ] 步骤 2：创建字段映射（编辑 fields.json）</span><br><span class="hljs-code">- [ ] 步骤 3：验证映射（运行 validate_fields.py）</span><br><span class="hljs-code">- [ ] 步骤 4：填充表单（运行 fill_form.py）</span><br><span class="hljs-code">- [ ] 步骤 5：验证输出（运行 verify_output.py）</span><br><span class="hljs-code">```</span><br><br><span class="hljs-strong">**步骤 1：分析表单**</span><br><br>运行：<span class="hljs-code">`python scripts/analyze_form.py input.pdf`</span><br><br>这提取表单字段及其位置，保存到 <span class="hljs-code">`fields.json`</span>。<br><br><span class="hljs-strong">**步骤 2：创建字段映射**</span><br><br>编辑 <span class="hljs-code">`fields.json`</span> 为每个字段添加值。<br><br><span class="hljs-strong">**步骤 3：验证映射**</span><br><br>运行：<span class="hljs-code">`python scripts/validate_fields.py fields.json`</span><br><br>在继续之前修复任何验证错误。<br><br><span class="hljs-strong">**步骤 4：填充表单**</span><br><br>运行：<span class="hljs-code">`python scripts/fill_form.py input.pdf fields.json output.pdf`</span><br><br><span class="hljs-strong">**步骤 5：验证输出**</span><br><br>运行：<span class="hljs-code">`python scripts/verify_output.py output.pdf`</span><br><br>如果验证失败，返回步骤 2。<br></code></pre></td></tr></table></figure></p>
+<p>清晰的步骤防止 Claude 跳过关键验证。清单帮助 Claude
+和您跟踪多步骤工作流的进度。</p>
+<h4 id="实现反馈循环">4.4.2 实现反馈循环</h4>
+<p><strong>常见模式</strong>：运行验证器 → 修复错误 → 重复</p>
+<p>此模式大大提高输出质量。</p>
+<p><strong>示例 1：风格指南合规性</strong>（适用于没有代码的技能）：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section">## 内容审查流程</span><br><br><span class="hljs-bullet">1.</span> 按照 STYLE<span class="hljs-emphasis">_GUIDE.md 中的指南起草您的内容</span><br><span class="hljs-emphasis">2. 根据清单审查：</span><br><span class="hljs-emphasis">   - 检查术语一致性</span><br><span class="hljs-emphasis">   - 验证示例遵循标准格式</span><br><span class="hljs-emphasis">   - 确认所有必需部分都存在</span><br><span class="hljs-emphasis">3. 如果发现问题：</span><br><span class="hljs-emphasis">   - 用特定部分参考记录每个问题</span><br><span class="hljs-emphasis">   - 修改内容</span><br><span class="hljs-emphasis">   - 再次审查清单</span><br><span class="hljs-emphasis">4. 仅当满足所有要求时才继续</span><br><span class="hljs-emphasis">5. 完成并保存文档</span><br></code></pre></td></tr></table></figure>
+<p>这展示了使用参考文档而不是脚本的验证循环模式。“验证器”是
+STYLE_GUIDE.md，Claude 通过读取和比较来执行检查。</p>
+<p><strong>示例 2：文档编辑流程</strong>（适用于有代码的技能）：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs markdown"><span class="hljs-section">## 文档编辑流程</span><br><br><span class="hljs-bullet">1.</span> 对 <span class="hljs-code">`word/document.xml`</span> 进行编辑<br><span class="hljs-bullet">2.</span> <span class="hljs-strong">**立即验证**</span>：<span class="hljs-code">`python ooxml/scripts/validate.py unpacked_dir/`</span><br><span class="hljs-bullet">3.</span> 如果验证失败：<br><span class="hljs-bullet">   -</span> 仔细查看错误消息<br><span class="hljs-bullet">   -</span> 修复 XML 中的问题<br><span class="hljs-bullet">   -</span> 再次运行验证<br><span class="hljs-bullet">4.</span> <span class="hljs-strong">**仅在验证通过时继续**</span><br><span class="hljs-bullet">5.</span> 重建：<span class="hljs-code">`python ooxml/scripts/pack.py unpacked_dir/ output.docx`</span><br><span class="hljs-bullet">6.</span> 测试输出文档<br></code></pre></td></tr></table></figure>
+<p>验证循环可以及早捕获错误。</p>
+<h3 id="内容指南">4.5 内容指南</h3>
+<h4 id="避免时间敏感信息">4.5.1 避免时间敏感信息</h4>
+<p>不要包含会过时的信息：</p>
+<p><strong>不好的例子：时间敏感</strong>（会变成错误）：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN">如果您在 2025 年 8 月之前执行此操作，请使用旧 API。<br>2025 年 8 月之后，使用新 API。<br></code></pre></td></tr></table></figure>
+<p><strong>好的例子</strong>（使用”旧模式”部分）： <figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section">## 当前方法</span><br><br>使用 v2 API 端点：<span class="hljs-code">`api.example.com/v2/messages`</span><br><br><span class="hljs-section">## 旧模式</span><br><br><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">details</span>&gt;</span></span><br><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">summary</span>&gt;</span></span>旧版 v1 API（已弃用 2025-08）<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">summary</span>&gt;</span></span><br><br>v1 API 使用：<span class="hljs-code">`api.example.com/v1/messages`</span><br><br>此端点不再受支持。<br><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">details</span>&gt;</span></span><br></code></pre></td></tr></table></figure></p>
+<p>旧模式部分提供历史背景，而不会使主要内容混乱。</p>
+<h4 id="使用一致的术语">4.5.2 使用一致的术语</h4>
+<p>选择一个术语并在整个技能中使用它：</p>
+<p><strong>好的 - 一致</strong>：</p>
+<ul>
+<li>始终”API 端点”</li>
+<li>始终”字段”</li>
+<li>始终”提取”</li>
+</ul>
+<p><strong>不好的 - 不一致</strong>：</p>
+<ul>
+<li>混合”API 端点”、“URL”、“API 路由”、“路径”</li>
+<li>混合”字段”、“框”、“元素”、“控件”</li>
+<li>混合”提取”、“拉取”、“获取”、“检索”</li>
+</ul>
+<p>一致性帮助 Claude 理解和遵循说明。</p>
+<h3 id="常见模式">4.6 常见模式</h3>
+<h4 id="模板模式">4.6.1 模板模式</h4>
+<p>为输出格式提供模板。将严格程度与您的需求相匹配。</p>
+<p><strong>对于严格要求</strong>（如 API 响应或数据格式）：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section">## 报告结构</span><br><br>始终使用此精确的模板结构：<br><br><span class="hljs-code">```markdown</span><br><span class="hljs-code"># [分析标题]</span><br><span class="hljs-code"></span><br><span class="hljs-code">## 执行摘要</span><br><span class="hljs-code">[关键发现的一段概述]</span><br><span class="hljs-code"></span><br><span class="hljs-code">## 关键发现</span><br><span class="hljs-code">- 带有支持数据的发现 1</span><br><span class="hljs-code">- 带有支持数据的发现 2</span><br><span class="hljs-code">- 带有支持数据的发现 3</span><br><span class="hljs-code"></span><br><span class="hljs-code">## 建议</span><br><span class="hljs-code">1. 具体可行的建议</span><br><span class="hljs-code">2. 具体可行的建议</span><br><span class="hljs-code">```</span><br></code></pre></td></tr></table></figure>
+<p><strong>对于灵活指导</strong>（当适应有用时）：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section">## 报告结构</span><br><br>这是一个合理的默认格式，但根据分析使用您的最佳判断：<br><br><span class="hljs-code">```markdown</span><br><span class="hljs-code"># [分析标题]</span><br><span class="hljs-code"></span><br><span class="hljs-code">## 执行摘要</span><br><span class="hljs-code">[概述]</span><br><span class="hljs-code"></span><br><span class="hljs-code">## 关键发现</span><br><span class="hljs-code">[根据您发现的内容调整部分]</span><br><span class="hljs-code"></span><br><span class="hljs-code">## 建议</span><br><span class="hljs-code">[根据具体背景定制]</span><br><span class="hljs-code">```</span><br><br>根据特定分析类型根据需要调整部分。<br></code></pre></td></tr></table></figure>
+<h4 id="示例模式">4.6.2 示例模式</h4>
+<p>对于输出质量取决于看到示例的技能，提供输入/输出对，就像在常规提示中一样：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section">## 提交消息格式</span><br><br>按照这些示例生成提交消息：<br><br><span class="hljs-strong">**示例 1：**</span><br>输入：使用 JWT 令牌添加用户身份验证<br>输出：<br><span class="hljs-code">```</span><br><span class="hljs-code">feat(auth): 实现基于 JWT 的身份验证</span><br><span class="hljs-code"></span><br><span class="hljs-code">添加登录端点和令牌验证中间件</span><br><span class="hljs-code">```</span><br><br><span class="hljs-strong">**示例 2：**</span><br>输入：修复日期在报告中显示不正确的错误<br>输出：<br><span class="hljs-code">```</span><br><span class="hljs-code">fix(reports): 修正时区转换中的日期格式</span><br><span class="hljs-code"></span><br><span class="hljs-code">在报告生成中一致使用 UTC 时间戳</span><br><span class="hljs-code">```</span><br><br><span class="hljs-strong">**示例 3：**</span><br>输入：更新依赖项并重构错误处理<br>输出：<br><span class="hljs-code">```</span><br><span class="hljs-code">chore: 更新依赖项并重构错误处理</span><br><span class="hljs-code"></span><br><span class="hljs-code">- 将 lodash 升级到 4.17.21</span><br><span class="hljs-code">- 跨端点标准化错误响应格式</span><br><span class="hljs-code">```</span><br><br>遵循此风格：type(scope): 简短描述，然后详细说明。<br></code></pre></td></tr></table></figure>
+<p>示例帮助 Claude 比单独的描述更清楚地理解所需的风格和细节程度。</p>
+<h4 id="条件工作流模式">4.6.3 条件工作流模式</h4>
+<p>通过决策点指导 Claude：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section">## 文档修改工作流</span><br><br><span class="hljs-bullet">1.</span> 确定修改类型：<br><br>   <span class="hljs-strong">**创建新内容？**</span> → 遵循下面的"创建工作流"<br>   <span class="hljs-strong">**编辑现有内容？**</span> → 遵循下面的"编辑工作流"<br><br><span class="hljs-bullet">2.</span> 创建工作流：<br><span class="hljs-bullet">   -</span> 使用 docx-js 库<br><span class="hljs-bullet">   -</span> 从头开始构建文档<br><span class="hljs-bullet">   -</span> 导出为 .docx 格式<br><br><span class="hljs-bullet">3.</span> 编辑工作流：<br><span class="hljs-bullet">   -</span> 解包现有文档<br><span class="hljs-bullet">   -</span> 直接修改 XML<br><span class="hljs-bullet">   -</span> 每次更改后验证<br><span class="hljs-bullet">   -</span> 完成时重新打包<br></code></pre></td></tr></table></figure>
+<p>如果工作流变得很大或复杂，有许多步骤，考虑将它们推送到单独的文件中，并告诉
+Claude 根据任务读取适当的文件。</p>
+<h3 id="评估和迭代">4.7 评估和迭代</h3>
+<h4 id="首先构建评估">4.7.1 首先构建评估</h4>
+<p><strong>在编写大量文档之前创建评估。</strong>
+这确保您的技能解决真实问题，而不是记录想象的问题。</p>
+<p><strong>评估驱动的开发</strong>：</p>
+<ol type="1">
+<li><strong>识别差距</strong>：在没有技能的情况下对代表性任务运行
+Claude。记录具体的失败或缺失的上下文</li>
+<li><strong>创建评估</strong>：构建三个场景来测试这些差距</li>
+<li><strong>建立基线</strong>：测量没有技能的 Claude 的性能</li>
+<li><strong>编写最少说明</strong>：创建足够的内容来解决差距并通过评估</li>
+<li><strong>迭代</strong>：执行评估、与基线比较并改进</li>
+</ol>
+<p>此方法确保您解决实际问题，而不是预期可能永远不会出现的要求。</p>
+<p><strong>评估结构</strong>：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"skills"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"pdf-processing"</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"query"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"从此 PDF 文件中提取所有文本并将其保存到 output.txt"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"files"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"test-files/document.pdf"</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"expected_behavior"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-string">"使用适当的 PDF 处理库或命令行工具成功读取 PDF 文件"</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-string">"从文档中的所有页面提取文本内容，不遗漏任何页面"</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-string">"将提取的文本保存到名为 output.txt 的文件中，格式清晰易读"</span><br>  <span class="hljs-punctuation">]</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p>此示例演示了具有简单测试标准的数据驱动评估。我们目前不提供运行这些评估的内置方式。用户可以创建自己的评估系统。评估是衡量技能有效性的真实来源。</p>
+<h4 id="与-claude-一起迭代开发技能">4.7.2 与 Claude
+一起迭代开发技能</h4>
+<p>最有效的技能开发流程涉及 Claude 本身。与一个 Claude 实例（“Claude
+A”）合作创建将由其他实例（“Claude B”）使用的技能。Claude A
+帮助您设计和改进说明，而 Claude B
+在真实任务中测试它们。这之所以有效，是因为 Claude
+模型既理解如何编写有效的代理说明，也理解代理需要什么信息。</p>
+<p><strong>创建新技能</strong>：</p>
+<ol type="1">
+<li><p><strong>在没有技能的情况下完成任务</strong>：与 Claude A
+一起使用常规提示来解决问题。在您工作时，您自然会提供上下文、解释偏好并分享程序知识。注意您重复提供的信息。</p></li>
+<li><p><strong>识别可重用模式</strong>：完成任务后，识别您提供的对类似未来任务有用的上下文。</p>
+<p><strong>示例</strong>：如果您完成了 BigQuery
+分析，您可能提供了表名、字段定义、过滤规则（如”始终排除测试账户”）和常见查询模式。</p></li>
+<li><p><strong>要求 Claude A
+创建技能</strong>：“创建一个技能来捕获我们刚刚使用的 BigQuery
+分析模式。包括表架构、命名约定和关于过滤测试账户的规则。”</p>
+<p>Claude
+模型本身理解技能格式和结构。您不需要特殊的系统提示或”编写技能”技能来让
+Claude 帮助创建技能。只需要求 Claude
+创建技能，它就会生成具有适当前置事项和正文内容的正确结构化
+SKILL.md。</p></li>
+<li><p><strong>审查简洁性</strong>：检查 Claude A
+是否没有添加不必要的解释。问：“删除关于赢率意义的解释 - Claude
+已经知道这个。”</p></li>
+<li><p><strong>改进信息架构</strong>：要求 Claude A
+更有效地组织内容。例如：“组织这个，使表架构在单独的参考文件中。我们稍后可能会添加更多表。”</p></li>
+<li><p><strong>在类似任务上测试</strong>：使用技能与 Claude
+B（一个加载了技能的新实例）进行相关用例。观察 Claude B
+是否找到正确的信息、正确应用规则并成功处理任务。</p></li>
+<li><p><strong>根据观察迭代</strong>：如果 Claude B
+遇到困难或遗漏了什么，返回 Claude A 并提供具体信息：“当 Claude
+使用此技能时，它忘记了为 Q4
+按日期过滤。我们应该添加关于日期过滤模式的部分吗？”</p></li>
+</ol>
+<p><strong>迭代现有技能</strong>：</p>
+<p>当改进技能时，相同的分层模式继续。您在以下之间交替：</p>
+<ul>
+<li><strong>与 Claude A 合作</strong>（帮助改进技能的专家）</li>
+<li><strong>与 Claude B 测试</strong>（使用技能执行真实工作的代理）</li>
+<li><strong>观察 Claude B 的行为</strong>并将见解带回 Claude A</li>
+</ul>
+<ol type="1">
+<li><p><strong>在真实工作流中使用技能</strong>：给 Claude
+B（加载了技能）实际任务，而不是测试场景</p></li>
+<li><p><strong>观察 Claude B
+的行为</strong>：注意它在哪里遇到困难、成功或做出意外选择</p>
+<p><strong>示例观察</strong>：“当我要求 Claude B
+生成区域销售报告时，它编写了查询但忘记了过滤测试账户，即使技能提到了此规则。”</p></li>
+<li><p><strong>返回 Claude A 进行改进</strong>：分享当前的 SKILL.md
+并描述您观察到的内容。问：“我注意到 Claude B
+在要求区域报告时忘记了过滤测试账户。技能提到了过滤，但也许还不够突出？”</p></li>
+<li><p><strong>审查 Claude A 的建议</strong>：Claude A
+可能建议重新组织以使规则更突出、使用更强的语言如”必须过滤”而不是”始终过滤”，或重构工作流部分。</p></li>
+<li><p><strong>应用并测试更改</strong>：使用 Claude A
+的改进更新技能，然后在类似请求上再次与 Claude B 测试</p></li>
+<li><p><strong>根据使用情况重复</strong>：当您遇到新场景时继续观察-改进-测试循环。每次迭代都根据真实代理行为而不是假设改进技能。</p></li>
+</ol>
+<p><strong>收集团队反馈</strong>：</p>
+<ol type="1">
+<li>与队友分享技能并观察他们的使用</li>
+<li>问：“技能在预期时激活吗？说明清楚吗？缺少什么？”</li>
+<li>合并反馈以解决您自己使用模式中的盲点</li>
+</ol>
+<p><strong>为什么此方法有效</strong>：Claude A
+理解代理需求，您提供领域专业知识，Claude B
+通过真实使用揭示差距，迭代改进根据观察到的行为而不是假设改进技能。</p>
+<h4 id="观察-claude-如何导航技能">4.7.3 观察 Claude 如何导航技能</h4>
+<p>当您迭代技能时，注意 Claude 实际上如何在实践中使用它们。观察：</p>
+<ul>
+<li><strong>意外的探索路径</strong>：Claude
+是否以您没有预期的顺序读取文件？这可能表明您的结构不如您认为的那样直观</li>
+<li><strong>错过的连接</strong>：Claude
+是否未能遵循对重要文件的引用？您的链接可能需要更明确或突出</li>
+<li><strong>对某些部分的过度依赖</strong>：如果 Claude
+反复读取同一文件，考虑该内容是否应该在主 SKILL.md 中</li>
+<li><strong>忽略的内容</strong>：如果 Claude
+从不访问捆绑文件，它可能是不必要的或在主说明中信号不良</li>
+</ul>
+<p>根据这些观察而不是假设进行迭代。您的技能元数据中的”name”和”description”特别关键。Claude
+在决定是否响应当前任务触发技能时使用这些。确保它们清楚地描述技能的功能和使用时机。</p>
+<h3 id="要避免的反模式">4.8 要避免的反模式</h3>
+<h4 id="避免-windows-风格的路径">4.8.1 避免 Windows 风格的路径</h4>
+<p>始终使用正斜杠在文件路径中，即使在 Windows 上：</p>
+<ul>
+<li>✓
+<strong>好的</strong>：<code>scripts/helper.py</code>、<code>reference/guide.md</code></li>
+<li>✗
+<strong>避免</strong>：<code>scripts\helper.py</code>、<code>reference\guide.md</code></li>
+</ul>
+<p>Unix 风格的路径在所有平台上都有效，而 Windows 风格的路径在 Unix
+系统上会导致错误。</p>
+<h4 id="避免提供太多选项">4.8.2 避免提供太多选项</h4>
+<p>除非必要，否则不要呈现多种方法：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-strong">**不好的例子：太多选择**</span>（令人困惑）：<br>"您可以使用 pypdf、或 pdfplumber、或 PyMuPDF、或 pdf2image、或..."<br><br><span class="hljs-strong">**好的例子：提供默认值**</span>（带有逃生舱口）：<br>"使用 pdfplumber 进行文本提取：<br><span class="hljs-code">```python</span><br><span class="hljs-code">import pdfplumber</span><br><span class="hljs-code">```</span><br><br>对于需要 OCR 的扫描 PDF，改用 pdf2image 与 pytesseract。"<br></code></pre></td></tr></table></figure>
+<h3 id="高级带有可执行代码的技能">4.9 高级：带有可执行代码的技能</h3>
+<p>下面的部分重点关注包含可执行脚本的技能。</p>
+<h4 id="解决不要推卸">4.9.1 解决，不要推卸</h4>
+<p>编写技能脚本时，处理错误条件而不是推卸给 Claude。</p>
+<p><strong>好的例子：明确处理错误</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">process_file</span>(<span class="hljs-params">path</span>):<br>    <span class="hljs-string">"""处理文件，如果不存在则创建它。"""</span><br>    <span class="hljs-keyword">try</span>:<br>        <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(path) <span class="hljs-keyword">as</span> f:<br>            <span class="hljs-keyword">return</span> f.read()<br>    <span class="hljs-keyword">except</span> FileNotFoundError:<br>        <span class="hljs-comment"># 创建具有默认内容的文件而不是失败</span><br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">f"文件 <span class="hljs-subst">{path}</span> 未找到，创建默认值"</span>)<br>        <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(path, <span class="hljs-string">'w'</span>) <span class="hljs-keyword">as</span> f:<br>            f.write(<span class="hljs-string">''</span>)<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">''</span><br>    <span class="hljs-keyword">except</span> PermissionError:<br>        <span class="hljs-comment"># 提供替代方案而不是失败</span><br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">f"无法访问 <span class="hljs-subst">{path}</span>，使用默认值"</span>)<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">''</span><br></code></pre></td></tr></table></figure>
+<p><strong>不好的例子：推卸给 Claude</strong>： <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">process_file</span>(<span class="hljs-params">path</span>):<br>    <span class="hljs-comment"># 只是失败并让 Claude 弄清楚</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">open</span>(path).read()<br></code></pre></td></tr></table></figure></p>
+<p>配置参数也应该被证明和记录，以避免”巫毒常数”（Ousterhout
+定律）。如果您不知道正确的值，Claude 如何确定它？</p>
+<p><strong>好的例子：自文档化</strong>：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-comment"># HTTP 请求通常在 30 秒内完成</span><br><span class="hljs-comment"># 更长的超时考虑了慢速连接</span><br><span class="hljs-attr">REQUEST_TIMEOUT</span> = <span class="hljs-number">30</span><br><br><span class="hljs-comment"># 三次重试平衡可靠性与速度</span><br><span class="hljs-comment"># 大多数间歇性故障在第二次重试时解决</span><br><span class="hljs-attr">MAX_RETRIES</span> = <span class="hljs-number">3</span><br></code></pre></td></tr></table></figure>
+<p><strong>不好的例子：魔法数字</strong>：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">TIMEOUT</span> = <span class="hljs-number">47</span>  <span class="hljs-comment"># 为什么是 47？</span><br><span class="hljs-attr">RETRIES</span> = <span class="hljs-number">5</span>   <span class="hljs-comment"># 为什么是 5？</span><br></code></pre></td></tr></table></figure>
+<h4 id="提供实用脚本">4.9.2 提供实用脚本</h4>
+<p>即使 Claude 可以编写脚本，预制脚本也提供优势：</p>
+<p><strong>实用脚本的优势</strong>：</p>
+<ul>
+<li>比生成的代码更可靠</li>
+<li>节省令牌（无需在上下文中包含代码）</li>
+<li>节省时间（无需代码生成）</li>
+<li>确保跨使用的一致性</li>
+</ul>
+<p><img src="/images/agent-skills-executable-scripts.png" srcset="/img/loading.gif" lazyload></p>
+<p>上面的图表显示了可执行脚本如何与说明文件一起工作。说明文件（forms.md）引用脚本，Claude
+可以执行它而无需将其内容加载到上下文中。</p>
+<p><strong>重要区别</strong>：在您的说明中明确说明 Claude 是否应该：</p>
+<ul>
+<li><strong>执行脚本</strong>（最常见）：“运行
+<code>analyze_form.py</code> 来提取字段”</li>
+<li><strong>作为参考读取</strong>（对于复杂逻辑）：“参阅
+<code>analyze_form.py</code> 了解字段提取算法”</li>
+</ul>
+<p>对于大多数实用脚本，执行是首选，因为它更可靠和高效。</p>
+<p><strong>示例</strong>：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section">## 实用脚本</span><br><br><span class="hljs-strong">**analyze<span class="hljs-emphasis">_form.py**：从 PDF 中提取所有表单字段</span></span><br><span class="hljs-emphasis"><span class="hljs-strong"></span></span><br><span class="hljs-emphasis"><span class="hljs-strong">```bash</span></span><br><span class="hljs-emphasis"><span class="hljs-strong">python scripts/analyze_</span>form.py input.pdf &gt; fields.json</span><br><span class="hljs-strong">```</span><br><span class="hljs-strong"></span><br><span class="hljs-strong">输出格式：</span><br><span class="hljs-strong">```json</span><br><span class="hljs-strong">{</span><br><span class="hljs-strong">  "field<span class="hljs-emphasis">_name": {"type": "text", "x": 100, "y": 200},</span></span><br><span class="hljs-emphasis"><span class="hljs-strong">  "signature": {"type": "sig", "x": 150, "y": 500}</span></span><br><span class="hljs-emphasis"><span class="hljs-strong">}</span></span><br><span class="hljs-emphasis"><span class="hljs-strong">```</span></span><br><span class="hljs-emphasis"><span class="hljs-strong"></span></span><br><span class="hljs-emphasis"><span class="hljs-strong">**validate_</span>boxes.py**</span>：检查重叠的边界框<br><br><span class="hljs-code">```bash</span><br><span class="hljs-code">python scripts/validate_boxes.py fields.json</span><br><span class="hljs-code"># 返回："OK"或列出冲突</span><br><span class="hljs-code">```</span><br><br><span class="hljs-strong">**fill<span class="hljs-emphasis">_form.py**：将字段值应用于 PDF</span></span><br><span class="hljs-emphasis"><span class="hljs-strong"></span></span><br><span class="hljs-emphasis"><span class="hljs-strong">```bash</span></span><br><span class="hljs-emphasis"><span class="hljs-strong">python scripts/fill_</span>form.py input.pdf fields.json output.pdf</span><br><span class="hljs-strong">```</span><br></code></pre></td></tr></table></figure>
+<h4 id="使用视觉分析">4.9.3 使用视觉分析</h4>
+<p>当输入可以呈现为图像时，让 Claude 分析它们：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-section">## 表单布局分析</span><br><br><span class="hljs-bullet">1.</span> 将 PDF 转换为图像：<br>   <span class="hljs-code">```bash</span><br><span class="hljs-code">   python scripts/pdf_to_images.py form.pdf</span><br><span class="hljs-code">   ```</span><br><br><span class="hljs-bullet">2.</span> 分析每个页面图像以识别表单字段<br><span class="hljs-bullet">3.</span> Claude 可以在视觉上看到字段位置和类型<br></code></pre></td></tr></table></figure>
+<p>在此示例中，您需要编写 <code>pdf_to_images.py</code> 脚本。</p>
+<p>Claude 的视觉能力帮助理解布局和结构。</p>
+<h4 id="创建可验证的中间输出">4.9.4 创建可验证的中间输出</h4>
+<p>当 Claude
+执行复杂的开放式任务时，它可能会犯错误。“计划-验证-执行”模式通过让
+Claude
+首先以结构化格式创建计划，然后在执行前使用脚本验证该计划来及早捕获错误。</p>
+<p><strong>示例</strong>：想象要求 Claude 根据电子表格更新 PDF 中的 50
+个表单字段。没有验证，Claude
+可能会引用不存在的字段、创建冲突的值、遗漏必需字段或错误地应用更新。</p>
+<p><strong>解决方案</strong>：使用上面显示的工作流模式（PDF
+表单填充），但添加一个中间 <code>changes.json</code>
+文件，在应用更改前进行验证。工作流变成：分析 →
+<strong>创建计划文件</strong> → <strong>验证计划</strong> → 执行 →
+验证。</p>
+<p><strong>为什么此模式有效</strong>：</p>
+<ul>
+<li><strong>及早捕获错误</strong>：验证在更改应用前发现问题</li>
+<li><strong>机器可验证</strong>：脚本提供客观验证</li>
+<li><strong>可逆计划</strong>：Claude 可以迭代计划而不接触原件</li>
+<li><strong>清晰调试</strong>：错误消息指向特定问题</li>
+</ul>
+<p><strong>何时使用</strong>：批量操作、破坏性更改、复杂验证规则、高风险操作。</p>
+<p><strong>实现提示</strong>：使用详细的验证脚本和特定的错误消息，如”字段
+‘signature_date’
+未找到。可用字段：customer_name、order_total、signature_date_signed”来帮助
+Claude 修复问题。</p>
+<h4 id="打包依赖项">4.9.5 打包依赖项</h4>
+<p>技能在代码执行环境中运行，具有特定于平台的限制：</p>
+<ul>
+<li><strong>claude.ai</strong>：可以从 npm 和 PyPI 安装包并从 GitHub
+存储库拉取</li>
+<li><strong>Anthropic
+API</strong>：没有网络访问权限，没有运行时包安装</li>
+</ul>
+<p>在您的 SKILL.md
+中列出所需的包，并验证它们在代码执行工具文档中可用。</p>
+<h4 id="运行时环境">4.9.6 运行时环境</h4>
+<p>技能在具有文件系统访问、bash
+命令和代码执行能力的代码执行环境中运行。</p>
+<p><strong>这如何影响您的创作</strong>：</p>
+<p><strong>Claude 如何访问技能</strong>：</p>
+<ol type="1">
+<li><strong>元数据预加载</strong>：启动时，所有技能 YAML
+前置事项中的名称和描述被加载到系统提示中</li>
+<li><strong>按需读取文件</strong>：Claude 在需要时使用 bash
+读取工具从文件系统访问 SKILL.md 和其他文件</li>
+<li><strong>高效执行脚本</strong>：实用脚本可以通过 bash
+执行，而无需将其完整内容加载到上下文中。只有脚本的输出消耗令牌</li>
+<li><strong>大文件无上下文惩罚</strong>：参考文件、数据或文档在实际读取前不消耗上下文令牌</li>
+</ol>
+<ul>
+<li><p><strong>文件路径很重要</strong>：Claude
+像文件系统一样导航您的技能目录。使用正斜杠（<code>reference/guide.md</code>），而不是反斜杠</p></li>
+<li><p><strong>描述性地命名文件</strong>：使用指示内容的名称：<code>form_validation_rules.md</code>，而不是
+<code>doc2.md</code></p></li>
+<li><p><strong>为发现组织</strong>：按域或功能组织目录</p>
+<ul>
+<li>好的：<code>reference/finance.md</code>、<code>reference/sales.md</code></li>
+<li>不好的：<code>docs/file1.md</code>、<code>docs/file2.md</code></li>
+</ul></li>
+<li><p><strong>捆绑综合资源</strong>：包括完整的 API
+文档、广泛的示例、大型数据集；在访问前没有上下文惩罚</p></li>
+<li><p><strong>对确定性操作优先使用脚本</strong>：编写
+<code>validate_form.py</code> 而不是要求 Claude 生成验证代码</p></li>
+<li><p><strong>明确执行意图</strong>：</p>
+<ul>
+<li>“运行 <code>analyze_form.py</code> 来提取字段”（执行）</li>
+<li>“参阅 <code>analyze_form.py</code>
+了解提取算法”（作为参考读取）</li>
+</ul></li>
+<li><p><strong>测试文件访问模式</strong>：通过使用真实请求测试来验证
+Claude 可以导航您的目录结构</p></li>
+</ul>
+<p><strong>示例</strong>：</p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs dos">bigquery-skill/<br>├── SKILL.<span class="hljs-built_in">md</span> (概述，指向参考文件)<br>└── reference/<br>    ├── finance.<span class="hljs-built_in">md</span> (收入指标)<br>    ├── sales.<span class="hljs-built_in">md</span> (管道数据)<br>    └── product.<span class="hljs-built_in">md</span> (使用分析)<br></code></pre></td></tr></table></figure>
+<p>当用户询问收入时，Claude 读取 SKILL.md，看到对
+<code>reference/finance.md</code> 的参考，并调用 bash
+来仅读取该文件。sales.md 和 product.md
+文件保留在文件系统上，在需要前消耗零上下文令牌。这个基于文件系统的模型是启用渐进式披露的原因。Claude
+可以导航并有选择地加载每个任务所需的内容。</p>
+<h3 id="mcp-工具参考">4.10 MCP 工具参考</h3>
+<p>如果您的技能使用
+MCP（模型上下文协议）工具，始终使用完全限定的工具名称以避免”找不到工具”错误。</p>
+<p><strong>格式</strong>：ServerName:tool_name</p>
+<p><strong>示例</strong>： <figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ruby">使用 <span class="hljs-title class_">BigQuery</span><span class="hljs-symbol">:bigquery_schema</span> 工具检索表架构。<br>使用 <span class="hljs-title class_">GitHub</span><span class="hljs-symbol">:create_issue</span> 工具创建问题。<br></code></pre></td></tr></table></figure></p>
+<p>其中：</p>
+<ul>
+<li><code>BigQuery</code> 和 <code>GitHub</code> 是 MCP 服务器名称</li>
+<li><code>bigquery_schema</code> 和 <code>create_issue</code>
+是这些服务器中的工具名称</li>
+</ul>
+<p>没有服务器前缀，Claude 可能无法定位工具，特别是当有多个 MCP
+服务器可用时。</p>
+<h4 id="避免假设工具已安装">4.10.1 避免假设工具已安装</h4>
+<p>不要假设包可用：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs MARKDOWN"><span class="hljs-strong">**不好的例子：假设安装**</span>：<br>"使用 pdf 库来处理文件。"<br><br><span class="hljs-strong">**好的例子：明确关于依赖项**</span>：<br>"安装所需的包：<span class="hljs-code">`pip install pypdf`</span><br><br>然后使用它：<br><span class="hljs-code">```python</span><br><span class="hljs-code">from pypdf import PdfReader</span><br><span class="hljs-code">reader = PdfReader("file.pdf")</span><br><span class="hljs-code">```</span><br></code></pre></td></tr></table></figure>
+<h3 id="技术说明">4.11 技术说明</h3>
+<h4 id="yaml-前置事项要求">4.11.1 YAML 前置事项要求</h4>
+<p>SKILL.md 前置事项需要 <code>name</code> 和 <code>description</code>
+字段，具有特定的验证规则：</p>
+<ul>
+<li><code>name</code>：最多 64 个字符，仅小写字母/数字/连字符，无 XML
+标签，无保留字</li>
+<li><code>description</code>：最多 1024 个字符，非空，无 XML 标签</li>
+</ul>
+<h4 id="令牌预算">4.11.2 令牌预算</h4>
+<p>保持 SKILL.md 正文在 500
+行以下以获得最佳性能。如果您的内容超过此限制，使用前面描述的渐进式披露模式将其拆分为单独的文件。</p>
+<h3 id="有效技能清单">4.12.3 有效技能清单</h3>
+<p>在分享技能之前，验证：</p>
+<p><strong>核心质量</strong></p>
+<ul>
+<li>描述具体并包含关键术语</li>
+<li>描述包括技能的功能和使用时机</li>
+<li>SKILL.md 正文在 500 行以下</li>
+<li>其他详情在单独的文件中（如果需要）</li>
+<li>没有时间敏感信息（或在”旧模式”部分中）</li>
+<li>整个技能中术语一致</li>
+<li>示例具体，不抽象</li>
+<li>文件引用一级深</li>
+<li>适当使用渐进式披露</li>
+<li>工作流有清晰的步骤</li>
+</ul>
+<p><strong>代码和脚本</strong></p>
+<ul>
+<li>脚本解决问题而不是推卸给 Claude</li>
+<li>错误处理明确且有帮助</li>
+<li>没有”巫毒常数”（所有值都有理由）</li>
+<li>所需的包在说明中列出并验证为可用</li>
+<li>脚本有清晰的文档</li>
+<li>没有 Windows 风格的路径（所有正斜杠）</li>
+<li>关键操作的验证/验证步骤</li>
+<li>包含质量关键任务的反馈循环</li>
+</ul>
+<p><strong>测试</strong></p>
+<ul>
+<li>至少创建了三个评估</li>
+<li>使用 Haiku、Sonnet 和 Opus 进行了测试</li>
+<li>使用真实使用场景进行了测试</li>
+<li>合并了团队反馈（如果适用）</li>
+</ul>
+<h2 id="五skills仓库">五、Skills仓库</h2>
+<p>官方仓库：<a target="_blank" rel="noopener" href="https://github.com/anthropics/skills">https://github.com/anthropics/skills</a>
+1. Awesome-Claude-Skills 1: <a target="_blank" rel="noopener" href="https://github.com/ComposioHQ/awesome-claude-skills">https://github.com/ComposioHQ/awesome-claude-skills</a>
+2. Awesome-Claude-Skills 2: <a target="_blank" rel="noopener" href="https://github.com/VoltAgent/awesome-claude-skills">https://github.com/VoltAgent/awesome-claude-skills</a>
+3. Awesome-Claude-Skills 3: <a target="_blank" rel="noopener" href="https://github.com/BehiSecc/awesome-claude-skills">https://github.com/BehiSecc/awesome-claude-skills</a>
+4. SkillsMP: <a target="_blank" rel="noopener" href="https://skillsmp.com">https://skillsmp.com</a> 5.
+AiTMPL Skills: <a target="_blank" rel="noopener" href="https://aitmpl.com/skills">https://aitmpl.com/skills</a> 6. Claude
+Marketplaces: <a target="_blank" rel="noopener" href="https://claudemarketplaces.com">https://claudemarketplaces.com</a></p>
+<h2 id="reference">Reference</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://code.claude.com/docs/zh-CN/skills">Agent Skills
+Docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills">Equipping
+agents for the real world with Agent Skills</a></li>
+<li><a href="/zh-CN/agents-and-tools/agent-skills/overview">Agent Skills
+开发指南</a></li>
+<li><a href="/zh-CN/agents-and-tools/agent-skills/best-practices">Agent
+Skills 最佳实践</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/1954950981457544102">告别繁琐！ZCF+Claude一键配置终极方案，1分钟搞定所有设置！</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.volcengine.com/articles/7563928289426407451">Claude
+新功能深度解析：Agent Skills 让 AI 智能体变得更专业</a></li>
+<li><a target="_blank" rel="noopener" href="https://skills.deeptoai.com/zh/docs/ai-ml/claude-agent-skills-first-principles-deep-dive">Claude
+Agent Skills：第一性原理深度解析</a></li>
+<li><a target="_blank" rel="noopener" href="https://my.feishu.cn/docx/BPYRdmZQaoLoRTxqvUPc7E1Lnib">Claude
+Skill 从原理到实战——一句话实现公众号自动撰写、排版、配图、发布</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/w-jv5FVU3puOqGRpJXvE5w">Claude
+Code 与 Codex 协作开发 3.0：从 MCP 到 Skills 的技术演进</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/1966598753134842902">Claude
+新王牌 “Skills” 深度解析：让你的 AI 秒变行业专家，告别重复劳动</a></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Claude-Code/" class="category-chain-item">Claude Code</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Claude-Code/" class="print-no-link">#Claude Code</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Claude Code（十）:Claude Code Skills</div>
+      <div>https://mztchaoqun.com.cn/posts/D97_ClaudeCode/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年11月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D98_FlashAttention-3/" title="FlashAttention-3:具有异步性和低精度的快速准确注意力机制">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">FlashAttention-3:具有异步性和低精度的快速准确注意力机制</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D96_ClaudeCode/" title="Claude Code（九）:Claude Code配置工具ZCF">
+                        <span class="hidden-mobile">Claude Code（九）:Claude Code配置工具ZCF</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
