@@ -1,0 +1,2390 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、OpenCode 1.1 安装OpenCode OpenCode安装超级简单，一行命令搞定。 打开终端，运行这个安装脚本： 1curl -fsSL https:&#x2F;&#x2F;opencode.ai&#x2F;install | bash  如果有更新，会进行更新如图所示。 1.2 Commands 用!开头来使用shell命令 1!ls -la     command 作用     &#x2F;agent 切换build和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenCode">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D111_OpenCode_OMO/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、OpenCode 1.1 安装OpenCode OpenCode安装超级简单，一行命令搞定。 打开终端，运行这个安装脚本： 1curl -fsSL https:&#x2F;&#x2F;opencode.ai&#x2F;install | bash  如果有更新，会进行更新如图所示。 1.2 Commands 用!开头来使用shell命令 1!ls -la     command 作用     &#x2F;agent 切换build和">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/Coders.png">
+<meta property="article:published_time" content="2026-03-04T07:07:45.000Z">
+<meta property="article:modified_time" content="2026-03-11T13:28:30.683Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="OpenCode">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/Coders.png">
+  
+  
+  
+  <title>OpenCode - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content (desktop) -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://it-tools.tech/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://excalidraw.com/" target="_self">
+                <i class="iconfont icon-brush"></i>
+                <span>excalidraw</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile grid menu overlay -->
+<div id="mobile-grid-menu" class="d-lg-none">
+  <div class="mobile-grid-menu-inner">
+    <div class="container">
+      <div class="row">
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-home-fill"></i>
+                  <span>首页</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/archives/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-archive-fill"></i>
+                  <span>归档</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/categories/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-category-fill"></i>
+                  <span>分类</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/tags/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-tags-fill"></i>
+                  <span>标签</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="https://it-tools.tech/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-briefcase"></i>
+                  <span>it-tools</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="https://excalidraw.com/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-brush"></i>
+                  <span>excalidraw</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/about/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-user-fill"></i>
+                  <span>关于</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            
+            <div class="col-12 mobile-grid-group-header">
+              <i class="iconfont icon-books"></i>
+              <span>文档</span>
+            </div>
+            
+              
+              
+              
+              <div class="col-4 mobile-grid-cell">
+                <a href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                  <div class="mobile-grid-item">
+                    <i class="iconfont icon-link-fill"></i>
+                    <span>安装主题</span>
+                  </div>
+                </a>
+              </div>
+            
+              
+              
+              
+              <div class="col-4 mobile-grid-cell">
+                <a href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                  <div class="mobile-grid-item">
+                    <i class="iconfont icon-link-fill"></i>
+                    <span>配置指南</span>
+                  </div>
+                </a>
+              </div>
+            
+              
+              
+              
+              <div class="col-4 mobile-grid-cell">
+                <a href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                  <div class="mobile-grid-item">
+                    <i class="iconfont icon-link-fill"></i>
+                    <span>图标用法</span>
+                  </div>
+                </a>
+              </div>
+            
+          
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
+            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-search"></i>
+                <span>搜索</span>
+              </div>
+            </a>
+          </div>
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
+               data-label-light="开灯"
+               data-label-dark="关灯">
+            <a href="javascript:;" aria-label="Color Toggle">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
+                <span id="mobile-color-toggle-label">关灯</span>
+              </div>
+            </a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="OpenCode"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-03-04 15:07" pubdate>
+          2026年3月4日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          26k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          218 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">OpenCode</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一opencode">一、OpenCode</h2>
+<h3 id="安装opencode">1.1 安装OpenCode</h3>
+<p>OpenCode安装超级简单，一行命令搞定。</p>
+<p>打开终端，运行这个安装脚本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -fsSL https://opencode.ai/install | bash<br></code></pre></td></tr></table></figure>
+<p><img src="/images/OP.png" srcset="/img/loading.gif" lazyload></p>
+<p>如果有更新，会进行更新如图所示。</p>
+<h3 id="commands">1.2 Commands</h3>
+<p>用!开头来使用shell命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">!<span class="hljs-built_in">ls</span> -la<br></code></pre></td></tr></table></figure>
+<table>
+
+<thead>
+<tr>
+<th style="text-align: left;">command</th>
+<th style="text-align: left;">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>/agent</code></td>
+<td style="text-align: left;">切换<code>build</code>和<code>plan</code>模式，可以直接使用<code>TAB</code>
+切换</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/connect</code></td>
+<td style="text-align: left;">配置模型</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/compact</code></td>
+<td style="text-align: left;">压缩当前会话</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/copy</code></td>
+<td style="text-align: left;">复制session记录</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/details</code></td>
+<td style="text-align: left;">切换工具执行详情</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/editor</code></td>
+<td style="text-align: left;">打开编辑器</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/exit</code></td>
+<td style="text-align: left;">退出</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/export</code></td>
+<td style="text-align: left;">将当前对话导出为 Markdown
+格式并在默认编辑器中打开。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/fork</code></td>
+<td style="text-align: left;">fork from message</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/init</code></td>
+<td style="text-align: left;">创建或更新 AGENTS.md 文件</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/mcp</code></td>
+<td style="text-align: left;">切换 MCP</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/models</code></td>
+<td style="text-align: left;">列出可用模型</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/new</code></td>
+<td style="text-align: left;">开始新会话</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/rename</code></td>
+<td style="text-align: left;">重命名会话</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/review</code></td>
+<td style="text-align: left;">review changes</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/redo</code></td>
+<td style="text-align: left;">重做之前撤销的消息。仅在使用 /undo
+后可用。(内部使用 Git 来管理文件变更。因此，您的项目需要是一个 Git
+仓库。)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/sessions</code></td>
+<td style="text-align: left;">列出并切换会话</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/share</code></td>
+<td style="text-align: left;">分享当前会话</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/status</code></td>
+<td style="text-align: left;">查看状态</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/theme</code></td>
+<td style="text-align: left;">列出可用主题</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/thinking</code></td>
+<td style="text-align: left;">在对话中切换显示思考/推理块的可见性。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/timeline</code></td>
+<td style="text-align: left;">Jump to message</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/timestamps</code></td>
+<td style="text-align: left;">时间戳</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/undo</code></td>
+<td style="text-align: left;">撤销对话中的上一条消息。删除最近用户发送的消息、所有后续回复以及任何文件更改。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/unshare</code></td>
+<td style="text-align: left;">取消分享当前会话</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>@</code></td>
+<td style="text-align: left;">在消息中引用文件。这会在当前工作目录中进行模糊文件搜索。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="自定义commands">1.2.1 自定义Commands</h4>
+<ul>
+<li><strong>创建.opencode/commands/test.md</strong></li>
+</ul>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs MD">---<br>description: Run tests with coverage<br>agent: build<br><span class="hljs-section">model: anthropic/claude-3-5-sonnet-20241022</span><br><span class="hljs-section">---</span><br><br>Run the full test suite with coverage report and show any failures.<br>Focus on the failing tests and suggest fixes.<br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">/test<br></code></pre></td></tr></table></figure>
+<ul>
+<li><strong>在OpenCode config中使用command指令</strong></li>
+</ul>
+<p>opencode.json</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"command"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-comment">// This becomes the name of the command</span><br>    <span class="hljs-attr">"test"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-comment">// This is the prompt that will be sent to the LLM</span><br>      <span class="hljs-attr">"template"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Run the full test suite with coverage report and show any failures.\nFocus on the failing tests and suggest fixes."</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-comment">// This is shown as the description in the TUI</span><br>      <span class="hljs-attr">"description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Run tests with coverage"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"agent"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"build"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"model"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"anthropic/claude-3-5-sonnet-20241022"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"subtask"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">/test<br></code></pre></td></tr></table></figure>
+<ol type="1">
+<li><strong>Template</strong>选项定义了当命令执行时将发送给 LLM
+的提示。</li>
+<li><strong>description</strong> 选项提供命令执行功能的简要描述。</li>
+<li><strong>agent</strong>
+配置可选指定哪个agents应执行此命令。如果这是一个子agents，命令将默认触发子agents调用。要禁用此行为，将
+subtask 设置为 false 。</li>
+<li><strong>subtask</strong>
+布尔值强制命令触发子agents调用。如果希望命令不污染你的主上下文，这很有用，并且会强制agents作为子agents行动，即使agents配置中的
+mode 设置为 primary 。</li>
+<li><strong>model</strong> 配置来覆盖此命令的默认模型。</li>
+</ol>
+<ul>
+<li><strong>使用参数运行命令</strong></li>
+</ul>
+<p><code>.opencode/commands/create-file.md</code></p>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs md">---<br><span class="hljs-section">description: Create a new file with content</span><br><span class="hljs-section">---</span><br><br>Create a file named $1 in the directory $2<br>with the following content: $3<br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">/create-file config.json src <span class="hljs-string">"{ \"key\": \"value\" }"</span><br><span class="hljs-comment"># $1 = config.json</span><br><span class="hljs-comment"># $2 = src</span><br><span class="hljs-comment"># $3 = { "key": "value" }</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li><strong>文件引用</strong></li>
+</ul>
+<p>使用 <code>@</code>后跟文件名在命令中包含文件。</p>
+<p><code>.opencode/commands/review-component.md</code></p>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs MD">---<br><span class="hljs-section">description: Review component</span><br><span class="hljs-section">---</span><br><br>Review the component in @src/components/Button.tsx.<br>Check for performance issues and suggest improvements.<br></code></pre></td></tr></table></figure>
+<p>文件内容会自动包含在提示中。</p>
+<h3 id="配置opencode">1.3 配置OpenCode</h3>
+<p>配置主要是设置AI模型的API密钥，让OpenCode能调用AI。</p>
+<ol type="1">
+<li>运行OpenCode：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">opencode<br></code></pre></td></tr></table></figure>
+<p>这会打开一个终端界面（TUI，像聊天窗口）。</p>
+<p><img src="/images/OP1.png" srcset="/img/loading.gif" lazyload></p>
+<ol start="2" type="1">
+<li><p>在界面里输入命令<code>/connect</code>，选择提供商（如opencode、anthropic、openai、google、DeepSeek、Qwen、Minimax、Moonshot、Z.AI）。</p>
+<p>选择不同的提供商，输入对应的API密钥就可以了。</p></li>
+</ol>
+<p>高级配置：编辑配置文件~/.config/opencode/opencode.json。比如添加主题或键位。</p>
+<p>opencode配置优先级顺序：</p>
+<ol type="1">
+<li>远程配置：<strong>.well-known/opencode</strong>（organizational
+defaults）</li>
+<li>全局配置：<strong>~/.config/opencode/opencode.json</strong>（user
+preferences）</li>
+<li>自定义配置：<strong>OPENCODE_CONFIG</strong>环境变量（自定义覆盖）</li>
+<li>项目配置：<strong>opencode.json</strong>在项目中（项目特定设置）</li>
+<li><strong>.opencode</strong>目录- agents, commands, plugins</li>
+<li>内联配置:
+<strong>OPENCODE_CONFIG_CONTENT</strong>环境变量(运行时覆盖)</li>
+</ol>
+<p>这意味着项目配置可以覆盖全局默认值，全局配置可以覆盖远程组织默认值。</p>
+<p><strong>.opencode</strong> 和 <strong>~/.config/opencode
+</strong>目录使用复数名称作为子目录：** agents/ 、 commands/ 、 modes/
+、 plugins/ 、 skills/ 、 tools/ 和 themes/**
+。为了向后兼容，也支持单数名称（例如 <strong>agent/</strong> ）。</p>
+<h4 id="rules">1.3.1 Rules</h4>
+<p>为 opencode 设置自定义指令。要创建一个新的 AGENTS.md 文件，您可以在
+opencode 中运行 <code>/init</code>命令。</p>
+<p><strong>优先级</strong></p>
+<ul>
+<li>从当前目录向上遍历本地文件（ AGENTS.md , CLAUDE.md ）</li>
+<li>全局文件位于 <code>~/.config/opencode/AGENTS.md</code></li>
+<li>Claude Code文件位于 <code>~/.claude/CLAUDE.md</code>
+（除非禁用）</li>
+</ul>
+<p>每个类别中，第一个匹配的文件胜出。例如，如果你同时有 AGENTS.md 和
+CLAUDE.md ，则仅使用 AGENTS.md 。类似地，
+<code>~/.config/opencode/AGENTS.md</code> 优先于
+<code>~/.claude/CLAUDE.md</code> 。</p>
+<p>要禁用 Claude Code 兼容性，请设置以下环境变量之一：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">export</span> OPENCODE_DISABLE_CLAUDE_CODE=1        <span class="hljs-comment"># Disable all .claude support</span><br><span class="hljs-built_in">export</span> OPENCODE_DISABLE_CLAUDE_CODE_PROMPT=1 <span class="hljs-comment"># Disable only ~/.claude/CLAUDE.md</span><br><span class="hljs-built_in">export</span> OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 <span class="hljs-comment"># Disable only .claude/skills</span><br></code></pre></td></tr></table></figure>
+<p><strong>自定义指令</strong></p>
+<p>可以在 opencode.json 或全局 ~/.config/opencode/opencode.json
+中指定自定义指令文件。这允许您和您的团队重用现有规则，而不是将它们复制到
+AGENTS.md。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"instructions"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"CONTRIBUTING.md"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"docs/guidelines.md"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">".cursor/rules/*.md"</span><span class="hljs-punctuation">]</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p>您还可以使用远程 URL 从网络上加载指令。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"instructions"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"https://raw.githubusercontent.com/my-org/shared-rules/main/style.md"</span><span class="hljs-punctuation">]</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p>远程指令获取时设有 5 秒超时。所有指令文件将与您的 AGENTS.md
+文件合并。</p>
+<p>您可以通过在您的 AGENTS.md 中提供明确指令来教会 opencode
+读取外部文件。以下是一个实际示例：</p>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs MD"><span class="hljs-section"># TypeScript Project Rules</span><br><br><span class="hljs-section">## External File Loading</span><br><br>CRITICAL: When you encounter a file reference (e.g., @rules/general.md), use your Read tool to load it on a need-to-know basis. They're relevant to the SPECIFIC task at hand.<br><br>Instructions:<br><br><span class="hljs-bullet">-</span> Do NOT preemptively load all references - use lazy loading based on actual need<br><span class="hljs-bullet">-</span> When loaded, treat content as mandatory instructions that override defaults<br><span class="hljs-bullet">-</span> Follow references recursively when needed<br><br><span class="hljs-section">## Development Guidelines</span><br><br>For TypeScript code style and best practices: @docs/typescript-guidelines.md<br>For React component architecture and hooks patterns: @docs/react-patterns.md<br>For REST API design and error handling: @docs/api-standards.md<br>For testing strategies and coverage requirements: @test/testing-guidelines.md<br><br><span class="hljs-section">## General Guidelines</span><br><br>Read the following file immediately as it's relevant to all workflows: @rules/general-guidelines.md.<br></code></pre></td></tr></table></figure>
+<p>这种做法可以让你：</p>
+<ul>
+<li>创建模块化、可重用的规则文件</li>
+<li>通过符号链接或 git 子模块在项目间共享规则</li>
+<li>保持 AGENTS.md 简洁，同时参考详细指南</li>
+<li>确保 opencode 仅在特定任务需要时加载文件</li>
+</ul>
+<h4 id="agents">1.3.2 Agents</h4>
+<p>Agents是可配置用于特定任务和工作流程的专业 AI
+助手。它们允许你使用自定义提示、模型和工具访问创建专注的工具。</p>
+<p>你可以在会话期间切换agents，或使用 <code>@</code> 提及调用它们。</p>
+<p>OpenCode 中有两种类型的agents：</p>
+<ul>
+<li><p><strong>主agents</strong>：你直接交互的主要助手。你可以使用 Tab
+键或你配置的 switch_agent
+快捷键在它们之间切换。这些agents处理你的主要对话。OpenCode
+内置两个主agents：</p>
+<ul>
+<li><strong>Build</strong>：构建是默认的主agents，所有工具都已启用。这是开发工作的标准agents，您需要完全访问文件操作和系统命令。</li>
+<li><strong>Plan</strong>：一个用于规划和分析的受限agents。我们使用权限系统来给你更多控制权，并防止无意中的更改。默认情况下，以下所有设置都为
+<code>ask</code> ：
+<ul>
+<li><strong>file edits</strong>：所有写入、补丁和编辑</li>
+<li><strong>bash</strong>： 所有 bash 命令</li>
+</ul></li>
+</ul></li>
+<li><p><strong>subagents</strong>：主agents可以调用的专门助手，用于特定任务。你也可以通过在消息中@提及它们来手动调用它们。OpenCode
+内置两个主subagents：</p>
+<ul>
+<li><strong>General</strong>：一个通用的agents，用于研究复杂问题并执行多步任务。具有完整的工具访问权限（除
+todo
+外），因此可以在需要时进行文件修改。使用此agents可以并行运行多个工作单元。</li>
+<li><strong>Explore</strong>：一个快速、只读的agents，用于探索代码库。不能修改文件。当你需要快速通过模式查找文件、搜索代码中的关键词，或回答关于代码库的问题时使用。</li>
+</ul>
+<p>由主agents根据其描述自动调用以执行特定任务。通过在消息中提及子agents手动调用。例如。</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim">@general <span class="hljs-keyword">help</span> <span class="hljs-keyword">me</span> <span class="hljs-built_in">search</span> <span class="hljs-keyword">for</span> this <span class="hljs-keyword">function</span><br></code></pre></td></tr></table></figure>
+<p><strong>配置</strong></p></li>
+</ul>
+<p>在您的 opencode.json 配置文件中配置agents：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"agent"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"build"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"mode"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"primary"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"model"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"anthropic/claude-sonnet-4-20250514"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"prompt"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"{file:./prompts/build.txt}"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"tools"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"write"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">"edit"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">"bash"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><br>      <span class="hljs-punctuation">}</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"plan"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"mode"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"primary"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"model"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"anthropic/claude-haiku-4-20250514"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"tools"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"write"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">"edit"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">"bash"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><br>      <span class="hljs-punctuation">}</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"code-reviewer"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Reviews code for best practices and potential issues"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"mode"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"subagent"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"model"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"anthropic/claude-sonnet-4-20250514"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"prompt"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"You are a code reviewer. Focus on security, performance, and maintainability."</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"tools"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"write"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">"edit"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><br>      <span class="hljs-punctuation">}</span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p>您也可以使用 markdown 文件定义agents。将它们放置在：</p>
+<ul>
+<li>全局： <code>~/.config/opencode/agents/</code></li>
+<li>项目级别： <code>.opencode/agents/</code></li>
+</ul>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs MD">---<br>description: Reviews code for quality and best practices<br>mode: subagent<br>model: anthropic/claude-sonnet-4-20250514<br>temperature: 0.1<br>tools:<br>  write: false<br>  edit: false<br><span class="hljs-section">  bash: false</span><br><span class="hljs-section">---</span><br><br>You are in code review mode. Focus on:<br><br><span class="hljs-bullet">-</span> Code quality and best practices<br><span class="hljs-bullet">-</span> Potential bugs and edge cases<br><span class="hljs-bullet">-</span> Performance implications<br><span class="hljs-bullet">-</span> Security considerations<br><br>Provide constructive feedback without making direct changes.<br></code></pre></td></tr></table></figure>
+<p>Markdown 文件名成为agents名称。例如， review.md 创建一个 review
+agents。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"tools"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"write"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"bash"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><br>  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"permission"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"edit"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"deny"</span><br>  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"agent"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"review"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Reviews code for best practices and potential issues"</span><span class="hljs-punctuation">,</span><br>       <span class="hljs-attr">"disable"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">"mode"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"subagent"</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"plan"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"model"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"anthropic/claude-haiku-4-20250514"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"temperature"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0.1</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"creative"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"temperature"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0.8</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"quick-thinker"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Fast reasoning with limited iterations"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"prompt"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"You are a quick thinker. Solve problems with minimal steps."</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"maxSteps"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"readonly"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"tools"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"mymcp_*"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">"write"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">"edit"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><br>      <span class="hljs-punctuation">}</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"build"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"permission"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-comment">// 你可以为特定的 bash 命令设置权限。</span><br>        <span class="hljs-attr">"bash"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <br>          <span class="hljs-attr">"*"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"ask"</span><span class="hljs-punctuation">,</span><span class="hljs-comment">// 请将 * 通配符放在前面，然后将具体规则放在后面</span><br>          <span class="hljs-attr">"git push"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"ask"</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-attr">"grep *"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"allow"</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-attr">"git *"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"ask"</span> <span class="hljs-comment">// glob 模式</span><br>        <span class="hljs-punctuation">}</span><br>      <span class="hljs-punctuation">}</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"internal-helper"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"mode"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"subagent"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"hidden"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"orchestrator"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"mode"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"primary"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-comment">//通过 permission.task 控制agents可以调用哪些子agents，使用通配符模式进行灵活匹配。</span><br>      <span class="hljs-attr">"permission"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"task"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>          <span class="hljs-attr">"*"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"deny"</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-attr">"orchestrator-*"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"allow"</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-attr">"code-reviewer"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"ask"</span><br>        <span class="hljs-punctuation">}</span><br>      <span class="hljs-punctuation">}</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"deep-thinker"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Agent that uses high reasoning effort for complex problems"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"model"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"openai/gpt-5"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-comment">// 这些附加选项是模型和提供者特定的。请查阅您的提供者的文档以获取可用参数。</span><br>      <span class="hljs-attr">"reasoningEffort"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"high"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"textVerbosity"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"low"</span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li><p><strong>description</strong>：选项来简要描述agents的作用以及何时使用它。</p></li>
+<li><p><strong>temperature</strong>：配置控制 LLM
+的响应随机性和创造性。</p>
+<ul>
+<li><strong>0.0-0.2</strong>：非常专注和确定的响应，适合代码分析和规划</li>
+<li><strong>0.3-0.5</strong>：平衡的响应，带有一些创造性，适合一般开发任务</li>
+<li><strong>0.6-1.0</strong>：更具创意和多样化的回复，适用于头脑风暴和探索</li>
+</ul></li>
+<li><p><strong>maxSteps</strong>：控制智能体在被迫仅以文本形式响应之前可以执行的最大迭代次数。这允许希望控制成本的用户对智能体行为设置限制。如果未设置此值，智能体将继续迭代，直到模型选择停止或用户中断会话。当达到限制时，智能体会收到一个特殊的系统提示，指示其以对其工作的总结和推荐剩余任务的形式进行响应。</p></li>
+<li><p><strong>disable</strong>：设置为 true 以禁用agents。</p></li>
+<li><p><strong>prompt</strong>：使用 prompt
+配置为该agents指定一个自定义系统提示文件。提示文件应包含特定于agents用途的说明。这个路径是相对于配置文件所在的位置。因此，它适用于全局
+OpenCode 配置和特定项目的配置。</p></li>
+<li><p><strong>model</strong>：使用 model
+配置来覆盖此agents的模型。这对于使用针对不同任务优化的不同模型很有用。</p></li>
+<li><p><strong>tools</strong>：通过 tools
+配置控制此agents中可用的工具。你可以通过将其设置为 true 或 false
+来启用或禁用特定工具。您还可以使用通配符来同时控制多个工具。</p></li>
+<li><p><strong>permission</strong>：您可以通过配置权限来管理agents可以执行的操作。目前，
+edit 、 bash 和 webfetch 工具的权限可以配置为：</p>
+<ul>
+<li><strong>“ask”</strong> — 运行工具前需要请求批准</li>
+<li><strong>“allow”</strong> — 允许所有操作无需批准</li>
+<li><strong>“deny”</strong> — 禁用该工具</li>
+</ul>
+<p>你也可以在 Markdown agents中设置权限。</p>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs MD">---<br>description: Code review without edits<br>mode: subagent<br>permission:<br>  edit: deny<br>  bash:<br><span class="hljs-code">    "*": ask</span><br><span class="hljs-code">    "git diff": allow</span><br><span class="hljs-code">    "git log*": allow</span><br><span class="hljs-code">    "grep *": allow</span><br><span class="hljs-code">  webfetch: deny</span><br><span class="hljs-code">---</span><br><span class="hljs-code"></span><br>Only analyze code and suggest changes.<br></code></pre></td></tr></table></figure></li>
+<li><p><strong>mode</strong>： mode
+选项用于确定agents的使用方式</p></li>
+<li><p><strong>hidden</strong>：true 将子agents从 <code>@</code>
+自动补全菜单中隐藏。适用于仅应通过任务工具由其他agents程序化调用的内subagents。</p></li>
+</ul>
+<p><strong>创建Agents</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">opencode agent create<br></code></pre></td></tr></table></figure>
+<ul>
+<li>询问应将agents保存到哪里；全局还是特定项目。</li>
+<li>agents应执行的操作说明。</li>
+<li>生成合适的系统提示和标识符。</li>
+<li>让您选择agents可以访问哪些工具。</li>
+<li>最后，创建一个包含agents配置的 markdown 文件。</li>
+</ul>
+<h4 id="models">1.3.3 Models</h4>
+<p>要将这些模型中的一个设置为默认模型，你可以在你的 OpenCode 配置中设置
+model。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"model"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"lmstudio/google/gemma-3n-e4b"</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p>您可以通过配置文件全局配置模型的选项。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"provider"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"openai"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"models"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"gpt-5"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>          <span class="hljs-attr">"options"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>            <span class="hljs-attr">"reasoningEffort"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"high"</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">"textVerbosity"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"low"</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">"reasoningSummary"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"auto"</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">"include"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"reasoning.encrypted_content"</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"anthropic"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"models"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"claude-sonnet-4-5-20250929"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>          <span class="hljs-attr">"options"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>            <span class="hljs-attr">"thinking"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>              <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"enabled"</span><span class="hljs-punctuation">,</span><br>              <span class="hljs-attr">"budgetTokens"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">16000</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p>您也可以定义自定义变体来扩展内置变体。变体允许您为同一模型配置不同的设置，而无需创建重复条目：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"provider"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"opencode"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"models"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"gpt-5"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>          <span class="hljs-attr">"variants"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>            <span class="hljs-attr">"high"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>              <span class="hljs-attr">"reasoningEffort"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"high"</span><span class="hljs-punctuation">,</span><br>              <span class="hljs-attr">"textVerbosity"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"low"</span><span class="hljs-punctuation">,</span><br>              <span class="hljs-attr">"reasoningSummary"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"auto"</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">"low"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>              <span class="hljs-attr">"reasoningEffort"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"low"</span><span class="hljs-punctuation">,</span><br>              <span class="hljs-attr">"textVerbosity"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"low"</span><span class="hljs-punctuation">,</span><br>              <span class="hljs-attr">"reasoningSummary"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"auto"</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p>Anthropic:</p>
+<ul>
+<li><strong>high</strong> - High thinking budget (default)</li>
+<li><strong>max</strong> - Maximum thinking budget</li>
+</ul>
+<p>OpenAI:</p>
+<p>因模型而异，大致为：</p>
+<ul>
+<li><strong>none</strong> - No reasoning</li>
+<li><strong>minimal</strong> - Minimal reasoning effort</li>
+<li><strong>low</strong> - Low reasoning effort</li>
+<li><strong>medium</strong> - Medium reasoning effort</li>
+<li><strong>high</strong> - High reasoning effort</li>
+<li><strong>xhigh</strong> - Extra high reasoning effort</li>
+</ul>
+<p>Google:</p>
+<ul>
+<li><strong>low</strong> - Lower effort/token budget</li>
+<li><strong>high</strong> - Higher effort/token budget</li>
+</ul>
+<p><strong>自定义变体</strong></p>
+<p>您可以覆盖现有变体或添加自己的：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"provider"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"openai"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"models"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"gpt-5"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>          <span class="hljs-attr">"variants"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>            <span class="hljs-attr">"thinking"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>              <span class="hljs-attr">"reasoningEffort"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"high"</span><span class="hljs-punctuation">,</span><br>              <span class="hljs-attr">"textVerbosity"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"low"</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">"fast"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>              <span class="hljs-attr">"disabled"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>            <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<h4 id="formatters">1.3.4 Formatters</h4>
+<p>OpenCode
+在使用语言特定的格式化工具编写或编辑文件后自动格式化文件。这确保了生成的代码符合您项目的代码风格。</p>
+<table>
+
+<thead>
+<tr>
+<th>Formatter</th>
+<th>Extensions</th>
+<th>Requirements</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gofmt</td>
+<td>.go</td>
+<td><code>gofmt</code> command available</td>
+</tr>
+<tr>
+<td>mix</td>
+<td>.ex, .exs, .eex, .heex, .leex, .neex, .sface</td>
+<td><code>mix</code> command available</td>
+</tr>
+<tr>
+<td>prettier</td>
+<td>.js, .jsx, .ts, .tsx, .html, .css, .md, .json, .yaml, and <a target="_blank" rel="noopener" href="https://prettier.io/docs/en/index.html">more</a></td>
+<td><code>prettier</code> dependency in <code>package.json</code></td>
+</tr>
+<tr>
+<td>biome</td>
+<td>.js, .jsx, .ts, .tsx, .html, .css, .md, .json, .yaml, and <a target="_blank" rel="noopener" href="https://biomejs.dev/">more</a></td>
+<td><code>biome.json(c)</code> config file</td>
+</tr>
+<tr>
+<td>zig</td>
+<td>.zig, .zon</td>
+<td><code>zig</code> command available</td>
+</tr>
+<tr>
+<td>clang-format</td>
+<td>.c, .cpp, .h, .hpp, .ino, and <a target="_blank" rel="noopener" href="https://clang.llvm.org/docs/ClangFormat.html">more</a></td>
+<td><code>.clang-format</code> config file</td>
+</tr>
+<tr>
+<td>ktlint</td>
+<td>.kt, .kts</td>
+<td><code>ktlint</code> command available</td>
+</tr>
+<tr>
+<td>ruff</td>
+<td>.py, .pyi</td>
+<td><code>ruff</code> command available with config</td>
+</tr>
+<tr>
+<td>rustfmt</td>
+<td>.rs</td>
+<td><code>rustfmt</code> command available</td>
+</tr>
+<tr>
+<td>cargofmt</td>
+<td>.rs</td>
+<td><code>cargo fmt</code> command available</td>
+</tr>
+<tr>
+<td>uv</td>
+<td>.py, .pyi</td>
+<td><code>uv</code> command available</td>
+</tr>
+<tr>
+<td>rubocop</td>
+<td>.rb, .rake, .gemspec, .ru</td>
+<td><code>rubocop</code> command available</td>
+</tr>
+<tr>
+<td>standardrb</td>
+<td>.rb, .rake, .gemspec, .ru</td>
+<td><code>standardrb</code> command available</td>
+</tr>
+<tr>
+<td>htmlbeautifier</td>
+<td>.erb, .html.erb</td>
+<td><code>htmlbeautifier</code> command available</td>
+</tr>
+<tr>
+<td>air</td>
+<td>.R</td>
+<td><code>air</code> command available</td>
+</tr>
+<tr>
+<td>dart</td>
+<td>.dart</td>
+<td><code>dart</code> command available</td>
+</tr>
+<tr>
+<td>ocamlformat</td>
+<td>.ml, .mli</td>
+<td><code>ocamlformat</code> command available and
+<code>.ocamlformat</code> config file</td>
+</tr>
+<tr>
+<td>terraform</td>
+<td>.tf, .tfvars</td>
+<td><code>terraform</code> command available</td>
+</tr>
+<tr>
+<td>gleam</td>
+<td>.gleam</td>
+<td><code>gleam</code> command available</td>
+</tr>
+<tr>
+<td>nixfmt</td>
+<td>.nix</td>
+<td><code>nixfmt</code> command available</td>
+</tr>
+<tr>
+<td>shfmt</td>
+<td>.sh, .bash</td>
+<td><code>shfmt</code> command available</td>
+</tr>
+<tr>
+<td>pint</td>
+<td>.php</td>
+<td><code>laravel/pint</code> dependency in
+<code>composer.json</code></td>
+</tr>
+<tr>
+<td>oxfmt (Experimental)</td>
+<td>.js, .jsx, .ts, .tsx</td>
+<td><code>oxfmt</code> dependency in <code>package.json</code> and an <a target="_blank" rel="noopener" href="https://opencode.ai/docs/cli/#experimental">experimental env
+variable flag</a></td>
+</tr>
+</tbody>
+</table>
+<p>当 OpenCode 写入或编辑文件时，它会：</p>
+<ul>
+<li>检查文件扩展名与所有启用的格式化器是否匹配。</li>
+<li>在文件上运行适当的格式化器命令。</li>
+<li>自动应用格式更改。</li>
+</ul>
+<p>您可以通过 OpenCode 配置中的 formatter 部分自定义格式器。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"formatter"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"prettier"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"command"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"npx"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"prettier"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"--write"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"$FILE"</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"environment"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"NODE_ENV"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"development"</span><br>      <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"extensions"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">".js"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">".ts"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">".jsx"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">".tsx"</span><span class="hljs-punctuation">]</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"custom-markdown-formatter"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"command"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"deno"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"fmt"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"$FILE"</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"extensions"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">".md"</span><span class="hljs-punctuation">]</span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li><strong>disabled</strong>：布尔值，将此设置为 true
+以禁用格式化器</li>
+<li><strong>command</strong>： string[]，用于格式化的命令</li>
+<li><strong>environment</strong>：object，运行格式化器时需要设置的环境变量</li>
+<li><strong>extensions</strong>：string[]，此格式化器应处理的文件扩展名</li>
+</ul>
+<p>要全局禁用所有格式化器，将 formatter 设置为 false :</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"formatter"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p>要禁用特定格式化器，将 disabled 设置为 true :</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"formatter"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"prettier"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"disabled"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<h4 id="lsp-servers">1.3.5 LSP Servers</h4>
+<p>OpenCode 通过语言服务器协议（LSP）帮助 LLM
+与您的代码库交互。它使用诊断功能向 LLM 提供反馈。OpenCode
+为流行语言提供了几个内置的 LSP 服务器：</p>
+<table>
+
+<thead>
+<tr>
+<th>LSP Server</th>
+<th>Extensions</th>
+<th>Requirements</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>astro</td>
+<td>.astro</td>
+<td>Auto-installs for Astro projects</td>
+</tr>
+<tr>
+<td>bash</td>
+<td>.sh, .bash, .zsh, .ksh</td>
+<td>Auto-installs bash-language-server</td>
+</tr>
+<tr>
+<td>clangd</td>
+<td>.c, .cpp, .cc, .cxx, .c++, .h, .hpp, .hh, .hxx, .h++</td>
+<td>Auto-installs for C/C++ projects</td>
+</tr>
+<tr>
+<td>csharp</td>
+<td>.cs</td>
+<td><code>.NET SDK</code> installed</td>
+</tr>
+<tr>
+<td>clojure-lsp</td>
+<td>.clj, .cljs, .cljc, .edn</td>
+<td><code>clojure-lsp</code> command available</td>
+</tr>
+<tr>
+<td>dart</td>
+<td>.dart</td>
+<td><code>dart</code> command available</td>
+</tr>
+<tr>
+<td>deno</td>
+<td>.ts, .tsx, .js, .jsx, .mjs</td>
+<td><code>deno</code> command available (auto-detects
+deno.json/deno.jsonc)</td>
+</tr>
+<tr>
+<td>elixir-ls</td>
+<td>.ex, .exs</td>
+<td><code>elixir</code> command available</td>
+</tr>
+<tr>
+<td>eslint</td>
+<td>.ts, .tsx, .js, .jsx, .mjs, .cjs, .mts, .cts, .vue</td>
+<td><code>eslint</code> dependency in project</td>
+</tr>
+<tr>
+<td>fsharp</td>
+<td>.fs, .fsi, .fsx, .fsscript</td>
+<td><code>.NET SDK</code> installed</td>
+</tr>
+<tr>
+<td>gleam</td>
+<td>.gleam</td>
+<td><code>gleam</code> command available</td>
+</tr>
+<tr>
+<td>gopls</td>
+<td>.go</td>
+<td><code>go</code> command available</td>
+</tr>
+<tr>
+<td>jdtls</td>
+<td>.java</td>
+<td><code>Java SDK (version 21+)</code> installed</td>
+</tr>
+<tr>
+<td>kotlin-ls</td>
+<td>.kt, .kts</td>
+<td>Auto-installs for Kotlin projects</td>
+</tr>
+<tr>
+<td>lua-ls</td>
+<td>.lua</td>
+<td>Auto-installs for Lua projects</td>
+</tr>
+<tr>
+<td>nixd</td>
+<td>.nix</td>
+<td><code>nixd</code> command available</td>
+</tr>
+<tr>
+<td>ocaml-lsp</td>
+<td>.ml, .mli</td>
+<td><code>ocamllsp</code> command available</td>
+</tr>
+<tr>
+<td>oxlint</td>
+<td>.ts, .tsx, .js, .jsx, .mjs, .cjs, .mts, .cts, .vue, .astro,
+.svelte</td>
+<td><code>oxlint</code> dependency in project</td>
+</tr>
+<tr>
+<td>php intelephense</td>
+<td>.php</td>
+<td>Auto-installs for PHP projects</td>
+</tr>
+<tr>
+<td>prisma</td>
+<td>.prisma</td>
+<td><code>prisma</code> command available</td>
+</tr>
+<tr>
+<td>pyright</td>
+<td>.py, .pyi</td>
+<td><code>pyright</code> dependency installed</td>
+</tr>
+<tr>
+<td>ruby-lsp (rubocop)</td>
+<td>.rb, .rake, .gemspec, .ru</td>
+<td><code>ruby</code> and <code>gem</code> commands available</td>
+</tr>
+<tr>
+<td>rust</td>
+<td>.rs</td>
+<td><code>rust-analyzer</code> command available</td>
+</tr>
+<tr>
+<td>sourcekit-lsp</td>
+<td>.swift, .objc, .objcpp</td>
+<td><code>swift</code> installed (<code>xcode</code> on macOS)</td>
+</tr>
+<tr>
+<td>svelte</td>
+<td>.svelte</td>
+<td>Auto-installs for Svelte projects</td>
+</tr>
+<tr>
+<td>terraform</td>
+<td>.tf, .tfvars</td>
+<td>Auto-installs from GitHub releases</td>
+</tr>
+<tr>
+<td>tinymist</td>
+<td>.typ, .typc</td>
+<td>Auto-installs from GitHub releases</td>
+</tr>
+<tr>
+<td>typescript</td>
+<td>.ts, .tsx, .js, .jsx, .mjs, .cjs, .mts, .cts</td>
+<td><code>typescript</code> dependency in project</td>
+</tr>
+<tr>
+<td>vue</td>
+<td>.vue</td>
+<td>Auto-installs for Vue projects</td>
+</tr>
+<tr>
+<td>yaml-ls</td>
+<td>.yaml, .yml</td>
+<td>Auto-installs Red Hat yaml-language-server</td>
+</tr>
+<tr>
+<td>zls</td>
+<td>.zig, .zon</td>
+<td><code>zig</code> command available</td>
+</tr>
+</tbody>
+</table>
+<p>当检测到上述文件扩展名之一且满足要求时，LSP 服务器将自动启用。当
+opencode 打开文件时，它会：</p>
+<ul>
+<li>检查文件扩展名与所有启用的 LSP 服务器是否匹配。</li>
+<li>如果 LSP 服务器尚未运行，则启动相应的 LSP 服务器。</li>
+</ul>
+<p><strong>配置</strong></p>
+<p>您可以通过 opencode 配置中的 lsp 部分自定义 LSP 服务器。</p>
+<p>Each LSP server supports the following:</p>
+<table>
+
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>disabled</code></td>
+<td>boolean</td>
+<td>将此设置为 true 以禁用 LSP 服务器</td>
+</tr>
+<tr>
+<td><code>command</code></td>
+<td>string[]</td>
+<td>启动 LSP 服务器的命令</td>
+</tr>
+<tr>
+<td><code>extensions</code></td>
+<td>string[]</td>
+<td>此 LSP 服务器应处理的文件扩展名</td>
+</tr>
+<tr>
+<td><code>env</code></td>
+<td>object</td>
+<td>启动服务器时需要设置的环境变量</td>
+</tr>
+<tr>
+<td><code>initialization</code></td>
+<td>object</td>
+<td>发送给 LSP 服务器的初始化选项</td>
+</tr>
+</tbody>
+</table>
+<p>要禁用特定的 LSP 服务器，将 disabled 设置为
+true，您可以通过指定命令和文件扩展名来添加自定义 LSP 服务器：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"lsp"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"typescript"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"disabled"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"custom-lsp"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"command"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"custom-lsp-server"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"--stdio"</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"extensions"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">".custom"</span><span class="hljs-punctuation">]</span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p>要全局禁用所有 LSP 服务器，将 lsp 设置为 false ：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"lsp"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<h4 id="mcp-servers">1.3.6 MCP servers</h4>
+<p>您可以在 OpenCode 配置文件中的 mcp 下定义 MCP 服务器。为每个 MCP
+添加一个唯一名称。在提示 LLM 时，您可以通过名称引用该 MCP。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"mcp"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"name-of-mcp-server"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-comment">// ...</span><br>      <span class="hljs-attr">"enabled"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">"name-of-other-mcp-server"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-comment">// ...</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p><strong>覆盖远程默认设置</strong></p>
+<p>组织可以通过它们的 .well-known/opencode 端点提供默认的 MCP
+服务器。这些服务器默认可能是禁用的，允许用户选择他们需要的那些服务器。</p>
+<p>要从您组织的远程配置中启用特定服务器，请使用 enabled: true
+将其添加到本地配置中。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"mcp"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"jira"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"remote"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"url"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://jira.example.com/mcp"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"enabled"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p><strong>本地</strong></p>
+<p>在 MCP 对象中使用 type 到 “local” 添加本地 MCP 服务器。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"mcp"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"my-local-mcp-server"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"local"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-comment">// Or ["bun", "x", "my-mcp-command"]</span><br>      <span class="hljs-attr">"command"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"npx"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"-y"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"my-mcp-command"</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"enabled"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"environment"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"MY_ENV_VAR"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"my_env_var_value"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<table>
+
+<thead>
+<tr>
+<th>Option</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td>String</td>
+<td>Y</td>
+<td>MCP 服务器连接类型，必须是 <code>"local"</code>
+或<code>"remote"</code>.</td>
+</tr>
+<tr>
+<td><code>command</code></td>
+<td>String</td>
+<td>Y(local)</td>
+<td>运行 MCP 服务器的命令和参数。</td>
+</tr>
+<tr>
+<td><code>url</code></td>
+<td>String</td>
+<td>Y(remote)</td>
+<td>远程 MCP 服务器的 URL。</td>
+</tr>
+<tr>
+<td><code>environment</code></td>
+<td>Object</td>
+<td>local</td>
+<td>运行服务器时需要设置的环境变量。</td>
+</tr>
+<tr>
+<td><code>enabled</code></td>
+<td>Boolean</td>
+<td></td>
+<td>在启动时启用或禁用 MCP 服务器。</td>
+</tr>
+<tr>
+<td><code>headers</code></td>
+<td>Object</td>
+<td>remote</td>
+<td>随请求发送的标头。</td>
+</tr>
+<tr>
+<td><code>oauth</code></td>
+<td>Object</td>
+<td>remote</td>
+<td>OAuth 认证配置。</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td>Number</td>
+<td></td>
+<td>从 MCP 服务器获取工具的超时时间（毫秒）。默认为 5000（5 秒）。</td>
+</tr>
+</tbody>
+</table>
+<p>如果您有来自 MCP 服务器的客户端凭证，可以配置它们：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"mcp"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"my-oauth-server"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"remote"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"url"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://mcp.example.com/mcp"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"oauth"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"clientId"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"{env:MY_MCP_CLIENT_ID}"</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">"clientSecret"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"{env:MY_MCP_CLIENT_SECRET}"</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">"scope"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"tools:read tools:execute"</span><br>      <span class="hljs-punctuation">}</span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p>如果您已注册免费账户，您可以使用您的 API 密钥并获取更高的速率限制。
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"mcp"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"context7"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"remote"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"url"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://mcp.context7.com/mcp"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"headers"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"CONTEXT7_API_KEY"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"{env:CONTEXT7_API_KEY}"</span><br>      <span class="hljs-punctuation">}</span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure></p>
+<p><strong>OAuth 选项</strong></p>
+<table>
+
+<thead>
+<tr>
+<th>Option  </th>
+<th> 类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>oauth</code></td>
+<td>Object or false </td>
+<td>OAuth 配置对象，或 <code>false</code> 禁用 OAuth 自动检测。</td>
+</tr>
+<tr>
+<td><code>clientId</code></td>
+<td>String </td>
+<td>OAuth 客户端 ID。如果未提供，将尝试动态客户端注册。</td>
+</tr>
+<tr>
+<td><code>clientSecret</code></td>
+<td>String </td>
+<td>OAuth 客户端密钥，如果授权服务器需要。</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td>String  </td>
+<td>OAuth 范围在授权期间请求。</td>
+</tr>
+</tbody>
+</table>
+<p>如果你有大量的 MCP
+服务器，你可能只想按agents启用它们，并在全局中禁用它们。要这样做：</p>
+<ul>
+<li>作为工具在全局中禁用它。</li>
+<li>在你的agents配置中，将 MCP 服务器作为一个工具启用。</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"$schema"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://opencode.ai/config.json"</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"mcp"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"my-mcp"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"local"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"command"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"bun"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"x"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"my-mcp-command"</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"enabled"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"tools"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"my-mcp*"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><br>  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">"agent"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"my-agent"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"tools"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"my-mcp*"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><br>      <span class="hljs-punctuation">}</span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<h4 id="acp-support">1.3.7 ACP Support</h4>
+<p>OpenCode 支持 Agent Client
+Protocol（ACP），允许您直接在兼容的编辑器和 IDE 中使用它。</p>
+<p><strong>Zed</strong></p>
+<p>添加到你Zed配置 ( ~/.config/zed/settings.json ):</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"agent_servers"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"OpenCode"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"command"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"opencode"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"args"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"acp"</span><span class="hljs-punctuation">]</span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p>要打开它，请在命令面板中使用 agent: new thread 操作。</p>
+<p>您也可以通过编辑您的 keymap.json :</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">[</span><br>  <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"bindings"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"cmd-alt-o"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>        <span class="hljs-string">"agent::NewExternalAgentThread"</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-punctuation">{</span><br>          <span class="hljs-attr">"agent"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>            <span class="hljs-attr">"custom"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>              <span class="hljs-attr">"name"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"OpenCode"</span><span class="hljs-punctuation">,</span><br>              <span class="hljs-attr">"command"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>                <span class="hljs-attr">"command"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"opencode"</span><span class="hljs-punctuation">,</span><br>                <span class="hljs-attr">"args"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"acp"</span><span class="hljs-punctuation">]</span><br>              <span class="hljs-punctuation">}</span><br>            <span class="hljs-punctuation">}</span><br>          <span class="hljs-punctuation">}</span><br>        <span class="hljs-punctuation">}</span><br>      <span class="hljs-punctuation">]</span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">]</span><br></code></pre></td></tr></table></figure>
+<p><strong>JetBrains IDEs</strong></p>
+<p><code>~/.jetbrains/acp.json</code></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"agent_servers"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"OpenCode"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"command"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"/absolute/path/bin/opencode"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"args"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"acp"</span><span class="hljs-punctuation">]</span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p>要打开它，请在 AI 聊天agents选择器中使用新的“OpenCode”agents。</p>
+<h4 id="agent-skills">1.3.8 Agent Skills</h4>
+<p>通过 SKILL.md 定义可重用行为。agentsskil让 OpenCode
+从你的仓库或主目录中发现可重用指令。skil通过原生 skill
+工具按需加载——agents可以看到可用的skil，并在需要时加载完整内容。</p>
+<ul>
+<li><strong>项目配置</strong>：
+<code>.opencode/skills/&lt;name&gt;/SKILL.md</code></li>
+<li><strong>全局配置</strong>：
+<code>~/.config/opencode/skills/&lt;name&gt;/SKILL.md</code></li>
+<li><strong>项目 Claude 兼容</strong>：
+<code>.claude/skills/&lt;name&gt;/SKILL.md</code></li>
+<li><strong>全局 Claude 兼容</strong>：
+<code>~/.claude/skills/&lt;name&gt;/SKILL.md</code></li>
+</ul>
+<p>对于项目本地路径，OpenCode 会从你的当前工作目录向上遍历，直到到达 git
+工作树。它会加载 <code>.opencode/</code> 中任何匹配的
+<code>skills/*/SKILL.md</code> 以及沿途任何匹配的
+<code>.claude/skills/*/SKILL.md</code> 。</p>
+<p>全局定义也会从 <code>~/.config/opencode/skills/*/SKILL.md</code> 和
+<code>~/.claude/skills/*/SKILL.md</code> 中加载。</p>
+<p><strong>编写格式</strong></p>
+<ul>
+<li><strong><code>name</code> (必需)</strong>：长度为 1-64
+个字符，为小写字母数字，使用单个连字符分隔，不要以 -
+开头或结尾，不要包含连续的 –，匹配包含 SKILL.md
+的目录名。等价正则表达式: <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">^[a-z0-9]+(-[a-z0-9]+)*$<br></code></pre></td></tr></table></figure></li>
+<li><strong><code>description</code> (必需)</strong>：必须为 1-1024
+个字符。确保它足够具体，以便agent能够正确选择。</li>
+<li><code>license</code> (可选)</li>
+<li><code>compatibility</code> (可选)</li>
+<li><code>metadata</code> (可选, string-to-string map)</li>
+</ul>
+<p>未知的 frontmatter 字段会被忽略。</p>
+<p>例子：</p>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs MD">---<br>name: git-release<br>description: Create consistent releases and changelogs<br>license: MIT<br>compatibility: opencode<br>metadata:<br>  audience: maintainers<br><span class="hljs-section">  workflow: github</span><br><span class="hljs-section">---</span><br><br><span class="hljs-section">## What I do</span><br><br><span class="hljs-bullet">-</span> Draft release notes from merged PRs<br><span class="hljs-bullet">-</span> Propose a version bump<br><span class="hljs-bullet">-</span> Provide a copy-pasteable <span class="hljs-code">`gh release create`</span> command<br><br><span class="hljs-section">## When to use me</span><br><br>Use this when you are preparing a tagged release.<br>Ask clarifying questions if the target versioning scheme is unclear.<br></code></pre></td></tr></table></figure>
+<p><strong>识别工具描述</strong></p>
+<p>OpenCode 在 <code>skill</code>
+工具描述中列出了可用skil。每个条目包括skil名称和描述：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">available_skills</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">skill</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>git-release<span class="hljs-tag">&lt;/<span class="hljs-name">name</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">description</span>&gt;</span>Create consistent releases and changelogs<span class="hljs-tag">&lt;/<span class="hljs-name">description</span>&gt;</span><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">skill</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">available_skills</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<p>agent通过调用工具来加载skil：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-function"><span class="hljs-title">skill</span><span class="hljs-params">({ name: <span class="hljs-string">"git-release"</span> })</span></span><br></code></pre></td></tr></table></figure>
+<p><strong>配置权限</strong></p>
+<p>使用 <code>opencode.json</code>
+中的基于模式的权限控制agent可以访问的skil：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"permission"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"skill"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"*"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"allow"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"pr-review"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"allow"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"internal-*"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"deny"</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">"experimental-*"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"ask"</span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<table>
+
+<thead>
+<tr>
+<th>Permission  </th>
+<th>Behavior  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allow</code></td>
+<td>skil立即加载</td>
+</tr>
+<tr>
+<td><code>deny</code></td>
+<td>skil对agent隐藏，访问被拒绝</td>
+</tr>
+<tr>
+<td><code>ask</code></td>
+<td>在加载前提示用户批准</td>
+</tr>
+</tbody>
+</table>
+<p>模式支持通配符： <code>internal-*</code> 匹配
+<code>internal-docs</code> 、 <code>internal-tools</code> 等</p>
+<p>为特定agent设置与全局默认值不同的权限。对于自定义agent（在agent的前置内容中）：</p>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs MD">---<br>permission:<br>  skill:<br><span class="hljs-section">    "documents-<span class="hljs-emphasis">*": "allow"</span></span><br><span class="hljs-emphasis"><span class="hljs-section">---</span></span><br></code></pre></td></tr></table></figure>
+<p>对于内置agent（在 <code>opencode.json</code> 中）：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"agent"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"plan"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"permission"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"skill"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>          <span class="hljs-attr">"internal-*"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"allow"</span><br>        <span class="hljs-punctuation">}</span><br>      <span class="hljs-punctuation">}</span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p><strong>禁用skil工具</strong></p>
+<p>完全禁用不应使用这些skil的agent：</p>
+<p>对于自定义agent：</p>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs MD">---<br>tools:<br><span class="hljs-section">  skill: false</span><br><span class="hljs-section">---</span><br></code></pre></td></tr></table></figure>
+<p>对于内置agent：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"agent"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>    <span class="hljs-attr">"plan"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>      <span class="hljs-attr">"tools"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><br>        <span class="hljs-attr">"skill"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><br>      <span class="hljs-punctuation">}</span><br>    <span class="hljs-punctuation">}</span><br>  <span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p>当禁用时， &lt;<code>available_skills</code>&gt; 部分完全被省略。</p>
+<p>如果skil没有显示：</p>
+<ul>
+<li>验证 <code>SKILL.md</code> 是否全部大写</li>
+<li>检查前文是否包含 <code>name</code> 和 <code>description</code></li>
+<li>确保skil名称在所有位置都是唯一的</li>
+<li>检查权限—带有 <code>deny</code> 的skil对agent隐藏</li>
+</ul>
+<h2 id="二oh-my-opencode">二、Oh-My-Opencode</h2>
+<p>Oh My OpenCode（简称
+OMO）是其最强插件，把单个模型升级为“多Agent协作团队”：oracle（架构师）、librarian（代码库专家）、frontend、backend
+等角色并行工作，自动调度任务、深度探索代码库。</p>
+<p>这个插件让OpenCode升级为“多AI团队”。安装基于你的订阅情况。</p>
+<ol type="1">
+<li>先确认你的订阅（用于配置参数）：</li>
+</ol>
+<ul>
+<li>Claude
+Pro/Max：用<code>--claude=yes</code>或<code>--claude=max20</code>（max20是高级模式）</li>
+<li>ChatGPT Plus：用<code>--openai=yes</code></li>
+<li>Gemini：用<code>--gemini=yes</code></li>
+<li>Copilot：用<code>--copilot=yes</code></li>
+<li>没有就用<code>no</code></li>
+</ul>
+<ol start="2" type="1">
+<li>安装Bun（如果没装，Oh My需要）：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -fsSL https://bun.sh/install | bash<br></code></pre></td></tr></table></figure>
+<ol start="3" type="1">
+<li>安装Oh My OpenCode：</li>
+</ol>
+<p>根据你的订阅替换参数。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">bunx oh-my-opencode install --no-tui --claude=<span class="hljs-built_in">yes</span> --openai=<span class="hljs-built_in">yes</span> --gemini=<span class="hljs-built_in">yes</span> --copilot=<span class="hljs-built_in">yes</span><br></code></pre></td></tr></table></figure>
+<ol start="4" type="1">
+<li></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cat</span> ~/.config/opencode/opencode.json | grep <span class="hljs-string">"oh-my-opencode"</span><br></code></pre></td></tr></table></figure>
+<p>如果看到插件名，就安装成功了。</p>
+<p>Oh-My-OpenCode 提供 10 个专业的 AI
+Agent。每个Agent都有独特的专长、优化的模型和工具权限。</p>
+<h3 id="opencode-antigravity-auth">2.1 opencode-antigravity-auth</h3>
+<p>开启科学上网，并打开TUN模式。</p>
+<ol type="1">
+<li>在<code>~/.config/opencode/opencode.json</code>文件中添加</li>
+</ol>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><br>  <span class="hljs-attr">"plugin"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">"opencode-antigravity-auth@latest"</span><span class="hljs-punctuation">]</span><br><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>登陆Google账户</li>
+</ol>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">opencode auth login</span><br></code></pre></td></tr></table></figure>
+<ol start="3" type="1">
+<li>验证是否成功</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">opencode run <span class="hljs-string">"Hello"</span> --model=google/antigravity-claude-sonnet-4-5-thinking --variant=max<br></code></pre></td></tr></table></figure>
+<p>正确输出就OK.</p>
+<h3 id="omo详解">2.2 OMO详解</h3>
+<h4 id="core-agents">2.2.1 Core Agents</h4>
+<table>
+
+<thead>
+<tr>
+<th>Agent</th>
+<th>Model</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sisyphus</strong></td>
+<td><code>anthropic/claude-opus-4-5</code></td>
+<td><strong>The default orchestrator.</strong>
+默认的协调器。使用专门的subAgent进行计划、分配和执行复杂任务，具有激进的多线程执行。基于待办事项的工作流程，具有扩展思考能力（32k
+预算）。备用方案：kimi-k2.5 → glm-4.7 → gpt-5.2-codex →
+gemini-3-pro。</td>
+</tr>
+<tr>
+<td><strong>oracle</strong></td>
+<td><code>openai/gpt-5.2</code></td>
+<td>架构决策、代码审查、调试。仅读咨询 - 星级逻辑推理和深度分析。受
+AmpCode 启发。</td>
+</tr>
+<tr>
+<td><strong>librarian</strong></td>
+<td><code>zai-coding-plan/glm-4.7</code></td>
+<td>多仓库分析、文档查找、开源实现示例。基于证据的答案，深入理解代码库。备用：glm-4.7-free
+→ claude-sonnet-4-5.</td>
+</tr>
+<tr>
+<td><strong>explore</strong></td>
+<td><code>anthropic/claude-haiku-4-5</code></td>
+<td>快速代码库探索和上下文 grep。备用：gpt-5-mini → gpt-5-nano。</td>
+</tr>
+<tr>
+<td><strong>multimodal-looker</strong></td>
+<td><code>google/gemini-3-flash</code></td>
+<td>视觉内容专家。分析 PDF、图像、图表以提取信息。备用：gpt-5.2 →
+glm-4.6v → kimi-k2.5 → claude-haiku-4-5 → gpt-5-nano。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="planning-agents">2.1.2 Planning Agents</h4>
+<table>
+
+<thead>
+<tr>
+<th>Agent</th>
+<th>Model</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Prometheus</strong></td>
+<td><code>anthropic/claude-opus-4-5</code></td>
+<td>战略规划师，具备面试模式。通过迭代提问创建详细工作计划。备用：kimi-k2.5
+→ gpt-5.2 → gemini-3-pro。</td>
+</tr>
+<tr>
+<td><strong>Metis</strong></td>
+<td><code>anthropic/claude-opus-4-5</code></td>
+<td>计划顾问 - 预规划分析。识别隐藏意图、模糊性和 AI
+故障点。备用：kimi-k2.5 → gpt-5.2 → gemini-3-pro。</td>
+</tr>
+<tr>
+<td><strong>Momus</strong></td>
+<td><code>openai/gpt-5.2</code></td>
+<td>计划审查者 -
+根据清晰度、可验证性和完整性标准对计划进行验证。备用方案：gpt-5.2 →
+claude-opus-4-5 → gemini-3-pro。</td>
+</tr>
+<tr>
+<td><strong>Hephaestus</strong></td>
+<td><code>openai/gpt-5.2</code></td>
+<td>专门写代码的模式。当你切换到这个模式，意味着需要他完成一个具体目标的任务，比如指定修改某个类的某个方法到指定内容。</td>
+</tr>
+<tr>
+<td><strong>Atlas</strong></td>
+<td><code>anthropic/claude-sonnet-4-5</code></td>
+<td>一个执行计划的协调者。将工作委托给专门的代理，直到完成为止。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Hephaestus</strong>：专门写代码的模式。当你切换到这个模式，意味着需要他完成一个具体目标的任务，比如指定修改某个类的某个方法到指定内容。他虽然也会调用Librarian或者Explore，但是主要工作是改指定代码，会快速和省钱许多。主要特点：</p>
+<ul>
+<li><strong>目标导向(Goal-Oriented)</strong>：给他一个目标，而不是一个菜谱。他决定自己的步骤。</li>
+<li><strong>先探索再行动(Explores Before
+Acting)</strong>：在编写一行代码之前，会启动 2-5
+个并行的explore/librarian agents。</li>
+<li><strong>端到端完成(End-to-End
+Completion)</strong>：不会停止，直到任务 100%完成并有验证证据。</li>
+<li><strong>模式匹配(Pattern
+Matching)</strong>：搜索现有代码库以匹配你的项目风格——没有 AI
+的杂乱。</li>
+<li><strong>合理的精度(Legitimate
+Precision)</strong>：像一位大师铁匠般雕琢代码——精准、简洁、恰到好处。</li>
+</ul>
+<p><strong>Prometheus</strong>：从3.0版本开始引入的重点模式。这个模式用官方的说法是：For
+Precise Work。</p>
+<p>这个模式的工作流程是：</p>
+<ol type="1">
+<li><p>分析提出的需求，对不清楚的地方提出一系列问题；</p></li>
+<li><p>根据1中的结果，生成计划和和任务清单；</p></li>
+<li><p>检查2生成的内容，拟定最后的工作计划；</p></li>
+<li><p>等待开始工作的指令。</p></li>
+</ol>
+<p>在这个模式下，Agent会针对需求中的模糊地带提出一系列的问题，最后得到完整的描述之后才会开始制定计划。而且Prometheus模式下Agent是只读模式的，不用担心改坏文件。那么在什么情况下使用这个模式呢：</p>
+<ul>
+<li>涉及横跨几天或者好几个Session的任务。</li>
+<li>关键性的产品变更。</li>
+<li>复杂的多文件重构工作。</li>
+<li>需要整个决策过程的文档的时候。</li>
+</ul>
+<p>Prometheus模式的使用有一点绕。如果你还在和他交互提问或者修改方案的时候，记得手动保证当前opencode在Prometheus模式；如果要开始输入/start-work让它干活了，记得保证切换到了Sisyphus模式！虽然官方说是由Atlas负责start-work，但是在第一次开始工作时，记得用Sisyphus。</p>
+<p><strong>Atlas</strong>:
+Atlas本来是和Prometheus配套的一个模式。本来的流程中，Prometheus模式的成果是一个计划文件，Atlas会根据这个计划文件开始干活。但是在实际使用中，我们的使用流程应该是这样：Prometheus模式输出计划
+-&gt; 切换到Sisyphus输入start-work，由Sisyphus来调用Atalas。</p>
+<p>主Agent会自动调用这些Agent，但你也可以显式调用它们：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs kotlin">Ask <span class="hljs-meta">@oracle</span> to review <span class="hljs-keyword">this</span> design and propose an architecture<br>Ask <span class="hljs-meta">@librarian</span> how <span class="hljs-keyword">this</span> <span class="hljs-keyword">is</span> implemented - why does the behavior keep changing?<br>Ask <span class="hljs-meta">@explore</span> <span class="hljs-keyword">for</span> the policy on <span class="hljs-keyword">this</span> feature<br></code></pre></td></tr></table></figure>
+<h4 id="tool-restrictions">2.2.3 Tool Restrictions</h4>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Restrictions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>oracle</td>
+<td>只读：不能写入、编辑或委托</td>
+</tr>
+<tr>
+<td>librarian</td>
+<td>无法写入、编辑或委托</td>
+</tr>
+<tr>
+<td>explore</td>
+<td>无法写入、编辑或委托</td>
+</tr>
+<tr>
+<td>multimodal-looker</td>
+<td>仅允许：读取、glob、grep</td>
+</tr>
+</tbody>
+</table>
+<h4 id="built-in-skills">2.2.4 Built-in Skills</h4>
+<table>
+
+<thead>
+<tr>
+<th>Skill</th>
+<th>Trigger</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>playwright</strong></td>
+<td>浏览器任务、测试、截图</td>
+<td>通过 Playwright MCP 实现浏览器自动化。对于任何与浏览器相关的任务 -
+验证、浏览、网络爬虫、测试、截图。</td>
+</tr>
+<tr>
+<td><strong>frontend-ui-ux</strong></td>
+<td>UI/UX tasks, styling</td>
+<td>设计师转型开发者。即使没有设计原型图也能打造出色的
+UI/UX。强调大胆的审美方向、独特的字体设计、协调的配色方案。</td>
+</tr>
+<tr>
+<td><strong>git-master</strong></td>
+<td>commit, rebase, squash, blame</td>
+<td>任何 git
+操作都必须使用。原子提交与自动拆分、变基/压缩工作流、历史记录搜索（追溯、二分查找、日志
+-S）。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="mcps-built-in-servers">2.2.5 MCPs: Built-in Servers</h4>
+<ul>
+<li>Exa (Web Search)：由 <a target="_blank" rel="noopener" href="https://exa.ai/">Exa AI</a>
+驱动的实时网络搜索。</li>
+<li>Context7 (Official Documentation):官方文档查找任何库/框架。</li>
+<li>Grep.app (GitHub Code Search):超快速代码搜索公共 GitHub
+仓库。非常适合查找实现示例。</li>
+</ul>
+<h3 id="ulwultrawork-模式-日常最常用性价比最高的开挂指令">2.3
+ulw（UltraWork 模式）—— 日常最常用、性价比最高的开挂指令</h3>
+<p><strong>核心机制：</strong></p>
+<p>在提示词中加入 ulw（或 ultrawork），OMO 会自动激活全部增强功能：</p>
+<ul>
+<li>多Agent并行（oracle 规划 → librarian 分析现有代码 →
+专业角色实现）</li>
+<li>深度工具链（LSP 静态分析、AST 解析、MCP 多文件上下文）</li>
+<li>子任务智能拆分与调度</li>
+<li>自动验证与迭代</li>
+</ul>
+<p><strong>基础用法：</strong></p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">ulw 请实现用户认证系统：注册、登录、<span class="hljs-keyword">JWT、刷新令牌、权限控制，集成到现有 </span>Express 项目。<br></code></pre></td></tr></table></figure>
+<p><strong>进阶技巧</strong>：</p>
+<ol type="1">
+<li><p><strong>指定优先级与角色分配</strong></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">ulw</span> UI 部分优先交给视觉/交互专家，优先级最高；后端逻辑交给 backend Agent；整体架构先让 oracle 评审。<br>请实现一个实时仪表盘，支持 WebSocket 更新、ECharts 图表、深色模式。<br></code></pre></td></tr></table></figure></li>
+<li><p><strong>强制深度代码库探索</strong></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">ulw</span> 先全面分析整个代码库的现有模式和痛点，再重构所有 API 路由为 RESTful 标准，消除重复代码。<br></code></pre></td></tr></table></figure></li>
+<li><p><strong>批量清理与优化</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ulw 移除所有 console.log、dead code、未使用 import/variables；统一代码风格（Prettier + ESLint）；性能优化所有慢查询。<br></code></pre></td></tr></table></figure></li>
+<li><p><strong>新项目从零搭建</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ulw 创建一个完整的 SaaS 模板：Next.js 14 App Router + Prisma + PostgreSQL + NextAuth + Tailwind + Shadcn/ui，支持多租户和订阅支付（Stripe）。<br></code></pre></td></tr></table></figure></li>
+<li><p><strong>结合工具链</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ulw 先运行 npm <span class="hljs-built_in">test</span> 收集失败案例，再针对性修复所有单元测试和集成测试，确保覆盖率 &gt;90%。<br></code></pre></td></tr></table></figure></li>
+</ol>
+<p><strong>为什么 ulw 这么强</strong>：<br>
+普通提示是单模型线性思考，容易遗漏边缘 case 或与现有代码冲突。ulw
+开启多Agent并行，librarian 会持续引用项目历史，oracle
+会提前识别风险，整体质量和速度提升 3-5 倍。</p>
+<p><strong>使用建议</strong>：</p>
+<ul>
+<li>小任务（如改一个组件）不需要 ulw</li>
+<li>中大型任务（新功能、重构、跨模块）必须加 ulw</li>
+<li>token 消耗会增加 2-4 倍，建议把高耗模型（如
+Sonnet）留给关键Agent</li>
+</ul>
+<h3 id="ralph-loop自主无限迭代循环-追求完美时的终极武器">2.4
+ralph-loop（自主无限迭代循环）—— 追求完美时的终极武器</h3>
+<p><strong>核心机制</strong>：<br>
+AI 会反复执行任务 → 自检 → 修复 →
+再执行，直到满足完成条件或达到最大次数。适合需要“死磕到底”的场景。</p>
+<p><strong>触发格式</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">/ralph-loop <span class="hljs-string">"任务描述（建议先加 ulw 增强）"</span> --max-iterations N --completion-promise <span class="hljs-string">"停止条件"</span><br></code></pre></td></tr></table></figure>
+<p><strong>参数详解</strong>：</p>
+<ul>
+<li><code>--max-iterations</code>：安全阀，推荐 10-30</li>
+<li><code>--completion-promise</code>：关键！必须是 AI
+输出中能明确检测的短语</li>
+</ul>
+<p><strong>实战示例</strong>：</p>
+<ol type="1">
+<li><p><strong>修复遗留 bug</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ulw /ralph-loop <span class="hljs-string">"修复所有已知的生产 bug（参考 ISSUE 列表），所有测试必须通过"</span> --max-iterations 20 --completion-promise <span class="hljs-string">"所有测试通过且无新错误"</span><br></code></pre></td></tr></table></figure></li>
+<li><p><strong>性能优化</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ulw /ralph-loop <span class="hljs-string">"优化首页加载时间到 &lt;1.5s（Lighthouse 分数 &gt;95）"</span> --max-iterations 25 --completion-promise <span class="hljs-string">"Lighthouse 性能分 &gt;95"</span><br></code></pre></td></tr></table></figure></li>
+<li><p><strong>大型迁移</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ulw /ralph-loop <span class="hljs-string">"将整个项目从 Redux 迁移到 Zustand，所有功能保持一致"</span> --max-iterations 30 --completion-promise <span class="hljs-string">"所有 e2e 测试通过且无状态丢失"</span><br></code></pre></td></tr></table></figure></li>
+<li><p><strong>算法死磕</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ulw /ralph-loop <span class="hljs-string">"实现一个 O(n log n) 的顶部 K 频繁元素算法，通过所有 leetcode 风格测试用例"</span> --max-iterations 15 --completion-promise <span class="hljs-string">"所有测试用例通过"</span><br></code></pre></td></tr></table></figure></li>
+</ol>
+<p><strong>高级玩法</strong>：</p>
+<ul>
+<li>嵌套 ulw + ralph-loop：先 ulw 规划，再进入 ralph-loop 执行</li>
+<li>中途干预：在终端看到进度不满意时 Ctrl+C 停止，调整提示后重启</li>
+<li>结合实际运行：循环中让 AI 自动 <code>/run npm run build</code>
+检查是否成功</li>
+</ul>
+<p><strong>风险控制</strong>：</p>
+<ul>
+<li>容易消耗大量 token，建议先小范围测试（max-iterations 5）</li>
+<li>completion-promise 要写得精准、可检测，避免无限循环</li>
+</ul>
+<h3 id="其他高级提示词技巧">2.5 其他高级提示词技巧</h3>
+<ol type="1">
+<li><p><strong>直接@调用特定Agent</strong></p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs less"><span class="hljs-variable">@oracle</span> 请先设计整体微服务架构图和数据库 schema<br><span class="hljs-variable">@librarian</span> 请搜索项目中所有与支付相关的代码，总结现有逻辑和潜在风险<br><span class="hljs-variable">@frontend</span> 请实现一个现代的响应式侧边栏，支持折叠和动态路由<br></code></pre></td></tr></table></figure></li>
+<li><p><strong>后台并行任务</strong>（不阻塞主对话）</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">ulw background:</span> <span class="hljs-string">持续监控代码库变化，自动生成更新后的架构文档</span><br><span class="hljs-attr">ulw background:</span> <span class="hljs-string">分析所有第三方依赖，列出过时/有安全漏洞的包并建议升级路径</span><br></code></pre></td></tr></table></figure></li>
+<li><p><strong>链式任务（分阶段）</strong></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">ulw</span> 第一阶段：只规划和输出详细实现计划（不修改代码）<br>ulw 第二阶段：根据计划逐步实现，每步完成后等待我确认<br></code></pre></td></tr></table></figure></li>
+<li><p><strong>强制思考链</strong><br>
+在任何复杂提示前加：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">请严格遵守：1. 先全面分析现有代码 2. 输出详细计划 3. 分步执行 4. 每步完成后运行测试验证<br></code></pre></td></tr></table></figure></li>
+<li><p><strong>多模型协同优化</strong><br>
+在 oh-my-opencode.json 中：</p>
+<ul>
+<li>oracle 用 Claude-3.5-Sonnet（强推理）</li>
+<li>librarian 用 Gemini-1.5-Pro（超长上下文）</li>
+<li>代码生成用 GPT-4o 或 o1（速度快）</li>
+</ul></li>
+</ol>
+<h3 id="更多高效玩法与场景">2.6 更多高效玩法与场景</h3>
+<ol type="1">
+<li><p><strong>每日代码审查流程</strong><br>
+早上输入：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">ulw 审查昨天的所有 git <span class="hljs-keyword">commit</span>，指出潜在 bug、性能问题、风格不一致，并自动修复低风险项<br></code></pre></td></tr></table></figure></li>
+<li><p><strong>文档自动同步</strong></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">ulw</span> 每次代码变更后，自动更新 README、API 文档、架构图（用 mermaid）<br></code></pre></td></tr></table></figure></li>
+<li><p><strong>探索性研发</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs css">ulw 并行探索三种技术方案：<span class="hljs-selector-tag">A</span>. 使用 tRPC  <span class="hljs-selector-tag">B</span>. 使用 GraphQL  C. 使用 <span class="hljs-attribute">REST</span> + Zod，请分别实现最小可运行原型并对比优劣<br></code></pre></td></tr></table></figure></li>
+<li><p><strong>一对多代码生成</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs css">ulw 为以下 <span class="hljs-number">10</span> 个组件生成统一风格的实现：<span class="hljs-selector-tag">Button</span>, Card, Modal, <span class="hljs-selector-tag">Table</span>...<br></code></pre></td></tr></table></figure></li>
+<li><p><strong>与 Git 深度集成</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">ulw 根据 feat: 新增用户仪表盘 的 <span class="hljs-keyword">commit</span> message，自动生成 PR 描述、变更日志、迁移指南<br></code></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="常见问题与优化建议">2.7 常见问题与优化建议</h3>
+<ul>
+<li><strong>输出卡住</strong>：加“一步一步思考，出错时立即报告”或重启对话</li>
+<li><strong>token 超支</strong>：优先用 Gemini 做
+librarian；复杂任务分阶段执行</li>
+<li><strong>Agent不听话</strong>：在提示中明确“严格按照我的指令，不得自行添加功能”</li>
+<li><strong>想加新Agent</strong>：在 oh-my-opencode.json 添加，如
+“tester”:</li>
+<li><strong>保持上下文</strong>：大项目建议用 <code>/clear</code>
+前备份重要对话</li>
+</ul>
+<p>掌握 ulw + ralph-loop + <span class="citation" data-cites="Agent调用">@Agent调用</span>，你就真正把 OpenCode + OMO
+用到了极致。很多开发者反馈：复杂功能从几天缩短到几小时，重构从一周变成一晚。</p>
+<h2 id="reference">Reference</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://opencode.ai/">opencode.ai</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/anomalyco/opencode">opencode
+github</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/code-yeongyu/oh-my-opencode">oh-my-opencode</a></li>
+<li><a target="_blank" rel="noopener" href="https://openwork.software/">openwork.software</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/different-ai/openwork">openwork
+Github</a></li>
+<li><a target="_blank" rel="noopener" href="https://support.claude.com/zh-CN/articles/13345190-cowork-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97">Cowork</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/NoeFabris/opencode-antigravity-auth">opencode-antigravity-auth</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/gyc567/p/19483739">OpenCode + Oh My
+OpenCode 高级使用教程：掌握 ulw、ralph-loop 与高效玩法</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/gyc567/p/19467284">OpenCode + Oh My
+OpenCode 配置和开发教程</a></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/OpenCode/" class="category-chain-item">OpenCode</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/OpenCode/" class="print-no-link">#OpenCode</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>OpenCode</div>
+      <div>https://mztchaoqun.com.cn/posts/D111_OpenCode_OMO/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年3月4日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D112_OpenClaw/" title="Openclaw">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Openclaw</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D110_DeepSeek_OCR2/" title="DeepSeek OCR 2：Visual Causal Flow">
+                        <span class="hidden-mobile">DeepSeek OCR 2：Visual Causal Flow</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    function isExpandAllEnabled() {
+      return CONFIG.toc && CONFIG.toc.expand_all === true;
+    }
+    function expandAllToc() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .tocbot-is-collapsed').removeClass('tocbot-is-collapsed');
+    }
+    function updateTocToggle($li, $childList) {
+      var $toggle = $li.children('.toc-toggle');
+      if ($toggle.length === 0) { return; }
+      var collapsed = $childList.hasClass('tocbot-is-collapsed');
+      $toggle
+        .toggleClass('toc-toggle-collapsed', collapsed)
+        .toggleClass('toc-toggle-expanded', !collapsed);
+    }
+    function bindTocToggle() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .toc-list-item').each(function() {
+        var $li = jQuery(this);
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) {
+          if ($li.children('.toc-toggle').length === 0) {
+            $li.prepend('<span class="toc-toggle toc-toggle-placeholder" aria-hidden="true">›</span>');
+          }
+          return;
+        }
+
+        if ($li.children('.toc-toggle').length === 0) {
+          $li.prepend('<span class="toc-toggle toc-toggle-expanded" aria-hidden="true">›</span>');
+        }
+        updateTocToggle($li, $childList);
+      });
+      jQuery('#toc-body').off('click.tocToggle').on('click.tocToggle', '.toc-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = jQuery(this).parent('.toc-list-item');
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) { return; }
+        $childList.toggleClass('tocbot-is-collapsed');
+        updateTocToggle($li, $childList);
+      });
+      if (!window.__tocToggleObserver) {
+        window.__tocToggleObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type !== 'attributes' || mutation.attributeName !== 'class') { return; }
+            var $list = jQuery(mutation.target);
+            var $li = $list.parent('.toc-list-item');
+            if ($li.length === 0) { return; }
+            updateTocToggle($li, $list);
+          });
+        });
+        jQuery('#toc-body ol').each(function() {
+          window.__tocToggleObserver.observe(this, { attributes: true });
+        });
+      }
+    }
+    var tocConfig = Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc);
+    if (isExpandAllEnabled()) {
+      tocConfig.collapseDepth = 6;
+    }
+    window.tocbot.init(tocConfig);
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    expandAllToc();
+    bindTocToggle();
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+        expandAllToc();
+        bindTocToggle();
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
