@@ -1,0 +1,2451 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="一、Hermes Agent 是什么 它不是依附于集成开发环境 (IDE) 的代码助手，也不是围绕单一 API 封装的聊天机器人。它是一个自主代理 ，运行时间越长，功能越强大。 主要特点  一个闭环学习系统 ——由智能体维护的记忆（附带定期提醒）、自主技能创建、使用过程中的技能自我改进、FTS5 跨会话回忆（结合 LLM 摘要）以及 Honcho 辩证用户建模 可在任何设备上运行，不仅限于笔记本电">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hermes Agent">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D116_Hermes_Agent/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="一、Hermes Agent 是什么 它不是依附于集成开发环境 (IDE) 的代码助手，也不是围绕单一 API 封装的聊天机器人。它是一个自主代理 ，运行时间越长，功能越强大。 主要特点  一个闭环学习系统 ——由智能体维护的记忆（附带定期提醒）、自主技能创建、使用过程中的技能自我改进、FTS5 跨会话回忆（结合 LLM 摘要）以及 Honcho 辩证用户建模 可在任何设备上运行，不仅限于笔记本电">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/hermes-og-image.png">
+<meta property="article:published_time" content="2026-04-22T12:11:24.000Z">
+<meta property="article:modified_time" content="2026-06-01T10:42:54.554Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="Hermes Agent">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/hermes-og-image.png">
+  
+  
+  
+  <title>Hermes Agent - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content (desktop) -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://it-tools.tech/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://excalidraw.com/" target="_self">
+                <i class="iconfont icon-brush"></i>
+                <span>excalidraw</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile grid menu overlay -->
+<div id="mobile-grid-menu" class="d-lg-none">
+  <div class="mobile-grid-menu-inner">
+    <div class="container">
+      <div class="row">
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-home-fill"></i>
+                  <span>首页</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/archives/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-archive-fill"></i>
+                  <span>归档</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/categories/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-category-fill"></i>
+                  <span>分类</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/tags/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-tags-fill"></i>
+                  <span>标签</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="https://it-tools.tech/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-briefcase"></i>
+                  <span>it-tools</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="https://excalidraw.com/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-brush"></i>
+                  <span>excalidraw</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/about/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-user-fill"></i>
+                  <span>关于</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            
+            <div class="col-12 mobile-grid-group-header">
+              <i class="iconfont icon-books"></i>
+              <span>文档</span>
+            </div>
+            
+              
+              
+              
+              <div class="col-4 mobile-grid-cell">
+                <a href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                  <div class="mobile-grid-item">
+                    <i class="iconfont icon-link-fill"></i>
+                    <span>安装主题</span>
+                  </div>
+                </a>
+              </div>
+            
+              
+              
+              
+              <div class="col-4 mobile-grid-cell">
+                <a href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                  <div class="mobile-grid-item">
+                    <i class="iconfont icon-link-fill"></i>
+                    <span>配置指南</span>
+                  </div>
+                </a>
+              </div>
+            
+              
+              
+              
+              <div class="col-4 mobile-grid-cell">
+                <a href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                  <div class="mobile-grid-item">
+                    <i class="iconfont icon-link-fill"></i>
+                    <span>图标用法</span>
+                  </div>
+                </a>
+              </div>
+            
+          
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
+            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-search"></i>
+                <span>搜索</span>
+              </div>
+            </a>
+          </div>
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
+               data-label-light="开灯"
+               data-label-dark="关灯">
+            <a href="javascript:;" aria-label="Color Toggle">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
+                <span id="mobile-color-toggle-label">关灯</span>
+              </div>
+            </a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Hermes Agent"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-04-22 20:11" pubdate>
+          2026年4月22日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          39k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          326 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Hermes Agent</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一hermes-agent-是什么">一、Hermes Agent 是什么</h2>
+<p>它不是依附于集成开发环境 (IDE) 的代码助手，也不是围绕单一 API
+封装的聊天机器人。它是一个自主代理 ，运行时间越长，功能越强大。</p>
+<p><strong>主要特点</strong></p>
+<ul>
+<li><strong>一个闭环学习系统</strong>
+——由智能体维护的记忆（附带定期提醒）、自主技能创建、使用过程中的技能自我改进、FTS5
+跨会话回忆（结合 LLM 摘要）以及 Honcho 辩证用户建模</li>
+<li><strong>可在任何设备上运行，不仅限于笔记本电脑</strong> ——支持 6
+种终端后端：本地、Docker、SSH、Daytona、Singularity 和 Modal。Daytona 和
+Modal
+提供无服务器持久化功能——环境在空闲时会进入休眠状态，几乎不消耗任何资源。</li>
+<li><strong>随时随地，尽在掌握</strong>
+——CLI、Telegram、Discord、Slack、WhatsApp、Signal、Matrix、Mattermost、电子邮件、短信、钉钉、飞书、微商、BlueBubbles、Home
+Assistant——通过一个网关即可访问 15 个以上的平台。</li>
+<li><strong>由模型训练专家构建</strong> ——由 Nous Research
+实验室创建，该实验室也是 Hermes、Nomos 和 Psyche 的开发者。可与 Nous
+Portal 、 OpenRouter 、OpenAI 或任何端点配合使用。</li>
+<li><strong>定时自动化</strong> —— 内置 cron 功能，可部署到任何平台</li>
+<li><strong>委托和并行化</strong> — 为并行工作流生成隔离的子代理。通过
+execute_code 进行程序化工具调用，可将多步骤管道合并为单个推理调用。</li>
+<li><strong>委托和并行化</strong> — 为并行工作流生成隔离的子代理。通过
+execute_code 进行程序化工具调用，可将多步骤管道合并为单个推理调用。</li>
+<li><strong>开放标准技能</strong> ——与 agentskills.io
+兼容。技能可移植、可共享，并通过技能中心由社区贡献。</li>
+<li><strong>完全网页控制</strong>
+——搜索、提取、浏览、视觉识别、图像生成、文本转语音</li>
+<li><strong>MCP 支持</strong> — 连接到任何 MCP 服务器以扩展工具功能</li>
+<li><strong>研究就绪</strong> ——支持批量处理、轨迹导出和使用 Atropos
+进行强化学习训练。由 Nous Research 构建——该实验室正是 Hermes、Nomos 和
+Psyche 模型背后的研发者。</li>
+</ul>
+<h3 id="快速安装">1.1 快速安装</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash<br></code></pre></td></tr></table></figure>
+<p>安装过程会让你配置模型和消息通道，安装好如下：</p>
+<p><img src="/images/HA.png" srcset="/img/loading.gif" lazyload></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">source</span> ~/.bashrc   <span class="hljs-comment"># or: source ~/.zshrc</span><br>hermes   <br></code></pre></td></tr></table></figure>
+<p>如需稍后重新配置个别设置，请使用专用命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">hermes model          <span class="hljs-comment"># Choose your LLM provider and model</span><br>hermes tools          <span class="hljs-comment"># Configure which tools are enabled</span><br>hermes gateway setup  <span class="hljs-comment"># Set up messaging platforms</span><br>hermes config <span class="hljs-built_in">set</span>     <span class="hljs-comment"># Set individual config values</span><br>hermes setup          <span class="hljs-comment"># Or run the full setup wizard to configure everything at once</span><br></code></pre></td></tr></table></figure>
+<p>只需一条命令即可更新到最新版本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">hermes update<br></code></pre></td></tr></table></figure>
+<p>通过即时通讯平台进行更新</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">/update<br></code></pre></td></tr></table></figure>
+<p>卸载</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">hermes uninstall<br></code></pre></td></tr></table></figure>
+<h3 id="使用hermes">1.2 使用Hermes</h3>
+<p><strong>CLI</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># Start an interactive session (default)</span><br>hermes<br><br><span class="hljs-comment"># Single query mode (non-interactive)</span><br>hermes chat -q <span class="hljs-string">"Hello"</span><br><br><span class="hljs-comment"># With a specific model</span><br>hermes chat --model <span class="hljs-string">"anthropic/claude-sonnet-4"</span><br><br><span class="hljs-comment"># With a specific provider</span><br>hermes chat --provider nous        <span class="hljs-comment"># Use Nous Portal</span><br>hermes chat --provider openrouter  <span class="hljs-comment"># Force OpenRouter</span><br><br><span class="hljs-comment"># With specific toolsets</span><br>hermes chat --toolsets <span class="hljs-string">"web,terminal,skills"</span><br><br><span class="hljs-comment"># Start with one or more skills preloaded</span><br>hermes -s hermes-agent-dev,github-auth<br>hermes chat -s github-pr-workflow -q <span class="hljs-string">"open a draft PR"</span><br><br><span class="hljs-comment"># Resume previous sessions</span><br>hermes --<span class="hljs-built_in">continue</span>             <span class="hljs-comment"># Resume the most recent CLI session (-c)</span><br>hermes --resume &lt;session_id&gt;  <span class="hljs-comment"># Resume a specific session by ID (-r)</span><br><br><span class="hljs-comment"># Verbose mode (debug output)</span><br>hermes chat --verbose<br><br><span class="hljs-comment"># Isolated git worktree (for running multiple agents in parallel)</span><br>hermes -w                         <span class="hljs-comment"># Interactive mode in worktree</span><br>hermes -w -q <span class="hljs-string">"Fix issue #123"</span>     <span class="hljs-comment"># Single query in worktree</span><br></code></pre></td></tr></table></figure>
+<p><img src="/images/HA2.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>TUI</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># Launch the TUI</span><br>hermes --tui<br><br><span class="hljs-comment"># Resume the latest TUI session (falls back to the latest classic session)</span><br>hermes --tui -c<br>hermes --tui --<span class="hljs-built_in">continue</span><br><br><span class="hljs-comment"># Resume a specific session by ID or title</span><br>hermes --tui -r 20260409_000000_aa11bb<br>hermes --tui --resume <span class="hljs-string">"my t0p session"</span><br><br><span class="hljs-comment"># Run source directly — skips the prebuild step (for TUI contributors)</span><br>hermes --tui --dev<br></code></pre></td></tr></table></figure>
+<p><img src="/images/HA1.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="配置">1.3 配置</h3>
+<p>所有设置都存储在 <code>~/.hermes/</code> 目录中，以便于访问。</p>
+<p><strong>目录结构</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">~/.hermes/<br>├── config.yaml     <span class="hljs-comment"># Settings (model, terminal, TTS, compression, etc.)</span><br>├── .<span class="hljs-built_in">env</span>            <span class="hljs-comment"># API keys and secrets</span><br>├── auth.json       <span class="hljs-comment"># OAuth provider credentials (Nous Portal, etc.)</span><br>├── SOUL.md         <span class="hljs-comment"># Primary agent identity (slot #1 in system prompt)</span><br>├── memories/       <span class="hljs-comment"># Persistent memory (MEMORY.md, USER.md)</span><br>├── skills/         <span class="hljs-comment"># Agent-created skills (managed via skill_manage tool)</span><br>├── cron/           <span class="hljs-comment"># Scheduled jobs</span><br>├── sessions/       <span class="hljs-comment"># Gateway sessions</span><br>└── logs/           <span class="hljs-comment"># Logs (errors.log, gateway.log — secrets auto-redacted)</span><br></code></pre></td></tr></table></figure>
+<p><strong>管理配置</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">hermes config              <span class="hljs-comment"># View current configuration</span><br>hermes config edit         <span class="hljs-comment"># Open config.yaml in your editor</span><br>hermes config <span class="hljs-built_in">set</span> KEY VAL  <span class="hljs-comment"># Set a specific value</span><br>hermes config check        <span class="hljs-comment"># Check for missing options (after updates)</span><br>hermes config migrate      <span class="hljs-comment"># Interactively add missing options</span><br><br><span class="hljs-comment"># Examples:</span><br>hermes config <span class="hljs-built_in">set</span> model anthropic/claude-opus-4<br>hermes config <span class="hljs-built_in">set</span> terminal.backend docker<br>hermes config <span class="hljs-built_in">set</span> OPENROUTER_API_KEY sk-or-...  <span class="hljs-comment"># Saves to .env</span><br></code></pre></td></tr></table></figure>
+<p><strong>配置优先级</strong></p>
+<ol type="1">
+<li>CLI 参数 — 例如， hermes chat –model anthropic/claude-sonnet-4
+（每次调用覆盖）</li>
+<li>~/.hermes/config.yaml — 所有非机密设置的主要配置文件</li>
+<li>~/.hermes/.env — 环境变量的备用文件；密钥（API 密钥、令牌、密码）
+必需 。</li>
+<li>内置默认值 ——当没有其他设置时，硬编码的安全默认值</li>
+</ol>
+<h3 id="sessions">1.4 Sessions</h3>
+<p>Hermes Agent
+会自动将每次对话保存为一个会话。会话支持对话恢复、跨会话搜索和完整的对话历史记录管理。</p>
+<p><strong>会话如何运作</strong></p>
+<p>无论对话来自命令行界面
+(CLI)、Telegram、Discord、Slack、WhatsApp、Signal、Matrix
+还是任何其他消息平台，所有对话都会以会话的形式存储，并包含完整的消息历史记录。会话在两个互补的系统中进行跟踪：</p>
+<ul>
+<li><strong>SQLite 数据库</strong> （ <code>~/.hermes/state.db</code>
+）——包含结构化会话元数据和 FTS5 全文搜索</li>
+<li><strong>JSONL 转录</strong> （ <code>~/.hermes/sessions/</code> ）—
+包含工具调用（网关）的原始对话转录</li>
+</ul>
+<p>使用 <code>--continue</code> 或 <code>--resume</code> 从 CLI
+恢复之前的对话：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># Resume the most recent CLI session</span><br>hermes --<span class="hljs-built_in">continue</span><br>hermes -c<br><br><span class="hljs-comment"># Or with the chat subcommand</span><br>hermes chat --<span class="hljs-built_in">continue</span><br>hermes chat -c<br></code></pre></td></tr></table></figure>
+<p>这会从 SQLite 数据库中查找最近的 cli
+会话，并加载其完整的对话历史记录。</p>
+<p>如果您已为会话指定了标题（请参阅下文 “会话命名
+”），则可以按名称恢复会话：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># Resume a named session</span><br>hermes -c <span class="hljs-string">"my project"</span><br><br><span class="hljs-comment"># If there are lineage variants (my project, my project #2, my project #3),</span><br><span class="hljs-comment"># this automatically resumes the most recent one</span><br>hermes -c <span class="hljs-string">"my project"</span>   <span class="hljs-comment"># → resumes "my project #3"</span><br></code></pre></td></tr></table></figure>
+<p>恢复特定会话</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># Resume a specific session by ID</span><br>hermes --resume 20250305_091523_a1b2c3d4<br>hermes -r 20250305_091523_a1b2c3d4<br><br><span class="hljs-comment"># Resume by title</span><br>hermes --resume <span class="hljs-string">"refactoring auth"</span><br><br><span class="hljs-comment"># Or with the chat subcommand</span><br>hermes chat --resume 20250305_091523_a1b2c3d4<br></code></pre></td></tr></table></figure>
+<p>退出 CLI 会话时会显示会话 ID，可以使用
+<code>hermes sessions list</code> 找到它们。</p>
+<h3 id="运行多个agents-profiles">1.5 运行多个Agents (Profiles)</h3>
+<p>通过 Profiles 功能，你可以在同一台机器上运行多个相互独立的 Hermes
+Agent，例如一个编码助手、一个私人管家或一个研究专员。每个 Profile
+都拥有自己完全独立的配置 (<code>config.yaml</code>)、API 密钥
+(<code>.env</code>)、系统提示词
+(<code>SOUL.md</code>)、记忆、会话历史、技能库以及网关状态，互不干扰。</p>
+<p><strong>快速上手与别名命令</strong></p>
+<p>创建一个 Profile 时，系统会自动为其生成一个专属的别名命令：
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">hermes profile create coder       <span class="hljs-comment"># 创建名为 coder 的 profile，并自动生成 "coder" 命令</span><br>coder setup                       <span class="hljs-comment"># 独立配置该 agent 的 API keys 和模型</span><br>coder chat                        <span class="hljs-comment"># 开始与该专属 agent 聊天</span><br></code></pre></td></tr></table></figure> 此后，你可以直接使用 <code>coder</code> 代替
+<code>hermes</code> 执行任何命令，如
+<code>coder gateway start</code>、<code>coder skills list</code>。你也可以在常规命令中使用
+<code>-p</code> 参数指定：<code>hermes -p coder chat</code>。</p>
+<p><strong>创建与克隆策略</strong></p>
+<ul>
+<li><strong>创建空白
+Profile</strong>：<code>hermes profile create mybot</code></li>
+<li><strong>仅克隆配置</strong>：<code>hermes profile create work --clone</code>
+（复制当前配置、密钥和系统提示词，但<strong>不</strong>复制历史记忆和会话，适合干净开局）</li>
+<li><strong>全量克隆
+(快照)</strong>：<code>hermes profile create backup --clone-all</code>
+（复制所有数据，包括记忆、完整历史记录和插件，非常适合备份或从现有上下文中“分叉”出一个新
+Agent）</li>
+</ul>
+<p><strong>多网关独立运行</strong></p>
+<p>由于每个 Profile 的状态是隔离的，你可以同时运行多个 Agent
+的后台网关服务，且它们可以分别接入不同的通讯平台： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 在 ~/.hermes/profiles/coder/.env 中配置 Telegram Bot A</span><br>coder gateway start <br><br><span class="hljs-comment"># 在 ~/.hermes/profiles/assistant/.env 中配置 Discord Bot B</span><br>assistant gateway start <br></code></pre></td></tr></table></figure>
+系统内置了 Token 冲突锁（Token Locks），如果两个 Profile
+不小心使用了同一个机器人的
+Token，系统会立刻抛出明确的错误进行拦截，防止冲突。</p>
+<p>此外，你还可以为每个 Agent
+独立注册后台守护服务：<code>coder gateway install</code>。</p>
+<p><strong>底层原理解析</strong></p>
+<p>Profiles 的本质是改变了工作目录。当你运行 <code>coder chat</code>
+时，系统在底层将其 <code>HERMES_HOME</code> 环境变量指向了
+<code>~/.hermes/profiles/coder</code>，使所有的日志、记忆、数据库操作全部隔离在此目录下。</p>
+<blockquote>
+<p><strong>注意</strong>：Profile
+隔离的是“大脑状态”，而<strong>不是</strong>文件系统沙盒。Agent
+执行代码的实际工作区依然由 <code>terminal.cwd</code>
+决定。如果你希望特定的 Profile
+始终在某个项目目录中启动，请在配置中指定： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">coder config <span class="hljs-built_in">set</span> terminal.cwd /absolute/path/to/project<br></code></pre></td></tr></table></figure></p>
+</blockquote>
+<h3 id="git-worktrees-隔离工作区">1.6 Git Worktrees 隔离工作区</h3>
+<p>在大型、长生命周期的代码仓库中，如果你需要： 1.
+在同一个项目上<strong>并行运行多个 Agent</strong>。 2. 让 Agent
+进行实验性的重构，而不污染你的主分支。</p>
+<p>使用 Git <strong>Worktrees（工作树）</strong>
+是最安全的做法。它可以为每个 Agent
+提供独立的目录和分支，而无需重新克隆整个庞大的代码库。</p>
+<p><strong>为什么需要隔离？</strong> Hermes 会将你当前运行
+<code>hermes</code> 的目录视为“项目根目录”。如果多个 Agent
+在同一个目录下并发运行，它们可能会互相覆盖或删除对方正在修改的文件。
+而通过 Git Worktrees，每个 Agent 都能获得： -
+独立的<strong>分支和工作目录</strong>。 - 独立的 <strong>Checkpoint
+(检查点) 历史</strong>，调用 <code>/rollback</code> 时互不影响。</p>
+<p><strong>自动 Worktree 模式 (<code>hermes -w</code>)</strong></p>
+<p>Hermes 内置了极简的自动处理机制。你完全不需要手动配置 git
+树，只需在你的仓库根目录下加上 <code>-w</code> 参数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> /path/to/your/repo<br>hermes -w<br></code></pre></td></tr></table></figure>
+<p>此时 Hermes 会在底层自动执行以下操作： 1. 在仓库的
+<code>.worktrees/</code> 目录下创建一个临时的独立工作区。 2.
+自动切出一个隔离的分支（例如 <code>hermes/hermes-&lt;hash&gt;</code>）。
+3. 在这个独立且干净的环境中启动交互式会话。</p>
+<p>如果你想并行运行多个 Agent，只需打开多个终端窗口，在每个窗口都运行
+<code>hermes -w</code>，它们就能在各自独立的分支互不干扰地工作。</p>
+<p>你也可以结合单次查询使用： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">hermes -w -q <span class="hljs-string">"帮忙修复一下 Issue #123 的 bug"</span><br></code></pre></td></tr></table></figure></p>
+<p><strong>手动管理 Worktree</strong></p>
+<p>如果你希望完全手动掌控，也可以使用原生的 git 命令：
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 在上一级目录创建一个名为 repo-feature 的工作区，并绑定新分支</span><br>git worktree add ../repo-feature feature/hermes-experiment<br><br><span class="hljs-built_in">cd</span> ../repo-feature<br>hermes  <span class="hljs-comment"># 此时 Agent 已经被完美隔离在这个新目录下</span><br></code></pre></td></tr></table></figure></p>
+<p>当实验结束后，如果你觉得 Agent 写的代码很好，可以直接将该分支 merge
+回主分支。如果搞砸了，直接丢弃该分支并执行
+<code>git worktree remove ../repo-feature</code> 清理即可。</p>
+<h3 id="security-安全机制">1.7 Security 安全机制</h3>
+<p>作为一款能够自动执行命令的 Agent，Hermes 在底层设计了极为严苛的
+<strong>七层防御纵深安全模型
+(Defense-in-depth)</strong>，确保你的系统、隐私和凭据绝对安全。</p>
+<p><strong>1. 危险命令审批 (Dangerous Command Approval)</strong></p>
+<p>在执行任何终端命令前，Hermes
+会使用内置拦截器扫描命令是否包含破坏性模式（如 <code>rm -rf</code>,
+<code>chmod 777</code>, <code>DROP TABLE</code>, <code>&gt; /etc/</code>
+等数十种高危操作）。 - <strong>拦截模式 (Mode)</strong>：默认为
+<code>manual</code>（手动确认）。你也可以开启 <code>smart</code>
+模式，让辅助 LLM 帮你评估风险，低风险自动放行，高危操作强制拦截。 -
+<strong>YOLO 模式</strong>：如果你在跑极其信任的全自动化流水线，可以使用
+<code>/yolo</code> 命令或 <code>--yolo</code>
+标志彻底关闭安全弹窗（请在隔离的 Docker 环境中使用）。 -
+<strong>云端免审批</strong>：如果你的后端沙盒配置为
+<code>docker</code>、<code>modal</code> 或
+<code>daytona</code>，系统会自动跳过危险命令检查，因为容器本身就是最完美的物理安全边界。</p>
+<p><strong>2. 网关用户授权与配对 (User Authorization &amp; DM
+Pairing)</strong></p>
+<p>当你把 Hermes 挂载到 Telegram、Discord
+或微信等公开平台上时，它默认是<strong>全封闭</strong>的（默认 Deny）。 -
+<strong>白名单机制</strong>：只有在 <code>~/.hermes/.env</code> 中配置了
+<code>TELEGRAM_ALLOWED_USERS</code> 等白名单 ID 的用户才能唤醒 Agent。 -
+<strong>DM Pairing
+(私信配对系统)</strong>：为方便向朋友分享，系统内置了动态验证码机制。未授权用户发消息时会收到一个
+8 位验证码，你可以直接在 CLI 中运行
+<code>hermes pairing approve telegram &lt;code&gt;</code> 为其放行。</p>
+<p><strong>3. 沙盒强化隔离 (Container Hardening)</strong></p>
+<p>当使用 <code>docker</code> 作为代码执行沙盒时，Hermes
+绝不会使用默认的弱隔离容器。它在底层强制注入了极其严酷的安全参数： -
+<code>--cap-drop ALL</code>：移除所有 Linux 内核特权。 -
+<code>--security-opt no-new-privileges</code>：彻底阻断提权攻击。 -
+<code>--tmpfs /run:rw,noexec,nosuid</code>：防止在运行时挂载点执行恶意脚本。</p>
+<p><strong>4. 环境变量与凭据穿透 (Env &amp; Credential
+Passthrough)</strong></p>
+<p>在大模型自动生成的代码中，<strong>绝不允许直接读取宿主机的环境变量</strong>（防止窃取你的
+AWS Key 或 SSH Key）。 - 只有被明确定义在技能（如
+<code>required_environment_variables</code>）或 <code>config.yaml</code>
+(<code>env_passthrough</code>) 中的环境变量才会被精确注入到执行沙盒中。
+- <strong>OAuth 文件穿透</strong>：对于 Google Workspace 这类需要
+<code>token.json</code> 文件的场景，系统只将其以只读 (<code>ro</code>)
+形式挂载进容器。</p>
+<p><strong>5. SSRF 防御与 Tirith 深度扫描</strong></p>
+<ul>
+<li><strong>防 SSRF
+攻击</strong>：内置的浏览器和网络工具强制拦截对本地内网 (如
+<code>192.168.0.0/16</code>)、回环地址 (<code>127.0.0.1</code>)
+和云服务元数据 (<code>169.254.169.254</code>) 的探测。</li>
+<li><strong>Tirith 扫描</strong>：在执行前，除了正则匹配，Hermes
+会调用外部的 <a target="_blank" rel="noopener" href="https://github.com/sheeki03/tirith">tirith</a>
+工具扫描混淆的恶意终端代码（例如检测管道投毒 <code>curl | bash</code> 或
+Unicode 欺骗攻击）。</li>
+</ul>
+<p><strong>6. 提示词注入防御 (Context File Injection)</strong></p>
+<p>当 Agent 读取工作区中庞大的 <code>AGENTS.md</code> 或
+<code>.cursorrules</code> 文件时，底层会扫描隐藏的 HTML
+注释、忽略指令（Ignore prior instructions）以及隐形 Unicode
+字符，防止被投毒的开源仓库挟持你的 Agent 去窃取本地秘钥。</p>
+<p><strong>7. MCP 凭据屏蔽</strong></p>
+<p>当挂载第三方 MCP (Model Context Protocol) 服务器时，所有 LLM
+的输出以及 MCP 抛出的报错日志都会被强行擦除敏感的 API Key
+(<code>sk-...</code>, <code>ghp_...</code>) 并替换为
+<code>[REDACTED]</code>。</p>
+<h2 id="二features-核心特性概览">二、Features 核心特性概览</h2>
+<p>Hermes Agent
+提供了一套极其丰富的特性矩阵，远超普通的聊天机器人。以下是它核心能力的全面概览：</p>
+<h3 id="核心基石-core">2.1 核心基石 (Core)</h3>
+<ul>
+<li><strong>Tools &amp; Toolsets
+(工具集)</strong>：按模块划分的底层能力扩展，涵盖网页搜索、终端控制、文件编辑等。你可以针对不同平台按需启停特定的工具集。</li>
+<li><strong>Skills System (技能系统)</strong>：兼容
+<code>agentskills.io</code> 开放标准的动态知识库。Agent
+会在需要时按需加载技能，极大节省 Token 开销。</li>
+<li><strong>Persistent Memory
+(持久化记忆)</strong>：跨会话的记忆系统。Agent 会通过
+<code>MEMORY.md</code> 和 <code>USER.md</code>
+记住你的偏好、项目背景和它曾学到的知识。</li>
+<li><strong>Context Files
+(上下文文件)</strong>：自动感知并加载项目目录下的
+<code>.hermes.md</code>, <code>AGENTS.md</code>,
+<code>.cursorrules</code> 等规范文件，塑造 Agent 的特定项目行为。</li>
+<li><strong>Context References (上下文引用)</strong>：在对话中输入
+<code>@</code> 即可直接注入文件、文件夹、Git Diffs 或
+URLs，系统会自动解析并附加内容。</li>
+<li><strong>Checkpoints
+(检查点与回滚)</strong>：在修改文件前自动为工作区创建快照，如果代码改崩了，随时可以使用
+<code>/rollback</code> 完美恢复。</li>
+</ul>
+<h3 id="自动化与后台守护-automation">2.2 自动化与后台守护
+(Automation)</h3>
+<ul>
+<li><strong>Cronjobs (定时任务)</strong>：支持通过自然语言或 Cron
+表达式调度后台任务。任务可以附带专属技能，并将结果推送到任何消息平台。</li>
+<li><strong>Subagent Delegation (多智能体委派)</strong>：使用
+<code>delegate_task</code>
+工具孵化具有隔离上下文、受限工具和独立终端的子 Agent 实例。默认支持 3
+个并发子 Agent 执行多线任务。</li>
+<li><strong>Code Execution (代码沙盒执行)</strong>：允许 Agent 编写
+Python 脚本并通过沙盒 RPC 编排调用 Hermes
+工具，将复杂的多步工作流压缩为单次 LLM 推理。</li>
+<li><strong>Event Hooks
+(生命周期钩子)</strong>：支持在网关层面或工具拦截点注入自定义代码逻辑，用于日志记录、安全扫描或告警。</li>
+<li><strong>Batch Processing (批处理)</strong>：并发处理成百上千个
+Prompts，并生成标准的 ShareGPT 格式轨迹数据，用于评估或构建训练集。</li>
+</ul>
+<h3 id="媒体与全能浏览器-media-web">2.3 媒体与全能浏览器 (Media &amp;
+Web)</h3>
+<ul>
+<li><strong>Browser Automation (浏览器自动化)</strong>：支持本地
+Chromium 控制以及 Browserbase 云端引擎。能够导航网页、穿透
+Cloudflare、填写表单并提取核心数据。</li>
+<li><strong>Voice Mode (全双工语音)</strong>：支持 CLI
+和跨平台的语音交互。甚至可以加入 Discord 语音频道进行实时语音对谈。</li>
+<li><strong>Vision (视觉感知)</strong>：支持剪贴板图片直接粘贴。Agent
+可利用视觉模型分析截图、还原 UI 或读取报错信息。</li>
+<li><strong>Image Generation (图像生成)</strong>：内置集成 FAL.ai，支持
+Flux 2 Pro、Recraft V4 等 8 种顶级文生图模型。</li>
+<li><strong>TTS (文本转语音)</strong>：内置 5 种语音提供商 (包括免费的
+Edge TTS 和顶级的 ElevenLabs)，让 Agent 发送高保真语音消息。</li>
+</ul>
+<h3 id="生态集成-integrations">2.4 生态集成 (Integrations)</h3>
+<ul>
+<li><strong>MCP Integration (模型上下文协议)</strong>：原生接入任何外部
+MCP 服务器，无缝打通内部数据库、GitHub 或专有系统工具。</li>
+<li><strong>Provider Routing
+(智能路由)</strong>：精细化控制哪个模型处理哪个任务，实现成本、速度与质量的极致平衡。</li>
+<li><strong>Fallback Providers
+(灾备降级)</strong>：主模型宕机时，自动切换至备用模型，确保后台定时任务万无一失。</li>
+<li><strong>Credential Pools (凭据池)</strong>：配置多个 API
+Key，系统会在触发 Rate Limit 时自动轮询切换，保证服务不中断。</li>
+<li><strong>Memory Providers (记忆提供商)</strong>：支持接入外部记忆后端
+(如 Honcho, Mem0, RetainDB 等)，实现跨会话的深度用户建模与个性化。</li>
+<li><strong>API Server (兼容 OpenAI API)</strong>：将 Hermes 暴露为标准
+HTTP 接口，可作为 Open WebUI、LobeChat 等前端的强化版底座。</li>
+<li><strong>IDE ACP 协议</strong>：支持直接接入 VS Code、Zed 和
+JetBrains 编辑器，在 IDE 内部渲染差异并控制光标。</li>
+<li><strong>RL Training (强化学习训练)</strong>：自动从 Agent
+会话中收集并生成标准格式的轨迹数据，用于大模型的强化学习 (RL)
+与微调训练。</li>
+</ul>
+<h3 id="深度定制-customization">2.5 深度定制 (Customization)</h3>
+<ul>
+<li><strong>Personality &amp; SOUL (人格塑造)</strong>：通过编写
+<code>SOUL.md</code>，从系统级重塑 Agent
+的身份认知与表达语气。你还可以在会话中使用 <code>/personality</code>
+动态切换人设预设。</li>
+<li><strong>Skins &amp; Themes (皮肤与主题)</strong>：深度自定义 CLI
+的视觉呈现效果。你可以修改横幅颜色、加载动画
+(Spinner)、响应框标签、品牌文本以及工具活动的特定前缀标识。</li>
+<li><strong>Plugins UI (插件市场)</strong>：一个统一的交互式 UI 界面
+(<code>hermes plugins</code>)，无需修改核心代码即可无缝安装第三方自定义工具、生命周期钩子和外部记忆库。
+## 三、Integrations</li>
+</ul>
+<p>Hermes Agent 可以连接到外部系统，用于 AI 推理、工具服务器、IDE
+工作流、编程式访问等。这些集成扩展了 Hermes
+的能力以及它可以运行的场景。</p>
+<h3 id="ai-提供商与路由-ai-providers-routing">3.1 AI 提供商与路由 (AI
+Providers &amp; Routing)</h3>
+<p>Hermes 开箱即用地支持多个 AI 推理提供商。你可以使用
+<code>hermes model</code> 进行交互式配置，或者在
+<code>config.yaml</code> 中进行设置。</p>
+<ul>
+<li><strong>AI 提供商</strong> — 支持 OpenRouter, Anthropic, OpenAI,
+Google 以及任何兼容 OpenAI 格式的端点。Hermes
+会针对每个提供商自动检测其能力（如视觉能力、流式输出以及工具调用）。</li>
+<li><strong>提供商路由 (Provider Routing)</strong> — 对 OpenRouter
+请求进行细粒度控制。你可以通过排序、白名单、黑名单以及明确的优先级顺序，来优化成本、速度或生成质量。</li>
+<li><strong>灾备降级 (Fallback Providers)</strong> —
+当你的主模型遇到错误时，自动故障转移到备用 LLM
+提供商。这不仅包括主模型的降级，还包括为视觉、上下文压缩和网页提取等辅助任务设置独立的备用模型。</li>
+</ul>
+<h3 id="工具服务器-mcp">3.2 工具服务器 (MCP)</h3>
+<ul>
+<li><strong>MCP 服务器</strong> — 通过 Model Context Protocol
+(模型上下文协议) 将 Hermes 连接到外部工具服务器。无需编写原生的 Hermes
+工具，即可访问来自 GitHub、数据库、文件系统、浏览器堆栈、内部 API
+等的外部工具。支持 <code>stdio</code> 和 <code>SSE</code>
+两种传输方式、按服务器级别的工具过滤，以及感知能力的资源/提示词注册。</li>
+</ul>
+<h3 id="网页搜索后端-web-search-backends">3.3 网页搜索后端 (Web Search
+Backends)</h3>
+<p><code>web_search</code> 和 <code>web_extract</code> 工具支持 4
+种后端提供商，可通过 <code>config.yaml</code> 或
+<code>hermes tools</code> 进行配置：</p>
+<table>
+
+<thead>
+<tr>
+<th>Backend (后端)</th>
+<th>Env Var (环境变量)</th>
+<th>Search (搜索)</th>
+<th>Extract (提取)</th>
+<th>Crawl (爬取)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Firecrawl</strong> (默认)</td>
+<td><code>FIRECRAWL_API_KEY</code></td>
+<td>✔</td>
+<td>✔</td>
+<td>✔</td>
+</tr>
+<tr>
+<td><strong>Parallel</strong></td>
+<td><code>PARALLEL_API_KEY</code></td>
+<td>✔</td>
+<td>✔</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Tavily</strong></td>
+<td><code>TAVILY_API_KEY</code></td>
+<td>✔</td>
+<td>✔</td>
+<td>✔</td>
+</tr>
+<tr>
+<td><strong>Exa</strong></td>
+<td><code>EXA_API_KEY</code></td>
+<td>✔</td>
+<td>✔</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>快速配置示例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">web:</span><br>  <span class="hljs-attr">backend:</span> <span class="hljs-string">firecrawl</span>    <span class="hljs-comment"># firecrawl | parallel | tavily | exa</span><br></code></pre></td></tr></table></figure>
+<p>如果未设置 <code>web.backend</code>，系统将根据可用的 API
+密钥自动检测后端。同时，通过配置 <code>FIRECRAWL_API_URL</code>
+也支持自托管的 Firecrawl。</p>
+<h3 id="浏览器自动化-browser-automation">3.4 浏览器自动化 (Browser
+Automation)</h3>
+<p>Hermes
+包含了全功能的浏览器自动化，提供多个后端选项来导航网站、填写表单并提取信息：</p>
+<ul>
+<li><strong>Browserbase</strong> —
+托管的云端浏览器，内置反爬虫绕过、验证码 (CAPTCHA)
+破解以及住宅代理池。</li>
+<li><strong>Browser Use</strong> — 另一种云端浏览器提供商方案。</li>
+<li><strong>本地 Chrome (通过 CDP)</strong> — 使用
+<code>/browser connect</code> 命令连接到你本地正在运行的 Chrome
+实例。</li>
+<li><strong>本地 Chromium</strong> — 通过 <code>agent-browser</code> CLI
+运行的无头本地浏览器。</li>
+</ul>
+<h3 id="语音与-tts-提供商-voice-tts-providers">3.5 语音与 TTS 提供商
+(Voice &amp; TTS Providers)</h3>
+<p>跨所有消息平台支持文本转语音 (TTS) 与语音转文本 (STT)：</p>
+<table>
+
+<thead>
+<tr>
+<th>Provider (提供商)</th>
+<th>Quality (质量)</th>
+<th>Cost (成本)</th>
+<th>API Key (密钥)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Edge TTS</strong> (默认)</td>
+<td>Good (良好)</td>
+<td>Free (免费)</td>
+<td>不需要</td>
+</tr>
+<tr>
+<td><strong>ElevenLabs</strong></td>
+<td>Excellent (极佳)</td>
+<td>Paid (付费)</td>
+<td><code>ELEVENLABS_API_KEY</code></td>
+</tr>
+<tr>
+<td><strong>OpenAI TTS</strong></td>
+<td>Good (良好)</td>
+<td>Paid (付费)</td>
+<td><code>VOICE_TOOLS_OPENAI_KEY</code></td>
+</tr>
+<tr>
+<td><strong>MiniMax</strong></td>
+<td>Good (良好)</td>
+<td>Paid (付费)</td>
+<td><code>MINIMAX_API_KEY</code></td>
+</tr>
+<tr>
+<td><strong>NeuTTS</strong></td>
+<td>Good (良好)</td>
+<td>Free (免费)</td>
+<td>不需要</td>
+</tr>
+</tbody>
+</table>
+<p>语音转文本 (Speech-to-text) 支持三种提供商：本地 Whisper
+(免费，在设备上运行)、Groq (极速云端) 以及 OpenAI Whisper
+API。语音消息转录在 Telegram, Discord, WhatsApp
+等各大消息平台上均可用。</p>
+<h3 id="ide-与编辑器集成-ide-editor-integration">3.6 IDE 与编辑器集成
+(IDE &amp; Editor Integration)</h3>
+<ul>
+<li><strong>IDE 集成 (ACP)</strong> — 在兼容 ACP (Agent Context
+Protocol) 的编辑器（如 VS Code, Zed 和 JetBrains）中使用 Hermes
+Agent。Hermes 作为一个 ACP
+服务器运行，直接在你的编辑器内部渲染聊天消息、工具活动、文件差异 (diffs)
+以及终端命令。</li>
+</ul>
+<h3 id="编程式访问-programmatic-access">3.7 编程式访问 (Programmatic
+Access)</h3>
+<ul>
+<li><strong>API Server</strong> — 将 Hermes 暴露为一个兼容 OpenAI 格式的
+HTTP 端点。任何支持 OpenAI 格式的前端 —— 如 Open WebUI, LobeChat,
+LibreChat, NextChat, ChatBox —— 都可以连接并把 Hermes
+作为带有完整工具集的底层后端来使用。</li>
+</ul>
+<h3 id="记忆与个性化-memory-personalization">3.8 记忆与个性化 (Memory
+&amp; Personalization)</h3>
+<ul>
+<li><strong>内置记忆 (Built-in Memory)</strong> — 通过
+<code>MEMORY.md</code> 和 <code>USER.md</code>
+文件实现持久化的精选记忆。Agent
+维护着一个有界限的个人笔记和用户画像存储，并在不同的会话之间持久生效。</li>
+<li><strong>记忆提供商 (Memory Providers)</strong> —
+接入外部的记忆后端以获得更深度的个性化。目前支持 7 种提供商：Honcho
+(辩证推理), OpenViking (分层检索), Mem0 (云端提取), Hindsight
+(知识图谱), Holographic (本地 SQLite), RetainDB (混合搜索), 以及
+ByteRover (基于 CLI)。</li>
+</ul>
+<h3 id="消息平台-messaging-platforms">3.9 消息平台 (Messaging
+Platforms)</h3>
+<p>Hermes 作为一个网关机器人 (Gateway bot) 可以运行在 15+
+种消息平台上，全部通过同一个 <code>gateway</code> 子系统进行配置：</p>
+<ul>
+<li><strong>Telegram</strong>, <strong>Discord</strong>,
+<strong>Slack</strong>, <strong>WhatsApp</strong>,
+<strong>Signal</strong>, <strong>Matrix</strong>,
+<strong>Mattermost</strong>, <strong>Email</strong>,
+<strong>SMS</strong>, <strong>DingTalk (钉钉)</strong>,
+<strong>Feishu/Lark (飞书)</strong>, <strong>WeCom (企业微信)</strong>,
+<strong>WeCom Callback</strong>, <strong>Weixin (微信个人号)</strong>,
+<strong>BlueBubbles</strong>, <strong>QQ Bot</strong>, <strong>Home
+Assistant</strong>, <strong>Webhooks</strong></li>
+</ul>
+<h3 id="智能家居-home-automation">3.10 智能家居 (Home Automation)</h3>
+<ul>
+<li><strong>Home Assistant</strong> — 通过四个专用工具
+(<code>ha_list_entities</code>, <code>ha_get_state</code>,
+<code>ha_list_services</code>, <code>ha_call_service</code>)
+控制智能家居设备。配置 <code>HASS_TOKEN</code> 后，Home Assistant
+工具集将自动激活。</li>
+</ul>
+<h3 id="插件系统-plugins">3.11 插件系统 (Plugins)</h3>
+<ul>
+<li><strong>插件系统 (Plugin System)</strong> —
+通过自定义工具、生命周期钩子和 CLI 命令来扩展
+Hermes，而无需修改核心代码。插件会自动从
+<code>~/.hermes/plugins/</code>、项目本地的
+<code>.hermes/plugins/</code> 以及 pip 安装的入口点中被发现和加载。</li>
+<li><strong>构建插件</strong> —
+提供了详细的分步指南，教你如何创建包含工具、钩子和 CLI 命令的 Hermes
+插件。</li>
+</ul>
+<h3 id="训练与评估-training-evaluation">3.12 训练与评估 (Training &amp;
+Evaluation)</h3>
+<ul>
+<li><strong>强化学习训练 (RL Training)</strong> — 从 Agent
+会话中生成轨迹 (trajectory)
+数据，用于强化学习和大模型微调。支持具有自定义奖励函数 (reward
+functions) 的 Atropos 环境。</li>
+<li><strong>批处理 (Batch Processing)</strong> —
+并行地跨数百个提示词运行 Agent，生成结构化的 ShareGPT
+格式轨迹数据，用于训练数据生成或模型评估。</li>
+</ul>
+<h2 id="四architecture">四、Architecture</h2>
+<h3 id="architecture-架构解析">4.1 Architecture 架构解析</h3>
+<p>本页面是 Hermes Agent
+内部构件的顶层地图。你可以通过它来了解代码库的全貌，随后再深入具体子系统的文档以了解实现细节。</p>
+<h4 id="system-overview-系统总览">1. System Overview (系统总览)</h4>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs text">┌─────────────────────────────────────────────────────────────────────┐<br>│                        Entry Points (入口点)                         │<br>│                                                                      │<br>│  CLI (cli.py)    Gateway (gateway/run.py)    ACP (acp_adapter/)     │<br>│  Batch Runner    API Server                  Python Library          │<br>└──────────┬──────────────┬───────────────────────┬───────────────────┘<br>           │              │                       │<br>           ▼              ▼                       ▼<br>┌─────────────────────────────────────────────────────────────────────┐<br>│                     AIAgent (run_agent.py)                          │<br>│                                                                     │<br>│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐               │<br>│  │ Prompt       │  │ Provider     │  │ Tool         │               │<br>│  │ Builder      │  │ Resolution   │  │ Dispatch     │               │<br>│  │ (prompt_     │  │ (runtime_    │  │ (model_      │               │<br>│  │  builder.py) │  │  provider.py)│  │  tools.py)   │               │<br>│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘               │<br>│         │                 │                 │                       │<br>│  ┌──────┴───────┐  ┌──────┴───────┐  ┌──────┴───────┐               │<br>│  │ Compression  │  │ 3 API Modes  │  │ Tool Registry│               │<br>│  │ &amp; Caching    │  │ chat_compl.  │  │ (registry.py)│               │<br>│  │ (压缩与缓存) │  │ codex_resp.  │  │ 47 tools     │               │<br>│  │              │  │ anthropic    │  │ 19 toolsets  │               │<br>│  └──────────────┘  └──────────────┘  └──────────────┘               │<br>└─────────────────────────────────────────────────────────────────────┘<br>           │                                    │<br>           ▼                                    ▼<br>┌───────────────────┐              ┌──────────────────────┐<br>│ Session Storage   │              │ Tool Backends         │<br>│ (SQLite + FTS5)   │              │ Terminal (6 backends) │<br>│ hermes_state.py   │              │ Browser (5 backends)  │<br>│ gateway/session.py│              │ Web (4 backends)      │<br>└───────────────────┘              │ MCP (dynamic)         │<br>                                   │ File, Vision, etc.    │<br>                                   └──────────────────────┘<br></code></pre></td></tr></table></figure>
+<h4 id="directory-structure-目录结构">2. Directory Structure
+(目录结构)</h4>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><code class="hljs text">hermes-agent/<br>├── run_agent.py              # AIAgent — 核心对话循环 (~10,700 行)<br>├── cli.py                    # HermesCLI — 交互式终端 UI (~10,000 行)<br>├── model_tools.py            # 工具发现、Schema 收集、调度分发<br>├── toolsets.py               # 工具分组及各平台的预设<br>├── hermes_state.py           # 带有 FTS5 的 SQLite 会话/状态数据库<br>├── hermes_constants.py       # HERMES_HOME、Profile 路径常量<br>├── batch_runner.py           # 批量轨迹生成引擎<br>│<br>├── agent/                    # Agent 内部构件<br>│   ├── prompt_builder.py     # System prompt 组装<br>│   ├── context_engine.py     # 上下文引擎抽象基类 (可插拔)<br>│   ├── context_compressor.py # 默认引擎 — 有损摘要压缩<br>│   ├── prompt_caching.py     # Anthropic 提示词缓存控制<br>│   ├── auxiliary_client.py   # 用于旁路任务 (视觉、摘要) 的辅助 LLM 客户端<br>│   ├── model_metadata.py     # 模型上下文长度、Token 估算<br>│   ├── models_dev.py         # models.dev 注册表集成<br>│   ├── anthropic_adapter.py  # Anthropic Messages API 格式转换<br>│   ├── display.py            # KawaiiSpinner 动画、工具预览格式化<br>│   ├── skill_commands.py     # Skill 相关的斜杠命令<br>│   ├── memory_manager.py     # 记忆管理器编排<br>│   ├── memory_provider.py    # 记忆提供商抽象基类<br>│   └── trajectory.py         # 轨迹保存助手<br>│<br>├── hermes_cli/               # CLI 子命令与安装设置<br>│   ├── main.py               # 入口点 — 所有 `hermes` 子命令 (~6,000 行)<br>│   ├── config.py             # 默认配置、环境变量、配置迁移<br>│   ├── commands.py           # 核心斜杠命令定义注册表<br>│   ├── auth.py               # 提供商注册表与凭据解析<br>│   ├── runtime_provider.py   # 提供商 → api_mode + 凭据 的映射<br>│   ├── models.py             # 模型目录、各提供商的模型列表<br>│   ├── model_switch.py       # /model 命令逻辑 (CLI 与网关共享)<br>│   ├── setup.py              # 交互式安装向导 (~3,100 行)<br>│   ├── skin_engine.py        # CLI 主题皮肤引擎<br>│   ├── skills_config.py      # hermes skills — 针对各平台的启停控制<br>│   ├── skills_hub.py         # /skills 斜杠命令<br>│   ├── tools_config.py       # hermes tools — 针对各平台的启停控制<br>│   ├── plugins.py            # 插件管理器 — 发现、加载、钩子<br>│   ├── callbacks.py          # 终端回调 (澄清、sudo 提权、危险审批)<br>│   └── gateway.py            # hermes gateway start/stop 服务控制<br>│<br>├── tools/                    # 工具实现 (每个工具一个独立文件)<br>│   ├── registry.py           # 中央工具注册表<br>│   ├── approval.py           # 危险命令检测<br>│   ├── terminal_tool.py      # 终端编排<br>│   ├── process_registry.py   # 后台常驻进程管理<br>│   ├── file_tools.py         # read_file, write_file, patch, search_files<br>│   ├── web_tools.py          # web_search, web_extract<br>│   ├── browser_tool.py       # 10 种浏览器自动化工具<br>│   ├── code_execution_tool.py # execute_code 代码沙盒执行<br>│   ├── delegate_tool.py      # 子智能体委派 (Subagent)<br>│   ├── mcp_tool.py           # MCP 客户端 (~2,200 行)<br>│   ├── credential_files.py   # 基于文件的凭据穿透<br>│   ├── env_passthrough.py    # 沙盒环境变量穿透<br>│   ├── ansi_strip.py         # ANSI 转义字符剥离<br>│   └── environments/         # 终端执行后端 (local, docker, ssh, modal, daytona, singularity)<br>│<br>├── gateway/                  # 消息平台网关 (Messaging Gateway)<br>│   ├── run.py                # 网关运行器 — 消息调度 (~9,000 行)<br>│   ├── session.py            # 会话存储 — 对话持久化<br>│   ├── delivery.py           # 出站消息投递<br>│   ├── pairing.py            # DM 私信配对授权<br>│   ├── hooks.py              # 钩子发现与生命周期事件<br>│   ├── mirror.py             # 跨会话消息镜像同步<br>│   ├── status.py             # Token 锁、Profile 作用域的进程追踪<br>│   ├── builtin_hooks/        # 默认常驻钩子<br>│   └── platforms/            # 18 个平台适配器: telegram, discord, slack, whatsapp, 等<br>│<br>├── acp_adapter/              # ACP 服务器 (VS Code / Zed / JetBrains)<br>├── cron/                     # 调度器 (jobs.py, scheduler.py)<br>├── plugins/memory/           # 记忆提供商插件<br>├── plugins/context_engine/   # 上下文引擎插件<br>├── environments/             # RL 训练环境 (Atropos)<br>├── skills/                   # 内置技能库 (默认始终可用)<br>├── optional-skills/          # 官方可选技能 (需显式安装)<br>├── website/                  # Docusaurus 文档站点 (包含本页)<br>└── tests/                    # Pytest 测试套件 (~3,000+ 测试用例)<br></code></pre></td></tr></table></figure>
+<h4 id="data-flow-数据流向">3. Data Flow (数据流向)</h4>
+<p><strong>CLI Session (终端交互会话)</strong> <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">用户输入 → HermesCLI.process_input()<br>  → AIAgent.run_conversation()<br>    → prompt_builder.build_system_prompt()<br>    → runtime_provider.resolve_runtime_provider()<br>    → API 调用 (chat_completions / codex_responses / anthropic_messages)<br>    → 产生工具调用? → model_tools.handle_function_call() → 循环继续<br>    → 最终响应 → display 渲染 → 保存至 SessionDB 数据库<br></code></pre></td></tr></table></figure></p>
+<p><strong>Gateway Message (网关消息处理)</strong> <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">平台事件回调 → Adapter.on_message() → 构造 MessageEvent<br>  → GatewayRunner._handle_message()<br>    → 验证用户授权<br>    → 解析 Session Key<br>    → 带有历史记录实例化 AIAgent<br>    → AIAgent.run_conversation()<br>    → 通过 Adapter 将响应投递给用户<br></code></pre></td></tr></table></figure></p>
+<p><strong>Cron Job (定时任务)</strong> <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">调度器触发 (Scheduler tick) → 从 jobs.json 加载到期的任务<br>  → 实例化全新的 AIAgent (无上下文历史)<br>  → 将任务绑定的技能注入到上下文中<br>  → 运行任务 Prompt<br>  → 将响应投递到目标平台<br>  → 更新任务状态与 next_run (下次运行时间)<br></code></pre></td></tr></table></figure></p>
+<h4 id="major-subsystems-核心子系统">4. Major Subsystems
+(核心子系统)</h4>
+<ul>
+<li><strong>Agent Loop (核心对话循环)</strong>：同步的编排引擎
+(<code>run_agent.py</code> 中的
+<code>AIAgent</code>)。处理提供商选择、提示词组装、工具执行、重试、降级、回调、上下文压缩和持久化。支持三种
+API 模式来对接不同的后端。</li>
+<li><strong>Prompt System
+(提示词系统)</strong>：在对话生命周期内维护和构建 Prompt。
+<ul>
+<li><code>prompt_builder.py</code>：从人格 (SOUL.md)、记忆 (MEMORY.md,
+USER.md)、技能、项目上下文文件、工具指南等组装出系统提示词。</li>
+<li><code>prompt_caching.py</code>：应用 Anthropic
+缓存断点以实现前缀缓存 (Prefix Caching)。</li>
+<li><code>context_compressor.py</code>：当上下文超出阈值时，对中间的回合进行摘要压缩。</li>
+</ul></li>
+<li><strong>Provider Resolution
+(提供商解析)</strong>：一个共享的运行时解析器，被 CLI、网关、Cron、ACP
+共享。将 <code>(提供商, 模型)</code> 映射为
+<code>(API 模式, API Key, Base URL)</code>，处理了 18+
+提供商的别名和凭据池轮询。</li>
+<li><strong>Tool System (工具系统)</strong>：中央工具注册表
+(<code>tools/registry.py</code>)。包含 19 个工具集中的 47
+个注册工具。在导入时利用装饰器完成自我注册。支持终端环境后端的无缝挂载。</li>
+<li><strong>Session Persistence (会话持久化)</strong>：基于 SQLite 和
+FTS5 的对话存储。具有谱系追踪
+(追踪跨压缩产生的分支会话)、跨平台隔离和处理写竞争的原子操作机制。</li>
+<li><strong>Messaging Gateway
+(消息网关)</strong>：常驻内存的长进程，包含 18
+种适配器，提供统一的对话路由、用户授权 (白名单与私信配对)、钩子系统以及
+Cron 的后台心跳维护。</li>
+<li><strong>Plugin System
+(插件系统)</strong>：从系统目录和项目本地热发现插件，以注入工具或钩子。特殊的插件如“记忆提供商”和“上下文引擎”只能单选激活。</li>
+<li><strong>RL / Environments
+(强化学习轨迹)</strong>：用于大模型微调和评估的环境框架，自动生成
+ShareGPT 格式的轨迹数据集。</li>
+</ul>
+<h4 id="design-principles-设计哲学">5. Design Principles (设计哲学)</h4>
+<table>
+
+<thead>
+<tr>
+<th>原则 (Principle)</th>
+<th>工程实践 (What it means in practice)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Prompt stability (提示词稳定性)</strong></td>
+<td>系统提示词 (System Prompt) 在对话中途绝不改变。除非用户显式触发（如
+<code>/model</code>），否则禁止发生任何会破坏缓存 (Cache-breaking)
+的修改。</td>
+</tr>
+<tr>
+<td><strong>Observable execution (可观测的执行)</strong></td>
+<td>每一次工具调用都必须通过回调向用户展示。在 CLI 中体现为
+Spinner，在网关中体现为实时的 Chat 状态消息。</td>
+</tr>
+<tr>
+<td><strong>Interruptible (可中断性)</strong></td>
+<td>API 调用和底层工具执行均可随时被用户的键盘信号打断。</td>
+</tr>
+<tr>
+<td><strong>Platform-agnostic core (平台无关的内核)</strong></td>
+<td>唯一的 <code>AIAgent</code> 类同时驱动 CLI、网关、ACP、批处理和 API
+服务器。各个平台的差异只存在于入口点，绝不在 Agent 内部。</td>
+</tr>
+<tr>
+<td><strong>Loose coupling (松耦合)</strong></td>
+<td>可选子系统（如
+MCP、插件、外部记忆提供商）一律采用注册表模式，而不是硬编码依赖。</td>
+</tr>
+<tr>
+<td><strong>Profile isolation (环境隔离)</strong></td>
+<td>每个 Profile (<code>hermes -p &lt;name&gt;</code>) 都有独立的
+<code>HERMES_HOME</code>、配置、记忆库和 PID。多个 Profile
+可完全独立并发运行。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="file-dependency-chain-文件依赖链">6. File Dependency Chain
+(文件依赖链)</h4>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">tools/registry.py  (无任何依赖 — 被所有工具文件导入)<br>       ↑<br>tools/*.py  (每个文件在 Import 阶段主动调用 registry.register())<br>       ↑<br>model_tools.py  (导入 tools/registry 并触发全局扫描与工具发现)<br>       ↑<br>run_agent.py, cli.py, batch_runner.py, environments/<br></code></pre></td></tr></table></figure>
+<p>这套极其优雅的依赖链意味着：<strong>工具的注册是发生在其被 import
+时的</strong>。所有的工具都不需要在中心文件中写长长的 import
+列表，只要工具脚本内有一句
+<code>registry.register()</code>，它就会被底层引擎自动发现并热加载！</p>
+<h3 id="agent-loop-internals-核心对话循环">4.2 Agent Loop Internals
+(核心对话循环)</h3>
+<p>核心的编排引擎是位于 <code>run_agent.py</code> 中的
+<code>AIAgent</code> 类 —— 大约 10,700
+行代码，处理了从系统提示词组装、工具调度分发到提供商灾备切换的所有核心逻辑。</p>
+<h4 id="core-responsibilities-核心职责">1. Core Responsibilities
+(核心职责)</h4>
+<p><code>AIAgent</code> 的主要职责包括：</p>
+<ul>
+<li>通过 <code>prompt_builder.py</code> 组装有效的系统提示词 (System
+Prompt) 与工具 Schema。</li>
+<li>选择正确的提供商 / API 模式 (chat_completions, codex_responses,
+anthropic_messages)。</li>
+<li>发起可被用户键盘输入或信号中断 (Interruptible) 的大模型 API
+调用。</li>
+<li>执行工具调用（顺序执行或通过线程池并发执行）。</li>
+<li>以 OpenAI Message 格式维护整条对话历史记录。</li>
+<li>处理上下文压缩、重试以及后备模型的自动切换。</li>
+<li>跟踪主 Agent 与子 Agent (Subagents) 的迭代预算 (Iteration
+budgets)。</li>
+<li>在上下文丢失之前将临时记忆持久化刷新到磁盘。</li>
+</ul>
+<h4 id="two-entry-points-两大入口点">2. Two Entry Points
+(两大入口点)</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 简易接口 — 仅返回最终字符串响应</span><br>response = agent.chat(<span class="hljs-string">"Fix the bug in main.py"</span>)<br><br><span class="hljs-comment"># 完整接口 — 返回包含完整消息、元数据以及 Token 消耗统计的字典</span><br>result = agent.run_conversation(<br>    user_message=<span class="hljs-string">"Fix the bug in main.py"</span>,<br>    system_message=<span class="hljs-literal">None</span>,           <span class="hljs-comment"># 省略时将自动构建</span><br>    conversation_history=<span class="hljs-literal">None</span>,     <span class="hljs-comment"># 省略时自动从 session 中恢复</span><br>    task_id=<span class="hljs-string">"task_abc123"</span><br>)<br></code></pre></td></tr></table></figure>
+<p><code>chat()</code> 只是一个轻量级的包装器，其内部调用了
+<code>run_conversation()</code> 并提取了返回字典中的
+<code>final_response</code> 字段。</p>
+<h4 id="api-modes-api-模式">3. API Modes (API 模式)</h4>
+<p>Hermes 支持三种 API
+执行模式，这些模式由“提供商选择”、“显式参数”和“Base URL
+探测启发式算法”共同解析得出：</p>
+<table>
+
+<thead>
+<tr>
+<th>API mode (模式)</th>
+<th>Used for (适用场景)</th>
+<th>Client type (客户端类型)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>chat_completions</code></td>
+<td>兼容 OpenAI 的端点 (如 OpenRouter，自定义模型以及大多数提供商)</td>
+<td><code>openai.OpenAI</code></td>
+</tr>
+<tr>
+<td><code>codex_responses</code></td>
+<td>OpenAI Codex / Responses API</td>
+<td>使用 Responses 格式的 <code>openai.OpenAI</code></td>
+</tr>
+<tr>
+<td><code>anthropic_messages</code></td>
+<td>原生的 Anthropic Messages API</td>
+<td>通过适配器转接的 <code>anthropic.Anthropic</code></td>
+</tr>
+</tbody>
+</table>
+<p>这些模式决定了：消息应如何格式化、工具调用如何结构化、响应如何解析，以及缓存/流式传输
+(Streaming) 如何工作。无论是调用前还是调用后，<strong>这三种模式在
+Hermes 内部都会统一收敛为原生的 OpenAI 风格字典格式</strong>
+(<code>role</code> / <code>content</code> /
+<code>tool_calls</code>)。</p>
+<p><strong>模式解析优先级排序:</strong> 1. 显式的 <code>api_mode</code>
+构造函数传参（最高优先级） 2.
+特定提供商的自动探测（例如：<code>anthropic</code> 提供商 →
+<code>anthropic_messages</code>） 3. Base URL
+启发式探测（例如：<code>api.anthropic.com</code> →
+<code>anthropic_messages</code>） 4.
+默认回退值：<code>chat_completions</code></p>
+<h4 id="turn-lifecycle-单轮回合生命周期">4. Turn Lifecycle
+(单轮回合生命周期)</h4>
+<p>Agent 核心循环的每一次迭代均遵循以下序列：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs text">run_conversation()<br>  1. 如果未提供 task_id，则自动生成。<br>  2. 将用户的 user message 追加到对话历史中。<br>  3. 构建或复用已缓存的系统提示词 (prompt_builder.py)。<br>  4. 检查是否需要进行飞行前压缩 (Preflight compression)（当前上下文 &gt; 50%）。<br>  5. 从对话历史中构建各 API 所需的消息数组：<br>     - chat_completions: 原样保留 OpenAI 格式。<br>     - codex_responses: 转换为 Responses API 的 input items。<br>     - anthropic_messages: 通过 anthropic_adapter.py 转换。<br>  6. 注入短暂的提示词层 (例如：迭代预算警告，上下文压力警告)。<br>  7. 如果是 Anthropic 模型，注入 Prompt Caching 的缓存断点标记。<br>  8. 发起可被中断的 API 调用 (_api_call_with_interrupt)。<br>  9. 解析大模型响应:<br>     - 如果包含 tool_calls：执行它们，将结果追加到历史，跳转回第 5 步循环。<br>     - 如果仅包含文本：将 session 存入数据库，如有必要将记忆刷入磁盘，返回。<br></code></pre></td></tr></table></figure>
+<h5 id="message-format-内部消息格式">Message Format (内部消息格式)</h5>
+<p>所有的消息在系统内部统一使用 OpenAI 兼容格式表示：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">{</span><span class="hljs-attr">"role"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"system"</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">"content"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"..."</span><span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">{</span><span class="hljs-attr">"role"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"user"</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">"content"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"..."</span><span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">{</span><span class="hljs-attr">"role"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"assistant"</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">"content"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"..."</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">"tool_calls"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>...<span class="hljs-punctuation">]</span><span class="hljs-punctuation">}</span><br><span class="hljs-punctuation">{</span><span class="hljs-attr">"role"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"tool"</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">"tool_call_id"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"..."</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">"content"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"..."</span><span class="hljs-punctuation">}</span><br></code></pre></td></tr></table></figure>
+<p>深度思考内容 (来自支持 Extended Thinking 的模型，如 R1/o3) 被储存在
+<code>assistant_msg["reasoning"]</code> 中，并可通过
+<code>reasoning_callback</code> 回调渲染给用户。</p>
+<h5 id="message-alternation-rules-消息交替规则">Message Alternation
+Rules (消息交替规则)</h5>
+<p>Agent Loop 强制执行极其严格的消息角色交替规则（为了迎合诸如 Anthropic
+等苛刻的模型）：</p>
+<ul>
+<li>在系统消息 (System) 之后：必须是
+<code>User → Assistant → User → Assistant → ...</code></li>
+<li>在工具调用期间：必须是
+<code>Assistant (携带 tool_calls) → Tool → Tool → ... → Assistant</code></li>
+<li><strong>绝不允许</strong>出现两个连续的 Assistant 消息。</li>
+<li><strong>绝不允许</strong>出现两个连续的 User 消息。</li>
+<li><strong>只有</strong> <code>tool</code>
+角色允许连续出现（代表并行的工具执行结果）。</li>
+</ul>
+<p>如果底层提供商发现历史记录违反上述格式，会直接抛出 400 拒绝请求，因此
+Hermes 内部做了严格的规范化。</p>
+<h4 id="interruptible-api-calls-可中断的-api-调用">5. Interruptible API
+Calls (可中断的 API 调用)</h4>
+<p>API 请求被包裹在 <code>_api_call_with_interrupt()</code>
+闭包中，实际的 HTTP
+网络请求会在一个后台线程中执行，同时主线程负责监听中断事件：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs text">┌────────────────────────────────────────────────────┐<br>│  主线程 (Main thread)          网络线程 (API thread)   │<br>│                                                    │<br>│   同时等待:                      HTTP POST           │<br>│    - 响应就绪            ───▶   发送给大模型厂商         │<br>│    - 中断信号 (interrupt event)                        │<br>│    - 请求超时 (timeout)                                │<br>└────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+<p>当被中断时（用户发送了新消息、输入了 <code>/stop</code> 命令或按下了
+Ctrl+C）： - 后台网络线程会被直接遗弃（丢弃迟来的响应）。 - Agent
+可以立刻去处理用户的新指令或优雅关机。 -
+绝不会有残缺的响应被塞入当前对话历史中污染上下文。</p>
+<h4 id="tool-execution-工具执行逻辑">6. Tool Execution
+(工具执行逻辑)</h4>
+<h5 id="sequential-vs-concurrent-顺序执行-vs-并发执行">Sequential vs
+Concurrent (顺序执行 vs 并发执行)</h5>
+<p>当模型返回了工具调用时：</p>
+<ul>
+<li><strong>单一的工具调用 (Single tool call)</strong> →
+直接在主线程中顺序执行。</li>
+<li><strong>多个工具调用 (Multiple tool calls)</strong> → 通过
+<code>ThreadPoolExecutor</code> 线程池并发执行。
+<ul>
+<li>特例：被标记为“交互式”的工具（如 <code>clarify</code>
+要求用户补充输入）会强制降级为顺序执行。</li>
+<li>无论完成顺序如何，结果都会被严格地按照原始工具调用 (tool call)
+的排序插回历史记录中。</li>
+</ul></li>
+</ul>
+<h5 id="execution-flow-执行链路">Execution Flow (执行链路)</h5>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs text">for each tool_call in response.tool_calls:<br>    1. 从 tools/registry.py 中解析出对应的 Handler<br>    2. 触发 pre_tool_call (调用前) 插件生命周期钩子<br>    3. 检查是否是危险命令 (位于 tools/approval.py)<br>       - 如果危险: 触发 approval_callback 拦截器，等待用户放行<br>    4. 携带参数与 task_id 执行该 Handler<br>    5. 触发 post_tool_call (调用后) 插件生命周期钩子<br>    6. 将结果组装为 {"role": "tool", "content": result} 追加到历史记录<br></code></pre></td></tr></table></figure>
+<h5 id="agent-level-tools-agent-级特权工具">Agent-Level Tools (Agent
+级特权工具)</h5>
+<p>有些特殊的工具会在到达 <code>handle_function_call()</code>
+<strong>之前</strong> 就被 <code>run_agent.py</code> 半路拦截：</p>
+<table>
+
+<thead>
+<tr>
+<th>Tool (工具名)</th>
+<th>Why intercepted (为什么需要拦截处理)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>todo</code></td>
+<td>需要读取/写入当前 Agent 实例局部的任务状态。</td>
+</tr>
+<tr>
+<td><code>memory</code></td>
+<td>需要向带有字符限制的磁盘记忆文件中刷新内容。</td>
+</tr>
+<tr>
+<td><code>session_search</code></td>
+<td>需要越过沙盒，直接查询当前 Agent 的 SQLite 历史会话数据库。</td>
+</tr>
+<tr>
+<td><code>delegate_task</code></td>
+<td>需要孵化出具备隔离上下文的子 Agent (Subagents) 实例。</td>
+</tr>
+</tbody>
+</table>
+<p>这些工具直接修改 Agent
+的内部状态，并在不经过通用工具注册表的情况下，伪造合成 (synthetic)
+的工具结果返回给大模型。</p>
+<h4 id="callback-surfaces-回调接口集">7. Callback Surfaces
+(回调接口集)</h4>
+<p><code>AIAgent</code> 支持特定于平台的回调 (Callbacks)，这些回调驱动了
+CLI、Gateway 和 ACP 中的实时进度渲染：</p>
+<table>
+
+<thead>
+<tr>
+<th>Callback (回调名称)</th>
+<th>When fired (何时触发)</th>
+<th>Used by (使用者)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tool_progress_callback</code></td>
+<td>在每个工具执行之前/之后</td>
+<td>CLI 的 Spinner 动画, 网关的进度卡片</td>
+</tr>
+<tr>
+<td><code>thinking_callback</code></td>
+<td>模型开始/停止思考时</td>
+<td>CLI 的 “thinking…” 占位符</td>
+</tr>
+<tr>
+<td><code>reasoning_callback</code></td>
+<td>模型流式返回深度思考内容时</td>
+<td>CLI 的思考框展示, 网关的 <think> 块</think></td>
+</tr>
+<tr>
+<td><code>clarify_callback</code></td>
+<td>调用了 <code>clarify</code> 工具时</td>
+<td>CLI 的输入框, 网关的交互式提问弹窗</td>
+</tr>
+<tr>
+<td><code>step_callback</code></td>
+<td>每个完整的 Agent 回合结束时</td>
+<td>网关的回合步骤追踪, ACP 状态反馈</td>
+</tr>
+<tr>
+<td><code>stream_delta_callback</code></td>
+<td>每一个流式输出的 Token (如开启流式)</td>
+<td>CLI 的流式打字机效果</td>
+</tr>
+<tr>
+<td><code>tool_gen_callback</code></td>
+<td>在流式输出中解析出工具名称时</td>
+<td>CLI Spinner 中的工具前瞻预览</td>
+</tr>
+<tr>
+<td><code>status_callback</code></td>
+<td>Agent 内部大状态变化时 (思考中、执行中等)</td>
+<td>ACP (IDE) 的状态更新</td>
+</tr>
+</tbody>
+</table>
+<h4 id="budget-and-fallback-behavior-迭代预算与灾备降级">8. Budget and
+Fallback Behavior (迭代预算与灾备降级)</h4>
+<h5 id="iteration-budget-迭代预算">Iteration Budget (迭代预算)</h5>
+<p>Agent 通过 <code>IterationBudget</code> 严密监控死循环： - 默认：90
+次迭代（可通过 <code>agent.max_turns</code> 配置）。 - 每一个 Agent
+拥有独立的预算。子 Agent 有自己的独立预算上限
+<code>delegation.max_iterations</code> (默认 50) —— 父子 Agent
+的总迭代次数可能会超过父级的限制。 - 达到 100% 阈值时，Agent
+会强制熔断，并生成一份截至目前的工作总结。</p>
+<h5 id="fallback-model-灾备模型">Fallback Model (灾备模型)</h5>
+<p>当主模型彻底崩溃（如 429 速率限制，5xx 厂商服务器宕机，401/403
+秘钥鉴权失败）时： 1. 检查 <code>config.yaml</code> 中的
+<code>fallback_providers</code> 后备列表。 2.
+按照顺序依次尝试每一个备用模型。 3.
+成功后，带着新的提供商身份无缝继续当前的对话。 4. 遇到 401/403
+错误时，系统在降级前会先尝试进行 OAuth 凭据的热刷新。</p>
+<p>降级系统对旁路任务（视觉、压缩、网页信息提取、本地搜索）依然适用 ——
+可以在 <code>auxiliary.*</code>
+配置文件块中为它们各自指定独立的备用链条。</p>
+<h4 id="compression-and-persistence-压缩与持久化">9. Compression and
+Persistence (压缩与持久化)</h4>
+<h5 id="when-compression-triggers-压缩何时触发">When Compression
+Triggers (压缩何时触发)</h5>
+<ul>
+<li><strong>Preflight (飞行前检查)</strong> (在发起 API 之前):
+如果对话历史长度超出了当前模型总上下文窗口的 50%。</li>
+<li><strong>Gateway auto-compression (网关自动压缩)</strong>: 如果超出了
+85%（这是一个更激进的阈值，运行在两个回合的空隙中）。</li>
+</ul>
+<h5 id="what-happens-during-compression-压缩期间发生了什么">What Happens
+During Compression (压缩期间发生了什么)</h5>
+<ol type="1">
+<li>强制将 Memory 闪存至磁盘（防止数据丢失）。</li>
+<li>将中间的对话回合送入摘要引擎，压缩为精简的摘要字符串。</li>
+<li>原封不动地保留最后 N 条消息（由
+<code>compression.protect_last_n</code> 控制，默认保留最后 20
+条）。</li>
+<li>强绑定工具调用与结果的消息对 (永远不会被拦腰拆分)。</li>
+<li>生成一个新的 Session 谱系
+ID（发生压缩意味着当前会话分裂出了一个“Child 子会话”）。</li>
+</ol>
+<h5 id="session-persistence-会话持久化">Session Persistence
+(会话持久化)</h5>
+<p>在每个回合结束之后： - 所有的 Message 会被存储进底层的 Session 数据库
+(通过 <code>hermes_state.py</code> 写入 SQLite)。 - 记忆的改动会被闪存进
+<code>MEMORY.md</code> / <code>USER.md</code>。 -
+该会话在未来可以随时通过发送 <code>/resume</code> 命令或
+<code>hermes chat --resume</code> 被完美恢复。</p>
+<h4 id="key-source-files-核心源码指引">10. Key Source Files
+(核心源码指引)</h4>
+<table>
+
+<thead>
+<tr>
+<th>File (源码文件)</th>
+<th>Purpose (作用)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>run_agent.py</code></td>
+<td>AIAgent 类的主阵地 — 核心对话循环的全部实现 (~10,700 行)。</td>
+</tr>
+<tr>
+<td><code>agent/prompt_builder.py</code></td>
+<td>负责从记忆、技能、项目规范文件、人格中组装系统大提示词。</td>
+</tr>
+<tr>
+<td><code>agent/context_engine.py</code></td>
+<td>ContextEngine 的抽象基类 — 使得上下文管理可热插拔。</td>
+</tr>
+<tr>
+<td><code>agent/context_compressor.py</code></td>
+<td>默认的上下文引擎 — 实现了有损的摘要压缩算法。</td>
+</tr>
+<tr>
+<td><code>agent/prompt_caching.py</code></td>
+<td>负责计算并注入 Anthropic 缓存断点以及分析缓存命中率。</td>
+</tr>
+<tr>
+<td><code>agent/auxiliary_client.py</code></td>
+<td>辅助的 LLM 客户端，处理旁路小任务 (如视觉识别或长文本摘要)。</td>
+</tr>
+<tr>
+<td><code>model_tools.py</code></td>
+<td>工具 Schema 的集中打包以及 <code>handle_function_call()</code>
+中央分发调度。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="prompt-assembly-提示词组装机制">4.3 Prompt Assembly
+(提示词组装机制)</h3>
+<p>Hermes 在设计上刻意将提示词分为了两部分： - <strong>cached system
+prompt state (被缓存的静态系统提示词状态)</strong> - <strong>ephemeral
+API-call-time additions (随 API 调用动态注入的短暂附加层)</strong></p>
+<p>这是整个项目中最核心的架构设计选择之一，因为它直接影响到： - Token
+消耗量 - 提示词缓存 (Prompt Caching) 的命中率 - 会话的连续性 -
+记忆的正确性</p>
+<p>主要涉及的文件： - <code>run_agent.py</code> -
+<code>agent/prompt_builder.py</code> -
+<code>tools/memory_tool.py</code></p>
+<h4 id="cached-system-prompt-layers-静态系统提示词的分层组装">1. Cached
+system prompt layers (静态系统提示词的分层组装)</h4>
+<p>被缓存的 System Prompt 大致按照以下 10 层顺序进行组装：</p>
+<ol type="1">
+<li>Agent 人格身份 — 优先加载 <code>HERMES_HOME</code> 下的
+<code>SOUL.md</code>，若不存在则回退至内置的
+<code>DEFAULT_AGENT_IDENTITY</code>。</li>
+<li>带有工具感知能力的行为准则。</li>
+<li>Honcho 静态上下文块 (当激活时)。</li>
+<li>可选的自定义系统消息 (System message)。</li>
+<li>被冻结的 MEMORY (系统记忆) 快照。</li>
+<li>被冻结的 USER (用户画像) 快照。</li>
+<li>Skills index (技能索引目录)。</li>
+<li>Context files (项目级上下文文件，如 <code>AGENTS.md</code>,
+<code>.cursorrules</code> 等) — 如果第一步已经加载了
+SOUL.md，它<strong>不会</strong>在这里被重复加载。</li>
+<li>当前时间戳 / 可选的 Session ID。</li>
+<li>Platform hint (针对不同平台的特定提示，如 CLI 或 Discord)。</li>
+</ol>
+<p>当系统设置了 <code>skip_context_files</code> (例如在孵化子 Agent
+委派任务时)，<code>SOUL.md</code> 不会被加载，取而代之的是硬编码的
+<code>DEFAULT_AGENT_IDENTITY</code>。</p>
+<h5 id="concrete-example-assembled-system-prompt-具体示例组装后的终态">Concrete
+example: assembled system prompt (具体示例：组装后的终态)</h5>
+<p>下面是一个简化版的、包含所有层的终态 System Prompt
+示例（注释说明了每个区块的来源）：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><code class="hljs markdown"><span class="hljs-section"># Layer 1: Agent Identity (来自 ~/.hermes/SOUL.md)</span><br>You are Hermes, an AI assistant created by Nous Research.<br>You are an expert software engineer and researcher.<br>You value correctness, clarity, and efficiency.<br>...<br><br><span class="hljs-section"># Layer 2: Tool-aware behavior guidance (工具行为准则)</span><br>You have persistent memory across sessions. Save durable facts using<br>the memory tool: user preferences, environment details, tool quirks,<br>and stable conventions. Memory is injected into every turn, so keep<br>it compact and focused on facts that will still matter later.<br>...<br>When the user references something from a past conversation or you<br>suspect relevant cross-session context exists, use session<span class="hljs-emphasis">_search</span><br><span class="hljs-emphasis">to recall it before asking them to repeat themselves.</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis"># Tool-use enforcement (强制工具使用，仅针对 GPT/Codex 模型)</span><br><span class="hljs-emphasis">You MUST use your tools to take action — do not describe what you</span><br><span class="hljs-emphasis">would do or plan to do without actually doing it.</span><br><span class="hljs-emphasis">...</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis"># Layer 3: Honcho static block (当激活外部记忆引擎时)</span><br><span class="hljs-emphasis">[Honcho personality/context data]</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis"># Layer 4: Optional system message (来自 config 或 API 传参)</span><br><span class="hljs-emphasis">[User-configured system message override]</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis"># Layer 5: Frozen MEMORY snapshot (记忆快照)</span><br><span class="hljs-emphasis">## Persistent Memory</span><br><span class="hljs-emphasis">- User prefers Python 3.12, uses pyproject.toml</span><br><span class="hljs-emphasis">- Default editor is nvim</span><br><span class="hljs-emphasis">- Working on project "atlas" in ~/code/atlas</span><br><span class="hljs-emphasis">- Timezone: US/Pacific</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis"># Layer 6: Frozen USER profile snapshot (用户画像)</span><br><span class="hljs-emphasis">## User Profile</span><br><span class="hljs-emphasis">- Name: Alice</span><br><span class="hljs-emphasis">- GitHub: alice-dev</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis"># Layer 7: Skills index (动态技能索引)</span><br><span class="hljs-emphasis">## Skills (mandatory)</span><br><span class="hljs-emphasis">Before replying, scan the skills below. If one clearly matches</span><br><span class="hljs-emphasis">your task, load it with skill_</span>view(name) and follow its instructions.<br>...<br><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">available_skills</span>&gt;</span></span><br>  software-development:<br><span class="hljs-bullet">    -</span> code-review: Structured code review workflow<br><span class="hljs-bullet">    -</span> test-driven-development: TDD methodology<br>  research:<br><span class="hljs-bullet">    -</span> arxiv: Search and summarize arXiv papers<br><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">available_skills</span>&gt;</span></span><br><br><span class="hljs-section"># Layer 8: Context files (从当前项目目录提取)</span><br><span class="hljs-section"># Project Context</span><br>The following project context files have been loaded and should be followed:<br><br><span class="hljs-section">## AGENTS.md</span><br>This is the atlas project. Use pytest for testing. The main<br>entry point is src/atlas/main.py. Always run <span class="hljs-code">`make lint`</span> before<br>committing.<br><br><span class="hljs-section"># Layer 9: Timestamp + session (时间戳与会话标识)</span><br>Current time: 2026-03-30T14:30:00-07:00<br>Session: abc123<br><br><span class="hljs-section"># Layer 10: Platform hint (平台呈现提示)</span><br>You are a CLI AI Agent. Try not to use markdown but simple text<br>renderable inside a terminal.<br></code></pre></td></tr></table></figure>
+<h4 id="how-soul.md-appears-in-the-prompt-soul.md-的注入逻辑">2. How
+SOUL.md appears in the prompt (SOUL.md 的注入逻辑)</h4>
+<p><code>SOUL.md</code> 存放在 <code>~/.hermes/SOUL.md</code>，充当
+Agent 的顶级身份认知 —— 它是 System Prompt 的绝对第一部分。在
+<code>prompt_builder.py</code> 中的加载逻辑如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 摘自 agent/prompt_builder.py (简化版)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">load_soul_md</span>() -&gt; <span class="hljs-type">Optional</span>[<span class="hljs-built_in">str</span>]:<br>    soul_path = get_hermes_home() / <span class="hljs-string">"SOUL.md"</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> soul_path.exists():<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span><br>    content = soul_path.read_text(encoding=<span class="hljs-string">"utf-8"</span>).strip()<br>    content = _scan_context_content(content, <span class="hljs-string">"SOUL.md"</span>)  <span class="hljs-comment"># 防注入安全扫描</span><br>    content = _truncate_content(content, <span class="hljs-string">"SOUL.md"</span>)       <span class="hljs-comment"># 强制截断至 20k 字符</span><br>    <span class="hljs-keyword">return</span> content<br></code></pre></td></tr></table></figure>
+<p>当 <code>load_soul_md()</code>
+返回有效内容时，它会替换掉硬编码的身份认知。随后在调用
+<code>build_context_files_prompt()</code> 时，会传入
+<code>skip_soul=True</code> 标志，以防止 <code>SOUL.md</code>
+出现两次（一次作为身份，一次作为普通上下文文件）。如果文件不存在，将回退到默认的热心
+AI 助手人设。</p>
+<h4 id="how-context-files-are-injected-项目上下文文件的注入逻辑">3. How
+context files are injected (项目上下文文件的注入逻辑)</h4>
+<p><code>build_context_files_prompt()</code> 使用了严格的
+<strong>优先级系统 (Priority system)</strong> ——
+每次只会加载一种项目级上下文（命中第一个即停止寻找）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 摘自 agent/prompt_builder.py (简化版)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">build_context_files_prompt</span>(<span class="hljs-params">cwd=<span class="hljs-literal">None</span>, skip_soul=<span class="hljs-literal">False</span></span>):<br>    cwd_path = Path(cwd).resolve()<br><br>    <span class="hljs-comment"># 优先级匹配：只加载【一种】上下文规则文件</span><br>    project_context = (<br>        _load_hermes_md(cwd_path)       <span class="hljs-comment"># 1. .hermes.md / HERMES.md (向上遍历至 git 根目录)</span><br>        <span class="hljs-keyword">or</span> _load_agents_md(cwd_path)    <span class="hljs-comment"># 2. AGENTS.md (仅限当前目录)</span><br>        <span class="hljs-keyword">or</span> _load_claude_md(cwd_path)    <span class="hljs-comment"># 3. CLAUDE.md (仅限当前目录)</span><br>        <span class="hljs-keyword">or</span> _load_cursorrules(cwd_path)  <span class="hljs-comment"># 4. .cursorrules / .cursor/rules/*.mdc</span><br>    )<br><br>    sections = []<br>    <span class="hljs-keyword">if</span> project_context:<br>        sections.append(project_context)<br><br>    <span class="hljs-comment"># 从 HERMES_HOME 加载独立于项目的 SOUL.md</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> skip_soul:<br>        soul_content = load_soul_md()<br>        <span class="hljs-keyword">if</span> soul_content:<br>            sections.append(soul_content)<br><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> sections:<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">""</span><br><br>    <span class="hljs-keyword">return</span> (<br>        <span class="hljs-string">"# Project Context\n\n"</span><br>        <span class="hljs-string">"The following project context files have been loaded "</span><br>        <span class="hljs-string">"and should be followed:\n\n"</span><br>        + <span class="hljs-string">"\n"</span>.join(sections)<br>    )<br></code></pre></td></tr></table></figure>
+<h5 id="context-file-discovery-details-上下文发现细节">Context file
+discovery details (上下文发现细节)</h5>
+<table>
+
+<thead>
+<tr>
+<th>Priority (优先级)</th>
+<th>Files (文件名)</th>
+<th>Search scope (搜索范围)</th>
+<th>Notes (备注)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>.hermes.md</code>, <code>HERMES.md</code></td>
+<td>当前目录向上遍历直到 git root</td>
+<td>Hermes 原生的项目级配置</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>AGENTS.md</code></td>
+<td>仅限当前目录</td>
+<td>通用的 Agent 指令规范标准</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>CLAUDE.md</code></td>
+<td>仅限当前目录</td>
+<td>兼容 Claude Code</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>.cursorrules</code>, <code>.cursor/rules/*.mdc</code></td>
+<td>仅限当前目录</td>
+<td>兼容 Cursor 编辑器</td>
+</tr>
+</tbody>
+</table>
+<p>所有的上下文文件在加载时都会经过： - <strong>安全扫描 (Security
+scanned)</strong> — 检查提示词注入攻击（如隐形 unicode
+字符，“忽略之前的指令”的话术，窃取凭据的企图）。 - <strong>暴力截断
+(Truncated)</strong> — 使用 70/20 的头尾比例截断至最高 20,000
+个字符，并带有截断标记。 - <strong>YAML 前置物剥离</strong> —
+<code>.hermes.md</code> 顶部的配置块会被抹除。</p>
+<h4 id="api-call-time-only-layers-仅-api-调用时的短暂附加层">4.
+API-call-time-only layers (仅 API 调用时的短暂附加层)</h4>
+<p>以下这些内容被刻意<strong>排除</strong>在了被缓存的 System Prompt
+之外：</p>
+<ul>
+<li>临时的
+<code>ephemeral_system_prompt</code>（例如迭代上限警告）。</li>
+<li>Prefill (大模型预填充) 消息。</li>
+<li>网关 (Gateway) 衍生的会话状态覆盖层。</li>
+<li>外部 Honcho
+记忆引擎在当前回合动态检索并注入到用户输入中的召回片段。</li>
+</ul>
+<p>这种严格的物理隔离确保了“稳定的静态前缀”永远不被污染，从而最大化
+Anthropic Prompt Caching 的省钱效果。</p>
+<h4 id="memory-snapshots-记忆快照机制">5. Memory snapshots
+(记忆快照机制)</h4>
+<p>本地记忆和用户画像数据是在 Session 启动时以“被冻结的快照 (Frozen
+snapshots)”的形式注入的。如果 Agent
+在中途使用记忆工具写入了新知识，它只会更新磁盘文件，<strong>绝对不会</strong>去修改当前已经构建好的
+System Prompt（除非发起了一个全新的 Session
+或触发了强行重建），这也同样是为了保护缓存的命中率。</p>
+<h4 id="why-prompt-assembly-is-split-this-way-为什么架构要如此分离">6.
+Why prompt assembly is split this way (为什么架构要如此分离？)</h4>
+<p>整个架构的分离设计是在极致优化以下几个核心指标： - 极致保护提供商侧的
+Prompt Caching 命中率（每一分钱都是刀刃）。 -
+避免在历史记录中发生不必要的状态突变。 -
+保持“记忆”的语义可预测性和稳定。 - 允许外部网关、ACP、CLI
+等接入端动态追加上下文，却绝不会“弄脏”底层持续运作的提示词大盘状态。</p>
+<h3 id="context-compression-and-caching-上下文压缩与缓存">4.4 Context
+Compression and Caching (上下文压缩与缓存)</h3>
+<p>Hermes Agent 使用“双重压缩系统”以及 Anthropic 的“提示词缓存 (Prompt
+caching)”技术，在超长对话中极其高效地管理上下文窗口。</p>
+<p>主要涉及源码：<code>agent/context_engine.py</code> (抽象基类),
+<code>agent/context_compressor.py</code> (默认引擎),
+<code>agent/prompt_caching.py</code>, <code>gateway/run.py</code>
+(会话卫生清理), <code>run_agent.py</code> (搜索
+<code>_compress_context</code>)</p>
+<h4 id="pluggable-context-engine-可插拔的上下文引擎">1. Pluggable
+Context Engine (可插拔的上下文引擎)</h4>
+<p>上下文管理建立在 <code>ContextEngine</code> 抽象基类之上。内置的
+<code>ContextCompressor</code>
+是默认的实现，但插件可以用其他引擎（例如无损上下文管理
+LCM）来替换它。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">context:</span><br>  <span class="hljs-attr">engine:</span> <span class="hljs-string">"compressor"</span>    <span class="hljs-comment"># 默认 — 内置的有损摘要压缩</span><br>  <span class="hljs-attr">engine:</span> <span class="hljs-string">"lcm"</span>           <span class="hljs-comment"># 示例 — 提供无损上下文的外部插件</span><br></code></pre></td></tr></table></figure>
+<p>引擎负责处理： - 决定何时应触发紧凑化
+(<code>should_compress()</code>) - 执行紧凑化 (<code>compress()</code>)
+- （可选）暴露 Agent 可调用的专属工具 (如 <code>lcm_grep</code>) - 从
+API 响应中追踪 Token 消耗</p>
+<p>引擎选择由 <code>config.yaml</code> 中的 <code>context.engine</code>
+驱动。解析顺序： 1. 检查
+<code>plugins/context_engine/&lt;name&gt;/</code> 目录 2.
+检查通用插件系统 (<code>register_context_engine()</code>) 3.
+回退到内置的 <code>ContextCompressor</code></p>
+<p>插件引擎<strong>永远不会自动激活</strong> — 用户必须显式地将
+<code>context.engine</code> 设置为插件名称。默认的
+<code>"compressor"</code> 始终使用内置逻辑。</p>
+<h4 id="dual-compression-system-双重压缩系统">2. Dual Compression System
+(双重压缩系统)</h4>
+<p>Hermes 拥有两个独立运行的隔离压缩层：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs text">                   ┌──────────────────────────┐<br>Incoming message   │ 网关会话卫生检查 (Hygiene) │  在上下文达到 85% 时触发<br>─────────────────► │ (前置拦截，粗略估算)       │  针对臃肿长会话的最后安全网<br>                   └─────────────┬────────────┘<br>                                 │<br>                                 ▼<br>                   ┌──────────────────────────┐<br>                   │ Agent 上下文压缩器         │  在上下文达到 50% 时触发 (默认)<br>                   │ (位于循环内，精准 Token)   │  常规的上下文管理<br>                   └──────────────────────────┘<br></code></pre></td></tr></table></figure>
+<p><strong>2.1 Gateway Session Hygiene (网关卫生检查, 85% 阈值)</strong>
+位于 <code>gateway/run.py</code>。这是在 Agent
+处理消息前运行的<strong>安全网</strong>。它能防止在回合之间（比如
+Telegram 隔夜积累的消息群）因会话过于臃肿而导致 API 彻底崩溃。 -
+<strong>阈值</strong>: 固定为模型上下文长度的 85% -
+<strong>触发条件</strong>: 只有当 <code>len(history) &gt;= 4</code>
+且启用了压缩时 - <strong>目的</strong>: 兜底捕捉那些侥幸逃过 Agent
+内部压缩器的超级长对话。阈值被刻意定得比 Agent
+高，以防止在网关聊天中每个回合都被错误地频繁压缩。</p>
+<p><strong>2.2 Agent ContextCompressor (Agent内部压缩器, 50%
+阈值)</strong> 位于
+<code>agent/context_compressor.py</code>。这是<strong>主力压缩系统</strong>，运行在
+Agent 工具循环内部，拥有最准确的 API 上报 Token 计数。</p>
+<h4 id="configuration-参数配置">3. Configuration (参数配置)</h4>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">compression:</span><br>  <span class="hljs-attr">enabled:</span> <span class="hljs-literal">true</span>              <span class="hljs-comment"># 启停开关 (默认: true)</span><br>  <span class="hljs-attr">threshold:</span> <span class="hljs-number">0.50</span>            <span class="hljs-comment"># 占上下文窗口的比例 (默认: 0.50 = 50%)</span><br>  <span class="hljs-attr">target_ratio:</span> <span class="hljs-number">0.20</span>         <span class="hljs-comment"># 阈值中保留为尾部 (Tail) 保护区的比例 (默认: 0.20)</span><br>  <span class="hljs-attr">protect_last_n:</span> <span class="hljs-number">20</span>         <span class="hljs-comment"># 最少需要保护的近期消息数 (默认: 20)</span><br><br><span class="hljs-attr">auxiliary:</span><br>  <span class="hljs-attr">compression:</span><br>    <span class="hljs-attr">model:</span> <span class="hljs-literal">null</span>              <span class="hljs-comment"># 覆盖摘要专用模型 (默认: 自动探测)</span><br>    <span class="hljs-attr">provider:</span> <span class="hljs-string">auto</span>           <span class="hljs-comment"># 摘要提供商: "auto", "openrouter", "main" 等</span><br></code></pre></td></tr></table></figure>
+<h4 id="compression-algorithm-压缩算法核心4步">4. Compression Algorithm
+(压缩算法核心4步)</h4>
+<p><code>ContextCompressor.compress()</code>
+方法遵循严格的四阶段算法：</p>
+<p><strong>Phase 1: Prune Old Tool Results (修剪旧工具结果 ——
+极低成本，无需 LLM)</strong> 保护区之外的大型工具输出 (&gt;200 字符)
+会被直接替换为：<code>[Old tool output cleared to save context space]</code>。这可以在不调用
+LLM 的情况下从冗长的文件读取或搜索结果中榨出大量 Token。</p>
+<p><strong>Phase 2: Determine Boundaries (划定边界)</strong>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs text">┌─────────────────────────────────────────────────────────────┐<br>│  Message list (消息列表)                                      │<br>│                                                             │<br>│  [0..2]   ← protect_first_n (系统提示词 + 最初第一轮对话永不删除) │<br>│  [3..N]   ← 中间回合 (middle turns) → 将被送去 LLM 生成摘要        │<br>│  [N..end] ← 尾部保护区 (由 target_ratio 预算 或 protect_last_n 决定)│<br>│                                                             │<br>└─────────────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure> 尾部保护是<strong>基于 Token
+预算的</strong>：系统从末尾倒序遍历，直到用尽尾部 Token
+预算。如果它发现该切断一轮连续的工具调用结果了，它会继续往上找，直到找到发起调用的那条
+Assistant 消息，确保<strong>绝不拆散工具调用/结果的配对</strong>。</p>
+<p><strong>Phase 3: Generate Structured Summary
+(生成结构化摘要)</strong> &gt; [!WARNING] &gt; 负责生成摘要的旁路模型
+(Summary model)
+的上下文长度<strong>必须至少等于</strong>主模型的长度。如果它被塞爆了，压缩器会直接静默丢弃中间的所有对话（无摘要），导致“失忆”。</p>
+<p>将把中间对话发送给辅助 LLM，按照以下模板强制生成摘要： - Goal
+(用户最终目标) - Constraints &amp; Preferences (约束与偏好) - Progress
+(进度：Done 已完成, In Progress 进行中, Blocked 阻塞) - Key Decisions
+(关键技术决策) - Relevant Files (相关文件) - Next Steps (下一步)</p>
+<p><strong>Phase 4: Assemble Compressed Messages (重组上下文)</strong>
+新的压缩消息列表变为： 1. 头部消息
+(首次压缩时会在系统提示词末尾加上说明) 2. 摘要消息 (Role
+会根据防同角色连续规则智能挑选) 3. 尾部消息 (原封不动)</p>
+<p>如果是<strong>连续多次压缩</strong>，系统会将“上一次的旧摘要”喂给
+LLM，要求它只进行“更新 (update)”而不是重新总结。这让任务卡片能动态从 “In
+Progress” 流转到 “Done”。</p>
+<h4 id="beforeafter-example-压缩前后震撼对比">5. Before/After Example
+(压缩前后震撼对比)</h4>
+<p><strong>Before (压缩前: 45条消息, ~95K Tokens)</strong> 充满了漫长的
+<code>terminal: mkdir</code>, <code>write_file: main.py</code>,
+<code>terminal: pytest</code> 报错与修补……</p>
+<p><strong>After (压缩后: 25条消息, ~45K Tokens)</strong> 中间 30
+多个回合的枯燥试错全部消失了！变成了一张精准的进度卡： <figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs markdown">[CONTEXT COMPACTION] Earlier turns were compacted...<br><span class="hljs-section">## Goal</span><br>Set up a FastAPI project with tests and error handling<br><span class="hljs-section">## Progress</span><br><span class="hljs-section">### Done</span><br><span class="hljs-bullet">-</span> Created project structure... 8/10 tests passing<br><span class="hljs-section">### In Progress</span><br><span class="hljs-bullet">-</span> Fixing 2 failing tests (test<span class="hljs-emphasis">_create_</span>user...)<br><span class="hljs-section">## Relevant Files</span><br><span class="hljs-bullet">-</span> main.py, tests/test<span class="hljs-emphasis">_api.py...</span><br><span class="hljs-emphasis">## Next Steps</span><br><span class="hljs-emphasis">- Fix failing test fixtures</span><br></code></pre></td></tr></table></figure>
+Agent
+醒来后看了眼进度卡，直接接上了上一秒的思路继续工作，毫无顿挫感。</p>
+<h4 id="prompt-caching-anthropic-提示词缓存系统">6. Prompt Caching
+(Anthropic 提示词缓存系统)</h4>
+<p>通过缓存对话前缀，长对话的输入 Token 成本暴跌 ~75%。使用的是
+Anthropic 的 <code>cache_control</code> 断点系统。</p>
+<p><strong>Strategy: system_and_3 (系统+尾部3连断点策略)</strong>
+Anthropic 每次请求最多允许打 4 个断点。Hermes 的排布是： - 断点
+1：System Prompt (所有回合绝对稳定命中！) - 断点 2：倒数第 3
+条非系统消息 - 断点 3：倒数第 2 条非系统消息 - 断点 4：最后 1
+条非系统消息 (形成滚动缓存窗口)</p>
+<p>缓存系统的默认 TTL 存活时间是 <code>5m</code> (5分钟)，可以在
+<code>config.yaml</code> 中配置为 <code>1h</code> 适合那些“边喝茶边跟 AI
+结对编程”的用户。</p>
+<hr>
+<h3 id="gateway-internals-消息网关内部机制">4.5 Gateway Internals
+(消息网关内部机制)</h3>
+<p>Messaging Gateway 是一个常驻内存的长进程，通过统一的架构将 Hermes
+接入 14+ 种外部聊天平台（如 Telegram, Discord, Slack 等）。</p>
+<h4 id="key-files-核心目录结构">1. Key Files (核心目录结构)</h4>
+<ul>
+<li><code>gateway/run.py</code>：<code>GatewayRunner</code> —
+网关主循环、斜杠命令解析与调度 (~9,000行)</li>
+<li><code>gateway/session.py</code>：会话存储持久化与 Session Key
+构造</li>
+<li><code>gateway/delivery.py</code>：负责将响应投递 (Delivery)
+回目标平台</li>
+<li><code>gateway/pairing.py</code>：私信 (DM) 配对授权逻辑</li>
+<li><code>gateway/platforms/</code>：平台适配器目录 (一平台一文件)</li>
+</ul>
+<h4 id="message-flow-核心消息流">2. Message Flow (核心消息流)</h4>
+<ol type="1">
+<li><strong>平台适配器 (Platform adapter)</strong> 收到底层 API
+事件，将其标准化为 <code>MessageEvent</code>。</li>
+<li><strong>基类适配器 (Base adapter)</strong> 进行第一道拦截：如果当前
+Session 的 Agent 正在运行，则直接将新消息扔进队列。如果是
+<code>/stop</code> 则放行。</li>
+<li><strong>GatewayRunner</strong> 接收事件：
+<ul>
+<li>组装 Session Key
+(<code>agent:main:{platform}:{chat_type}:{chat_id}</code>)。</li>
+<li>检查用户权限 (Authorization)。</li>
+<li>解析是否是斜杠命令并分发。</li>
+<li>如果是一般对话，实例化一个携带历史记录的 <code>AIAgent</code>。</li>
+</ul></li>
+<li><strong>Agent</strong> 疯狂运转，随后将生成的
+<strong>Response</strong> 通过平台适配器投递给用户。</li>
+</ol>
+<h4 id="authorization-多级安全鉴权">3. Authorization (多级安全鉴权)</h4>
+<p>网关使用了严格的“五层降级拦截”来防止黑客白嫖你的 API Key： 1.
+<strong>全局平台放行</strong>：例如
+<code>TELEGRAM_ALLOW_ALL_USERS=true</code>。 2.
+<strong>平台白名单</strong>：配置文件中配置的特定用户 ID 列表。 3.
+<strong>DM 动态配对 (Pairing)</strong>：管理员在群里敲
+<code>/pair</code> 生成一个配对码
+<code>ABC123</code>，新用户私信机器人输入该码即可动态提权。 4.
+<strong>全局跨平台放行</strong>：<code>GATEWAY_ALLOW_ALL_USERS=true</code>。
+5. <strong>默认兜底</strong>：直接拒绝 (Deny) 未授权访客。</p>
+<h4 id="platform-adapters-18大平台适配器">4. Platform Adapters
+(18大平台适配器)</h4>
+<p>所有的适配器都在 <code>gateway/platforms/</code>
+下，实现了公共基类的三个方法 (<code>connect</code>,
+<code>disconnect</code>, <code>send_message</code>)： -
+<strong>Telegram</strong> (长轮询/Webhook) - <strong>Discord</strong>
+(discord.py) - <strong>Slack</strong> (Socket Mode) - <strong>WhatsApp,
+Signal, Matrix, Mattermost</strong> - <strong>Email (IMAP), SMS
+(Twilio)</strong> - <strong>DingTalk (钉钉), Feishu (飞书), WeCom
+(企业微信), Weixin (个人微信通过 iLink)</strong> - <strong>BlueBubbles
+(接入苹果 iMessage)</strong> - <strong>QQ Bot (官方 API v2)</strong></p>
+<p>由于某些平台（如 Telegram Bot
+API）<strong>不允许两个进程同时使用同一个 Token</strong>，所有的适配器在
+<code>connect()</code> 时都会请求获取跨进程的 Token Locks，防止多
+Profile 冲突。</p>
+<h4 id="hooks-生命周期钩子">5. Hooks (生命周期钩子)</h4>
+<p>网关提供了一整套基于目录的热插拔 Hooks： -
+<code>gateway:startup</code>, <code>session:start</code>,
+<code>agent:step</code>, <code>agent:end</code>, <code>command:*</code>
+所有的 Hook 脚本只要放在 <code>~/.hermes/hooks/</code>
+目录下，网关会在启动时自动扫描并注册，实现如“在 Agent
+工作完毕后发送一封邮件通知”这样的能力。</p>
+<hr>
+<h3 id="session-storage-sqlite-会话存储系统">4.6 Session Storage (SQLite
+会话存储系统)</h3>
+<p>Hermes Agent 使用单一的 SQLite 数据库
+(<code>~/.hermes/state.db</code>) 来持久化跨 CLI
+和网关会话的所有消息历史、Token 开销和模型配置。这彻底取代了早期粗糙的
+<code>JSONL</code> 文件流。</p>
+<p>主要代码：<code>hermes_state.py</code></p>
+<h4 id="architecture-overview-架构总览">1. Architecture Overview
+(架构总览)</h4>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">~/.hermes/state.db (SQLite, 开启了 WAL 模式)<br>├── sessions          — 会话的元数据 (包含模型、开销账单、层级谱系)<br>├── messages          — 全量的底层 Message 对话记录<br>├── messages_fts      — 利用 FTS5 引擎提供闪电般的全文检索<br>└── schema_version    — 用于无损数据迁移的版本号<br></code></pre></td></tr></table></figure>
+<p><strong>关键设计决策：</strong> - <strong>WAL
+模式</strong>：允许网关在应对并发聊天时，实现“多读一写”不锁死。 -
+<strong>FTS5 虚拟表</strong>：支持对本地百万字的 Agent
+生成的代码和对话进行毫秒级全文检索。 - <strong>Session lineage
+(会话谱系)</strong>：通过
+<code>parent_session_id</code>，将因上下文压缩而断裂分裂出的新会话像 Git
+树一样连接起来。</p>
+<h4 id="write-contention-handling-史诗级的写入竞争处理">2. Write
+Contention Handling (史诗级的写入竞争处理)</h4>
+<p>由于可能有网关后台、CLI 前台、Cron 任务、甚至是 Git Worktree
+沙盒等几十个进程同时想要写入同一个
+<code>state.db</code>。<code>SessionDB</code>
+类做出了教科书级别的锁争用优化： - <strong>缩短 SQLite
+的死锁超时</strong> 从原生的 30 秒剧烈缩减到 1 秒。 - <strong>带有
+Jitter 的应用层重试</strong>：在 20ms 到 150ms 之间随机退避，最高重试 15
+次。 - <strong>BEGIN IMMEDIATE
+强事务</strong>：在进入事务的第一秒就立刻暴露锁竞争，而不是等到最后
+commit 时才报错。 - <strong>周期性 WAL 检查点
+(Checkpoint)</strong>：每成功写入 50 次，就静默触发一次 PASSIVE
+检查点。</p>
+<p>这完美地避开了 SQLite 臭名昭著的“护航效应 (Convoy
+effect)”，让几十个智能体并发不卡顿。</p>
+<h4 id="full-text-search-支持黑魔法的-fts5-检索">3. Full-Text Search
+(支持黑魔法的 FTS5 检索)</h4>
+<p>Hermes 提供了一个极其强大的 <code>db.search_messages()</code>
+接口。</p>
+<table>
+<thead>
+<tr>
+<th>FTS5 语法</th>
+<th>示例</th>
+<th>意义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>关键词</td>
+<td><code>docker deployment</code></td>
+<td>同时包含两词 (隐式 AND)</td>
+</tr>
+<tr>
+<td>精确短语</td>
+<td><code>"exact phrase"</code></td>
+<td>精确匹配完整短语</td>
+</tr>
+<tr>
+<td>布尔 OR</td>
+<td><code>docker OR kubernetes</code></td>
+<td>包含其一即可</td>
+</tr>
+<tr>
+<td>布尔 NOT</td>
+<td><code>python NOT java</code></td>
+<td>排除干扰词</td>
+</tr>
+<tr>
+<td>前缀匹配</td>
+<td><code>deploy*</code></td>
+<td>匹配 deploy, deployment 等</td>
+</tr>
+</tbody>
+</table>
+<p>底层做了极端的自动
+Sanitization：剥离没闭合的引号、将带连字符的单词（如
+<code>chat-send</code>）用引号保护、自动清理尾部的残缺布尔符，防止搜素引擎直接语法报错崩溃。</p>
+<h4 id="session-lineage-export-会话谱系与导出">4. Session Lineage &amp;
+Export (会话谱系与导出)</h4>
+<p>你可以通过 SQL 中的 <code>WITH RECURSIVE</code> CTE
+递归查询语句，顺藤摸瓜找出一个会话的全部“祖宗”与“子孙”。系统也提供了原生的
+Python 接口 <code>db.export_session()</code> 和清理陈旧僵尸会话的
+<code>db.prune_sessions(older_than_days=90)</code> 方法。</p>
+<hr>
+<h3 id="provider-runtime-resolution-大模型提供商运行时解析">4.7 Provider
+Runtime Resolution (大模型提供商运行时解析)</h3>
+<p>由于 Hermes 面向 CLI、Gateway、Cron
+和旁路工具提供统一的服务，它实现了一个底层的<strong>共享运行时解析器
+(Shared runtime resolver)</strong>，决定每一次 LLM
+调用到底走哪条高速公路。</p>
+<p>核心逻辑位于：<code>hermes_cli/runtime_provider.py</code> 和
+<code>hermes_cli/auth.py</code>。</p>
+<h4 id="resolution-precedence-解析优先级">1. Resolution precedence
+(解析优先级)</h4>
+<p>提供商解析遵循严格的层叠覆盖原则： 1. CLI 或参数显式指定
+(<code>--provider</code>, <code>--model</code>) 2.
+<code>config.yaml</code> 中保存的历史模型/提供商状态 3. 环境变量的覆盖
+(<code>OPENAI_API_KEY</code>, 等等) 4. 厂商特有的默认规则兜底</p>
+<p>Hermes 把保存的 <code>config.yaml</code>
+视为真正的“单点事实”。这防止了用户昨天在 <code>hermes model</code>
+里切成了 Anthropic，结果今天开了一个配置有 <code>OPENAI_API_KEY</code>
+的破 Shell 就导致模型静默跳回 GPT-4 的惨剧。</p>
+<h4 id="native-anthropic-path-原生的-anthropic-链路">2. Native Anthropic
+path (原生的 Anthropic 链路)</h4>
+<p>现在的 Anthropic 模型不再只是通过 OpenRouter 的兼容接口访问了！</p>
+<p>当解析器选中 <code>anthropic</code> 时，引擎会彻底切换形态： -
+<code>api_mode = anthropic_messages</code> - 直接连线原生 Anthropic
+Messages API - 通过 <code>agent/anthropic_adapter.py</code>
+进行数据结构转换</p>
+<p>它甚至接入了 <strong>Claude Code (也就是著名的 mcp-cli)</strong>
+的底层刷新凭据链！如果存在 Claude Code 的 OAuth 刷新
+Token，它会比写死的环境变量拥有更高优先级，并在触发 401 Unauthorized
+前自动静默刷新凭证，永远不断联。</p>
+<h4 id="openai-compatible-and-isolation-自定义网关的绝密隔离">3.
+OpenAI-compatible and Isolation (自定义网关的绝密隔离)</h4>
+<p>当环境中同时存在
+<code>OPENROUTER_API_KEY</code>、<code>AI_GATEWAY_API_KEY</code> 和
+<code>OPENAI_API_KEY</code> 时，Hermes 绝不会“乱甩秘钥导致泄露”。</p>
+<ul>
+<li><code>OPENROUTER_API_KEY</code> 绝对且只会被发送到
+<code>openrouter.ai</code></li>
+<li><code>AI_GATEWAY_API_KEY</code> 绝对只送往 Vercel 的
+<code>ai-gateway.vercel.sh</code></li>
+<li><code>OPENAI_API_KEY</code> 作为 fallback 发送给所有自定义的基础
+URL。</li>
+</ul>
+<h4 id="fallback-models-无缝灾备降级机制">4. Fallback models
+(无缝灾备降级机制)</h4>
+<p>当你的主模型（比如 OpenRouter 的 4.5 Sonnet）因官方宕机而爆出
+<code>5xx</code>，或者你的余额不足爆出 <code>402</code> 时，Hermes
+绝不会让任务中断：</p>
+<ol type="1">
+<li><strong>触发点</strong>：当遇到非重试的致命错误（如 401 鉴权失效）或
+<code>429</code> 触碰上限时。</li>
+<li><strong>激活降级 (Activation)</strong>：它会立刻读取
+<code>config.yaml</code> 中的 <code>fallback_model</code>。</li>
+<li><strong>无缝热拔插</strong>：在内存中瞬间替换掉主循环里的
+<code>self.provider</code>, <code>self.base_url</code>, 和底层的 HTTP
+Client。</li>
+<li><strong>再启程</strong>：带着最新的 Token 和新的模型，继续刚才未尽的
+Tool 调用循环！</li>
+</ol>
+<p>而且这一切在 Gateway、CLI
+等所有入口点全面生效！旁路小模型（如视觉摘要器）也拥有这套独立且完整的灾备降级逻辑。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Hermes-Agent/" class="category-chain-item">Hermes Agent</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Hermes-Agent/" class="print-no-link">#Hermes Agent</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Hermes Agent</div>
+      <div>https://mztchaoqun.com.cn/posts/D116_Hermes_Agent/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年4月22日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D117_CTM/" title="CTM——Continuous Thought Machine">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">CTM——Continuous Thought Machine</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D115_Good_Skills/" title="Skills推荐">
+                        <span class="hidden-mobile">Skills推荐</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    function isExpandAllEnabled() {
+      return CONFIG.toc && CONFIG.toc.expand_all === true;
+    }
+    function expandAllToc() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .tocbot-is-collapsed').removeClass('tocbot-is-collapsed');
+    }
+    function updateTocToggle($li, $childList) {
+      var $toggle = $li.children('.toc-toggle');
+      if ($toggle.length === 0) { return; }
+      var collapsed = $childList.hasClass('tocbot-is-collapsed');
+      $toggle
+        .toggleClass('toc-toggle-collapsed', collapsed)
+        .toggleClass('toc-toggle-expanded', !collapsed);
+    }
+    function bindTocToggle() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .toc-list-item').each(function() {
+        var $li = jQuery(this);
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) {
+          if ($li.children('.toc-toggle').length === 0) {
+            $li.prepend('<span class="toc-toggle toc-toggle-placeholder" aria-hidden="true">›</span>');
+          }
+          return;
+        }
+
+        if ($li.children('.toc-toggle').length === 0) {
+          $li.prepend('<span class="toc-toggle toc-toggle-expanded" aria-hidden="true">›</span>');
+        }
+        updateTocToggle($li, $childList);
+      });
+      jQuery('#toc-body').off('click.tocToggle').on('click.tocToggle', '.toc-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = jQuery(this).parent('.toc-list-item');
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) { return; }
+        $childList.toggleClass('tocbot-is-collapsed');
+        updateTocToggle($li, $childList);
+      });
+      if (!window.__tocToggleObserver) {
+        window.__tocToggleObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type !== 'attributes' || mutation.attributeName !== 'class') { return; }
+            var $list = jQuery(mutation.target);
+            var $li = $list.parent('.toc-list-item');
+            if ($li.length === 0) { return; }
+            updateTocToggle($li, $list);
+          });
+        });
+        jQuery('#toc-body ol').each(function() {
+          window.__tocToggleObserver.observe(this, { attributes: true });
+        });
+      }
+    }
+    var tocConfig = Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc);
+    if (isExpandAllEnabled()) {
+      tocConfig.collapseDepth = 6;
+    }
+    window.tocbot.init(tocConfig);
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    expandAllToc();
+    bindTocToggle();
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+        expandAllToc();
+        bindTocToggle();
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

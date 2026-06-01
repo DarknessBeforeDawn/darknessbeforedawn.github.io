@@ -1,0 +1,1673 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mztchaoqun">
+  <meta name="keywords" content="hexo,theme,fluid,material,material-design,blog">
+  
+    <meta name="description" content="AI 编程 Agent Skills 精选推荐 随着 AI 编程工具（Claude Code、Cursor、Gemini CLI、Codex 等）的普及，一种新的生态正在形成——Agent Skills。Skills 本质上是一组结构化的 Markdown 指令文件，用于指导 AI 编程 Agent 遵循特定的工作流程、最佳实践和质量标准。本文精选了 12 个优秀的开源 Skills 项目，帮助你">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Skills推荐">
+<meta property="og:url" content="https://mztchaoqun.com.cn/posts/D115_Good_Skills/index.html">
+<meta property="og:site_name" content="Suny的文章">
+<meta property="og:description" content="AI 编程 Agent Skills 精选推荐 随着 AI 编程工具（Claude Code、Cursor、Gemini CLI、Codex 等）的普及，一种新的生态正在形成——Agent Skills。Skills 本质上是一组结构化的 Markdown 指令文件，用于指导 AI 编程 Agent 遵循特定的工作流程、最佳实践和质量标准。本文精选了 12 个优秀的开源 Skills 项目，帮助你">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mztchaoqun.com.cn/images/skills.jpeg">
+<meta property="article:published_time" content="2026-04-11T05:48:11.000Z">
+<meta property="article:modified_time" content="2026-06-01T10:42:54.554Z">
+<meta property="article:author" content="mztchaoqun">
+<meta property="article:tag" content="Skills">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mztchaoqun.com.cn/images/skills.jpeg">
+  
+  
+  
+  <title>Skills推荐 - Suny的文章</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mztchaoqun.com.cn","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Suny的文章</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content (desktop) -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://it-tools.tech/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>it-tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://excalidraw.com/" target="_self">
+                <i class="iconfont icon-brush"></i>
+                <span>excalidraw</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                <span>文档</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                    
+                    <span>安装主题</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                    
+                    <span>配置指南</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                    
+                    <span>图标用法</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile grid menu overlay -->
+<div id="mobile-grid-menu" class="d-lg-none">
+  <div class="mobile-grid-menu-inner">
+    <div class="container">
+      <div class="row">
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-home-fill"></i>
+                  <span>首页</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/archives/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-archive-fill"></i>
+                  <span>归档</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/categories/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-category-fill"></i>
+                  <span>分类</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/tags/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-tags-fill"></i>
+                  <span>标签</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="https://it-tools.tech/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-briefcase"></i>
+                  <span>it-tools</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="https://excalidraw.com/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-brush"></i>
+                  <span>excalidraw</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/about/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-user-fill"></i>
+                  <span>关于</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            
+            <div class="col-12 mobile-grid-group-header">
+              <i class="iconfont icon-books"></i>
+              <span>文档</span>
+            </div>
+            
+              
+              
+              
+              <div class="col-4 mobile-grid-cell">
+                <a href="https://hexo.fluid-dev.com/docs/start/" target="_self">
+                  <div class="mobile-grid-item">
+                    <i class="iconfont icon-link-fill"></i>
+                    <span>安装主题</span>
+                  </div>
+                </a>
+              </div>
+            
+              
+              
+              
+              <div class="col-4 mobile-grid-cell">
+                <a href="https://hexo.fluid-dev.com/docs/guide/" target="_self">
+                  <div class="mobile-grid-item">
+                    <i class="iconfont icon-link-fill"></i>
+                    <span>配置指南</span>
+                  </div>
+                </a>
+              </div>
+            
+              
+              
+              
+              <div class="col-4 mobile-grid-cell">
+                <a href="https://hexo.fluid-dev.com/docs/icon/" target="_self">
+                  <div class="mobile-grid-item">
+                    <i class="iconfont icon-link-fill"></i>
+                    <span>图标用法</span>
+                  </div>
+                </a>
+              </div>
+            
+          
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
+            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-search"></i>
+                <span>搜索</span>
+              </div>
+            </a>
+          </div>
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
+               data-label-light="开灯"
+               data-label-dark="关灯">
+            <a href="javascript:;" aria-label="Color Toggle">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
+                <span id="mobile-color-toggle-label">关灯</span>
+              </div>
+            </a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/post_banner.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Skills推荐"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-04-11 13:48" pubdate>
+          2026年4月11日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          79 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Skills推荐</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="ai-编程-agent-skills-精选推荐">AI 编程 Agent Skills
+精选推荐</h1>
+<p>随着 AI 编程工具（Claude Code、Cursor、Gemini CLI、Codex
+等）的普及，一种新的生态正在形成——<strong>Agent Skills</strong>。Skills
+本质上是一组结构化的 Markdown 指令文件，用于指导 AI 编程 Agent
+遵循特定的工作流程、最佳实践和质量标准。本文精选了 12 个优秀的开源
+Skills 项目，帮助你更高效地驾驭 AI 编程助手。</p>
+<hr>
+<h2 id="everything-claude-code">1. Everything Claude Code</h2>
+<blockquote>
+<p><strong>仓库地址</strong>: <a target="_blank" rel="noopener" href="https://github.com/affaan-m/everything-claude-code">affaan-m/everything-claude-code</a>
+<strong>⭐ Stars</strong>: 164k+ | <strong>🍴 Forks</strong>: 25.4k+</p>
+</blockquote>
+<h3 id="简介">简介</h3>
+<p>Everything Claude Code（简称 ECC）是目前最大、最全面的 AI Agent
+性能优化系统，曾获得 Anthropic
+黑客松冠军。它不只是一个配置包，而是一个完整的系统：包含
+Skills、Instincts（本能）、记忆优化、持续学习、安全扫描和研究驱动开发。经过
+10 个月以上的日常高强度使用打磨，支持 Claude
+Code、Codex、Cursor、OpenCode、Gemini 等多个 AI Agent 平台。</p>
+<h3 id="核心内容">核心内容</h3>
+<table>
+
+<thead>
+<tr>
+<th>类别</th>
+<th>数量</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Agents</td>
+<td>38 个</td>
+<td>专业角色代理（代码审查、测试工程、安全审计等）</td>
+</tr>
+<tr>
+<td>Skills</td>
+<td>156 个</td>
+<td>涵盖开发、运维、内容创作等多领域技能</td>
+</tr>
+<tr>
+<td>Commands</td>
+<td>72 个</td>
+<td>遗留命令别名（Legacy Command Shims）</td>
+</tr>
+<tr>
+<td>Rules</td>
+<td>多语言</td>
+<td>支持 TypeScript、Python、Go、Java、Kotlin、C++ 等 12+ 语言</td>
+</tr>
+<tr>
+<td>Hooks</td>
+<td>多个</td>
+<td>会话生命周期钩子</td>
+</tr>
+</tbody>
+</table>
+<h3 id="亮点功能">亮点功能</h3>
+<ul>
+<li><strong>ECC 2.0 Alpha</strong>: 基于 Rust 的控制面板原型，支持
+dashboard、start、sessions、status 等命令</li>
+<li><strong>AgentShield</strong>: 集成安全扫描，包含 1282 个测试和 102
+条规则</li>
+<li><strong>多 Agent 编排</strong>: PM2 命令和多 Agent
+工作流（<code>/multi-plan</code>、<code>/multi-execute</code> 等）</li>
+<li><strong>选择性安装</strong>:
+清单驱动的安装流程，支持按需安装组件</li>
+<li><strong>跨平台支持</strong>: Claude
+Code、Codex、Cursor、OpenCode、Gemini、Kiro 等</li>
+</ul>
+<h3 id="使用方式">使用方式</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 一键安装（Linux/macOS）</span><br>curl -fsSL https://raw.githubusercontent.com/affaan-m/everything-claude-code/main/install.sh | bash<br><br><span class="hljs-comment"># 或手动克隆</span><br>git <span class="hljs-built_in">clone</span> https://github.com/affaan-m/everything-claude-code.git<br></code></pre></td></tr></table></figure>
+<hr>
+<h2 id="agent-skillsaddy-osmani">2. Agent Skills（Addy Osmani）</h2>
+<blockquote>
+<p><strong>仓库地址</strong>: <a target="_blank" rel="noopener" href="https://github.com/addyosmani/agent-skills">addyosmani/agent-skills</a>
+<strong>⭐ Stars</strong>: 20.6k | <strong>🍴 Forks</strong>: 2.5k</p>
+</blockquote>
+<h3 id="简介-1">简介</h3>
+<p>由 Google Chrome 团队工程负责人 Addy Osmani
+打造的生产级工程技能集合。这些 Skills
+编码了资深工程师在构建软件时使用的工作流程、质量门禁和最佳实践，融入了
+Google 工程文化中的核心概念，包括《Software Engineering at Google》和
+Google 工程实践指南中的理念。</p>
+<h3 id="核心架构">核心架构</h3>
+<p>Skills 围绕完整的软件开发生命周期组织，分为六个阶段：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">DEFINE → PLAN → BUILD → VERIFY → REVIEW → SHIP<br>/spec    /plan   /build  /test    /review  /ship<br></code></pre></td></tr></table></figure>
+<h3 id="个核心-skills">20 个核心 Skills</h3>
+<p><strong>Define（定义）</strong>: - <code>idea-refine</code> —
+想法精炼 - <code>spec-driven-development</code> — 规范驱动开发</p>
+<p><strong>Plan（规划）</strong>: -
+<code>planning-and-task-breakdown</code> — 规划与任务分解</p>
+<p><strong>Build（构建）</strong>: -
+<code>incremental-implementation</code> — 增量实现 -
+<code>test-driven-development</code> — 测试驱动开发 -
+<code>context-engineering</code> — 上下文工程 -
+<code>frontend-ui-engineering</code> — 前端 UI 工程 -
+<code>api-and-interface-design</code> — API 与接口设计 -
+<code>source-driven-development</code> — 源码驱动开发</p>
+<p><strong>Verify（验证）</strong>: -
+<code>browser-testing-with-devtools</code> — 浏览器测试 -
+<code>debugging-and-error-recovery</code> — 调试与错误恢复</p>
+<p><strong>Review（审查）</strong>: -
+<code>code-review-and-quality</code> — 代码审查与质量 -
+<code>code-simplification</code> — 代码简化 -
+<code>security-and-hardening</code> — 安全加固 -
+<code>performance-optimization</code> — 性能优化</p>
+<p><strong>Ship（发布）</strong>: -
+<code>git-workflow-and-versioning</code> — Git 工作流 -
+<code>ci-cd-and-automation</code> — CI/CD 与自动化 -
+<code>documentation-and-adrs</code> — 文档与 ADR -
+<code>shipping-and-launch</code> — 发布与上线 -
+<code>deprecation-and-migration</code> — 弃用与迁移</p>
+<h3 id="设计亮点">设计亮点</h3>
+<ul>
+<li><strong>反合理化表</strong>: 每个 Skill 都包含 AI
+常用借口及反驳论点（如”我稍后再加测试”）</li>
+<li><strong>验证不可妥协</strong>: 每个 Skill
+都以证据要求结束——测试通过、构建输出、运行时数据</li>
+<li><strong>渐进式披露</strong>: SKILL.md
+是入口，参考资料按需加载，最小化 Token 消耗</li>
+</ul>
+<h3 id="使用方式-1">使用方式</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># Claude Code Marketplace 安装</span><br>/plugin marketplace add addyosmani/agent-skills<br>/plugin install agent-skills@addy-agent-skills<br><br><span class="hljs-comment"># 本地安装</span><br>git <span class="hljs-built_in">clone</span> https://github.com/addyosmani/agent-skills.git<br>claude --plugin-dir /path/to/agent-skills<br><br><span class="hljs-comment"># Gemini CLI 安装</span><br>gemini skills install https://github.com/addyosmani/agent-skills.git --path skills<br><br><span class="hljs-comment"># Cursor: 复制 SKILL.md 到 .cursor/rules/</span><br></code></pre></td></tr></table></figure>
+<hr>
+<h2 id="pua-让-ai-不敢放弃的-skill">3. PUA — 让 AI 不敢放弃的 Skill</h2>
+<blockquote>
+<p><strong>仓库地址</strong>: <a target="_blank" rel="noopener" href="https://github.com/tanweai/pua">tanweai/pua</a> <strong>⭐
+Stars</strong>: 16.6k | <strong>🍴 Forks</strong>: 953</p>
+</blockquote>
+<h3 id="简介-2">简介</h3>
+<p>PUA 是一个极具创意的 AI 编程 Agent Skill 插件，使用中国互联网大厂的
+PUA 话术（中文版）和西方科技公司的 PIP（Performance Improvement
+Plan）话术（英文版），迫使 AI 在放弃之前穷尽一切可能的解决方案。支持
+Claude Code、Codex CLI、Cursor、Kiro、Gemini CLI 等多平台。</p>
+<h3 id="三大核心能力">三大核心能力</h3>
+<ol type="1">
+<li><strong>PUA 话术</strong> — 让 AI 不敢放弃</li>
+<li><strong>调试方法论</strong> — 给 AI 不放弃的能力</li>
+<li><strong>主动性强制</strong> — 让 AI 主动出击而非被动等待</li>
+</ol>
+<h3 id="触发机制">触发机制</h3>
+<p><strong>自动触发</strong>（以下情况出现时自动激活）： - 任务连续失败
+2 次以上 - AI 准备说”我无法”/“无法解决” - AI
+把问题推给用户：“请检查…”/“建议手动…” - 反复调整同一段代码却不产生新信息
+- 遇到权限/网络错误就放弃</p>
+<p><strong>手动触发</strong>：在对话中输入 <code>/pua</code></p>
+<h3 id="特殊模式">特殊模式</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/pua:yes</code></td>
+<td>无条件执行模式</td>
+</tr>
+<tr>
+<td><code>/pua:mama</code></td>
+<td>温柔鼓励模式</td>
+</tr>
+<tr>
+<td><code>/pua:pua-loop</code></td>
+<td>循环调试模式</td>
+</tr>
+<tr>
+<td><code>/pua:p9</code></td>
+<td>最高性能等级</td>
+</tr>
+<tr>
+<td><code>/pua:on</code></td>
+<td>开启持续 PUA</td>
+</tr>
+</tbody>
+</table>
+<h3 id="使用方式-2">使用方式</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># Vercel Skills CLI 安装（英文版）</span><br>npx skills add tanweai/pua --skill pua-en<br><br><span class="hljs-comment"># Claude Code Marketplace 安装</span><br>claude plugin marketplace add tanweai/pua<br>claude plugin install pua@pua-skills<br><br><span class="hljs-comment"># 开发者安装</span><br>git <span class="hljs-built_in">clone</span> https://github.com/tanweai/pua ~/.claude/plugins/pua<br></code></pre></td></tr></table></figure>
+<hr>
+<h2 id="graphify-代码库知识图谱">4. Graphify — 代码库知识图谱</h2>
+<blockquote>
+<p><strong>仓库地址</strong>: <a target="_blank" rel="noopener" href="https://github.com/safishamsi/graphify">safishamsi/graphify</a>
+<strong>⭐ Stars</strong>: 32.7k | <strong>🍴 Forks</strong>: 3.6k</p>
+</blockquote>
+<h3 id="简介-3">简介</h3>
+<p>Graphify 是一个 AI 编程助手 Skill，输入 <code>/graphify</code>
+命令，它会读取你的文件，构建知识图谱，帮你发现代码库中隐藏的结构和架构决策背后的”为什么”。它是全模态的——支持代码、PDF、Markdown、截图、图表、白板照片、视频和音频文件，支持
+25 种编程语言的 AST 解析。</p>
+<h3 id="工作原理三遍扫描">工作原理（三遍扫描）</h3>
+<ol type="1">
+<li><strong>AST 解析</strong>:
+确定性地从代码文件中提取结构（类、函数、导入、调用图），无需 LLM</li>
+<li><strong>音视频转录</strong>: 使用 faster-whisper
+本地转录，基于语料库的领域感知提示词</li>
+<li><strong>LLM 提取</strong>: Claude 子 Agent
+并行运行，从文档、论文、图片和转录中提取概念和关系</li>
+</ol>
+<h3 id="输出内容">输出内容</h3>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs nix">graphify-out<span class="hljs-symbol">/</span><br>├── graph.html         <span class="hljs-comment"># 交互式图谱 — 浏览器打开，可点击节点、搜索、按社区过滤</span><br>├── GRAPH_REPORT.md    <span class="hljs-comment"># 神节点、意外连接、建议提问</span><br>├── graph.json         <span class="hljs-comment"># 持久化图谱 — 数周后查询无需重新读取</span><br>└── cache<span class="hljs-symbol">/</span>             <span class="hljs-comment"># SHA256 缓存 — 重新运行仅处理变更文件</span><br></code></pre></td></tr></table></figure>
+<h3 id="关系标记">关系标记</h3>
+<ul>
+<li><code>EXTRACTED</code> — 直接从源码中发现</li>
+<li><code>INFERRED</code> — 合理推断（附置信度分数）</li>
+<li><code>AMBIGUOUS</code> — 标记待审查</li>
+</ul>
+<h3 id="使用方式-3">使用方式</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 安装（推荐 uv）</span><br>uv tool install graphifyy &amp;&amp; graphify install<br><br><span class="hljs-comment"># 或 pipx</span><br>pipx install graphifyy &amp;&amp; graphify install<br><br><span class="hljs-comment"># 运行</span><br>/graphify .   <span class="hljs-comment"># 在 AI 编程助手中输入</span><br><br><span class="hljs-comment"># 各平台安装</span><br>graphify install --platform codex<br>graphify install --platform gemini<br>graphify cursor install<br>graphify antigravity install<br></code></pre></td></tr></table></figure>
+<hr>
+<h2 id="uiux-pro-max-skill">5. UI/UX Pro Max Skill</h2>
+<blockquote>
+<p><strong>仓库地址</strong>: <a target="_blank" rel="noopener" href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill">nextlevelbuilder/ui-ux-pro-max-skill</a>
+<strong>⭐ Stars</strong>: 69.1k | <strong>🍴 Forks</strong>: 7.1k</p>
+</blockquote>
+<h3 id="简介-4">简介</h3>
+<p>UI/UX Pro Max Skill 是一个为 AI 编程 Agent 注入设计智能的顶级
+Skill。它让 AI 不再只是机械地写代码，而是能够像专业设计师一样思考 UI/UX
+问题。该项目包含了一套完整的设计系统生成器，支持
+Web、移动端（iOS/Android）、桌面端等多平台，是目前最专业的设计增强插件。</p>
+<h3 id="核心内容-1">核心内容</h3>
+<ul>
+<li><strong>海量预定义样式</strong>: 包含 57 种 UI 风格、95 种调色板、56
+种字体组合。</li>
+<li><strong>UX 最佳实践</strong>: 内置 98 条 UX
+准则，涵盖无障碍性（WCAG）、响应式布局、加载态设计等。</li>
+<li><strong>多框架支持</strong>: 深度支持 React, Next.js, Vue, Flutter,
+SwiftUI, Jetpack Compose 等。</li>
+<li><strong>设计系统生成器</strong>: 161
+条特定行业规则，可自动为项目生成符合行业标准的 Design System。</li>
+</ul>
+<h3 id="使用方式-4">使用方式</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 全局安装 CLI 工具</span><br>npm install -g uipro-cli<br><br><span class="hljs-comment"># 在 Claude Code 中安装</span><br>/plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill<br>/plugin install ui-ux-pro-max<br><br><span class="hljs-comment"># 手动安装</span><br>将 SKILL.md 复制到项目的 .claude/skills/ 目录下<br></code></pre></td></tr></table></figure>
+<hr>
+<h2 id="claude-mem-持久化记忆插件">6. Claude-Mem — 持久化记忆插件</h2>
+<blockquote>
+<p><strong>仓库地址</strong>: <a target="_blank" rel="noopener" href="https://github.com/thedotmack/claude-mem">thedotmack/claude-mem</a>
+<strong>⭐ Stars</strong>: 65.4k | <strong>🍴 Forks</strong>: 5.5k</p>
+</blockquote>
+<h3 id="简介-5">简介</h3>
+<p>Claude-Mem 是一个为 Claude Code
+打造的生产级持久化记忆系统。它通过捕获工具调用的观察数据，进行 AI
+驱动的语义压缩处理，并将其注入到未来的会话中。这彻底解决了 AI
+编程助手在长期项目或复杂重构中“上下文丢失”的痛点。</p>
+<h3 id="核心架构5层架构">核心架构（5层架构）</h3>
+<ol type="1">
+<li><strong>Hooks</strong>: 自动捕获每次工具调用的输入与输出。</li>
+<li><strong>Worker Service</strong>: 后台异步处理记忆的清理与聚合。</li>
+<li><strong>Semantic Summarizer</strong>:
+使用轻量级模型对冗长的工具输出进行关键信息提取。</li>
+<li><strong>SQLite Storage</strong>: 本地持久化存储，支持向量搜索。</li>
+<li><strong>MCP Integration</strong>: 通过 Model Context Protocol 与
+Claude Code 深度集成。</li>
+</ol>
+<h3 id="亮点功能-1">亮点功能</h3>
+<ul>
+<li><strong>跨会话注入</strong>: 新会话开始时，自动注入上一次修复的 Bug
+或达成的架构共识。</li>
+<li><strong>自动清理</strong>: 自动识别并删除过时或重复的记忆，节省
+Token。</li>
+<li><strong>隐私保护</strong>: 数据完全存储在本地 SQLite 中。</li>
+</ul>
+<h3 id="使用方式-5">使用方式</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 安装记忆服务</span><br>npx claude-mem setup<br><br><span class="hljs-comment"># 在 Claude Code 中启用</span><br>claude --plugin-dir ~/.claude/plugins/claude-mem<br><br><span class="hljs-comment"># 手动管理记忆</span><br>/mem list<br>/mem prune<br></code></pre></td></tr></table></figure>
+<hr>
+<h2 id="andrej-karpathy-skills">7. Andrej Karpathy Skills</h2>
+<blockquote>
+<p><strong>仓库地址</strong>: <a target="_blank" rel="noopener" href="https://github.com/forrestchang/andrej-karpathy-skills">forrestchang/andrej-karpathy-skills</a>
+<strong>⭐ Stars</strong>: 74.6k | <strong>🍴 Forks</strong>: 6.9k</p>
+</blockquote>
+<h3 id="简介-6">简介</h3>
+<p>受 AI 大神 Andrej Karpathy 的编码理念（尤其是他关于 LLM
+编程陷阱的观察）启发，本项目将核心编程哲学编码为结构化的 Skills
+指令，旨在纠正 AI Agent 常见的“阿谀奉承”和“盲目假设”行为。</p>
+<h3 id="核心理念">核心理念</h3>
+<ol type="1">
+<li><strong>先思考再编码</strong> — 动手之前充分理解问题</li>
+<li><strong>追求简洁</strong> — 最好的代码是最简单的代码</li>
+<li><strong>精确外科手术式修改</strong> —
+最小化变更范围，不做不必要的重构</li>
+<li><strong>目标驱动执行</strong> — 始终围绕目标行动，避免偏离</li>
+</ol>
+<h3 id="使用方式-6">使用方式</h3>
+<p>将 <code>CLAUDE.md</code> 文件放置在项目根目录或
+<code>~/.claude/</code> 目录中，Claude Code
+会自动读取并遵循其中的指导原则。</p>
+<hr>
+<h2 id="multica-多-agent-协作平台">8. Multica — 多 Agent 协作平台</h2>
+<blockquote>
+<p><strong>仓库地址</strong>: <a target="_blank" rel="noopener" href="https://github.com/multica-ai/multica">multica-ai/multica</a>
+<strong>⭐ Stars</strong>: 19.1k | <strong>🍴 Forks</strong>: 2.3k</p>
+</blockquote>
+<h3 id="简介-7">简介</h3>
+<p>Multica 是一个开源的托管 Agent 平台，设计理念是将 AI 编码 Agent
+视为团队成员。它支持任务分配和技能复合，让多个 AI Agent
+像团队一样协作完成复杂项目。</p>
+<h3 id="核心特性">核心特性</h3>
+<ul>
+<li><strong>Agent 即队友</strong>: 将 AI Agent
+视为团队成员进行任务分配</li>
+<li><strong>技能复合</strong>: 组合多个 Skills 产生协同效应</li>
+<li><strong>任务编排</strong>: 支持复杂的多 Agent 任务调度和协调</li>
+<li><strong>统一管理</strong>: 集中管理多个 Agent 的状态和产出</li>
+</ul>
+<h3 id="使用方式-7">使用方式</h3>
+<p>参考仓库 README 进行平台部署和 Agent 配置。</p>
+<hr>
+<h2 id="obsidian-skills">9. Obsidian Skills</h2>
+<blockquote>
+<p><strong>仓库地址</strong>: <a target="_blank" rel="noopener" href="https://github.com/kepano/obsidian-skills">kepano/obsidian-skills</a>
+<strong>⭐ Stars</strong>: 25.9k | <strong>🍴 Forks</strong>: 1.7k</p>
+</blockquote>
+<h3 id="简介-8">简介</h3>
+<p>由 Obsidian 创始人 Kepano 打造的 Agent Skills，专门为 Obsidian
+知识管理生态设计。它让 AI Agent 能够熟练操作 Obsidian 的核心功能，包括
+Markdown 文件处理、Bases 数据库、JSON Canvas 画布和 CLI 命令行操作。</p>
+<h3 id="核心能力">核心能力</h3>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Markdown 处理</td>
+<td>创建、编辑、链接 Obsidian 风格的 Markdown 文件</td>
+</tr>
+<tr>
+<td>Bases 操作</td>
+<td>操作 Obsidian Bases 数据库视图</td>
+</tr>
+<tr>
+<td>JSON Canvas</td>
+<td>创建和编辑 JSON Canvas 画布文件</td>
+</tr>
+<tr>
+<td>CLI 集成</td>
+<td>通过命令行与 Obsidian 交互</td>
+</tr>
+</tbody>
+</table>
+<h3 id="使用方式-8">使用方式</h3>
+<p>将 Skills 文件放入 Agent 的技能目录中，AI 即可理解和操作 Obsidian
+的各种文件格式和功能。</p>
+<hr>
+<h2 id="baoyu-skills">10. Baoyu Skills</h2>
+<blockquote>
+<p><strong>仓库地址</strong>: <a target="_blank" rel="noopener" href="https://github.com/jimliu/baoyu-skills">jimliu/baoyu-skills</a>
+<strong>⭐ Stars</strong>: 15.9k | <strong>🍴 Forks</strong>: 1.8k</p>
+</blockquote>
+<h3 id="简介-9">简介</h3>
+<p>Baoyu Skills 是一组面向效率和内容生产的 AI Skills
+集合，特别擅长内容生成和发布工具，包括小红书图片卡片生成器和信息图制作工具等，非常适合中文内容创作者使用。</p>
+<h3 id="核心工具">核心工具</h3>
+<ul>
+<li><strong>小红书图片卡片生成器</strong>:
+自动生成符合小红书平台规范的图文卡片</li>
+<li><strong>信息图制作</strong>: 将数据和信息转化为视觉化的信息图</li>
+<li><strong>内容发布工具</strong>: 简化内容创作到发布的工作流程</li>
+</ul>
+<h3 id="使用方式-9">使用方式</h3>
+<p>根据需要选择对应的 Skill 文件，放入 AI Agent
+的技能目录中即可使用。</p>
+<hr>
+<h2 id="excalidraw-diagram-skill">11. Excalidraw Diagram Skill</h2>
+<blockquote>
+<p><strong>仓库地址</strong>: <a target="_blank" rel="noopener" href="https://github.com/coleam00/excalidraw-diagram-skill">coleam00/excalidraw-diagram-skill</a>
+<strong>⭐ Stars</strong>: 2.6k | <strong>🍴 Forks</strong>: 334</p>
+</blockquote>
+<h3 id="简介-10">简介</h3>
+<p>一个让 AI 编程 Agent 能够生成精美实用的 Excalidraw 图表的
+Skill。不是简单的方框加箭头——而是能够”视觉化论证”的图表。兼容任何支持
+Skills 的编程 Agent。</p>
+<h3 id="核心特色">核心特色</h3>
+<ul>
+<li><strong>图表会论证</strong>:
+每个形状/组件都映射其代表的概念——扇出代表一对多，时间线代表序列</li>
+<li><strong>证据性产物</strong>: 技术图表包含真实代码片段和实际 JSON
+载荷</li>
+<li><strong>内置视觉验证</strong>: 基于 Playwright 的渲染流水线，Agent
+能看到自己的输出并修复布局问题</li>
+<li><strong>品牌可定制</strong>: 所有颜色和品牌样式集中在
+<code>references/color-palette.md</code> 中</li>
+</ul>
+<h3 id="文件结构">文件结构</h3>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs nix">excalidraw-diagram<span class="hljs-symbol">/</span><br>  SKILL.md                    <span class="hljs-comment"># 设计方法论 + 工作流程</span><br>  references<span class="hljs-symbol">/</span><br>    color-palette.md           <span class="hljs-comment"># 品牌色（编辑此文件自定义）</span><br>    element-templates.md       <span class="hljs-comment"># 各元素类型的 JSON 模板</span><br>    json-schema.md             <span class="hljs-comment"># Excalidraw JSON 格式参考</span><br>    render_excalidraw.py       <span class="hljs-comment"># 渲染 .excalidraw 为 PNG</span><br>    render_template.html       <span class="hljs-comment"># 浏览器渲染模板</span><br>    pyproject.toml             <span class="hljs-comment"># Python 依赖</span><br></code></pre></td></tr></table></figure>
+<h3 id="使用方式-10">使用方式</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 克隆并复制到技能目录</span><br>git <span class="hljs-built_in">clone</span> https://github.com/coleam00/excalidraw-diagram-skill.git<br><span class="hljs-built_in">cp</span> -r excalidraw-diagram-skill .claude/skills/excalidraw-diagram<br><br><span class="hljs-comment"># 设置渲染器</span><br><span class="hljs-built_in">cd</span> .claude/skills/excalidraw-diagram/references<br>uv <span class="hljs-built_in">sync</span><br>uv run playwright install chromium<br><br><span class="hljs-comment"># 然后直接告诉 AI：</span><br><span class="hljs-comment"># "Create an Excalidraw diagram showing the system architecture"</span><br></code></pre></td></tr></table></figure>
+<hr>
+<h2 id="minimax-skills-多模态全栈开发技能集">12. MiniMax Skills —
+多模态全栈开发技能集</h2>
+<blockquote>
+<p><strong>仓库地址</strong>: <a target="_blank" rel="noopener" href="https://github.com/MiniMax-AI/skills">MiniMax-AI/skills</a>
+<strong>⭐ Stars</strong>: 11.1k | <strong>🍴 Forks</strong>: 942</p>
+</blockquote>
+<h3 id="简介-11">简介</h3>
+<p>MiniMax Skills 是由 MiniMax AI 团队推出的 AI 编程 Agent
+开发技能集合，提供前端、全栈、Android、iOS、Flutter、React
+Native、Shader 等多领域的结构化、生产级开发指导。除了传统的代码开发
+Skills，它还包含丰富的多模态内容生成能力——PDF、PPTX、XLSX、DOCX
+文档生成、GIF/贴纸制作、视觉分析、音乐生成等，是目前覆盖面最广的多模态
+Skills 之一。</p>
+<blockquote>
+<p>⚠️ <strong>Beta 阶段</strong> — 项目正在积极开发中，Skills、API
+和配置格式可能会在不通知的情况下变更。</p>
+</blockquote>
+<h3 id="核心-skills-清单">核心 Skills 清单</h3>
+<p><strong>开发类</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>frontend-dev</code></td>
+<td>前端开发指导</td>
+</tr>
+<tr>
+<td><code>fullstack-dev</code></td>
+<td>全栈开发指导</td>
+</tr>
+<tr>
+<td><code>android-native-dev</code></td>
+<td>Android 原生开发</td>
+</tr>
+<tr>
+<td><code>ios-application-dev</code></td>
+<td>iOS 应用开发</td>
+</tr>
+<tr>
+<td><code>flutter-dev</code></td>
+<td>Flutter 跨平台开发</td>
+</tr>
+<tr>
+<td><code>react-native-dev</code></td>
+<td>React Native 开发</td>
+</tr>
+<tr>
+<td><code>shader-dev</code></td>
+<td>Shader 着色器开发</td>
+</tr>
+</tbody>
+</table>
+<p><strong>多模态内容生成</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>minimax-pdf</code></td>
+<td>PDF 文档生成</td>
+</tr>
+<tr>
+<td><code>pptx-generator</code></td>
+<td>PPT 演示文稿生成</td>
+</tr>
+<tr>
+<td><code>minimax-xlsx</code></td>
+<td>Excel 表格生成</td>
+</tr>
+<tr>
+<td><code>minimax-docx</code></td>
+<td>Word 文档生成</td>
+</tr>
+<tr>
+<td><code>gif-sticker-maker</code></td>
+<td>GIF 贴纸制作</td>
+</tr>
+<tr>
+<td><code>vision-analysis</code></td>
+<td>视觉分析</td>
+</tr>
+<tr>
+<td><code>minimax-multimodal-toolkit</code></td>
+<td>多模态工具箱</td>
+</tr>
+<tr>
+<td><code>minimax-music-gen</code></td>
+<td>AI 音乐生成</td>
+</tr>
+<tr>
+<td><code>buddy-sings</code></td>
+<td>AI 唱歌伴侣</td>
+</tr>
+<tr>
+<td><code>minimax-music-playlist</code></td>
+<td>音乐播放列表生成</td>
+</tr>
+</tbody>
+</table>
+<h3 id="使用方式-11">使用方式</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># Claude Code — Marketplace 安装</span><br>claude plugin marketplace add https://github.com/MiniMax-AI/skills<br>claude plugin install minimax-skills<br><br><span class="hljs-comment"># Cursor — 克隆到本地</span><br>git <span class="hljs-built_in">clone</span> https://github.com/MiniMax-AI/skills.git ~/.cursor/minimax-skills<br><span class="hljs-comment"># 然后在 Cursor 设置中指向 ~/.cursor/minimax-skills/skills/</span><br><br><span class="hljs-comment"># Codex — 克隆并链接</span><br>git <span class="hljs-built_in">clone</span> https://github.com/MiniMax-AI/skills.git ~/.codex/minimax-skills<br><span class="hljs-built_in">mkdir</span> -p ~/.agents/skills<br><span class="hljs-built_in">ln</span> -s ~/.codex/minimax-skills/skills ~/.agents/skills/minimax-skills<br><br><span class="hljs-comment"># OpenCode — 克隆并链接</span><br>git <span class="hljs-built_in">clone</span> https://github.com/MiniMax-AI/skills.git ~/.minimax-skills<br><span class="hljs-built_in">mkdir</span> -p ~/.config/opencode/skills<br><span class="hljs-built_in">ln</span> -s ~/.minimax-skills/skills/* ~/.config/opencode/skills/<br></code></pre></td></tr></table></figure>
+<hr>
+<h2 id="总结">总结</h2>
+<table>
+
+<thead>
+<tr>
+<th>Skill</th>
+<th>定位</th>
+<th>适用场景</th>
+<th>平台支持</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Everything Claude Code</td>
+<td>全能型性能优化系统</td>
+<td>日常开发全流程</td>
+<td>多平台</td>
+</tr>
+<tr>
+<td>Agent Skills (Addy)</td>
+<td>生产级工程工作流</td>
+<td>企业级软件开发</td>
+<td>多平台</td>
+</tr>
+<tr>
+<td>PUA</td>
+<td>强制 AI 不放弃</td>
+<td>疑难调试</td>
+<td>多平台</td>
+</tr>
+<tr>
+<td>Graphify</td>
+<td>代码库知识图谱</td>
+<td>理解大型代码库</td>
+<td>多平台</td>
+</tr>
+<tr>
+<td>UI/UX Pro Max</td>
+<td>设计智能</td>
+<td>UI/UX 开发</td>
+<td>多平台</td>
+</tr>
+<tr>
+<td>Claude-Mem</td>
+<td>持久化记忆</td>
+<td>长期项目</td>
+<td>Claude Code</td>
+</tr>
+<tr>
+<td>Karpathy Skills</td>
+<td>编码理念</td>
+<td>编码质量提升</td>
+<td>Claude Code</td>
+</tr>
+<tr>
+<td>Multica</td>
+<td>多 Agent 协作</td>
+<td>复杂项目</td>
+<td>自有平台</td>
+</tr>
+<tr>
+<td>Obsidian Skills</td>
+<td>知识管理</td>
+<td>Obsidian 用户</td>
+<td>多平台</td>
+</tr>
+<tr>
+<td>Baoyu Skills</td>
+<td>内容生产</td>
+<td>中文内容创作</td>
+<td>Claude Code</td>
+</tr>
+<tr>
+<td>Excalidraw Diagram</td>
+<td>图表生成</td>
+<td>架构可视化</td>
+<td>多平台</td>
+</tr>
+<tr>
+<td>MiniMax Skills</td>
+<td>多模态全栈开发</td>
+<td>跨平台开发 + 内容生成</td>
+<td>多平台</td>
+</tr>
+</tbody>
+</table>
+<p>选择适合自己工作流的 Skills，可以显著提升 AI
+编程助手的输出质量和工作效率。建议从 <strong>Agent Skills</strong> 或
+<strong>Everything Claude Code</strong>
+开始，它们提供了最全面的开发工作流覆盖。如果你经常遇到 AI
+“放弃”的情况，<strong>PUA</strong>
+是一个非常有效的补充。对于需要理解大型代码库的场景，<strong>Graphify</strong>
+是不二之选。如果你需要多模态内容生成能力（文档、音乐、视觉），<strong>MiniMax
+Skills</strong> 是独特的选择。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Skills/" class="category-chain-item">Skills</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Skills/" class="print-no-link">#Skills</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Skills推荐</div>
+      <div>https://mztchaoqun.com.cn/posts/D115_Good_Skills/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mztchaoqun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年4月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/D116_Hermes_Agent/" title="Hermes Agent">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Hermes Agent</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/D114_Skills/" title="Superpowers、GSD、OpenSpec、Spec-kit、Gstack">
+                        <span class="hidden-mobile">Superpowers、GSD、OpenSpec、Spec-kit、Gstack</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!-- <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> --> <div class="flex flex-auto justify-center [&amp;>*]:px-[16px] [&amp;>a]:no-underline  mb-[8px]"><a target="_blank" class="flex items-center text-[#A1A1A1] hover:text-white " href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51015602000856"><img alt="川公网安备" fetchpriority="high" width="20" height="20" decoding="async" data-nimg="1" class="mr-[6px]" src="/images/ga.png" srcset="/img/loading.gif" lazyload style="color: transparent;">&nbsp;川公网安备&nbsp;51015602000856号</a>&emsp;<a target="_blank" class="text-[#A1A1A1] hover:text-white " href="https://beian.miit.gov.cn/">蜀ICP备2024061486号-1</a></div> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    function isExpandAllEnabled() {
+      return CONFIG.toc && CONFIG.toc.expand_all === true;
+    }
+    function expandAllToc() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .tocbot-is-collapsed').removeClass('tocbot-is-collapsed');
+    }
+    function updateTocToggle($li, $childList) {
+      var $toggle = $li.children('.toc-toggle');
+      if ($toggle.length === 0) { return; }
+      var collapsed = $childList.hasClass('tocbot-is-collapsed');
+      $toggle
+        .toggleClass('toc-toggle-collapsed', collapsed)
+        .toggleClass('toc-toggle-expanded', !collapsed);
+    }
+    function bindTocToggle() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .toc-list-item').each(function() {
+        var $li = jQuery(this);
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) {
+          if ($li.children('.toc-toggle').length === 0) {
+            $li.prepend('<span class="toc-toggle toc-toggle-placeholder" aria-hidden="true">›</span>');
+          }
+          return;
+        }
+
+        if ($li.children('.toc-toggle').length === 0) {
+          $li.prepend('<span class="toc-toggle toc-toggle-expanded" aria-hidden="true">›</span>');
+        }
+        updateTocToggle($li, $childList);
+      });
+      jQuery('#toc-body').off('click.tocToggle').on('click.tocToggle', '.toc-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = jQuery(this).parent('.toc-list-item');
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) { return; }
+        $childList.toggleClass('tocbot-is-collapsed');
+        updateTocToggle($li, $childList);
+      });
+      if (!window.__tocToggleObserver) {
+        window.__tocToggleObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type !== 'attributes' || mutation.attributeName !== 'class') { return; }
+            var $list = jQuery(mutation.target);
+            var $li = $list.parent('.toc-list-item');
+            if ($li.length === 0) { return; }
+            updateTocToggle($li, $list);
+          });
+        });
+        jQuery('#toc-body ol').each(function() {
+          window.__tocToggleObserver.observe(this, { attributes: true });
+        });
+      }
+    }
+    var tocConfig = Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc);
+    if (isExpandAllEnabled()) {
+      tocConfig.collapseDepth = 6;
+    }
+    window.tocbot.init(tocConfig);
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    expandAllToc();
+    bindTocToggle();
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+        expandAllToc();
+        bindTocToggle();
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
